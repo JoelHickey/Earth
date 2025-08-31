@@ -1,0 +1,44 @@
+// Slider configurations
+export const INPUT_SLIDERS = [
+  { name: 'sleepQuality', label: 'Sleep Quality' },
+  { name: 'foodLevel', label: 'Food' },
+  { name: 'caffeineLevel', label: 'Coffee' }
+];
+
+export const EMOTION_SLIDERS = [
+  { name: 'happiness', label: 'Happiness' },
+  { name: 'anxiety', label: 'Anxiety' },
+  { name: 'energy', label: 'Energy' },
+  { name: 'focus', label: 'Focus' },
+  { name: 'stress', label: 'Stress' },
+  { name: 'sadness', label: 'Sadness' },
+  { name: 'anger', label: 'Anger' },
+  { name: 'irritability', label: 'Irritability' },
+  { name: 'dread', label: 'Dread' }
+];
+
+// View button configurations
+export const VIEW_BUTTONS = [
+  { id: 'inputs', icon: '/Plug.ico', alt: 'Plug' },
+  { id: 'emotions', icon: '/Volume Controls.ico', alt: 'Levels' },
+  { id: 'environment', icon: '/Tree.ico', alt: 'Tree' },
+  { id: 'timeline', icon: '/Notepad.ico', alt: 'Notepad' }
+];
+
+// Windows 95 color palette
+export const COLORS = {
+  mainBackground: '#d4d0c8',
+  lightGrey: '#c0c0c0',
+  darkGrey: '#808080',
+  white: '#ffffff',
+  black: '#000000',
+  windowsBlue: '#000080',
+  titleBarGradient: 'linear-gradient(90deg, #000080 0%, #1084d0 100%)'
+};
+
+// Default values
+export const DEFAULT_VALUES = {
+  sliderValue: 0,
+  checkboxValue: false,
+  activeView: 'emotions'
+};
