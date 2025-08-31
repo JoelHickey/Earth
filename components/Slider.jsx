@@ -34,12 +34,14 @@ const Slider = ({
       width: "20px",
       height: "20px",
       background: "#d4d0c8",
-      border: "2px outset #c0c0c0",
+      borderTop: "2px solid #ffffff",
+      borderLeft: "2px solid #ffffff",
+      borderBottom: "2px solid #808080",
+      borderRight: "2px solid #808080",
       position: "absolute",
       left: "-10px",
       cursor: "pointer",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
-      boxShadow: "inset 1px 1px #ffffff, inset -1px -1px #808080"
+      fontFamily: "'MS Sans Serif', Arial, sans-serif"
     },
     input: {
       width: "20px",

@@ -15,18 +15,22 @@ const Toolbar = ({ activeView, setActiveView, outputValue }) => {
       width: "36px",
       height: "28px",
       background: "#d4d0c8",
-      border: "2px outset #c0c0c0",
+      borderTop: "2px solid #ffffff",
+      borderLeft: "2px solid #ffffff",
+      borderBottom: "2px solid #808080", 
+      borderRight: "2px solid #808080",
       fontSize: "10px",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
-      boxShadow: "inset 1px 1px #ffffff, inset -1px -1px #808080"
+      fontFamily: "'MS Sans Serif', Arial, sans-serif"
     },
     activeButton: {
-      border: "2px inset #c0c0c0",
-      boxShadow: "inset 1px 1px #808080, inset -1px -1px #ffffff"
+      borderTop: "2px solid #808080",
+      borderLeft: "2px solid #808080",
+      borderBottom: "2px solid #ffffff",
+      borderRight: "2px solid #ffffff"
     },
     separator: {
       width: "1px",
@@ -50,15 +54,19 @@ const Toolbar = ({ activeView, setActiveView, outputValue }) => {
 
   const handleButtonMouseDown = (e) => {
     if (e.target.tagName === 'BUTTON') {
-      e.target.style.border = "2px inset #c0c0c0";
-      e.target.style.boxShadow = "inset 1px 1px #808080, inset -1px -1px #ffffff";
+      e.target.style.borderTop = "2px solid #808080";
+      e.target.style.borderLeft = "2px solid #808080";
+      e.target.style.borderBottom = "2px solid #ffffff";
+      e.target.style.borderRight = "2px solid #ffffff";
     }
   };
 
   const handleButtonMouseUp = (e) => {
     if (e.target.tagName === 'BUTTON') {
-      e.target.style.border = "2px outset #c0c0c0";
-      e.target.style.boxShadow = "inset 1px 1px #ffffff, inset -1px -1px #808080";
+      e.target.style.borderTop = "2px solid #ffffff";
+      e.target.style.borderLeft = "2px solid #ffffff";
+      e.target.style.borderBottom = "2px solid #808080";
+      e.target.style.borderRight = "2px solid #808080";
     }
   };
 

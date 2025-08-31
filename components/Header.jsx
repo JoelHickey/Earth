@@ -17,7 +17,10 @@ const Header = () => {
       width: "20px",
       height: "18px",
       background: "#d4d0c8",
-      border: "1px outset #c0c0c0",
+      borderTop: "1px solid #ffffff",
+      borderLeft: "1px solid #ffffff",
+      borderBottom: "1px solid #808080",
+      borderRight: "1px solid #808080",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
@@ -32,12 +35,18 @@ const Header = () => {
   };
 
   const handleCloseButtonMouseDown = (e) => {
-    e.target.style.border = "1px inset #c0c0c0";
+    e.target.style.borderTop = "1px solid #808080";
+    e.target.style.borderLeft = "1px solid #808080";
+    e.target.style.borderBottom = "1px solid #ffffff";
+    e.target.style.borderRight = "1px solid #ffffff";
     e.target.style.background = "#c0c0c0";
   };
 
   const handleCloseButtonMouseUp = (e) => {
-    e.target.style.border = "1px outset #c0c0c0";
+    e.target.style.borderTop = "1px solid #ffffff";
+    e.target.style.borderLeft = "1px solid #ffffff";
+    e.target.style.borderBottom = "1px solid #808080";
+    e.target.style.borderRight = "1px solid #808080";
     e.target.style.background = "#d4d0c8";
   };
 
