@@ -84,7 +84,7 @@ function Default() {
     },
     outputBar: {
       flex: 1,
-      height: "28px",
+      height: "24px",
       background: "#ffffff",
       border: "2px inset #c0c0c0",
       display: "flex",
@@ -96,9 +96,8 @@ function Default() {
     },
     separator: {
       width: "1px",
-      height: "16px",
+      height: "20px",
       background: "#808080",
-      border: "1px inset #c0c0c0",
       marginLeft: "8px"
     },
     statusBar: {
@@ -227,11 +226,12 @@ function Default() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: "10px",
+            fontSize: "12px",
             fontFamily: "'MS Sans Serif', Arial, sans-serif",
             color: "#000000",
             padding: "0",
-            lineHeight: "1"
+            lineHeight: "1",
+            fontWeight: "bold"
           }}
           onMouseDown={(e) => {
             e.target.style.border = "1px inset #c0c0c0";
@@ -242,7 +242,7 @@ function Default() {
             e.target.style.background = "#d4d0c8";
           }}
         >
-          ×
+          ✕
         </button>
       </div>
 
@@ -335,10 +335,26 @@ function Default() {
         
         <div style={styles.separator} />
         
-        <div style={styles.outputBar}>
-          Output: {Math.round(outputValue)}/10
+        <div style={{ display: "flex", alignItems: "center", gap: "2px", flex: 1, marginLeft: "8px" }}>
+          <span style={{ 
+            fontSize: "10px", 
+            fontFamily: "'MS Sans Serif', Arial, sans-serif",
+            color: "#000000"
+          }}>
+            Output:
+          </span>
+          <div style={styles.outputBar}>
+            {Math.round(outputValue)}/10
+          </div>
         </div>
       </div>
+
+      {/* Separator between toolbar and content */}
+      <div style={{ 
+        height: "1px", 
+        background: "#808080",
+        margin: "0 4px"
+      }} />
 
       {/* Main Content */}
       <div style={styles.mainContent}>
