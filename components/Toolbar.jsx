@@ -26,7 +26,8 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
       justifyContent: "center",
       fontFamily: "'MS Sans Serif', sans-serif",
       fontWeight: "normal",
-      padding: "0"
+      padding: "0",
+      boxSizing: "border-box"
     },
     authButton: {
       width: "80px",
@@ -68,7 +69,8 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
       padding: "0 8px",
       fontSize: "10px",
       fontFamily: "'MS Sans Serif', sans-serif",
-      marginLeft: "8px"
+      marginLeft: "8px",
+      boxSizing: "border-box"
     }
   };
 
