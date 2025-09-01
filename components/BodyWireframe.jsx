@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [authMode, setAuthMode] = useState('signin'); // 'signin' or 'signup'
   const styles = {
     container: {
       width: '100%',
@@ -149,25 +148,19 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
             <div style={styles.authButtons}>
               <button
                 style={styles.authButton}
-                onClick={() => {
-                  if (authMode === 'signin') {
-                    onSignIn(username, password);
-                  } else {
-                    onSignUp(username, password);
-                  }
-                }}
+                onClick={() => onSignIn(username, password)}
                 onMouseDown={handleButtonMouseDown}
                 onMouseUp={handleButtonMouseUp}
               >
-                {authMode === 'signin' ? 'Sign In' : 'Sign Up'}
+                Sign In
               </button>
               <button
                 style={styles.authButton}
-                onClick={() => setAuthMode(authMode === 'signin' ? 'signup' : 'signin')}
+                onClick={() => onSignUp(username, password)}
                 onMouseDown={handleButtonMouseDown}
                 onMouseUp={handleButtonMouseUp}
               >
-                {authMode === 'signin' ? 'Switch to Sign Up' : 'Switch to Sign In'}
+                Sign Up
               </button>
             </div>
           </div>
