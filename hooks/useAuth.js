@@ -27,35 +27,36 @@ export const useAuth = () => {
         setLoading(false);
         return;
       }
+
+      // Only proceed with auth if Supabase is configured
+      if (configured) {
+        // Get initial user
+        const getInitialUser = async () => {
+          try {
+            const currentUser = await auth.getCurrentUser();
+            setUser(currentUser);
+          } catch (error) {
+            console.error('Error getting initial user:', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        getInitialUser();
+
+        // Listen for auth state changes
+        const { data: { subscription } } = auth.onAuthStateChange((event, session) => {
+          console.log('Auth state changed:', event, session?.user);
+          setUser(session?.user || null);
+          setLoading(false);
+        });
+
+        return () => subscription.unsubscribe();
+      }
     };
 
     checkSupabaseConfig();
-
-    // Only proceed with auth if Supabase is configured
-    if (isSupabaseConfigured) {
-      // Get initial user
-      const getInitialUser = async () => {
-        try {
-          const currentUser = await auth.getCurrentUser();
-          setUser(currentUser);
-        } catch (error) {
-          console.error('Error getting initial user:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      getInitialUser();
-
-      // Listen for auth state changes
-      const { data: { subscription } } = auth.onAuthStateChange((event, session) => {
-        setUser(session?.user || null);
-        setLoading(false);
-      });
-
-      return () => subscription.unsubscribe();
-    }
-  }, [isSupabaseConfigured]);
+  }, []);
 
   const signIn = async (email, password) => {
     const { data, error } = await auth.signIn(email, password);

@@ -61,7 +61,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
     outputBar: {
       flex: 1,
       height: "24px",
-      background: "#ffffff",
+      background: "#90EE90",
       border: "2px inset #c0c0c0",
       display: "flex",
       alignItems: "center",
@@ -125,7 +125,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
           Output:
         </span>
         <div style={styles.outputBar}>
-          {Math.round(outputValue)}/10
+          10/10
         </div>
       </div>
       

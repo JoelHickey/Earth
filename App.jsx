@@ -172,8 +172,10 @@ function Default() {
   };
 
   const handleDirectSignIn = async (username, password) => {
+    console.log('Attempting sign in with:', username);
     if (!isSupabaseConfigured) {
       console.log('Supabase not configured');
+      alert('Supabase not configured');
       return;
     }
     
@@ -181,18 +183,22 @@ function Default() {
       const { data, error } = await auth.signIn(username, password);
       if (error) {
         console.error('Sign in error:', error.message);
-        // You could add error handling here (show error message to user)
+        alert('Sign in error: ' + error.message);
       } else {
         console.log('Sign in successful:', data.user);
+        alert('Sign in successful!');
       }
     } catch (error) {
       console.error('Unexpected error during sign in:', error);
+      alert('Unexpected error: ' + error.message);
     }
   };
 
   const handleDirectSignUp = async (username, password) => {
+    console.log('Attempting sign up with:', username);
     if (!isSupabaseConfigured) {
       console.log('Supabase not configured');
+      alert('Supabase not configured');
       return;
     }
     
@@ -200,12 +206,14 @@ function Default() {
       const { data, error } = await auth.signUp(username, password);
       if (error) {
         console.error('Sign up error:', error.message);
-        // You could add error handling here (show error message to user)
+        alert('Sign up error: ' + error.message);
       } else {
         console.log('Sign up successful:', data.user);
+        alert('Sign up successful!');
       }
     } catch (error) {
       console.error('Unexpected error during sign up:', error);
+      alert('Unexpected error: ' + error.message);
     }
   };
 
