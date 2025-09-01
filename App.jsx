@@ -11,6 +11,7 @@ import BodyWireframe from './components/BodyWireframe';
 import { useSliderDrag } from './hooks/useSliderDrag';
 import { useAppState } from './utils/stateManager';
 import { useAuth } from './hooks/useAuth';
+import { auth } from './utils/supabase';
 import { INPUT_SLIDERS, EMOTION_SLIDERS } from './utils/constants';
 
 function Default() {
@@ -170,6 +171,44 @@ function Default() {
     }
   };
 
+  const handleDirectSignIn = async (username, password) => {
+    if (!isSupabaseConfigured) {
+      console.log('Supabase not configured');
+      return;
+    }
+    
+    try {
+      const { data, error } = await auth.signIn(username, password);
+      if (error) {
+        console.error('Sign in error:', error.message);
+        // You could add error handling here (show error message to user)
+      } else {
+        console.log('Sign in successful:', data.user);
+      }
+    } catch (error) {
+      console.error('Unexpected error during sign in:', error);
+    }
+  };
+
+  const handleDirectSignUp = async (username, password) => {
+    if (!isSupabaseConfigured) {
+      console.log('Supabase not configured');
+      return;
+    }
+    
+    try {
+      const { data, error } = await auth.signUp(username, password);
+      if (error) {
+        console.error('Sign up error:', error.message);
+        // You could add error handling here (show error message to user)
+      } else {
+        console.log('Sign up successful:', data.user);
+      }
+    } catch (error) {
+      console.error('Unexpected error during sign up:', error);
+    }
+  };
+
   // Show loading screen while checking auth
   if (loading) {
     return (
@@ -222,13 +261,13 @@ function Default() {
                 onAreaClick={setSelectedBodyArea}
                 isAuthenticated={isAuthenticated}
                 user={user}
-                onSignIn={() => {
-                  setAuthMode('signin');
-                  setShowAuthModal(true);
+                onSignIn={(username, password) => {
+                  // Handle direct sign in with credentials
+                  handleDirectSignIn(username, password);
                 }}
-                onSignUp={() => {
-                  setAuthMode('signup');
-                  setShowAuthModal(true);
+                onSignUp={(username, password) => {
+                  // Handle direct sign up with credentials
+                  handleDirectSignUp(username, password);
                 }}
                 onSignOut={isSupabaseConfigured ? handleSignOut : null}
               />
