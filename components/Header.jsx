@@ -53,7 +53,7 @@ const Header = () => {
   return (
     <div style={styles.header}>
       <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-        <img src="/Earth.ico" alt="Earth" style={{ width: "16px", height: "16px" }} />
+        <img src="/Earth.ico" alt="Earth" style={{ width: "14px", height: "14px" }} />
         <span>Earth</span>
       </div>
       <button

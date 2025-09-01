@@ -110,7 +110,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
           onMouseDown={handleButtonMouseDown}
           onMouseUp={handleButtonMouseUp}
         >
-          <img src={icon} alt={alt} style={{ width: "16px", height: "16px" }} />
+          <img src={icon} alt={alt} style={{ width: "14px", height: "14px" }} />
         </button>
       ))}
       
