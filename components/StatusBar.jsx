@@ -29,7 +29,7 @@ const StatusBar = ({ isAuthenticated, user }) => {
 
     return (
     <div style={styles.statusBar}>
-      <span>{isAuthenticated ? `Signed in as ${user?.email || 'User'}` : 'Not signed in'}</span>
+      <span>{isAuthenticated ? `Signed in as ${user?.email || 'User'}` : ''}</span>
       
       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginLeft: "auto" }}>
         <span>Neural link</span>

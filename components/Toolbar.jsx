@@ -63,7 +63,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
     outputBar: {
       flex: 1,
       height: "22px",
-      background: "#90EE90",
+      background: "#00ff00",
       border: "2px inset #c0c0c0",
       display: "flex",
       alignItems: "center",
