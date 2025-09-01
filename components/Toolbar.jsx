@@ -12,23 +12,8 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
       borderTop: "1px solid #ffffff"
     },
         button: {
-      width: "36px",
-      height: "28px",
-      background: "#d4d0c8",
-      borderTop: "2px solid #ffffff",
-      borderLeft: "2px solid #ffffff",
-      borderBottom: "2px solid #808080",
-      borderRight: "2px solid #808080",
-      fontSize: "10px",
-      cursor: "pointer",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontFamily: "'MS Sans Serif', sans-serif"
-    },
-    authButton: {
-      width: "80px",
-      height: "28px",
+      width: "50px",
+      height: "22px",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
       borderLeft: "2px solid #ffffff",
@@ -40,7 +25,26 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
       alignItems: "center",
       justifyContent: "center",
       fontFamily: "'MS Sans Serif', sans-serif",
-      whiteSpace: "nowrap"
+      fontWeight: "bold",
+      padding: "0 6px"
+    },
+    authButton: {
+      width: "80px",
+      height: "22px",
+      background: "#d4d0c8",
+      borderTop: "2px solid #ffffff",
+      borderLeft: "2px solid #ffffff",
+      borderBottom: "2px solid #808080",
+      borderRight: "2px solid #808080",
+      fontSize: "10px",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontFamily: "'MS Sans Serif', sans-serif",
+      whiteSpace: "nowrap",
+      fontWeight: "bold",
+      padding: "0 6px"
     },
     activeButton: {
       borderTop: "2px solid #808080",

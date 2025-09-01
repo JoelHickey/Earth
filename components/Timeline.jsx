@@ -49,14 +49,18 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       width: "16px",
       height: "16px",
       background: "#d4d0c8",
-      border: "1px outset #c0c0c0",
+      borderTop: "2px solid #ffffff",
+      borderLeft: "2px solid #ffffff",
+      borderBottom: "2px solid #808080",
+      borderRight: "2px solid #808080",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
-      color: "#000000"
+      color: "#000000",
+      fontWeight: "bold"
     },
     addEventForm: {
       display: "flex",
@@ -85,14 +89,19 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       padding: "0 2px"
     },
     addButton: {
-      width: "40px",
-      height: "16px",
+      width: "50px",
+      height: "22px",
       background: "#d4d0c8",
-      border: "1px outset #c0c0c0",
+      borderTop: "2px solid #ffffff",
+      borderLeft: "2px solid #ffffff",
+      borderBottom: "2px solid #808080",
+      borderRight: "2px solid #808080",
       cursor: "pointer",
       fontSize: "10px",
       fontFamily: "'MS Sans Serif', sans-serif",
-      color: "#000000"
+      color: "#000000",
+      fontWeight: "bold",
+      padding: "0 6px"
     }
   };
 
@@ -137,11 +146,17 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
                 style={styles.deleteButton}
                 onClick={() => onDeleteEvent(index)}
                 onMouseDown={(e) => {
-                  e.target.style.border = "1px inset #c0c0c0";
+                  e.target.style.borderTop = "2px solid #808080";
+                  e.target.style.borderLeft = "2px solid #808080";
+                  e.target.style.borderBottom = "2px solid #ffffff";
+                  e.target.style.borderRight = "2px solid #ffffff";
                   e.target.style.background = "#c0c0c0";
                 }}
                 onMouseUp={(e) => {
-                  e.target.style.border = "1px outset #c0c0c0";
+                  e.target.style.borderTop = "2px solid #ffffff";
+                  e.target.style.borderLeft = "2px solid #ffffff";
+                  e.target.style.borderBottom = "2px solid #808080";
+                  e.target.style.borderRight = "2px solid #808080";
                   e.target.style.background = "#d4d0c8";
                 }}
               >
@@ -173,11 +188,17 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
           style={styles.addButton}
           onClick={handleAddEvent}
           onMouseDown={(e) => {
-            e.target.style.border = "1px inset #c0c0c0";
+            e.target.style.borderTop = "2px solid #808080";
+            e.target.style.borderLeft = "2px solid #808080";
+            e.target.style.borderBottom = "2px solid #ffffff";
+            e.target.style.borderRight = "2px solid #ffffff";
             e.target.style.background = "#c0c0c0";
           }}
           onMouseUp={(e) => {
-            e.target.style.border = "1px outset #c0c0c0";
+            e.target.style.borderTop = "2px solid #ffffff";
+            e.target.style.borderLeft = "2px solid #ffffff";
+            e.target.style.borderBottom = "2px solid #808080";
+            e.target.style.borderRight = "2px solid #808080";
             e.target.style.background = "#d4d0c8";
           }}
         >

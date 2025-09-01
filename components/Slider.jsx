@@ -45,15 +45,16 @@ const Slider = ({
     },
     input: {
       width: "20px",
-      height: "16px",
+      height: "18px",
       fontSize: "10px",
       fontFamily: "'MS Sans Serif', sans-serif",
       border: "2px inset #c0c0c0",
       background: "#ffffff",
       textAlign: "center",
-      padding: "0 2px",
+      padding: "1px 2px",
       marginTop: "16px",
-      boxShadow: "inset 1px 1px #808080, inset -1px -1px #ffffff"
+      boxShadow: "inset 1px 1px #808080, inset -1px -1px #ffffff",
+      boxSizing: "border-box"
     },
     label: {
       fontSize: "10px",
@@ -77,9 +78,7 @@ const Slider = ({
         </div>
       </div>
       <input
-        type="number"
-        min="0"
-        max="10"
+        type="text"
         value={Math.round(value)}
         onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
         style={styles.input}

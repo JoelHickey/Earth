@@ -42,16 +42,14 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
     },
     input: {
       width: '100%',
-      height: '16px',
+      height: '18px',
       fontSize: '10px',
       fontFamily: "'MS Sans Serif', sans-serif",
-      borderTop: '1px solid #808080',
-      borderLeft: '1px solid #808080',
-      borderBottom: '1px solid #ffffff',
-      borderRight: '1px solid #ffffff',
+      border: '2px inset #c0c0c0',
       background: '#ffffff',
-      padding: '1px 3px',
-      boxSizing: 'border-box'
+      padding: '1px 4px',
+      boxSizing: 'border-box',
+      boxShadow: 'inset 1px 1px #808080, inset -1px -1px #ffffff'
     },
     authTitle: {
       fontSize: '11px',
@@ -79,7 +77,7 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
       justifyContent: 'flex-end'
     },
     authButton: {
-      height: '20px',
+      height: '22px',
       background: '#d4d0c8',
       borderTop: '2px solid #ffffff',
       borderLeft: '2px solid #ffffff',
@@ -89,7 +87,8 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
       fontFamily: "'MS Sans Serif', sans-serif",
       cursor: 'pointer',
       padding: '0 6px',
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      minWidth: '50px'
     },
 
   };
@@ -136,7 +135,6 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 style={styles.input}
-                placeholder="Enter username"
               />
             </div>
             <div style={styles.inputGroup}>
@@ -146,7 +144,6 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 style={styles.input}
-                placeholder="Enter password"
               />
             </div>
             <div style={styles.authButtons}>

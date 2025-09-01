@@ -15,17 +15,17 @@ const Header = () => {
     },
     closeButton: {
       width: "20px",
-      height: "18px",
+      height: "22px",
       background: "#d4d0c8",
-      borderTop: "1px solid #ffffff",
-      borderLeft: "1px solid #ffffff",
-      borderBottom: "1px solid #808080",
-      borderRight: "1px solid #808080",
+      borderTop: "2px solid #ffffff",
+      borderLeft: "2px solid #ffffff",
+      borderBottom: "2px solid #808080",
+      borderRight: "2px solid #808080",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontSize: "12px",
+      fontSize: "10px",
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000",
       padding: "0",
@@ -35,18 +35,18 @@ const Header = () => {
   };
 
   const handleCloseButtonMouseDown = (e) => {
-    e.target.style.borderTop = "1px solid #808080";
-    e.target.style.borderLeft = "1px solid #808080";
-    e.target.style.borderBottom = "1px solid #ffffff";
-    e.target.style.borderRight = "1px solid #ffffff";
+    e.target.style.borderTop = "2px solid #808080";
+    e.target.style.borderLeft = "2px solid #808080";
+    e.target.style.borderBottom = "2px solid #ffffff";
+    e.target.style.borderRight = "2px solid #ffffff";
     e.target.style.background = "#c0c0c0";
   };
 
   const handleCloseButtonMouseUp = (e) => {
-    e.target.style.borderTop = "1px solid #ffffff";
-    e.target.style.borderLeft = "1px solid #ffffff";
-    e.target.style.borderBottom = "1px solid #808080";
-    e.target.style.borderRight = "1px solid #808080";
+    e.target.style.borderTop = "2px solid #ffffff";
+    e.target.style.borderLeft = "2px solid #ffffff";
+    e.target.style.borderBottom = "2px solid #808080";
+    e.target.style.borderRight = "2px solid #808080";
     e.target.style.background = "#d4d0c8";
   };
 
