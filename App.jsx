@@ -179,103 +179,6 @@ function Default() {
     <div style={styles.mainWindow}>
       <Header />
       
-      {/* Second Toolbar */}
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "2px",
-        padding: "4px",
-        background: "#d4d0c8",
-        borderBottom: "1px solid #808080",
-        borderTop: "1px solid #ffffff"
-      }}>
-        
-        {isAuthenticated ? (
-          <>
-            <span style={{ 
-              fontSize: "10px", 
-              fontFamily: "'MS Sans Serif', Arial, sans-serif",
-              color: "#000000",
-              marginLeft: "8px"
-            }}>
-              {user?.email || 'User'}
-            </span>
-            <button
-              style={{
-                width: "80px",
-                height: "28px",
-                background: "#d4d0c8",
-                borderTop: "2px solid #ffffff",
-                borderLeft: "2px solid #ffffff",
-                borderBottom: "2px solid #808080",
-                borderRight: "2px solid #808080",
-                fontSize: "10px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: "'MS Sans Serif', Arial, sans-serif"
-              }}
-              onClick={isSupabaseConfigured ? handleSignOut : null}
-              onMouseDown={(e) => {
-                e.target.style.borderTop = "2px solid #808080";
-                e.target.style.borderLeft = "2px solid #808080";
-                e.target.style.borderBottom = "2px solid #ffffff";
-                e.target.style.borderRight = "2px solid #ffffff";
-              }}
-              onMouseUp={(e) => {
-                e.target.style.borderTop = "2px solid #ffffff";
-                e.target.style.borderLeft = "2px solid #ffffff";
-                e.target.style.borderBottom = "2px solid #808080";
-                e.target.style.borderRight = "2px solid #808080";
-              }}
-            >
-              Sign Out
-            </button>
-          </>
-        ) : (
-          <button
-            style={{
-              width: "80px",
-              height: "28px",
-              background: "#d4d0c8",
-              borderTop: "2px solid #ffffff",
-              borderLeft: "2px solid #ffffff",
-              borderBottom: "2px solid #808080",
-              borderRight: "2px solid #808080",
-              fontSize: "10px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "'MS Sans Serif', Arial, sans-serif"
-            }}
-            onClick={() => setShowAuthModal(true)}
-            onMouseDown={(e) => {
-              e.target.style.borderTop = "2px solid #808080";
-              e.target.style.borderLeft = "2px solid #808080";
-              e.target.style.borderBottom = "2px solid #ffffff";
-              e.target.style.borderRight = "2px solid #ffffff";
-            }}
-            onMouseUp={(e) => {
-              e.target.style.borderTop = "2px solid #ffffff";
-              e.target.style.borderLeft = "2px solid #ffffff";
-              e.target.style.borderBottom = "2px solid #808080";
-              e.target.style.borderRight = "2px solid #808080";
-            }}
-          >
-            Sign In
-          </button>
-        )}
-      </div>
-      
-      {/* Separator between toolbars */}
-      <div style={{ 
-        height: "1px", 
-        background: "#808080",
-        margin: "0 4px"
-      }} />
-      
       <Toolbar 
         activeView={activeView} 
         setActiveView={setActiveView} 
@@ -294,7 +197,12 @@ function Default() {
         {renderViewContent()}
       </div>
 
-      <StatusBar isAuthenticated={isAuthenticated} user={user} />
+      <StatusBar 
+        isAuthenticated={isAuthenticated} 
+        user={user} 
+        onSignIn={() => setShowAuthModal(true)}
+        onSignOut={isSupabaseConfigured ? handleSignOut : null}
+      />
       
 
       
