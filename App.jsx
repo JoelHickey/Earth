@@ -178,18 +178,6 @@ function Default() {
   return (
     <div style={styles.mainWindow}>
       <Header />
-      <Toolbar 
-        activeView={activeView} 
-        setActiveView={setActiveView} 
-        outputValue={outputValue}
-      />
-      
-      {/* Separator between toolbars */}
-      <div style={{ 
-        height: "1px", 
-        background: "#808080",
-        margin: "0 4px"
-      }} />
       
       {/* Second Toolbar */}
       <div style={{
@@ -280,6 +268,19 @@ function Default() {
           </button>
         )}
       </div>
+      
+      {/* Separator between toolbars */}
+      <div style={{ 
+        height: "1px", 
+        background: "#808080",
+        margin: "0 4px"
+      }} />
+      
+      <Toolbar 
+        activeView={activeView} 
+        setActiveView={setActiveView} 
+        outputValue={outputValue}
+      />
       
       {/* Separator between toolbar and content */}
       <div style={{ 
