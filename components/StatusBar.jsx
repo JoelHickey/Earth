@@ -13,7 +13,8 @@ const StatusBar = ({ isAuthenticated, user }) => {
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000",
       minHeight: "20px",
-      width: "100%"
+      width: "100%",
+      overflow: "hidden"
     },
     neuralLinkIndicator: {
       width: "8px",
@@ -31,7 +32,7 @@ const StatusBar = ({ isAuthenticated, user }) => {
         <span>{isAuthenticated ? `Signed in as ${user?.email || 'User'}` : 'Not signed in'}</span>
       </div>
       
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginRight: "4px" }}>
         <span>Neural link</span>
         <div style={styles.neuralLinkIndicator} />
       </div>
