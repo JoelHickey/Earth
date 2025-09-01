@@ -11,13 +11,13 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
       borderBottom: "1px solid #808080",
       borderTop: "1px solid #ffffff"
     },
-    button: {
+        button: {
       width: "36px",
       height: "28px",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
       borderLeft: "2px solid #ffffff",
-      borderBottom: "2px solid #808080", 
+      borderBottom: "2px solid #808080",
       borderRight: "2px solid #808080",
       fontSize: "10px",
       cursor: "pointer",
@@ -25,6 +25,22 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
       alignItems: "center",
       justifyContent: "center",
       fontFamily: "'MS Sans Serif', Arial, sans-serif"
+    },
+    authButton: {
+      width: "80px",
+      height: "28px",
+      background: "#d4d0c8",
+      borderTop: "2px solid #ffffff",
+      borderLeft: "2px solid #ffffff",
+      borderBottom: "2px solid #808080",
+      borderRight: "2px solid #808080",
+      fontSize: "10px",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      whiteSpace: "nowrap"
     },
     activeButton: {
       borderTop: "2px solid #808080",
@@ -122,7 +138,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
               {user?.email || 'User'}
             </span>
             <button
-              style={styles.button}
+              style={styles.authButton}
               onClick={onSignOut}
               onMouseDown={handleButtonMouseDown}
               onMouseUp={handleButtonMouseUp}
@@ -132,7 +148,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
           </>
         ) : (
           <button
-            style={styles.button}
+            style={styles.authButton}
             onClick={onSignIn}
             onMouseDown={handleButtonMouseDown}
             onMouseUp={handleButtonMouseUp}
