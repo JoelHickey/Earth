@@ -125,36 +125,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
         </div>
       </div>
       
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        {isAuthenticated ? (
-          <>
-            <span style={{ 
-              fontSize: "10px", 
-              fontFamily: "'MS Sans Serif', Arial, sans-serif",
-              color: "#000000"
-            }}>
-              {user?.email || 'User'}
-            </span>
-            <button
-              style={styles.authButton}
-              onClick={onSignOut}
-              onMouseDown={handleButtonMouseDown}
-              onMouseUp={handleButtonMouseUp}
-            >
-              Sign Out
-            </button>
-          </>
-        ) : (
-          <button
-            style={styles.authButton}
-            onClick={onSignIn}
-            onMouseDown={handleButtonMouseDown}
-            onMouseUp={handleButtonMouseUp}
-          >
-            Sign In
-          </button>
-        )}
-      </div>
+
     </div>
   );
 };
