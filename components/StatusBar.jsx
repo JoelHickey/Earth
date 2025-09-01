@@ -3,14 +3,15 @@ import React from 'react';
 const StatusBar = ({ isAuthenticated, user }) => {
   const styles = {
     statusBar: {
-      background: "#d4d0c8",
+      background: "#008080",
       borderTop: "1px solid #ffffff",
       padding: "2px 8px",
       fontSize: "10px",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      fontFamily: "'MS Sans Serif', sans-serif"
+      fontFamily: "'MS Sans Serif', sans-serif",
+      color: "#ffffff"
     },
     neuralLinkIndicator: {
       width: "8px",
