@@ -30,26 +30,26 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
       fontSize: '8px'
     },
     inputGroup: {
-      marginBottom: '4px',
+      marginBottom: '6px',
       textAlign: 'left'
     },
     inputLabel: {
-      fontSize: '8px',
+      fontSize: '9px',
       fontWeight: 'bold',
-      marginBottom: '1px',
+      marginBottom: '2px',
       color: '#000000'
     },
     input: {
       width: '100%',
-      height: '16px',
-      fontSize: '8px',
+      height: '18px',
+      fontSize: '9px',
       fontFamily: "'MS Sans Serif', Arial, sans-serif",
       borderTop: '1px solid #808080',
       borderLeft: '1px solid #808080',
       borderBottom: '1px solid #ffffff',
       borderRight: '1px solid #ffffff',
       background: '#ffffff',
-      padding: '1px 2px',
+      padding: '2px 3px',
       boxSizing: 'border-box'
     },
     authTitle: {
@@ -72,20 +72,20 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
     authButtons: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '2px',
+      gap: '4px',
       alignItems: 'flex-start'
     },
     authButton: {
-      height: '18px',
+      height: '20px',
       background: '#d4d0c8',
       borderTop: '2px solid #ffffff',
       borderLeft: '2px solid #ffffff',
       borderBottom: '2px solid #808080',
       borderRight: '2px solid #808080',
-      fontSize: '8px',
+      fontSize: '9px',
       fontFamily: "'MS Sans Serif', Arial, sans-serif",
       cursor: 'pointer',
-      padding: '0 4px',
+      padding: '0 6px',
       fontWeight: 'bold'
     },
 
