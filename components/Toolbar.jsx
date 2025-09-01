@@ -12,8 +12,8 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
       borderTop: "1px solid #ffffff"
     },
         button: {
-      width: "16px",
-      height: "16px",
+      width: "24px",
+      height: "22px",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
       borderLeft: "2px solid #ffffff",
@@ -30,7 +30,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
     },
     authButton: {
       width: "80px",
-      height: "16px",
+      height: "22px",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
       borderLeft: "2px solid #ffffff",

@@ -14,8 +14,8 @@ const Header = () => {
       borderBottom: "1px solid #808080"
     },
     closeButton: {
-      width: "16px",
-      height: "16px",
+      width: "24px",
+      height: "22px",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
       borderLeft: "2px solid #ffffff",
