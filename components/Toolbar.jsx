@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Toolbar = ({ activeView, setActiveView, outputValue }) => {
+const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut }) => {
   const styles = {
     viewSwitcher: {
       display: "flex",
@@ -107,6 +107,26 @@ const Toolbar = ({ activeView, setActiveView, outputValue }) => {
         <div style={styles.outputBar}>
           {Math.round(outputValue)}/10
         </div>
+      </div>
+      
+      <div style={styles.separator} />
+      
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <span style={{ 
+          fontSize: "10px", 
+          fontFamily: "'MS Sans Serif', Arial, sans-serif",
+          color: "#000000"
+        }}>
+          {user?.email || 'User'}
+        </span>
+        <button
+          style={styles.button}
+          onClick={onSignOut}
+          onMouseDown={handleButtonMouseDown}
+          onMouseUp={handleButtonMouseUp}
+        >
+          Sign Out
+        </button>
       </div>
     </div>
   );

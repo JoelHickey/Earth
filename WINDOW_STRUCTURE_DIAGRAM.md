@@ -1,4 +1,4 @@
-# Windows 95 Mental Health Monitor - Window Structure Diagram
+$# Windows 95 Mental Health Monitor - Window Structure Diagram
 
 ## 📐 Overall Window Dimensions
 ```

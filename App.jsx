@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Slider from './components/Slider';
 import Divider from './components/Divider';
 import CheckboxGroup from './components/CheckboxGroup';
@@ -6,11 +6,16 @@ import Timeline from './components/Timeline';
 import Header from './components/Header';
 import Toolbar from './components/Toolbar';
 import StatusBar from './components/StatusBar';
+import AuthModal from './components/AuthModal';
 import { useSliderDrag } from './hooks/useSliderDrag';
 import { useAppState } from './utils/stateManager';
+import { useAuth } from './hooks/useAuth';
 import { INPUT_SLIDERS, EMOTION_SLIDERS } from './utils/constants';
 
 function Default() {
+  const { user, loading, signOut, isAuthenticated } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  
   const {
     sliderValues,
     updateSlider,
@@ -133,10 +138,107 @@ function Default() {
     }
   };
 
+  const handleAuthSuccess = (user) => {
+    console.log('User authenticated:', user);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  // Show loading screen while checking auth
+  if (loading) {
+    return (
+      <div style={{
+        width: "700px",
+        height: "400px",
+        background: "#d4d0c8",
+        borderTop: "2px solid #ffffff",
+        borderLeft: "2px solid #ffffff",
+        borderBottom: "2px solid #808080",
+        borderRight: "2px solid #808080",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'MS Sans Serif', Arial, sans-serif",
+        fontSize: "12px"
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  // Show auth modal if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div style={{
+        width: "700px",
+        height: "400px",
+        background: "#d4d0c8",
+        borderTop: "2px solid #ffffff",
+        borderLeft: "2px solid #ffffff",
+        borderBottom: "2px solid #808080",
+        borderRight: "2px solid #808080",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "'MS Sans Serif', Arial, sans-serif",
+        gap: "16px"
+      }}>
+        <div style={{ fontSize: "14px", fontWeight: "bold" }}>
+          Windows 95 Mental Health Monitor
+        </div>
+        <div style={{ fontSize: "10px", textAlign: "center" }}>
+          Please sign in to access your mental health data
+        </div>
+        <button
+          onClick={() => setShowAuthModal(true)}
+          style={{
+            height: "24px",
+            background: "#d4d0c8",
+            borderTop: "2px solid #ffffff",
+            borderLeft: "2px solid #ffffff",
+            borderBottom: "2px solid #808080",
+            borderRight: "2px solid #808080",
+            fontSize: "10px",
+            fontFamily: "'MS Sans Serif', Arial, sans-serif",
+            cursor: "pointer",
+            padding: "0 16px"
+          }}
+          onMouseDown={(e) => {
+            e.target.style.borderTop = "2px solid #808080";
+            e.target.style.borderLeft = "2px solid #808080";
+            e.target.style.borderBottom = "2px solid #ffffff";
+            e.target.style.borderRight = "2px solid #ffffff";
+          }}
+          onMouseUp={(e) => {
+            e.target.style.borderTop = "2px solid #ffffff";
+            e.target.style.borderLeft = "2px solid #ffffff";
+            e.target.style.borderBottom = "2px solid #808080";
+            e.target.style.borderRight = "2px solid #808080";
+          }}
+        >
+          Sign In
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div style={styles.mainWindow}>
       <Header />
-      <Toolbar activeView={activeView} setActiveView={setActiveView} outputValue={outputValue} />
+      <Toolbar 
+        activeView={activeView} 
+        setActiveView={setActiveView} 
+        outputValue={outputValue}
+        user={user}
+        onSignOut={handleSignOut}
+      />
       
       {/* Separator between toolbar and content */}
       <div style={{ 
@@ -151,6 +253,12 @@ function Default() {
       </div>
 
       <StatusBar />
+      
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onAuthSuccess={handleAuthSuccess}
+      />
     </div>
   );
 }

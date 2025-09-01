@@ -8,7 +8,13 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "keywords": ["react", "windows95", "mental-health", "monitoring", "retro-ui"],
+  "keywords": [
+    "react",
+    "windows95",
+    "mental-health",
+    "monitoring",
+    "retro-ui"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
@@ -17,6 +23,7 @@
     "vite": "^7.1.3"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.56.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   }
