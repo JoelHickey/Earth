@@ -13,7 +13,7 @@ import { useAuth } from './hooks/useAuth';
 import { INPUT_SLIDERS, EMOTION_SLIDERS } from './utils/constants';
 
 function Default() {
-  const { user, loading, signOut, isAuthenticated } = useAuth();
+  const { user, loading, signOut, isAuthenticated, isSupabaseConfigured } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   
   const {
@@ -172,8 +172,8 @@ function Default() {
     );
   }
 
-  // Show auth modal if not authenticated
-  if (!isAuthenticated) {
+  // Show auth modal if Supabase is configured and user is not authenticated
+  if (isSupabaseConfigured && !isAuthenticated) {
     return (
       <div style={{
         width: "700px",
@@ -237,7 +237,7 @@ function Default() {
         setActiveView={setActiveView} 
         outputValue={outputValue}
         user={user}
-        onSignOut={handleSignOut}
+        onSignOut={isSupabaseConfigured ? handleSignOut : null}
       />
       
       {/* Separator between toolbar and content */}

@@ -109,25 +109,29 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut }) =>
         </div>
       </div>
       
-      <div style={styles.separator} />
-      
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <span style={{ 
-          fontSize: "10px", 
-          fontFamily: "'MS Sans Serif', Arial, sans-serif",
-          color: "#000000"
-        }}>
-          {user?.email || 'User'}
-        </span>
-        <button
-          style={styles.button}
-          onClick={onSignOut}
-          onMouseDown={handleButtonMouseDown}
-          onMouseUp={handleButtonMouseUp}
-        >
-          Sign Out
-        </button>
-      </div>
+      {onSignOut && (
+        <>
+          <div style={styles.separator} />
+          
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ 
+              fontSize: "10px", 
+              fontFamily: "'MS Sans Serif', Arial, sans-serif",
+              color: "#000000"
+            }}>
+              {user?.email || 'User'}
+            </span>
+            <button
+              style={styles.button}
+              onClick={onSignOut}
+              onMouseDown={handleButtonMouseDown}
+              onMouseUp={handleButtonMouseUp}
+            >
+              Sign Out
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
