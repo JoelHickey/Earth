@@ -3,7 +3,7 @@ import React from 'react';
 const StatusBar = ({ isAuthenticated, user }) => {
   const styles = {
     statusBar: {
-      background: "#008080",
+      background: "#d4d0c8",
       borderTop: "1px solid #ffffff",
       padding: "2px 8px",
       fontSize: "10px",
@@ -11,7 +11,7 @@ const StatusBar = ({ isAuthenticated, user }) => {
       justifyContent: "space-between",
       alignItems: "center",
       fontFamily: "'MS Sans Serif', sans-serif",
-      color: "#ffffff",
+      color: "#000000",
       minHeight: "20px",
       width: "100%"
     },
