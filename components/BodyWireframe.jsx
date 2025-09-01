@@ -87,7 +87,7 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
       fontFamily: "'MS Sans Serif', sans-serif",
       cursor: 'pointer',
       padding: '0 6px',
-      fontWeight: 'bold',
+      fontWeight: 'normal',
       minWidth: '50px'
     },
 

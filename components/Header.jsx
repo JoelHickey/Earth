@@ -30,7 +30,7 @@ const Header = () => {
       color: "#000000",
       padding: "0",
       lineHeight: "1",
-      fontWeight: "bold"
+      fontWeight: "normal"
     }
   };
 

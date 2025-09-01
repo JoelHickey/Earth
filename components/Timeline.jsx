@@ -60,7 +60,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000",
-      fontWeight: "bold"
+      fontWeight: "normal"
     },
     addEventForm: {
       display: "flex",
@@ -100,7 +100,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       fontSize: "10px",
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000",
-      fontWeight: "bold",
+      fontWeight: "normal",
       padding: "0 6px"
     }
   };
