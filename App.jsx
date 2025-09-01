@@ -15,6 +15,7 @@ import { INPUT_SLIDERS, EMOTION_SLIDERS } from './utils/constants';
 function Default() {
   const { user, loading, signOut, isAuthenticated, isSupabaseConfigured } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState('signin'); // 'signin' or 'signup'
   
   const {
     sliderValues,
@@ -200,20 +201,28 @@ function Default() {
       <StatusBar 
         isAuthenticated={isAuthenticated} 
         user={user} 
-        onSignIn={() => setShowAuthModal(true)}
+        onSignIn={() => {
+          setAuthMode('signin');
+          setShowAuthModal(true);
+        }}
+        onSignUp={() => {
+          setAuthMode('signup');
+          setShowAuthModal(true);
+        }}
         onSignOut={isSupabaseConfigured ? handleSignOut : null}
       />
       
 
       
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => {
-          console.log('Auth modal closing');
-          setShowAuthModal(false);
-        }}
-        onAuthSuccess={handleAuthSuccess}
-      />
+                <AuthModal
+            isOpen={showAuthModal}
+            onClose={() => {
+              console.log('Auth modal closing');
+              setShowAuthModal(false);
+            }}
+            onAuthSuccess={handleAuthSuccess}
+            initialMode={authMode}
+          />
     </div>
   );
 }

@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { auth } from '../utils/supabase';
 
-const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
-  const [isSignUp, setIsSignUp] = useState(false);
+const AuthModal = ({ isOpen, onClose, onAuthSuccess, initialMode = 'signin' }) => {
+  const [isSignUp, setIsSignUp] = useState(initialMode === 'signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Reset form when modal opens with different mode
+  useEffect(() => {
+    if (isOpen) {
+      setIsSignUp(initialMode === 'signup');
+      setEmail('');
+      setPassword('');
+      setError('');
+    }
+  }, [isOpen, initialMode]);
 
   const styles = {
     overlay: {

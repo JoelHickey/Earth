@@ -1,6 +1,6 @@
 import React from 'react';
 
-const StatusBar = ({ isAuthenticated, user, onSignIn, onSignOut }) => {
+const StatusBar = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut }) => {
   const styles = {
     statusBar: {
       background: "#d4d0c8",
@@ -64,28 +64,52 @@ const StatusBar = ({ isAuthenticated, user, onSignIn, onSignOut }) => {
             Sign Out
           </button>
         ) : (
-          <button
-            style={{
-              width: "60px",
-              height: "18px",
-              background: "#d4d0c8",
-              borderTop: "2px solid #ffffff",
-              borderLeft: "2px solid #ffffff",
-              borderBottom: "2px solid #808080",
-              borderRight: "2px solid #808080",
-              fontSize: "9px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: "'MS Sans Serif', Arial, sans-serif"
-            }}
-            onClick={onSignIn}
-            onMouseDown={handleButtonMouseDown}
-            onMouseUp={handleButtonMouseUp}
-          >
-            Sign In
-          </button>
+          <>
+            <button
+              style={{
+                width: "60px",
+                height: "18px",
+                background: "#d4d0c8",
+                borderTop: "2px solid #ffffff",
+                borderLeft: "2px solid #ffffff",
+                borderBottom: "2px solid #808080",
+                borderRight: "2px solid #808080",
+                fontSize: "9px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontFamily: "'MS Sans Serif', Arial, sans-serif"
+              }}
+              onClick={onSignIn}
+              onMouseDown={handleButtonMouseDown}
+              onMouseUp={handleButtonMouseUp}
+            >
+              Sign In
+            </button>
+            <button
+              style={{
+                width: "60px",
+                height: "18px",
+                background: "#d4d0c8",
+                borderTop: "2px solid #ffffff",
+                borderLeft: "2px solid #ffffff",
+                borderBottom: "2px solid #808080",
+                borderRight: "2px solid #808080",
+                fontSize: "9px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontFamily: "'MS Sans Serif', Arial, sans-serif"
+              }}
+              onClick={onSignUp}
+              onMouseDown={handleButtonMouseDown}
+              onMouseUp={handleButtonMouseUp}
+            >
+              Sign Up
+            </button>
+          </>
         )}
       </div>
       
