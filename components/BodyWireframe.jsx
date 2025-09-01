@@ -149,19 +149,19 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
             <div style={styles.authButtons}>
               <button
                 style={styles.authButton}
-                onClick={() => onSignIn(username, password)}
-                onMouseDown={handleButtonMouseDown}
-                onMouseUp={handleButtonMouseUp}
-              >
-                Sign In
-              </button>
-              <button
-                style={styles.authButton}
                 onClick={() => onSignUp(username, password)}
                 onMouseDown={handleButtonMouseDown}
                 onMouseUp={handleButtonMouseUp}
               >
                 Sign Up
+              </button>
+              <button
+                style={styles.authButton}
+                onClick={() => onSignIn(username, password)}
+                onMouseDown={handleButtonMouseDown}
+                onMouseUp={handleButtonMouseUp}
+              >
+                Sign In
               </button>
             </div>
           </div>
