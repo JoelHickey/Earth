@@ -220,6 +220,17 @@ function Default() {
               <BodyWireframe 
                 selectedArea={selectedBodyArea}
                 onAreaClick={setSelectedBodyArea}
+                isAuthenticated={isAuthenticated}
+                user={user}
+                onSignIn={() => {
+                  setAuthMode('signin');
+                  setShowAuthModal(true);
+                }}
+                onSignUp={() => {
+                  setAuthMode('signup');
+                  setShowAuthModal(true);
+                }}
+                onSignOut={isSupabaseConfigured ? handleSignOut : null}
               />
             </div>
           </div>
@@ -227,15 +238,6 @@ function Default() {
       <StatusBar 
         isAuthenticated={isAuthenticated} 
         user={user} 
-        onSignIn={() => {
-          setAuthMode('signin');
-          setShowAuthModal(true);
-        }}
-        onSignUp={() => {
-          setAuthMode('signup');
-          setShowAuthModal(true);
-        }}
-        onSignOut={isSupabaseConfigured ? handleSignOut : null}
       />
       
 
