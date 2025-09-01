@@ -56,7 +56,7 @@ function Default() {
       background: "#d4d0c8",
       flex: 1,
       padding: "4px",
-      minHeight: "300px",
+      minHeight: "250px",
       width: "100%",
       flexShrink: 0,
       overflow: "hidden",
@@ -123,28 +123,28 @@ function Default() {
     switch (activeView) {
       case 'inputs':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
+          <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
             {renderSliderRow(INPUT_SLIDERS, "flex-start")}
           </div>
         );
       
       case 'emotions':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
+          <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
             {renderSliderRow(EMOTION_SLIDERS, "flex-start")}
           </div>
         );
       
       case 'environment':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
+          <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
             <CheckboxGroup checkboxes={environmentCheckboxConfig} columns={3} />
           </div>
         );
       
       case 'timeline':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
+          <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
             <Timeline 
               events={timelineEvents}
               onAddEvent={addTimelineEvent}
