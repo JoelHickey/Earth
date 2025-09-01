@@ -38,7 +38,7 @@ function Default() {
   // Styles
   const styles = {
     mainWindow: {
-      width: "900px", // Increased to accommodate right pane
+      width: "800px", // Reduced from 900px
       height: "fit-content",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
