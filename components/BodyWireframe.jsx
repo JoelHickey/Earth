@@ -153,7 +153,7 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
                 onMouseDown={handleButtonMouseDown}
                 onMouseUp={handleButtonMouseUp}
               >
-                Sign Up
+                Create Profile
               </button>
               <button
                 style={styles.authButton}
