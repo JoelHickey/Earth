@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const BodyWireframe = ({ selectedArea, onAreaClick, isAuthenticated, user, onSignIn, onSignUp, onSignOut }) => {
+const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [authMode, setAuthMode] = useState('signin'); // 'signin' or 'signup'
@@ -10,7 +10,7 @@ const BodyWireframe = ({ selectedArea, onAreaClick, isAuthenticated, user, onSig
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       padding: '8px',
       background: '#d4d0c8',
       fontFamily: "'MS Sans Serif', Arial, sans-serif"
@@ -19,17 +19,18 @@ const BodyWireframe = ({ selectedArea, onAreaClick, isAuthenticated, user, onSig
       fontSize: '10px',
       fontWeight: 'bold',
       marginBottom: '8px',
-      color: '#000000'
+      color: '#000000',
+      alignSelf: 'center'
     },
     bodyContainer: {
       position: 'relative',
       width: '120px',
       height: '200px',
-      border: '1px solid #808080',
       background: '#ffffff',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      alignSelf: 'center'
     },
     bodyOutline: {
       position: 'relative',
@@ -110,8 +111,7 @@ const BodyWireframe = ({ selectedArea, onAreaClick, isAuthenticated, user, onSig
     infoPanel: {
       marginTop: '8px',
       padding: '4px',
-      border: '1px solid #808080',
-      background: '#ffffff',
+      background: '#d4d0c8',
       fontSize: '8px',
       minHeight: '40px',
       width: '100%'
@@ -119,12 +119,12 @@ const BodyWireframe = ({ selectedArea, onAreaClick, isAuthenticated, user, onSig
     authSection: {
       marginBottom: '8px',
       padding: '4px',
-      border: '1px solid #808080',
-      background: '#ffffff',
+      background: '#d4d0c8',
       fontSize: '8px'
     },
     inputGroup: {
-      marginBottom: '4px'
+      marginBottom: '4px',
+      textAlign: 'left'
     },
     inputLabel: {
       fontSize: '8px',
@@ -149,7 +149,8 @@ const BodyWireframe = ({ selectedArea, onAreaClick, isAuthenticated, user, onSig
       fontSize: '9px',
       fontWeight: 'bold',
       marginBottom: '4px',
-      color: '#000000'
+      color: '#000000',
+      alignSelf: 'flex-start'
     },
     authInfo: {
       display: 'flex',
@@ -164,7 +165,8 @@ const BodyWireframe = ({ selectedArea, onAreaClick, isAuthenticated, user, onSig
     authButtons: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '2px'
+      gap: '2px',
+      alignItems: 'flex-start'
     },
     authButton: {
       height: '18px',
@@ -186,16 +188,7 @@ const BodyWireframe = ({ selectedArea, onAreaClick, isAuthenticated, user, onSig
     }
   };
 
-  const bodyAreas = [
-    { id: 'head', label: 'Head', description: 'Mental clarity, focus, headaches' },
-    { id: 'torso', label: 'Torso', description: 'Breathing, heart rate, digestion' },
-    { id: 'leftArm', label: 'Left Arm', description: 'Tension, pain, circulation' },
-    { id: 'rightArm', label: 'Right Arm', description: 'Tension, pain, circulation' },
-    { id: 'leftLeg', label: 'Left Leg', description: 'Energy, pain, circulation' },
-    { id: 'rightLeg', label: 'Right Leg', description: 'Energy, pain, circulation' }
-  ];
 
-  const selectedAreaInfo = bodyAreas.find(area => area.id === selectedArea);
 
   const handleButtonMouseDown = (e) => {
     e.target.style.borderTop = "2px solid #808080";
@@ -278,72 +271,7 @@ const BodyWireframe = ({ selectedArea, onAreaClick, isAuthenticated, user, onSig
         )}
       </div>
 
-      <div style={styles.separator} />
 
-      <div style={styles.title}>Body Monitor</div>
-      
-      <div style={styles.bodyContainer}>
-        <div style={styles.bodyOutline}>
-          <div 
-            style={styles.head}
-            onClick={() => onAreaClick('head')}
-          >
-            <div style={{...styles.areaLabel, top: '8px'}}>H</div>
-          </div>
-          
-          <div 
-            style={styles.torso}
-            onClick={() => onAreaClick('torso')}
-          >
-            <div style={{...styles.areaLabel, top: '25px'}}>T</div>
-          </div>
-          
-          <div 
-            style={styles.leftArm}
-            onClick={() => onAreaClick('leftArm')}
-          >
-            <div style={{...styles.areaLabel, top: '15px'}}>LA</div>
-          </div>
-          
-          <div 
-            style={styles.rightArm}
-            onClick={() => onAreaClick('rightArm')}
-          >
-            <div style={{...styles.areaLabel, top: '15px'}}>RA</div>
-          </div>
-          
-          <div 
-            style={styles.leftLeg}
-            onClick={() => onAreaClick('leftLeg')}
-          >
-            <div style={{...styles.areaLabel, top: '35px'}}>LL</div>
-          </div>
-          
-          <div 
-            style={styles.rightLeg}
-            onClick={() => onAreaClick('rightLeg')}
-          >
-            <div style={{...styles.areaLabel, top: '35px'}}>RL</div>
-          </div>
-        </div>
-      </div>
-      
-      <div style={styles.infoPanel}>
-        {selectedAreaInfo ? (
-          <div>
-            <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>
-              {selectedAreaInfo.label}
-            </div>
-            <div style={{ fontSize: '7px', lineHeight: '1.2' }}>
-              {selectedAreaInfo.description}
-            </div>
-          </div>
-        ) : (
-          <div style={{ fontSize: '7px', color: '#666' }}>
-            Click on a body area to monitor
-          </div>
-        )}
-      </div>
     </div>
   );
 };

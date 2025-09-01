@@ -18,7 +18,7 @@ function Default() {
   const { user, loading, signOut, isAuthenticated, isSupabaseConfigured } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('signin'); // 'signin' or 'signup'
-  const [selectedBodyArea, setSelectedBodyArea] = useState(null);
+
   
   const {
     sliderValues,
@@ -257,8 +257,6 @@ function Default() {
             </div>
             <div style={styles.rightPane}>
               <BodyWireframe 
-                selectedArea={selectedBodyArea}
-                onAreaClick={setSelectedBodyArea}
                 isAuthenticated={isAuthenticated}
                 user={user}
                 onSignIn={(username, password) => {
