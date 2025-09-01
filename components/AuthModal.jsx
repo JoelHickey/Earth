@@ -170,6 +170,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
     }
   };
 
+  console.log('AuthModal render - isOpen:', isOpen);
   if (!isOpen) return null;
 
   return (

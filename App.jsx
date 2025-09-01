@@ -140,6 +140,7 @@ function Default() {
 
   const handleAuthSuccess = (user) => {
     console.log('User authenticated:', user);
+    setShowAuthModal(false);
   };
 
   const handleSignOut = async () => {
@@ -197,7 +198,10 @@ function Default() {
           Please sign in to access your mental health data
         </div>
         <button
-          onClick={() => setShowAuthModal(true)}
+          onClick={() => {
+            console.log('Sign In button clicked');
+            setShowAuthModal(true);
+          }}
           style={{
             height: "24px",
             background: "#d4d0c8",
@@ -256,7 +260,10 @@ function Default() {
       
       <AuthModal
         isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
+        onClose={() => {
+          console.log('Auth modal closing');
+          setShowAuthModal(false);
+        }}
         onAuthSuccess={handleAuthSuccess}
       />
     </div>
