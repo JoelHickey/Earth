@@ -15,107 +15,14 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
       background: '#d4d0c8',
       fontFamily: "'MS Sans Serif', Arial, sans-serif"
     },
-    title: {
-      fontSize: '10px',
-      fontWeight: 'bold',
-      marginBottom: '8px',
-      color: '#000000',
-      alignSelf: 'center'
-    },
-    bodyContainer: {
-      position: 'relative',
-      width: '120px',
-      height: '200px',
-      background: '#ffffff',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignSelf: 'center'
-    },
-    bodyOutline: {
-      position: 'relative',
-      width: '80px',
-      height: '160px'
-    },
-    head: {
-      position: 'absolute',
-      top: '0',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      width: '30px',
-      height: '30px',
-      border: '2px solid #000000',
-      borderRadius: '50%',
-      cursor: 'pointer',
-      background: selectedArea === 'head' ? '#c0c0c0' : 'transparent'
-    },
-    torso: {
-      position: 'absolute',
-      top: '30px',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      width: '40px',
-      height: '60px',
-      border: '2px solid #000000',
-      cursor: 'pointer',
-      background: selectedArea === 'torso' ? '#c0c0c0' : 'transparent'
-    },
-    leftArm: {
-      position: 'absolute',
-      top: '35px',
-      left: '10px',
-      width: '15px',
-      height: '40px',
-      border: '2px solid #000000',
-      cursor: 'pointer',
-      background: selectedArea === 'leftArm' ? '#c0c0c0' : 'transparent'
-    },
-    rightArm: {
-      position: 'absolute',
-      top: '35px',
-      right: '10px',
-      width: '15px',
-      height: '40px',
-      border: '2px solid #000000',
-      cursor: 'pointer',
-      background: selectedArea === 'rightArm' ? '#c0c0c0' : 'transparent'
-    },
-    leftLeg: {
-      position: 'absolute',
-      bottom: '0',
-      left: '15px',
-      width: '15px',
-      height: '50px',
-      border: '2px solid #000000',
-      cursor: 'pointer',
-      background: selectedArea === 'leftLeg' ? '#c0c0c0' : 'transparent'
-    },
-    rightLeg: {
-      position: 'absolute',
-      bottom: '0',
-      right: '15px',
-      width: '15px',
-      height: '50px',
-      border: '2px solid #000000',
-      cursor: 'pointer',
-      background: selectedArea === 'rightLeg' ? '#c0c0c0' : 'transparent'
-    },
-    areaLabel: {
-      position: 'absolute',
-      fontSize: '8px',
-      fontWeight: 'bold',
-      color: '#000000',
-      textAlign: 'center',
-      width: '100%'
-    },
-    infoPanel: {
-      marginTop: '8px',
-      padding: '4px',
-      background: '#d4d0c8',
-      fontSize: '8px',
-      minHeight: '40px',
-      width: '100%'
-    },
+
+
+
+
+
+
+
+
     authSection: {
       marginBottom: '8px',
       padding: '4px',
@@ -181,11 +88,7 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
       padding: '0 4px',
       fontWeight: 'bold'
     },
-    separator: {
-      height: '1px',
-      background: '#808080',
-      margin: '8px 0'
-    }
+
   };
 
 
