@@ -8,13 +8,14 @@ const StatusBar = ({ isAuthenticated, user }) => {
       padding: "2px 8px",
       fontSize: "10px",
       display: "flex",
-      justifyContent: "space-between",
+      justifyContent: "flex-start",
       alignItems: "center",
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000",
       minHeight: "20px",
       width: "100%",
-      overflow: "hidden"
+      overflow: "hidden",
+      boxSizing: "border-box"
     },
     neuralLinkIndicator: {
       width: "8px",
@@ -28,11 +29,9 @@ const StatusBar = ({ isAuthenticated, user }) => {
 
     return (
     <div style={styles.statusBar}>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <span>{isAuthenticated ? `Signed in as ${user?.email || 'User'}` : 'Not signed in'}</span>
-      </div>
+      <span>{isAuthenticated ? `Signed in as ${user?.email || 'User'}` : 'Not signed in'}</span>
       
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginLeft: "auto" }}>
         <span>Neural link</span>
         <div style={styles.neuralLinkIndicator} />
       </div>
