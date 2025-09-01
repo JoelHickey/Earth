@@ -125,8 +125,6 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
         </div>
       </div>
       
-      <div style={styles.separator} />
-      
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
         {isAuthenticated ? (
           <>
