@@ -15,34 +15,36 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.5)',
+      background: 'rgba(0, 0, 0, 0.3)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 9999
     },
     modal: {
-      width: '400px',
+      width: '320px',
       background: '#d4d0c8',
       borderTop: '2px solid #ffffff',
       borderLeft: '2px solid #ffffff',
       borderBottom: '2px solid #808080',
       borderRight: '2px solid #808080',
-      fontFamily: "'MS Sans Serif', Arial, sans-serif"
+      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)'
     },
     header: {
       background: 'linear-gradient(90deg, #000080 0%, #1084d0 100%)',
       color: '#ffffff',
-      padding: '4px 8px',
-      fontSize: '12px',
+      padding: '3px 6px',
+      fontSize: '11px',
       fontWeight: 'bold',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      borderBottom: '1px solid #808080'
     },
     closeButton: {
-      width: '16px',
-      height: '14px',
+      width: '14px',
+      height: '12px',
       background: '#d4d0c8',
       borderTop: '1px solid #ffffff',
       borderLeft: '1px solid #ffffff',
@@ -52,7 +54,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize: '10px',
+      fontSize: '8px',
       fontFamily: "'MS Sans Serif', Arial, sans-serif",
       color: '#000000',
       padding: '0',
@@ -60,54 +62,58 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       fontWeight: 'bold'
     },
     content: {
-      padding: '16px',
+      padding: '12px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '12px'
+      gap: '8px'
     },
     inputGroup: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '4px'
+      gap: '3px'
     },
     label: {
-      fontSize: '10px',
+      fontSize: '9px',
       fontFamily: "'MS Sans Serif', Arial, sans-serif",
-      color: '#000000'
+      color: '#000000',
+      fontWeight: 'bold'
     },
     input: {
-      height: '20px',
-      fontSize: '10px',
+      height: '18px',
+      fontSize: '9px',
       fontFamily: "'MS Sans Serif', Arial, sans-serif",
       borderTop: '1px solid #808080',
       borderLeft: '1px solid #808080',
       borderBottom: '1px solid #ffffff',
       borderRight: '1px solid #ffffff',
       background: '#ffffff',
-      padding: '2px 4px'
+      padding: '1px 3px'
     },
     button: {
-      height: '24px',
+      height: '22px',
       background: '#d4d0c8',
       borderTop: '2px solid #ffffff',
       borderLeft: '2px solid #ffffff',
       borderBottom: '2px solid #808080',
       borderRight: '2px solid #808080',
-      fontSize: '10px',
+      fontSize: '9px',
       fontFamily: "'MS Sans Serif', Arial, sans-serif",
       cursor: 'pointer',
-      padding: '0 8px'
+      padding: '0 6px',
+      fontWeight: 'bold'
     },
     buttonRow: {
       display: 'flex',
-      gap: '8px',
-      justifyContent: 'flex-end'
+      gap: '6px',
+      justifyContent: 'flex-end',
+      marginTop: '4px'
     },
     error: {
-      fontSize: '10px',
+      fontSize: '8px',
       fontFamily: "'MS Sans Serif', Arial, sans-serif",
       color: '#ff0000',
-      textAlign: 'center'
+      textAlign: 'center',
+      marginTop: '2px'
     },
     toggleText: {
       fontSize: '10px',
@@ -189,12 +195,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
         </div>
         
         <div style={styles.content}>
-          <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '12px' }}>
-              {isSignUp ? 'Create Account' : 'Welcome Back'}
+          <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+            <h3 style={{ margin: '0 0 4px 0', fontSize: '10px', fontWeight: 'bold' }}>
+              {isSignUp ? 'Create Account' : 'Sign In'}
             </h3>
-            <p style={{ margin: '0', fontSize: '10px', color: '#666' }}>
-              {isSignUp ? 'Sign up to save your mental health data' : 'Sign in to access your data'}
+            <p style={{ margin: '0', fontSize: '8px', color: '#666' }}>
+              {isSignUp ? 'Enter your details below' : 'Enter your credentials'}
             </p>
           </div>
           
