@@ -31,7 +31,10 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
     },
     inputGroup: {
       marginBottom: '6px',
-      textAlign: 'left'
+      textAlign: 'left',
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%'
     },
     inputLabel: {
       fontSize: '9px',
