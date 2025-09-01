@@ -28,14 +28,18 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       borderLeft: '2px solid #ffffff',
       borderBottom: '2px solid #808080',
       borderRight: '2px solid #808080',
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
-      boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)'
+      fontFamily: "'MS Sans Serif', sans-serif",
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '0',
+      flexShrink: 0,
+      overflow: 'hidden'
     },
     header: {
       background: 'linear-gradient(90deg, #000080 0%, #1084d0 100%)',
       color: '#ffffff',
-      padding: '3px 6px',
-      fontSize: '11px',
+      padding: '4px',
+      fontSize: '12px',
       fontWeight: 'bold',
       display: 'flex',
       alignItems: 'center',
@@ -43,8 +47,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       borderBottom: '1px solid #808080'
     },
     closeButton: {
-      width: '14px',
-      height: '12px',
+      width: '20px',
+      height: '18px',
       background: '#d4d0c8',
       borderTop: '1px solid #ffffff',
       borderLeft: '1px solid #ffffff',
@@ -54,7 +58,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize: '8px',
+      fontSize: '12px',
       fontFamily: "'MS Sans Serif', Arial, sans-serif",
       color: '#000000',
       padding: '0',
@@ -62,10 +66,12 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       fontWeight: 'bold'
     },
     content: {
-      padding: '12px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '8px'
+      background: '#d4d0c8',
+      flex: 1,
+      padding: '4px',
+      width: '100%',
+      flexShrink: 0,
+      overflow: 'hidden'
     },
     inputGroup: {
       display: 'flex',
@@ -195,63 +201,67 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
         </div>
         
         <div style={styles.content}>
-          <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-            <h3 style={{ margin: '0 0 4px 0', fontSize: '10px', fontWeight: 'bold' }}>
-              {isSignUp ? 'Create Account' : 'Sign In'}
-            </h3>
-            <p style={{ margin: '0', fontSize: '8px', color: '#666' }}>
-              {isSignUp ? 'Enter your details below' : 'Enter your credentials'}
-            </p>
+          <div style={{ padding: "8px", width: "100%", height: "100%", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+              <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '10px', fontWeight: 'bold' }}>
+                  {isSignUp ? 'Create Account' : 'Sign In'}
+                </h3>
+                <p style={{ margin: '0', fontSize: '8px', color: '#666' }}>
+                  {isSignUp ? 'Enter your details below' : 'Enter your credentials'}
+                </p>
+              </div>
+              
+              <form onSubmit={handleSubmit}>
+                <div style={styles.inputGroup}>
+                  <label style={styles.label}>Email:</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    style={styles.input}
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+                
+                <div style={styles.inputGroup}>
+                  <label style={styles.label}>Password:</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    style={styles.input}
+                    placeholder="Enter your password"
+                    required
+                  />
+                </div>
+
+                {error && <div style={styles.error}>{error}</div>}
+
+                <div style={styles.buttonRow}>
+                  <button
+                    type="button"
+                    onClick={() => setIsSignUp(!isSignUp)}
+                    style={styles.button}
+                    onMouseDown={handleButtonMouseDown}
+                    onMouseUp={handleButtonMouseUp}
+                  >
+                    {isSignUp ? 'Sign In' : 'Sign Up'}
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    style={styles.button}
+                    onMouseDown={handleButtonMouseDown}
+                    onMouseUp={handleButtonMouseUp}
+                  >
+                    {loading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-          
-          <form onSubmit={handleSubmit}>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Email:</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={styles.input}
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-            
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Password:</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={styles.input}
-                placeholder="Enter your password"
-                required
-              />
-            </div>
-
-            {error && <div style={styles.error}>{error}</div>}
-
-            <div style={styles.buttonRow}>
-              <button
-                type="button"
-                onClick={() => setIsSignUp(!isSignUp)}
-                style={styles.button}
-                onMouseDown={handleButtonMouseDown}
-                onMouseUp={handleButtonMouseUp}
-              >
-                {isSignUp ? 'Sign In' : 'Sign Up'}
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                style={styles.button}
-                onMouseDown={handleButtonMouseDown}
-                onMouseUp={handleButtonMouseUp}
-              >
-                {loading ? 'Loading...' : (isSignUp ? 'Sign Up' : 'Sign In')}
-              </button>
-            </div>
-          </form>
         </div>
       </div>
     </div>
