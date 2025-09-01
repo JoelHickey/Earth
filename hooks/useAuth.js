@@ -11,7 +11,10 @@ export const useAuth = () => {
     const checkSupabaseConfig = () => {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      const configured = !!(supabaseUrl && supabaseKey);
+      // Check if we have valid credentials (not placeholder values)
+      const configured = !!(supabaseUrl && supabaseKey && 
+        supabaseUrl !== 'https://your-project-id.supabase.co' && 
+        supabaseKey !== 'your_anon_public_key_here');
       setIsSupabaseConfigured(configured);
       
       if (!configured) {
