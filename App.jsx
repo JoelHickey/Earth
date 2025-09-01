@@ -38,7 +38,7 @@ function Default() {
   // Styles
   const styles = {
     mainWindow: {
-      width: "800px", // Reduced from 900px
+      width: "820px", // Adjusted to 820px
       height: "fit-content",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
