@@ -173,65 +173,7 @@ function Default() {
     );
   }
 
-  // Show auth modal if Supabase is configured and user is not authenticated
-  if (isSupabaseConfigured && !isAuthenticated) {
-    return (
-      <div style={{
-        width: "700px",
-        height: "400px",
-        background: "#d4d0c8",
-        borderTop: "2px solid #ffffff",
-        borderLeft: "2px solid #ffffff",
-        borderBottom: "2px solid #808080",
-        borderRight: "2px solid #808080",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "'MS Sans Serif', Arial, sans-serif",
-        gap: "16px"
-      }}>
-        <div style={{ fontSize: "14px", fontWeight: "bold" }}>
-          Windows 95 Mental Health Monitor
-        </div>
-        <div style={{ fontSize: "10px", textAlign: "center" }}>
-          Please sign in to access your mental health data
-        </div>
-        <button
-          onClick={() => {
-            console.log('Sign In button clicked');
-            setShowAuthModal(true);
-          }}
-          style={{
-            height: "24px",
-            background: "#d4d0c8",
-            borderTop: "2px solid #ffffff",
-            borderLeft: "2px solid #ffffff",
-            borderBottom: "2px solid #808080",
-            borderRight: "2px solid #808080",
-            fontSize: "10px",
-            fontFamily: "'MS Sans Serif', Arial, sans-serif",
-            cursor: "pointer",
-            padding: "0 16px"
-          }}
-          onMouseDown={(e) => {
-            e.target.style.borderTop = "2px solid #808080";
-            e.target.style.borderLeft = "2px solid #808080";
-            e.target.style.borderBottom = "2px solid #ffffff";
-            e.target.style.borderRight = "2px solid #ffffff";
-          }}
-          onMouseUp={(e) => {
-            e.target.style.borderTop = "2px solid #ffffff";
-            e.target.style.borderLeft = "2px solid #ffffff";
-            e.target.style.borderBottom = "2px solid #808080";
-            e.target.style.borderRight = "2px solid #808080";
-          }}
-        >
-          Sign In
-        </button>
-      </div>
-    );
-  }
+
 
   return (
     <div style={styles.mainWindow}>
@@ -242,6 +184,8 @@ function Default() {
         outputValue={outputValue}
         user={user}
         onSignOut={isSupabaseConfigured ? handleSignOut : null}
+        onSignIn={() => setShowAuthModal(true)}
+        isAuthenticated={isAuthenticated}
       />
       
       {/* Separator between toolbar and content */}
@@ -256,7 +200,7 @@ function Default() {
         {renderViewContent()}
       </div>
 
-      <StatusBar />
+      <StatusBar isAuthenticated={isAuthenticated} user={user} />
       
 
       

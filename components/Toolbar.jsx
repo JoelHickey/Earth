@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut }) => {
+const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSignIn, isAuthenticated }) => {
   const styles = {
     viewSwitcher: {
       display: "flex",
@@ -109,11 +109,11 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut }) =>
         </div>
       </div>
       
-      {onSignOut && (
-        <>
-          <div style={styles.separator} />
-          
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <div style={styles.separator} />
+      
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        {isAuthenticated ? (
+          <>
             <span style={{ 
               fontSize: "10px", 
               fontFamily: "'MS Sans Serif', Arial, sans-serif",
@@ -129,9 +129,18 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut }) =>
             >
               Sign Out
             </button>
-          </div>
-        </>
-      )}
+          </>
+        ) : (
+          <button
+            style={styles.button}
+            onClick={onSignIn}
+            onMouseDown={handleButtonMouseDown}
+            onMouseUp={handleButtonMouseUp}
+          >
+            Sign In
+          </button>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const StatusBar = () => {
+const StatusBar = ({ isAuthenticated, user }) => {
   const styles = {
     statusBar: {
       background: "#d4d0c8",
@@ -25,7 +25,7 @@ const StatusBar = () => {
   return (
     <div style={styles.statusBar}>
       <div style={{ display: "flex", alignItems: "center" }}>
-        <span>Ready</span>
+        <span>{isAuthenticated ? `Signed in as ${user?.email || 'User'}` : 'Not signed in'}</span>
       </div>
       
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
