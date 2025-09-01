@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Toolbar from './components/Toolbar';
 import StatusBar from './components/StatusBar';
 import AuthModal from './components/AuthModal';
+import BodyWireframe from './components/BodyWireframe';
 import { useSliderDrag } from './hooks/useSliderDrag';
 import { useAppState } from './utils/stateManager';
 import { useAuth } from './hooks/useAuth';
@@ -16,6 +17,7 @@ function Default() {
   const { user, loading, signOut, isAuthenticated, isSupabaseConfigured } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('signin'); // 'signin' or 'signup'
+  const [selectedBodyArea, setSelectedBodyArea] = useState(null);
   
   const {
     sliderValues,
@@ -35,7 +37,7 @@ function Default() {
   // Styles
   const styles = {
     mainWindow: {
-      width: "700px",
+      width: "900px", // Increased to accommodate right pane
       height: "fit-content",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
@@ -56,6 +58,22 @@ function Default() {
       minHeight: "300px",
       width: "100%",
       flexShrink: 0,
+      overflow: "hidden",
+      display: "flex",
+      flexDirection: "row" // Changed to row to accommodate side-by-side layout
+    },
+    leftContent: {
+      flex: 1,
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden"
+    },
+    rightPane: {
+      width: "180px",
+      background: "#d4d0c8",
+      borderLeft: "1px solid #808080",
+      display: "flex",
+      flexDirection: "column",
       overflow: "hidden"
     }
   };
@@ -194,9 +212,17 @@ function Default() {
       }} />
 
       {/* Main Content */}
-      <div style={styles.mainContent}>
-        {renderViewContent()}
-      </div>
+                <div style={styles.mainContent}>
+            <div style={styles.leftContent}>
+              {renderViewContent()}
+            </div>
+            <div style={styles.rightPane}>
+              <BodyWireframe 
+                selectedArea={selectedBodyArea}
+                onAreaClick={setSelectedBodyArea}
+              />
+            </div>
+          </div>
 
       <StatusBar 
         isAuthenticated={isAuthenticated} 
