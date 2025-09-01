@@ -77,7 +77,7 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
       justifyContent: 'flex-end'
     },
     authButton: {
-      height: '22px',
+      height: '16px',
       background: '#d4d0c8',
       borderTop: '2px solid #ffffff',
       borderLeft: '2px solid #ffffff',

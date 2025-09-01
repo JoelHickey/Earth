@@ -90,7 +90,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
     },
     addButton: {
       width: "50px",
-      height: "22px",
+      height: "16px",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
       borderLeft: "2px solid #ffffff",
