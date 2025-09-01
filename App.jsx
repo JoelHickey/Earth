@@ -96,7 +96,7 @@ function Default() {
     <div style={{ 
       display: "flex", 
       gap: "2px", 
-      justifyContent: "space-between", 
+      justifyContent: align, 
       alignItems: "flex-start",
       width: "100%",
       maxWidth: "100%",
