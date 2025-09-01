@@ -258,6 +258,8 @@ function Default() {
 
       <StatusBar />
       
+
+      
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => {

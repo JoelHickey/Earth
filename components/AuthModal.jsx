@@ -19,7 +19,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      zIndex: 1000
+      zIndex: 9999
     },
     modal: {
       width: '400px',
@@ -189,6 +189,15 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
         </div>
         
         <div style={styles.content}>
+          <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '12px' }}>
+              {isSignUp ? 'Create Account' : 'Welcome Back'}
+            </h3>
+            <p style={{ margin: '0', fontSize: '10px', color: '#666' }}>
+              {isSignUp ? 'Sign up to save your mental health data' : 'Sign in to access your data'}
+            </p>
+          </div>
+          
           <form onSubmit={handleSubmit}>
             <div style={styles.inputGroup}>
               <label style={styles.label}>Email:</label>
@@ -197,6 +206,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 style={styles.input}
+                placeholder="Enter your email"
                 required
               />
             </div>
@@ -208,6 +218,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 style={styles.input}
+                placeholder="Enter your password"
                 required
               />
             </div>
