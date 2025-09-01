@@ -24,7 +24,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif"
+      fontFamily: "'MS Sans Serif', sans-serif"
     },
     authButton: {
       width: "80px",
@@ -39,7 +39,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       whiteSpace: "nowrap"
     },
     activeButton: {
@@ -63,7 +63,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
       alignItems: "center",
       padding: "0 8px",
       fontSize: "10px",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       marginLeft: "8px"
     }
   };
@@ -115,7 +115,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, user, onSignOut, onSi
       <div style={{ display: "flex", alignItems: "center", gap: "2px", flex: 1, marginLeft: "8px" }}>
         <span style={{ 
           fontSize: "10px", 
-          fontFamily: "'MS Sans Serif', Arial, sans-serif",
+          fontFamily: "'MS Sans Serif', sans-serif",
           color: "#000000"
         }}>
           Output:

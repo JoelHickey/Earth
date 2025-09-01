@@ -26,7 +26,7 @@ const Header = () => {
       alignItems: "center",
       justifyContent: "center",
       fontSize: "12px",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000",
       padding: "0",
       lineHeight: "1",

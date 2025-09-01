@@ -41,13 +41,13 @@ const Slider = ({
       position: "absolute",
       left: "-10px",
       cursor: "pointer",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif"
+      fontFamily: "'MS Sans Serif', sans-serif"
     },
     input: {
       width: "20px",
       height: "16px",
       fontSize: "10px",
-      fontFamily: "MS Sans Serif, Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       border: "2px inset #c0c0c0",
       background: "#ffffff",
       textAlign: "center",
@@ -59,7 +59,7 @@ const Slider = ({
       fontSize: "10px",
       textAlign: "center",
       marginTop: "4px",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif"
+      fontFamily: "'MS Sans Serif', sans-serif"
     }
   };
 

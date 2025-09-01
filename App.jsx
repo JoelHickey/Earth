@@ -223,7 +223,7 @@ function Default() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontFamily: "'MS Sans Serif', Arial, sans-serif",
+        fontFamily: "'MS Sans Serif', sans-serif",
         fontSize: "12px"
       }}>
         Loading...

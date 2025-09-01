@@ -10,7 +10,7 @@ const StatusBar = ({ isAuthenticated, user }) => {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif"
+      fontFamily: "'MS Sans Serif', sans-serif"
     },
     neuralLinkIndicator: {
       width: "8px",

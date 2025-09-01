@@ -69,7 +69,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, initialMode = 'signin' }) =
       alignItems: 'center',
       justifyContent: 'center',
       fontSize: '12px',
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       color: '#000000',
       padding: '0',
       lineHeight: '1',
@@ -90,14 +90,14 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, initialMode = 'signin' }) =
     },
     label: {
       fontSize: '9px',
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       color: '#000000',
       fontWeight: 'bold'
     },
     input: {
       height: '18px',
       fontSize: '9px',
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       borderTop: '1px solid #808080',
       borderLeft: '1px solid #808080',
       borderBottom: '1px solid #ffffff',
@@ -113,7 +113,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, initialMode = 'signin' }) =
       borderBottom: '2px solid #808080',
       borderRight: '2px solid #808080',
       fontSize: '9px',
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       cursor: 'pointer',
       padding: '0 6px',
       fontWeight: 'bold'
@@ -126,14 +126,14 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess, initialMode = 'signin' }) =
     },
     error: {
       fontSize: '8px',
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       color: '#ff0000',
       textAlign: 'center',
       marginTop: '2px'
     },
     toggleText: {
       fontSize: '10px',
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       color: '#000080',
       cursor: 'pointer',
       textAlign: 'center',

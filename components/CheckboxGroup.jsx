@@ -16,7 +16,7 @@ const CheckboxGroup = ({ checkboxes, columns = 3 }) => {
       alignItems: "center",
       gap: "4px",
       fontSize: "10px",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif"
+      fontFamily: "'MS Sans Serif', sans-serif"
     },
     checkbox: {
       width: "12px",

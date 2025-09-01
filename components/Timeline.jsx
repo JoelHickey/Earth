@@ -15,7 +15,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       fontSize: "12px",
       fontWeight: "bold",
       color: "#000000",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       borderBottom: "1px solid #808080",
       paddingBottom: "4px"
     },
@@ -34,7 +34,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       background: "#ffffff",
       border: "1px inset #c0c0c0",
       fontSize: "10px",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif"
+      fontFamily: "'MS Sans Serif', sans-serif"
     },
     timeStamp: {
       minWidth: "60px",
@@ -55,7 +55,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       alignItems: "center",
       justifyContent: "center",
       fontSize: "8px",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000"
     },
     addEventForm: {
@@ -70,7 +70,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       width: "60px",
       height: "16px",
       fontSize: "10px",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       border: "1px inset #c0c0c0",
       background: "#ffffff",
       padding: "0 2px"
@@ -79,7 +79,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       flex: 1,
       height: "16px",
       fontSize: "10px",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       border: "1px inset #c0c0c0",
       background: "#ffffff",
       padding: "0 2px"
@@ -91,7 +91,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       border: "1px outset #c0c0c0",
       cursor: "pointer",
       fontSize: "10px",
-      fontFamily: "'MS Sans Serif', Arial, sans-serif",
+      fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000"
     }
   };
@@ -124,7 +124,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
             textAlign: "center", 
             color: "#808080", 
             fontSize: "10px",
-            fontFamily: "'MS Sans Serif', Arial, sans-serif"
+            fontFamily: "'MS Sans Serif', sans-serif"
           }}>
             No events recorded yet. Add your first event below.
           </div>
