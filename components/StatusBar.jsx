@@ -11,7 +11,9 @@ const StatusBar = ({ isAuthenticated, user }) => {
       justifyContent: "space-between",
       alignItems: "center",
       fontFamily: "'MS Sans Serif', sans-serif",
-      color: "#ffffff"
+      color: "#ffffff",
+      minHeight: "20px",
+      width: "100%"
     },
     neuralLinkIndicator: {
       width: "8px",
