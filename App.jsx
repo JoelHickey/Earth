@@ -250,13 +250,6 @@ function Default() {
         setActiveView={setActiveView} 
         outputValue={outputValue}
       />
-      
-      {/* Separator between toolbar and content */}
-      <div style={{ 
-        height: "1px", 
-        background: "#808080",
-        margin: "0 4px"
-      }} />
 
       {/* Main Content */}
                 <div style={styles.mainContent}>
