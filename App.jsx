@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Slider from './components/Slider';
 import Divider from './components/Divider';
 import CheckboxGroup from './components/CheckboxGroup';
@@ -6,20 +6,11 @@ import Timeline from './components/Timeline';
 import Header from './components/Header';
 import Toolbar from './components/Toolbar';
 import StatusBar from './components/StatusBar';
-import AuthModal from './components/AuthModal';
-import BodyWireframe from './components/BodyWireframe';
 import { useSliderDrag } from './hooks/useSliderDrag';
 import { useAppState } from './utils/stateManager';
-import { useAuth } from './hooks/useAuth';
-import { auth } from './utils/supabase';
 import { INPUT_SLIDERS, EMOTION_SLIDERS } from './utils/constants';
 
 function Default() {
-  const { user, loading, signOut, isAuthenticated, isSupabaseConfigured } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState('signin'); // 'signin' or 'signup'
-
-  
   const {
     sliderValues,
     updateSlider,
@@ -30,15 +21,38 @@ function Default() {
     deleteTimelineEvent,
     activeView,
     setActiveView,
-    outputValue
+    outputValue,
+    bloodSugar,
+    updateBloodSugar,
+    getBloodSugarStatus,
+    estimateBloodSugar,
+    autoCalculateBloodSugar,
+    autoUpdateEmotions,
+    saveSliderPositions,
+    recallSliderPositions,
+    hasSavedPositions,
+    getCurrentLevels
   } = useAppState();
 
   const handleSliderMouseDown = useSliderDrag();
 
+  // Auto-calculate blood sugar when input sliders change
+  React.useEffect(() => {
+    autoCalculateBloodSugar();
+  }, [
+    sliderValues.sleepQuality,
+    sliderValues.foodLevel,
+    sliderValues.caffeineLevel,
+    sliderValues.waterLevel,
+    sliderValues.walkLevel,
+    sliderValues.squatsLevel,
+    autoCalculateBloodSugar
+  ]);
+
   // Styles
   const styles = {
     mainWindow: {
-      width: "820px", // Adjusted to 820px
+      width: "820px",
       height: "fit-content",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
@@ -61,25 +75,15 @@ function Default() {
       flexShrink: 0,
       overflow: "hidden",
       display: "flex",
-      flexDirection: "row" // Changed to row to accommodate side-by-side layout
+      flexDirection: "row"
     },
     leftContent: {
       flex: 1,
       display: "flex",
       flexDirection: "column",
       overflow: "hidden"
-    },
-    rightPane: {
-      width: "180px",
-      background: "#d4d0c8",
-      borderLeft: "1px solid #808080",
-      display: "flex",
-      flexDirection: "column",
-      overflow: "hidden"
     }
   };
-
-
 
   // Checkbox configurations
   const environmentCheckboxConfig = [
@@ -104,17 +108,29 @@ function Default() {
       minHeight: "220px",
       overflow: "hidden"
     }}>
-      {sliders.map((slider, index) => (
-        <React.Fragment key={slider.name}>
-          <Slider
-            value={sliderValues[slider.name]}
-            onChange={(value) => updateSlider(slider.name, value)}
-            onMouseDown={handleSliderMouseDown}
-            label={slider.label}
-          />
-          {index < sliders.length - 1 && <Divider />}
-        </React.Fragment>
-      ))}
+      {sliders.map((slider, index) => {
+        // Calculate caffeine for coffee slider (now handled by unit system)
+        const caffeineMg = null; // No longer needed - using unit system
+        
+        // Calculate water in ml (now handled by unit system)
+        const waterMl = null; // No longer needed - using unit system
+        
+        return (
+          <React.Fragment key={slider.name}>
+            <Slider
+              value={sliderValues[slider.name]}
+              onChange={(value) => updateSlider(slider.name, value)}
+              onMouseDown={handleSliderMouseDown}
+              label={slider.label}
+              caffeineMg={caffeineMg}
+              waterMl={waterMl}
+              unit={slider.unit}
+              multiplier={slider.multiplier}
+            />
+            {index < sliders.length - 1 && <Divider />}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 
@@ -158,137 +174,31 @@ function Default() {
     }
   };
 
-  const handleAuthSuccess = (user) => {
-    console.log('User authenticated:', user);
-    setShowAuthModal(false);
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
-  const handleDirectSignIn = async (username, password) => {
-    console.log('Attempting sign in with:', username);
-    if (!isSupabaseConfigured) {
-      console.log('Supabase not configured');
-      alert('Supabase not configured');
-      return;
-    }
-    
-    try {
-      const { data, error } = await auth.signIn(username, password);
-      if (error) {
-        console.error('Sign in error:', error.message);
-        alert('Sign in error: ' + error.message);
-      } else {
-        console.log('Sign in successful:', data.user);
-        alert('Sign in successful!');
-      }
-    } catch (error) {
-      console.error('Unexpected error during sign in:', error);
-      alert('Unexpected error: ' + error.message);
-    }
-  };
-
-  const handleDirectSignUp = async (username, password) => {
-    console.log('Attempting sign up with:', username);
-    if (!isSupabaseConfigured) {
-      console.log('Supabase not configured');
-      alert('Supabase not configured');
-      return;
-    }
-    
-    try {
-      const { data, error } = await auth.signUp(username, password);
-      if (error) {
-        console.error('Sign up error:', error.message);
-        alert('Sign up error: ' + error.message);
-      } else {
-        console.log('Sign up successful:', data.user);
-        alert('Sign up successful!');
-      }
-    } catch (error) {
-      console.error('Unexpected error during sign up:', error);
-      alert('Unexpected error: ' + error.message);
-    }
-  };
-
-  // Show loading screen while checking auth
-  if (loading) {
-    return (
-      <div style={{
-        width: "700px",
-        height: "400px",
-        background: "#d4d0c8",
-        borderTop: "2px solid #ffffff",
-        borderLeft: "2px solid #ffffff",
-        borderBottom: "2px solid #808080",
-        borderRight: "2px solid #808080",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "'MS Sans Serif', sans-serif",
-        fontSize: "12px"
-      }}>
-        Loading...
-      </div>
-    );
-  }
-
-
-
   return (
     <div style={styles.mainWindow}>
       <Header />
       
-      <Toolbar 
-        activeView={activeView} 
-        setActiveView={setActiveView} 
-        outputValue={outputValue}
-      />
-
-      {/* Main Content */}
-                <div style={styles.mainContent}>
-            <div style={styles.leftContent}>
-              {renderViewContent()}
-            </div>
-            <div style={styles.rightPane}>
-              <BodyWireframe 
-                isAuthenticated={isAuthenticated}
-                user={user}
-                onSignIn={(username, password) => {
-                  // Handle direct sign in with credentials
-                  handleDirectSignIn(username, password);
-                }}
-                onSignUp={(username, password) => {
-                  // Handle direct sign up with credentials
-                  handleDirectSignUp(username, password);
-                }}
-                onSignOut={isSupabaseConfigured ? handleSignOut : null}
-              />
-            </div>
-          </div>
-
+        <Toolbar 
+          activeView={activeView} 
+          setActiveView={setActiveView} 
+          outputValue={outputValue}
+          bloodSugar={bloodSugar}
+          getBloodSugarStatus={getBloodSugarStatus}
+          saveSliderPositions={saveSliderPositions}
+          recallSliderPositions={recallSliderPositions}
+          hasSavedPositions={hasSavedPositions}
+        />
+            
+      <div style={styles.mainContent}>
+        <div style={styles.leftContent}>
+          {renderViewContent()}
+        </div>
+      </div>
+          
       <StatusBar 
-        isAuthenticated={isAuthenticated} 
-        user={user} 
+        caffeineLevel={sliderValues.caffeineLevel}
+        sliderValues={sliderValues}
       />
-      
-
-      
-                <AuthModal
-            isOpen={showAuthModal}
-            onClose={() => {
-              console.log('Auth modal closing');
-              setShowAuthModal(false);
-            }}
-            onAuthSuccess={handleAuthSuccess}
-            initialMode={authMode}
-          />
     </div>
   );
 }

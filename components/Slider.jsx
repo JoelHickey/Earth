@@ -6,7 +6,11 @@ const Slider = ({
   onMouseDown, 
   label, 
   width = "65px",
-  gap = "2px" 
+  gap = "2px",
+  caffeineMg = null,
+  waterMl = null,
+  unit = null,
+  multiplier = 1
 }) => {
   const styles = {
     container: {
@@ -44,7 +48,7 @@ const Slider = ({
       fontFamily: "'MS Sans Serif', sans-serif"
     },
     input: {
-      width: "20px",
+      width: "50px",
       height: "18px",
       fontSize: "10px",
       fontFamily: "'MS Sans Serif', sans-serif",
@@ -60,9 +64,19 @@ const Slider = ({
       fontSize: "10px",
       textAlign: "center",
       marginTop: "4px",
-      fontFamily: "'MS Sans Serif', sans-serif"
+      fontFamily: "'MS Sans Serif', sans-serif",
+      whiteSpace: "nowrap",
+      width: "100%"
     }
   };
+
+  // Create label with caffeine or water if provided
+  let displayLabel = label;
+  if (caffeineMg !== null) {
+    displayLabel = `${label} (${caffeineMg}mg)`;
+  } else if (waterMl !== null) {
+    displayLabel = `${label} (${waterMl}ml)`;
+  }
 
   return (
     <div style={styles.container}>
@@ -79,11 +93,18 @@ const Slider = ({
       </div>
       <input
         type="text"
-        value={Math.round(value)}
-        onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+        value={unit ? `${Math.round(value * multiplier)}${unit}` : Math.round(value)}
+        onChange={(e) => {
+          if (unit) {
+            const numericValue = parseFloat(e.target.value.replace(unit, '')) || 0;
+            onChange(numericValue / multiplier);
+          } else {
+            onChange(parseFloat(e.target.value) || 0);
+          }
+        }}
         style={styles.input}
       />
-      <div style={styles.label}>{label}</div>
+      <div style={styles.label}>{displayLabel}</div>
     </div>
   );
 };

@@ -1,8 +1,10 @@
 // Slider configurations
 export const INPUT_SLIDERS = [
   { name: 'sleepQuality', label: 'Sleep Quality' },
-  { name: 'foodLevel', label: 'Food' },
-  { name: 'caffeineLevel', label: 'Coffee' }
+  { name: 'waterLevel', label: 'Water', unit: 'ml', multiplier: 300 },
+  { name: 'caffeineLevel', label: 'Coffee', unit: 'mg', multiplier: 95 },
+  { name: 'foodLevel', label: 'Food', unit: 'cal', multiplier: 300 },
+  { name: 'walkLevel', label: 'Walk', unit: 'km', multiplier: 1 }
 ];
 
 export const EMOTION_SLIDERS = [
@@ -20,7 +22,7 @@ export const EMOTION_SLIDERS = [
 // View button configurations
 export const VIEW_BUTTONS = [
   { id: 'inputs', icon: '/Plug.ico', alt: 'Plug' },
-  { id: 'emotions', icon: '/Volume Controls.ico', alt: 'Levels' },
+  { id: 'emotions', icon: '/Smiley face.ico', alt: 'Emotions' },
   { id: 'environment', icon: '/Tree.ico', alt: 'Tree' },
   { id: 'timeline', icon: '/Notepad.ico', alt: 'Notepad' }
 ];
