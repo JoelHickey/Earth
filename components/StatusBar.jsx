@@ -117,16 +117,19 @@ const StatusBar = ({ caffeineLevel = 0, sliderValues = {} }) => {
 
   const styles = {
     statusBar: {
-      background: "#d4d0c8",
-      borderTop: "1px solid #ffffff",
-      padding: "2px 8px",
-      fontSize: "10px",
+      background: "#c0c0c0",
+      borderTop: "1px solid #808080",
+      borderLeft: "1px solid #808080",
+      borderBottom: "1px solid #ffffff",
+      borderRight: "1px solid #ffffff",
+      padding: "3px 8px",
+      fontSize: "11px",
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000",
-      minHeight: "20px",
+      minHeight: "22px",
       width: "100%",
       overflow: "hidden",
       boxSizing: "border-box"

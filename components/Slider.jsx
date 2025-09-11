@@ -10,7 +10,8 @@ const Slider = ({
   caffeineMg = null,
   waterMl = null,
   unit = null,
-  multiplier = 1
+  multiplier = 1,
+  style = {}
 }) => {
   const styles = {
     container: {
@@ -79,7 +80,7 @@ const Slider = ({
   }
 
   return (
-    <div style={styles.container}>
+    <div style={{...styles.container, ...style}}>
       <div style={styles.sliderContainer}>
         <div style={styles.sliderTrack}>
           <div
