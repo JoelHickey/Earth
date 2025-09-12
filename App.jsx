@@ -19,23 +19,23 @@ function App() {
   
   // Add state for sliders
   const [sliderValues, setSliderValues] = useState({
-    sleepQuality: 5,
-    sleepDuration: 0, // Default to 0 hours
-    waterLevel: 5,
-    caffeineLevel: 5,
-    foodLevel: 5,
-    walkLevel: 5,
-    alcoholLevel: 5,
-    sugarLevel: 5,
-    happiness: 5,
-    anxiety: 5,
-    energy: 5,
-    focus: 5,
-    stress: 5,
-    sadness: 5,
-    anger: 5,
-    irritability: 5,
-    dread: 5
+    sleepQuality: 0,
+    sleepDuration: 0,
+    waterLevel: 0,
+    caffeineLevel: 0,
+    foodLevel: 0,
+    walkLevel: 0,
+    alcoholLevel: 0,
+    sugarLevel: 0,
+    happiness: 0,
+    anxiety: 0,
+    energy: 0,
+    focus: 0,
+    stress: 0,
+    sadness: 0,
+    anger: 0,
+    irritability: 0,
+    dread: 0
   });
 
   // Add state for environment checkboxes
