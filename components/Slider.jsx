@@ -94,10 +94,10 @@ const Slider = ({
       </div>
       <input
         type="text"
-        value={unit ? `${Math.round(value * multiplier)}${unit}` : Math.round(value)}
+        value={unit ? `${Math.round(value * multiplier)} ${unit}` : Math.round(value)}
         onChange={(e) => {
           if (unit) {
-            const numericValue = parseFloat(e.target.value.replace(unit, '')) || 0;
+            const numericValue = parseFloat(e.target.value.replace(` ${unit}`, '')) || 0;
             onChange(numericValue / multiplier);
           } else {
             onChange(parseFloat(e.target.value) || 0);
