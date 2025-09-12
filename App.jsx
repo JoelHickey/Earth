@@ -108,7 +108,7 @@ function App() {
       width: "100%",
       maxWidth: "100%",
       position: "relative",
-      minHeight: "220px",
+      minHeight: sliders.length > 10 ? "380px" : "220px",
       overflow: "hidden"
     }}>
       {sliders.map((slider, index) => (
@@ -132,7 +132,7 @@ function App() {
     switch (activeView) {
       case 'inputs':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
+          <div style={{ padding: "8px", width: "100%", height: "400px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
             {renderSliderRow(INPUT_SLIDERS, "flex-start")}
           </div>
         );
