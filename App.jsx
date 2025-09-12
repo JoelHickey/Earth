@@ -16,6 +16,7 @@ function App() {
   const [activeView, setActiveView] = useState('inputs');
   const [outputValue] = useState(5);
   const [bloodSugar] = useState(100);
+  const [cortisolLevel] = useState(3); // Default cortisol level
   const getBloodSugarStatus = () => 'normal';
   
   // Add state for sliders
@@ -213,7 +214,7 @@ function App() {
       padding: "16px"
     }}>
       <div style={styles.mainWindow}>
-        <Header />
+        <Header cortisolLevel={cortisolLevel} />
         <Toolbar 
           activeView={activeView}
           setActiveView={setActiveView}
