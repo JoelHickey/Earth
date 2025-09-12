@@ -107,7 +107,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       transition: "width 0.2s ease"
     },
     bloodSugarLabel: {
-      fontSize: "9px",
+      fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000"
     },
