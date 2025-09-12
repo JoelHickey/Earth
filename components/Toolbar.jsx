@@ -38,7 +38,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
     },
     outputBar: {
       width: "126px",
-      height: "12px",
+      height: "10px",
       background: "#d4d0c8",
       border: "2px inset #c0c0c0",
       display: "flex",
@@ -74,7 +74,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
     },
     bloodSugarBar: {
       width: "126px",
-      height: "12px",
+      height: "10px",
       background: "#d4d0c0",
       border: "2px inset #c0c0c0",
       display: "flex",
@@ -113,7 +113,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
     },
     cortisolBar: {
       width: "126px",
-      height: "12px",
+      height: "10px",
       background: "#d4d0c8",
       border: "2px inset #c0c0c0",
       display: "flex",
