@@ -23,7 +23,7 @@ const Slider = ({
     },
     sliderContainer: {
       width: "4px",
-      height: "200px",
+      height: "150px",
       background: "#808080",
       border: "1px inset #c0c0c0",
       position: "relative",
@@ -86,7 +86,7 @@ const Slider = ({
           <div
             style={{
               ...styles.sliderThumb,
-              top: `${Math.max(0, Math.min(180, (10 - value) * 18))}px`
+              top: `${Math.max(0, Math.min(130, (10 - value) * 13))}px`
             }}
             onMouseDown={(e) => onMouseDown(e, onChange, value)}
           />
