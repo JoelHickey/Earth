@@ -1,7 +1,7 @@
 import React from 'react';
 import { VIEW_BUTTONS } from '../utils/constants';
 
-const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodSugarStatus, saveSliderPositions, recallSliderPositions, hasSavedPositions }) => {
+const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodSugarStatus, saveSliderPositions, recallSliderPositions, hasSavedPositions, cortisolLevel = 0 }) => {
   const styles = {
     viewSwitcher: {
       display: "flex",
@@ -110,6 +110,40 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       fontSize: "9px",
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000"
+    },
+    cortisolBar: {
+      width: "80px",
+      height: "12px",
+      background: "#d4d0c8",
+      border: "2px inset #c0c0c0",
+      display: "flex",
+      alignItems: "center",
+      padding: "0",
+      fontSize: "8px",
+      fontFamily: "'MS Sans Serif', sans-serif",
+      marginLeft: "8px",
+      boxSizing: "border-box",
+      position: "relative",
+      overflow: "hidden"
+    },
+    cortisolFill: {
+      height: "100%",
+      width: `${(cortisolLevel / 10) * 100}%`,
+      background: (() => {
+        if (cortisolLevel === 0) return "transparent";
+        if (cortisolLevel <= 3) return "#00ff00"; // Low - Green
+        if (cortisolLevel <= 6) return "#ffff00"; // Medium - Yellow
+        return "#ff0000"; // High - Red
+      })(),
+      position: "absolute",
+      left: "0",
+      top: "0",
+      transition: "width 0.2s ease"
+    },
+    cortisolLabel: {
+      fontSize: "8px",
+      fontFamily: "'MS Sans Serif', sans-serif",
+      color: "#000000"
     }
   };
 
@@ -209,6 +243,14 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
           </span>
           <div style={styles.bloodSugarBar}>
             <div style={styles.bloodSugarFill} />
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+          <span style={styles.cortisolLabel}>
+            Cortisol:
+          </span>
+          <div style={styles.cortisolBar}>
+            <div style={styles.cortisolFill} />
           </div>
         </div>
       </div>

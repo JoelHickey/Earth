@@ -214,7 +214,7 @@ function App() {
       padding: "16px"
     }}>
       <div style={styles.mainWindow}>
-        <Header cortisolLevel={cortisolLevel} />
+        <Header />
         <Toolbar 
           activeView={activeView}
           setActiveView={setActiveView}
@@ -224,6 +224,7 @@ function App() {
           saveSliderPositions={saveSliderPositions}
           recallSliderPositions={recallSliderPositions}
           hasSavedPositions={hasSavedPositions()}
+          cortisolLevel={cortisolLevel}
         />
         <div style={styles.mainContent}>
           <div style={styles.leftContent}>
