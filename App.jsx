@@ -109,7 +109,7 @@ function App() {
       maxWidth: "100%",
       position: "relative",
       minHeight: sliders.length > 10 ? "380px" : "220px",
-      overflow: "hidden"
+      overflow: sliders.length > 10 ? "visible" : "hidden"
     }}>
       {sliders.map((slider, index) => (
         <React.Fragment key={slider.name}>
@@ -132,7 +132,7 @@ function App() {
     switch (activeView) {
       case 'inputs':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "400px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
+          <div style={{ padding: "8px", width: "100%", height: "400px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
             {renderSliderRow(INPUT_SLIDERS, "flex-start")}
           </div>
         );
