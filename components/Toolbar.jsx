@@ -67,9 +67,9 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
     },
     healthIndicators: {
       display: "flex",
-      flexDirection: "column",
-      alignItems: "flex-end",
-      gap: "2px",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: "8px",
       marginLeft: "auto"
     },
     bloodSugarBar: {
@@ -254,19 +254,17 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
             <div style={styles.cortisolFill} />
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "2px", marginLeft: "8px" }}>
-          <button
-            style={{
-              ...styles.button,
-              ...(activeView === 'emotions' && styles.activeButton)
-            }}
-            onClick={() => setActiveView('emotions')}
-            onMouseDown={handleButtonMouseDown}
-            onMouseUp={handleButtonMouseUp}
-          >
-            <img src={emotionsButton?.icon} alt={emotionsButton?.alt} style={{ width: "18px", height: "18px" }} />
-          </button>
-        </div>
+        <button
+          style={{
+            ...styles.button,
+            ...(activeView === 'emotions' && styles.activeButton)
+          }}
+          onClick={() => setActiveView('emotions')}
+          onMouseDown={handleButtonMouseDown}
+          onMouseUp={handleButtonMouseUp}
+        >
+          <img src={emotionsButton?.icon} alt={emotionsButton?.alt} style={{ width: "18px", height: "18px" }} />
+        </button>
       </div>
     </div>
   );
