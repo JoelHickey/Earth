@@ -161,8 +161,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
     }
   };
 
-  const viewButtons = VIEW_BUTTONS.filter(button => button.id !== 'emotions');
-  const emotionsButton = VIEW_BUTTONS.find(button => button.id === 'emotions');
+  const viewButtons = VIEW_BUTTONS;
 
   return (
     <div style={styles.viewSwitcher}>
@@ -252,17 +251,6 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
             </div>
           </div>
         </div>
-        <button
-          style={{
-            ...styles.button,
-            ...(activeView === 'emotions' && styles.activeButton)
-          }}
-          onClick={() => setActiveView('emotions')}
-          onMouseDown={handleButtonMouseDown}
-          onMouseUp={handleButtonMouseUp}
-        >
-          <img src={emotionsButton?.icon} alt={emotionsButton?.alt} style={{ width: "18px", height: "18px" }} />
-        </button>
       </div>
     </div>
   );
