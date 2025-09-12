@@ -12,7 +12,7 @@ function App() {
   console.log("App is rendering!");
   
   // Add state for Toolbar props
-  const [activeView, setActiveView] = useState('emotions');
+  const [activeView, setActiveView] = useState('inputs');
   const [outputValue] = useState(5);
   const [bloodSugar] = useState(100);
   const getBloodSugarStatus = () => 'normal';

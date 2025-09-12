@@ -43,5 +43,5 @@ export const COLORS = {
 export const DEFAULT_VALUES = {
   sliderValue: 0,
   checkboxValue: false,
-  activeView: 'emotions'
+  activeView: 'inputs'
 };
