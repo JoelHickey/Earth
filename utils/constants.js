@@ -8,7 +8,6 @@ export const INPUT_SLIDERS = [
   { name: 'walkLevel', label: 'Walk', unit: 'km', multiplier: 1 },
   { name: 'alcoholLevel', label: 'Alcohol', unit: 'drinks', multiplier: 1 },
   { name: 'medication1', label: 'Zoloft', unit: 'mg', multiplier: 1 },
-  { name: 'medication2', label: 'Medication 2', unit: 'mg', multiplier: 1 },
   { name: 'vitaminD', label: 'Vitamin D', unit: 'IU', multiplier: 100 },
   { name: 'vitaminB12', label: 'Vitamin B12', unit: 'mcg', multiplier: 1 },
   { name: 'vitaminC', label: 'Vitamin C', unit: 'mg', multiplier: 10 },

@@ -29,7 +29,6 @@ function App() {
     walkLevel: 0,
     alcoholLevel: 0,
     medication1: 0,
-    medication2: 0,
     vitaminD: 0,
     vitaminB12: 0,
     vitaminC: 0,
