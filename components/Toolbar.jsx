@@ -112,7 +112,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       color: "#000000"
     },
     cortisolBar: {
-      width: "80px",
+      width: "126px",
       height: "12px",
       background: "#d4d0c8",
       border: "2px inset #c0c0c0",
