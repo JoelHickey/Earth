@@ -20,7 +20,12 @@ export const EMOTION_SLIDERS = [
 ];
 
 // View button configurations
-export const VIEW_BUTTONS = [];
+export const VIEW_BUTTONS = [
+  { id: 'inputs', icon: '/Plug.ico', alt: 'Plug' },
+  { id: 'emotions', icon: '/Smiley face.ico', alt: 'Emotions' },
+  { id: 'environment', icon: '/Tree.ico', alt: 'Tree' },
+  { id: 'timeline', icon: '/Notepad.ico', alt: 'Notepad' }
+];
 
 // Windows 95 color palette
 export const COLORS = {

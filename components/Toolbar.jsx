@@ -1,7 +1,7 @@
 import React from 'react';
 import { VIEW_BUTTONS } from '../utils/constants';
 
-const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodSugarStatus }) => {
+const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodSugarStatus, saveSliderPositions, recallSliderPositions, hasSavedPositions }) => {
   const styles = {
     viewSwitcher: {
       display: "flex",
@@ -37,7 +37,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       borderRight: "2px solid #ffffff"
     },
     outputBar: {
-      width: "250px",
+      width: "126px",
       height: "12px",
       background: "#d4d0c8",
       border: "2px inset #c0c0c0",
@@ -65,6 +65,52 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       top: "0",
       transition: "width 0.2s ease"
     },
+    healthIndicators: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-end",
+      gap: "2px",
+      marginLeft: "auto"
+    },
+    bloodSugarBar: {
+      width: "126px",
+      height: "12px",
+      background: "#d4d0c0",
+      border: "2px inset #c0c0c0",
+      display: "flex",
+      alignItems: "center",
+      padding: "0",
+      fontSize: "10px",
+      fontFamily: "'MS Sans Serif', sans-serif",
+      marginLeft: "8px",
+      boxSizing: "border-box",
+      position: "relative",
+      overflow: "hidden"
+    },
+    bloodSugarFill: {
+      height: "100%",
+      width: (() => {
+        if (!bloodSugar) return "0%";
+        // Normalize blood sugar to 0-100% (60-180 mg/dL range)
+        const normalized = Math.max(0, Math.min(100, ((bloodSugar - 60) / 120) * 100));
+        return `${normalized}%`;
+      })(),
+      background: (() => {
+        if (!bloodSugar) return "transparent";
+        if (bloodSugar < 70) return "#ff0000"; // Low - Red
+        if (bloodSugar > 140) return "#ff0000"; // High - Red
+        return "#008000"; // Normal - Green
+      })(),
+      position: "absolute",
+      left: "0",
+      top: "0",
+      transition: "width 0.2s ease"
+    },
+    bloodSugarLabel: {
+      fontSize: "9px",
+      fontFamily: "'MS Sans Serif', sans-serif",
+      color: "#000000"
+    }
   };
 
   const handleButtonMouseDown = (e) => {
@@ -103,6 +149,69 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
           <img src={icon} alt={alt} style={{ width: "14px", height: "14px" }} />
         </button>
       ))}
+      
+      <div style={{ display: "flex", gap: "2px", marginLeft: "8px", alignItems: "center" }}>
+        <div style={{
+          width: "1px",
+          height: "16px",
+          background: "#808080",
+          borderLeft: "1px solid #ffffff",
+          marginRight: "4px"
+        }} />
+        <button
+          onClick={saveSliderPositions}
+          style={{
+            ...styles.button,
+            width: "auto",
+            padding: "0 6px",
+            fontSize: "9px"
+          }}
+          onMouseDown={handleButtonMouseDown}
+          onMouseUp={handleButtonMouseUp}
+        >
+          Save
+        </button>
+        <button
+          onClick={recallSliderPositions}
+          disabled={!hasSavedPositions}
+          style={{
+            ...styles.button,
+            width: "auto",
+            padding: "0 6px",
+            fontSize: "9px",
+            background: hasSavedPositions ? "#d4d0c8" : "#c0c0c0",
+            cursor: hasSavedPositions ? "pointer" : "not-allowed",
+            color: hasSavedPositions ? "#000000" : "#808080"
+          }}
+          onMouseDown={handleButtonMouseDown}
+          onMouseUp={handleButtonMouseUp}
+        >
+          Recall
+        </button>
+      </div>
+      
+      <div style={styles.healthIndicators}>
+        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+          <span style={{ 
+            fontSize: "9px", 
+            fontFamily: "'MS Sans Serif', sans-serif",
+            color: "#000000"
+          }}>
+            Output:
+          </span>
+          <div style={styles.outputBar}>
+            <div style={styles.outputFill} />
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+          <span style={styles.bloodSugarLabel}>
+            Blood Sugar:
+          </span>
+          <div style={styles.bloodSugarBar}>
+            <div style={styles.bloodSugarFill} />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
