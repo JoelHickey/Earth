@@ -6,7 +6,15 @@ export const INPUT_SLIDERS = [
   { name: 'caffeineLevel', label: 'Coffee', unit: 'shots', multiplier: 1 },
   { name: 'foodLevel', label: 'Food', unit: 'cal', multiplier: 300 },
   { name: 'walkLevel', label: 'Walk', unit: 'km', multiplier: 1 },
-  { name: 'alcoholLevel', label: 'Alcohol', unit: 'drinks', multiplier: 1 }
+  { name: 'alcoholLevel', label: 'Alcohol', unit: 'drinks', multiplier: 1 },
+  { name: 'medication1', label: 'Zoloft', unit: 'mg', multiplier: 1 },
+  { name: 'medication2', label: 'Medication 2', unit: 'mg', multiplier: 1 },
+  { name: 'vitaminD', label: 'Vitamin D', unit: 'IU', multiplier: 100 },
+  { name: 'vitaminB12', label: 'Vitamin B12', unit: 'mcg', multiplier: 1 },
+  { name: 'vitaminC', label: 'Vitamin C', unit: 'mg', multiplier: 10 },
+  { name: 'magnesium', label: 'Magnesium', unit: 'mg', multiplier: 10 },
+  { name: 'iron', label: 'Iron', unit: 'mg', multiplier: 1 },
+  { name: 'zinc', label: 'Zinc', unit: 'mg', multiplier: 1 }
 ];
 
 export const MEDICATION_SLIDERS = [
@@ -34,7 +42,6 @@ export const EMOTION_SLIDERS = [
 export const VIEW_BUTTONS = [
   { id: 'inputs', icon: '/Plug.ico', alt: 'Plug' },
   { id: 'emotions', icon: '/Smiley face.ico', alt: 'Emotions' },
-  { id: 'medication', icon: '/Battery-block.ico', alt: 'Medication' },
   { id: 'environment', icon: '/Tree.ico', alt: 'Tree' },
   { id: 'timeline', icon: '/Notepad.ico', alt: 'Notepad' }
 ];

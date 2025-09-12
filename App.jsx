@@ -7,7 +7,7 @@ import Divider from './components/Divider';
 import CheckboxGroup from './components/CheckboxGroup';
 import Timeline from './components/Timeline';
 import { useSliderDrag } from './hooks/useSliderDrag';
-import { INPUT_SLIDERS, EMOTION_SLIDERS, MEDICATION_SLIDERS } from './utils/constants';
+import { INPUT_SLIDERS, EMOTION_SLIDERS } from './utils/constants';
 
 function App() {
   console.log("App is rendering!");
@@ -141,13 +141,6 @@ function App() {
         return (
           <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
             {renderSliderRow(EMOTION_SLIDERS, "flex-start")}
-          </div>
-        );
-      
-      case 'medication':
-        return (
-          <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
-            {renderSliderRow(MEDICATION_SLIDERS, "flex-start")}
           </div>
         );
       
