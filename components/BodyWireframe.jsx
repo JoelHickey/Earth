@@ -114,62 +114,6 @@ const BodyWireframe = ({ isAuthenticated, user, onSignIn, onSignUp, onSignOut })
 
   return (
     <div style={styles.container}>
-      {/* Authentication Section */}
-      <div style={styles.authSection}>
-        <div style={styles.authTitle}>User Account</div>
-        {isAuthenticated ? (
-          <div style={styles.authInfo}>
-            <div style={styles.userEmail}>{user?.email || 'User'}</div>
-            <button
-              style={styles.authButton}
-              onClick={onSignOut}
-              onMouseDown={handleButtonMouseDown}
-              onMouseUp={handleButtonMouseUp}
-            >
-              Sign Out
-            </button>
-          </div>
-        ) : (
-          <div>
-            <div style={styles.inputGroup}>
-              <div style={styles.inputLabel}>Username:</div>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                style={styles.input}
-              />
-            </div>
-            <div style={styles.inputGroup}>
-              <div style={styles.inputLabel}>Password:</div>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={styles.input}
-              />
-            </div>
-            <div style={styles.authButtons}>
-              <button
-                style={styles.authButton}
-                onClick={() => onSignUp(username, password)}
-                onMouseDown={handleButtonMouseDown}
-                onMouseUp={handleButtonMouseUp}
-              >
-                Create
-              </button>
-              <button
-                style={styles.authButton}
-                onClick={() => onSignIn(username, password)}
-                onMouseDown={handleButtonMouseDown}
-                onMouseUp={handleButtonMouseUp}
-              >
-                Sign In
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
 
 
     </div>

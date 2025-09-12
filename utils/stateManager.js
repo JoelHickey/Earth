@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 
 export const useAppState = () => {
   // Slider states
@@ -8,10 +8,11 @@ export const useAppState = () => {
     caffeineLevel: 0,
     waterLevel: 0,
     walkLevel: 0,
+    alcoholLevel: 0,
+    sugarLevel: 0,
     happiness: 0,
     anxiety: 0,
     energy: 0,
-    focus: 0,
     stress: 0,
     sadness: 0,
     anger: 0,
@@ -29,10 +30,12 @@ export const useAppState = () => {
     cleanliness: false
   });
 
-  const [timelineEvents, setTimelineEvents] = useState([]);
 
   // Blood sugar tracking (auto-calculated)
   const [bloodSugar, setBloodSugar] = useState(null);
+  
+  // Cortisol tracking (auto-calculated)
+  const [cortisolLevel, setCortisolLevel] = useState(0);
 
   // UI state
   const [activeView, setActiveView] = useState('inputs');
@@ -40,13 +43,14 @@ export const useAppState = () => {
   // Flag to prevent auto-update when manually adjusting emotions
   const [isManuallyAdjusting, setIsManuallyAdjusting] = useState(false);
   
-  // Saved slider positions for recall
-  const [savedSliderPositions, setSavedSliderPositions] = useState(null);
+  // User login state
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   // Slider update function
   const updateSlider = (name, value) => {
     // Check if this is an emotion slider being manually adjusted
-    const emotionSliders = ['happiness', 'anxiety', 'energy', 'focus', 'stress', 'sadness', 'anger', 'irritability', 'dread'];
+    const emotionSliders = ['happiness', 'anxiety', 'energy', 'stress', 'sadness', 'anger', 'irritability', 'dread'];
     if (emotionSliders.includes(name)) {
       setIsManuallyAdjusting(true);
       // Reset flag after a short delay
@@ -60,140 +64,48 @@ export const useAppState = () => {
     setEnvironmentCheckboxes(prev => ({ ...prev, [name]: checked }));
   };
 
-  const addTimelineEvent = (event) => {
-    setTimelineEvents(prev => [...prev, event]);
-  };
 
-  const deleteTimelineEvent = (index) => {
-    setTimelineEvents(prev => prev.filter((_, i) => i !== index));
-  };
-
-  // Blood sugar functions
-  const updateBloodSugar = (value) => {
-    setBloodSugar(value ? parseInt(value) : null);
-  };
 
   // Auto-calculate blood sugar when sliders change
-  const autoCalculateBloodSugar = () => {
+  const autoCalculateBloodSugar = useCallback(() => {
     const estimated = estimateBloodSugar();
     setBloodSugar(estimated);
-  };
+  }, [estimateBloodSugar]);
 
-  // Auto-update emotions based on input levels (only emotion sliders)
-  const autoUpdateEmotions = () => {
-    // Don't auto-update if user is manually adjusting emotions
-    if (isManuallyAdjusting) return;
-    
-    const newEmotions = { ...sliderValues };
-    
-    // Only update emotion sliders, not input sliders
-    const emotionSliders = ['happiness', 'anxiety', 'energy', 'focus', 'stress', 'sadness', 'anger', 'irritability', 'dread'];
-    
-    // Sleep Quality affects multiple emotions
-    if (sliderValues.sleepQuality > 0) {
-      // Good sleep increases happiness and energy, decreases anxiety and stress
-      newEmotions.happiness = Math.min(10, sliderValues.happiness + (sliderValues.sleepQuality * 0.3));
-      newEmotions.energy = Math.min(10, sliderValues.energy + (sliderValues.sleepQuality * 0.4));
-      newEmotions.anxiety = Math.max(0, sliderValues.anxiety - (sliderValues.sleepQuality * 0.2));
-      newEmotions.stress = Math.max(0, sliderValues.stress - (sliderValues.sleepQuality * 0.25));
-    }
-    
-    // Food Level affects energy, happiness, and irritability
-    if (sliderValues.foodLevel > 0) {
-      newEmotions.energy = Math.min(10, sliderValues.energy + (sliderValues.foodLevel * 0.2));
-      newEmotions.happiness = Math.min(10, sliderValues.happiness + (sliderValues.foodLevel * 0.15));
-      newEmotions.irritability = Math.max(0, sliderValues.irritability - (sliderValues.foodLevel * 0.3));
-    }
-    
-    // Caffeine Level affects energy, anxiety, and focus
-    if (sliderValues.caffeineLevel > 0) {
-      newEmotions.energy = Math.min(10, sliderValues.energy + (sliderValues.caffeineLevel * 0.3));
-      newEmotions.focus = Math.min(10, sliderValues.focus + (sliderValues.caffeineLevel * 0.25));
-      newEmotions.anxiety = Math.min(10, sliderValues.anxiety + (sliderValues.caffeineLevel * 0.2));
-    }
-    
-    // Water Level affects energy and focus
-    // Convert ml to cups for calculation (1 cup = 237ml)
-    const waterCups = (sliderValues.waterLevel * 300) / 237;
-    if (waterCups > 0) {
-      newEmotions.energy = Math.min(10, sliderValues.energy + (waterCups * 0.15));
-      newEmotions.focus = Math.min(10, sliderValues.focus + (waterCups * 0.2));
-    }
-    
-    // Exercise (Walk) affects mood and stress
-    const totalExercise = sliderValues.walkLevel;
-    if (totalExercise > 0) {
-      newEmotions.happiness = Math.min(10, sliderValues.happiness + (totalExercise * 0.1));
-      newEmotions.stress = Math.max(0, sliderValues.stress - (totalExercise * 0.15));
-      newEmotions.energy = Math.min(10, sliderValues.energy + (totalExercise * 0.1));
-    }
-    
-    // Blood sugar affects mood (if we have a reading)
-    if (bloodSugar) {
-      if (bloodSugar < 70) {
-        // Low blood sugar increases irritability, anxiety, and decreases energy
-        newEmotions.irritability = Math.min(10, sliderValues.irritability + 2);
-        newEmotions.anxiety = Math.min(10, sliderValues.anxiety + 1.5);
-        newEmotions.energy = Math.max(0, sliderValues.energy - 1);
-      } else if (bloodSugar > 140) {
-        // High blood sugar increases fatigue and decreases focus
-        newEmotions.energy = Math.max(0, sliderValues.energy - 1.5);
-        newEmotions.focus = Math.max(0, sliderValues.focus - 1);
-      }
-    }
-    
-    // Only update emotion sliders, preserve input sliders
-    const updatedValues = { ...sliderValues };
-    emotionSliders.forEach(emotion => {
-      updatedValues[emotion] = newEmotions[emotion];
-    });
-    
-    setSliderValues(updatedValues);
-  };
+  // Auto-calculate cortisol when sliders change
+  const autoCalculateCortisol = useCallback(() => {
+    const estimated = estimateCortisol();
+    setCortisolLevel(estimated);
+  }, [estimateCortisol]);
 
-  // Recall functions
-  const saveSliderPositions = () => {
-    setSavedSliderPositions({ ...sliderValues });
-  };
+  // Calculate blood sugar and cortisol on initial load and when sliders change
+  useEffect(() => {
+    const estimatedBloodSugar = estimateBloodSugar();
+    setBloodSugar(estimatedBloodSugar);
+    
+    const estimatedCortisol = estimateCortisol();
+    setCortisolLevel(estimatedCortisol);
+  }, [
+    sliderValues.sleepQuality,
+    sliderValues.foodLevel,
+    sliderValues.caffeineLevel,
+    sliderValues.waterLevel,
+    sliderValues.walkLevel,
+    sliderValues.alcoholLevel,
+    sliderValues.sugarLevel,
+    estimateBloodSugar,
+    estimateCortisol
+  ]);
 
-  const recallSliderPositions = () => {
-    if (savedSliderPositions) {
-      setSliderValues({ ...savedSliderPositions });
-    }
-  };
 
-  // Get current levels for display
-  const getCurrentLevels = () => {
-    const levels = {};
-    
-    // Input sliders with units
-    levels['Sleep Quality'] = `${sliderValues.sleepQuality}/10`;
-    levels['Water'] = `${Math.round(sliderValues.waterLevel * 300)}ml`;
-    levels['Coffee'] = `${Math.round(sliderValues.caffeineLevel * 95)}mg`;
-    levels['Food'] = `${Math.round(sliderValues.foodLevel * 300)}cal`;
-    levels['Walk'] = `${sliderValues.walkLevel}km`;
-    
-    // Emotion sliders
-    levels['Happiness'] = `${sliderValues.happiness}/10`;
-    levels['Anxiety'] = `${sliderValues.anxiety}/10`;
-    levels['Energy'] = `${sliderValues.energy}/10`;
-    levels['Focus'] = `${sliderValues.focus}/10`;
-    levels['Stress'] = `${sliderValues.stress}/10`;
-    levels['Sadness'] = `${sliderValues.sadness}/10`;
-    levels['Anger'] = `${sliderValues.anger}/10`;
-    levels['Irritability'] = `${sliderValues.irritability}/10`;
-    levels['Dread'] = `${sliderValues.dread}/10`;
-    
-    return levels;
-  };
 
   // Get blood sugar status
-  const getBloodSugarStatus = () => {
-    if (!bloodSugar) return { status: 'unknown', color: '#000000', message: 'No reading' };
+  const getBloodSugarStatus = (value) => {
+    if (!value) return { status: 'unknown', color: '#000000', message: 'No reading' };
     
-    if (bloodSugar < 70) {
+    if (value < 70) {
       return { status: 'low', color: '#ff0000', message: 'Low' };
-    } else if (bloodSugar > 140) {
+    } else if (value > 140) {
       return { status: 'high', color: '#ff0000', message: 'High' };
     } else {
       return { status: 'normal', color: '#008000', message: 'Normal' };
@@ -201,42 +113,156 @@ export const useAppState = () => {
   };
 
   // Estimate blood sugar based on current slider levels
-  const estimateBloodSugar = () => {
-    let estimatedLevel = 90; // Base level (normal fasting)
+  const estimateBloodSugar = useCallback(() => {
+    // Check if any sliders have been set (non-zero values)
+    const hasInputs = sliderValues.sleepQuality > 0 || sliderValues.foodLevel > 0 || 
+                      sliderValues.caffeineLevel > 0 || sliderValues.waterLevel > 0 || 
+                      sliderValues.walkLevel > 0 || sliderValues.alcoholLevel > 0 || 
+                      sliderValues.sugarLevel > 0;
     
-    // Food level impact (1 = 300 calories, 10 = 3000 calories)
-    const calories = sliderValues.foodLevel * 300; // 1 unit = 300 calories
-    const foodImpact = (calories / 3000) * 40; // Scale to max 40 points for 3000 calories
-    estimatedLevel += foodImpact;
+    // If no inputs set, return neutral baseline
+    if (!hasInputs) {
+      return 85; // Neutral blood sugar baseline
+    }
     
-    // Caffeine impact (can cause blood sugar spikes)
-    const caffeineImpact = (sliderValues.caffeineLevel / 10) * 15; // Up to 15 point spike
+    // Get current time and calculate time since last meal (6pm yesterday)
+    const now = new Date();
+    const lastMealTime = new Date();
+    lastMealTime.setHours(18, 0, 0, 0); // 6pm yesterday
+    lastMealTime.setDate(lastMealTime.getDate() - 1); // Always set to yesterday
+    const hoursSinceLastMeal = (now - lastMealTime) / (1000 * 60 * 60);
+    
+    
+    // Start with neutral baseline
+    let estimatedLevel = 85; // Neutral baseline
+    
+    // Extended fasting impact (only if food slider is explicitly set to 0)
+    if (sliderValues.foodLevel === 0 && hoursSinceLastMeal > 12) {
+      const fastingHours = hoursSinceLastMeal - 12; // Hours beyond normal fasting
+      const fastingPenalty = Math.min(fastingHours * 2, 20); // Moderate penalty for intentional fasting
+      estimatedLevel -= fastingPenalty;
+    }
+    
+    // Food level impact (positive impact when food is consumed)
+    const currentFoodCalories = sliderValues.foodLevel * 300;
+    const currentFoodImpact = (currentFoodCalories / 1000) * 15; // Moderate impact
+    estimatedLevel += currentFoodImpact;
+    
+    // Caffeine impact (moderate impact)
+    const caffeineImpact = sliderValues.caffeineLevel * 5; // Moderate impact: 5 points per shot
     estimatedLevel += caffeineImpact;
     
-    // Water level impact (dehydration can raise blood sugar)
-    // Convert ml to cups (1 cup = 237ml) for calculation
-    const waterCups = (sliderValues.waterLevel * 300) / 237; // Convert ml to cups
-    const waterImpact = ((8 - waterCups) / 8) * 10; // Dehydration adds up to 10 points (8 cups = optimal)
+    // Water level impact (dehydration penalty only when water is low)
+    const waterCups = (sliderValues.waterLevel * 300) / 237;
+    const waterImpact = ((8 - waterCups) / 8) * 5; // Moderate dehydration impact
     estimatedLevel += Math.max(0, waterImpact);
     
-    // Sleep quality impact (poor sleep raises blood sugar)
-    const sleepImpact = ((10 - sliderValues.sleepQuality) / 10) * 20; // Poor sleep adds up to 20 points
+    // Sleep quality impact (poor sleep penalty only when sleep is low)
+    const sleepImpact = ((10 - sliderValues.sleepQuality) / 10) * 8; // Moderate sleep impact
     estimatedLevel += sleepImpact;
     
     // Exercise impact (exercise lowers blood sugar)
-    const exerciseImpact = (sliderValues.walkLevel / 10) * -25; // Exercise can lower by up to 25 points
+    const exerciseImpact = (sliderValues.walkLevel / 10) * -15; // Moderate exercise impact
     estimatedLevel += exerciseImpact;
     
-    // Time since waking (blood sugar naturally rises after waking)
-    // Assuming 1h 23min awake = ~1.4 hours
-    const timeImpact = 1.4 * 5; // ~5 points per hour after waking
-    estimatedLevel += timeImpact;
+    // Alcohol impact (moderate impact)
+    const alcoholImpact = sliderValues.alcoholLevel * 6; // Moderate impact per drink
+    estimatedLevel += alcoholImpact;
     
-    // Ensure reasonable bounds
+    // Sugar impact (moderate impact)
+    const sugarGrams = sliderValues.sugarLevel * 10; // Convert slider to grams
+    const sugarImpact = sugarGrams * 1.5; // Moderate impact: 1.5 points per gram
+    estimatedLevel += sugarImpact;
+    
+    
+    // Ensure reasonable bounds (60-180 mg/dL)
     estimatedLevel = Math.max(60, Math.min(180, estimatedLevel));
     
     return Math.round(estimatedLevel);
-  };
+  }, []);
+
+  // Estimate cortisol based on stress, anxiety, sleep, fasting, and time factors
+  const estimateCortisol = useCallback(() => {
+    // Check if any sliders have been set (non-zero values)
+    const hasInputs = sliderValues.sleepQuality > 0 || sliderValues.foodLevel > 0 || 
+                      sliderValues.caffeineLevel > 0 || sliderValues.waterLevel > 0 || 
+                      sliderValues.walkLevel > 0 || sliderValues.alcoholLevel > 0 || 
+                      sliderValues.sugarLevel > 0;
+    
+    // If no inputs set, return neutral baseline
+    if (!hasInputs) {
+      return 12; // Neutral cortisol baseline
+    }
+    
+    // Get current time for circadian rhythm calculation
+    const now = new Date();
+    const currentHour = now.getHours();
+    
+    // Calculate time since last meal (assuming last meal was at 6pm yesterday)
+    const lastMealTime = new Date();
+    lastMealTime.setHours(18, 0, 0, 0); // 6pm yesterday
+    lastMealTime.setDate(lastMealTime.getDate() - 1); // Always set to yesterday
+    const hoursSinceLastMeal = (now - lastMealTime) / (1000 * 60 * 60);
+    
+    // Start with circadian baseline (varies by time of day)
+    let estimatedCortisol;
+    if (currentHour >= 6 && currentHour <= 10) {
+      estimatedCortisol = 18; // Morning peak (6-10 AM)
+    } else if (currentHour >= 11 && currentHour <= 15) {
+      estimatedCortisol = 15; // Afternoon moderate (11 AM - 3 PM)
+    } else if (currentHour >= 16 && currentHour <= 20) {
+      estimatedCortisol = 12; // Evening lower (4-8 PM)
+    } else {
+      estimatedCortisol = 8; // Night lowest (9 PM - 5 AM)
+    }
+    
+    // Fasting impact (only if food slider is explicitly set to 0)
+    if (sliderValues.foodLevel === 0 && hoursSinceLastMeal > 12) {
+      const fastingHours = hoursSinceLastMeal - 12; // Hours beyond normal fasting
+      const fastingImpact = Math.min(fastingHours * 1.5, 10); // Moderate impact for intentional fasting
+      estimatedCortisol += fastingImpact;
+    }
+    
+    // Note: Not using emotion sliders (stress, anxiety) for cortisol calculation
+    
+    // Sleep quality impact (poor sleep raises cortisol)
+    const sleepImpact = ((10 - sliderValues.sleepQuality) / 10) * 6; // Moderate sleep impact
+    estimatedCortisol += sleepImpact;
+    
+    // Caffeine impact (caffeine raises cortisol)
+    const caffeineImpact = sliderValues.caffeineLevel * 3; // Moderate impact: 3 points per shot
+    estimatedCortisol += caffeineImpact;
+    
+    // Exercise impact (moderate exercise can raise cortisol initially)
+    const exerciseImpact = (sliderValues.walkLevel / 10) * 2; // Moderate exercise impact
+    estimatedCortisol += exerciseImpact;
+    
+    // Alcohol impact (alcohol can initially lower cortisol)
+    const alcoholImpact = sliderValues.alcoholLevel * -2; // Moderate alcohol impact
+    estimatedCortisol += alcoholImpact;
+    
+    // Sugar impact (sugar spikes can cause stress response)
+    const sugarGrams = sliderValues.sugarLevel * 10; // Convert slider to grams
+    const sugarImpact = sugarGrams * 0.5; // Moderate cortisol impact: 0.5 points per gram
+    estimatedCortisol += sugarImpact;
+    
+    // Water level impact (dehydration can raise cortisol)
+    const waterCups = (sliderValues.waterLevel * 300) / 237;
+    const waterImpact = ((8 - waterCups) / 8) * 4; // Moderate dehydration impact
+    estimatedCortisol += Math.max(0, waterImpact);
+    
+    // Food level impact (fasting raises cortisol)
+    const foodImpact = ((10 - sliderValues.foodLevel) / 10) * 3; // Moderate fasting impact
+    estimatedCortisol += foodImpact;
+    
+    // Note: Not using emotion sliders (anger, irritability, dread, energy) for cortisol calculation
+    
+    // Ensure reasonable bounds (6-30 μg/dL)
+    estimatedCortisol = Math.max(6, Math.min(30, estimatedCortisol));
+    
+    
+    return Math.round(estimatedCortisol);
+  }, []);
 
   // Calculate output value
   const outputValue = useMemo(() => {
@@ -253,7 +279,6 @@ export const useAppState = () => {
     value += (sliderValues.happiness / 10) * 2;
     value += (sliderValues.anxiety / 10) * -1.5;
     value += (sliderValues.energy / 10) * 1;
-    value += (sliderValues.focus / 10) * 1;
     value += (sliderValues.stress / 10) * -1;
     value += (sliderValues.sadness / 10) * -1;
     value += (sliderValues.anger / 10) * -1;
@@ -268,8 +293,6 @@ export const useAppState = () => {
     if (environmentCheckboxes.airQuality) value += 0.4;
     if (environmentCheckboxes.cleanliness) value += 0.3;
     
-    // Timeline factors (simplified for now)
-    if (timelineEvents.length > 0) value += 0.1;
     
     // Ensure output starts at 0 for new users
     const finalValue = Math.max(0, Math.min(10, value));
@@ -277,35 +300,42 @@ export const useAppState = () => {
     // If all inputs are at default (0/false), return 0
     const allSlidersAtZero = Object.values(sliderValues).every(val => val === 0);
     const allCheckboxesFalse = Object.values(environmentCheckboxes).every(val => val === false);
-    const noTimelineEvents = timelineEvents.length === 0;
     
-    if (allSlidersAtZero && allCheckboxesFalse && noTimelineEvents) {
+    if (allSlidersAtZero && allCheckboxesFalse) {
       return 0;
     }
     
     return finalValue;
-  }, [sliderValues, environmentCheckboxes, timelineEvents]);
+  }, [sliderValues, environmentCheckboxes]);
+
+  // Login functions
+  const closeLoginDialog = () => setShowLoginDialog(false);
+  const login = (username, password) => {
+    // Simple login validation (in real app, this would check against server)
+    if (username && password) {
+      setCurrentUser(username);
+      setShowLoginDialog(false);
+    }
+  };
 
   return {
     sliderValues,
     updateSlider,
     environmentCheckboxes,
     updateEnvironmentCheckbox,
-    timelineEvents,
-    addTimelineEvent,
-    deleteTimelineEvent,
     activeView,
     setActiveView,
     outputValue,
     bloodSugar,
-    updateBloodSugar,
     getBloodSugarStatus,
-    estimateBloodSugar,
     autoCalculateBloodSugar,
-    autoUpdateEmotions,
-    saveSliderPositions,
-    recallSliderPositions,
-    hasSavedPositions: savedSliderPositions !== null,
-    getCurrentLevels
+    cortisolLevel,
+    autoCalculateCortisol,
+    currentUser,
+    showLoginDialog,
+    closeLoginDialog,
+    login,
+    isLoggedIn: !!currentUser,
+    logout: () => setCurrentUser(null)
   };
 };
