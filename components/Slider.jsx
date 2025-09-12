@@ -50,8 +50,8 @@ const Slider = ({
     },
     input: {
       width: "50px",
-      height: "18px",
-      fontSize: "10px",
+      height: "14px",
+      fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
       border: "2px inset #c0c0c0",
       background: "#ffffff",
@@ -62,7 +62,7 @@ const Slider = ({
       boxSizing: "border-box"
     },
     label: {
-      fontSize: "10px",
+      fontSize: "8px",
       textAlign: "center",
       marginTop: "4px",
       fontFamily: "'MS Sans Serif', sans-serif",

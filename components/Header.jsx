@@ -5,27 +5,29 @@ const Header = () => {
     header: {
       background: "linear-gradient(90deg, #000080 0%, #1084d0 100%)",
       color: "#ffffff",
-      padding: "4px",
-      fontSize: "12px",
+      padding: "2px 4px",
+      fontSize: "8px",
       fontWeight: "bold",
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      borderBottom: "1px solid #808080"
+      borderBottom: "1px solid #808080",
+      height: "19px",
+      boxSizing: "border-box"
     },
     closeButton: {
-      width: "24px",
-      height: "22px",
+      width: "16px",
+      height: "14px",
       background: "#d4d0c8",
-      borderTop: "2px solid #ffffff",
-      borderLeft: "2px solid #ffffff",
-      borderBottom: "2px solid #808080",
-      borderRight: "2px solid #808080",
+      borderTop: "1px solid #ffffff",
+      borderLeft: "1px solid #ffffff",
+      borderBottom: "1px solid #808080",
+      borderRight: "1px solid #808080",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontSize: "10px",
+      fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000",
       padding: "0",
@@ -35,18 +37,18 @@ const Header = () => {
   };
 
   const handleCloseButtonMouseDown = (e) => {
-    e.target.style.borderTop = "2px solid #808080";
-    e.target.style.borderLeft = "2px solid #808080";
-    e.target.style.borderBottom = "2px solid #ffffff";
-    e.target.style.borderRight = "2px solid #ffffff";
+    e.target.style.borderTop = "1px solid #808080";
+    e.target.style.borderLeft = "1px solid #808080";
+    e.target.style.borderBottom = "1px solid #ffffff";
+    e.target.style.borderRight = "1px solid #ffffff";
     e.target.style.background = "#c0c0c0";
   };
 
   const handleCloseButtonMouseUp = (e) => {
-    e.target.style.borderTop = "2px solid #ffffff";
-    e.target.style.borderLeft = "2px solid #ffffff";
-    e.target.style.borderBottom = "2px solid #808080";
-    e.target.style.borderRight = "2px solid #808080";
+    e.target.style.borderTop = "1px solid #ffffff";
+    e.target.style.borderLeft = "1px solid #ffffff";
+    e.target.style.borderBottom = "1px solid #808080";
+    e.target.style.borderRight = "1px solid #808080";
     e.target.style.background = "#d4d0c8";
   };
 

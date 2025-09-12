@@ -20,7 +20,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       borderLeft: "2px solid #ffffff",
       borderBottom: "2px solid #808080",
       borderRight: "2px solid #808080",
-      fontSize: "10px",
+      fontSize: "8px",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
@@ -44,7 +44,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       display: "flex",
       alignItems: "center",
       padding: "0",
-      fontSize: "10px",
+      fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
       marginLeft: "8px",
       boxSizing: "border-box",
@@ -80,7 +80,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       display: "flex",
       alignItems: "center",
       padding: "0",
-      fontSize: "10px",
+      fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
       marginLeft: "8px",
       boxSizing: "border-box",
@@ -164,7 +164,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
             ...styles.button,
             width: "auto",
             padding: "0 6px",
-            fontSize: "9px"
+            fontSize: "8px"
           }}
           onMouseDown={handleButtonMouseDown}
           onMouseUp={handleButtonMouseUp}
@@ -178,7 +178,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
             ...styles.button,
             width: "auto",
             padding: "0 6px",
-            fontSize: "9px",
+            fontSize: "8px",
             background: hasSavedPositions ? "#d4d0c8" : "#c0c0c0",
             cursor: hasSavedPositions ? "pointer" : "not-allowed",
             color: hasSavedPositions ? "#000000" : "#808080"
@@ -193,7 +193,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       <div style={styles.healthIndicators}>
         <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
           <span style={{ 
-            fontSize: "9px", 
+            fontSize: "8px", 
             fontFamily: "'MS Sans Serif', sans-serif",
             color: "#000000"
           }}>

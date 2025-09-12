@@ -12,7 +12,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       padding: "8px"
     },
     header: {
-      fontSize: "12px",
+      fontSize: "8px",
       fontWeight: "bold",
       color: "#000000",
       fontFamily: "'MS Sans Serif', sans-serif",
@@ -33,7 +33,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       padding: "4px",
       background: "#ffffff",
       border: "1px inset #c0c0c0",
-      fontSize: "10px",
+      fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif"
     },
     timeStamp: {
@@ -73,7 +73,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
     timeInput: {
       width: "60px",
       height: "16px",
-      fontSize: "10px",
+      fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
       border: "1px inset #c0c0c0",
       background: "#ffffff",
@@ -82,7 +82,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
     eventInput: {
       flex: 1,
       height: "16px",
-      fontSize: "10px",
+      fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
       border: "1px inset #c0c0c0",
       background: "#ffffff",
@@ -97,7 +97,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
       borderBottom: "2px solid #808080",
       borderRight: "2px solid #808080",
       cursor: "pointer",
-      fontSize: "10px",
+      fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000",
       fontWeight: "normal",
@@ -132,7 +132,7 @@ const Timeline = ({ events = [], onAddEvent, onDeleteEvent }) => {
             padding: "16px", 
             textAlign: "center", 
             color: "#808080", 
-            fontSize: "10px",
+            fontSize: "8px",
             fontFamily: "'MS Sans Serif', sans-serif"
           }}>
             No events recorded yet. Add your first event below.
