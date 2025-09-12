@@ -6,6 +6,7 @@ import StatusBar from './components/StatusBar';
 import Divider from './components/Divider';
 import CheckboxGroup from './components/CheckboxGroup';
 import Timeline from './components/Timeline';
+import { useSliderDrag } from './hooks/useSliderDrag';
 import { INPUT_SLIDERS, EMOTION_SLIDERS } from './utils/constants';
 
 function App() {
@@ -54,6 +55,8 @@ function App() {
   const handleSliderChange = (name, value) => {
     setSliderValues(prev => ({ ...prev, [name]: value }));
   };
+
+  const handleSliderMouseDown = useSliderDrag();
 
   // Add functions for Save/Recall functionality
   const saveSliderPositions = () => {
@@ -105,6 +108,7 @@ function App() {
           <Slider
             value={sliderValues[slider.name]}
             onChange={(value) => handleSliderChange(slider.name, value)}
+            onMouseDown={handleSliderMouseDown}
             label={slider.label}
             unit={slider.unit}
             multiplier={slider.multiplier}
