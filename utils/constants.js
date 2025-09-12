@@ -34,7 +34,7 @@ export const EMOTION_SLIDERS = [
 // View button configurations
 export const VIEW_BUTTONS = [
   { id: 'inputs', icon: '/Plug.ico', alt: 'Plug' },
-  { id: 'emotions', icon: '/Smiley face.ico', alt: 'Emotions' },
+  { id: 'emotions', icon: '/Volume Controls.ico', alt: 'Emotions' },
   { id: 'medication', icon: '/Battery-block.ico', alt: 'Medication' },
   { id: 'environment', icon: '/Tree.ico', alt: 'Tree' },
   { id: 'timeline', icon: '/Notepad.ico', alt: 'Notepad' }
