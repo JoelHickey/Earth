@@ -20,7 +20,7 @@ function App() {
   // Add state for sliders
   const [sliderValues, setSliderValues] = useState({
     sleepQuality: 5,
-    sleepDuration: 8, // Default to 8 hours
+    sleepDuration: 0, // Default to 0 hours
     waterLevel: 5,
     caffeineLevel: 5,
     foodLevel: 5,
