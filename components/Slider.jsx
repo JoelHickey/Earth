@@ -50,13 +50,13 @@ const Slider = ({
     },
     input: {
       width: "50px",
-      height: "14px",
+      height: "16px",
       fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
       border: "2px inset #c0c0c0",
       background: "#ffffff",
       textAlign: "center",
-      padding: "1px 2px",
+      padding: "2px",
       marginTop: "16px",
       boxShadow: "inset 1px 1px #808080, inset -1px -1px #ffffff",
       boxSizing: "border-box"
