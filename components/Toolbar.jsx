@@ -72,6 +72,12 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       gap: "8px",
       marginLeft: "auto"
     },
+    healthBars: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-end",
+      gap: "2px"
+    },
     bloodSugarBar: {
       width: "126px",
       height: "8px",
@@ -226,32 +232,34 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       </div>
       
       <div style={styles.healthIndicators}>
-        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-          <span style={{ 
-            fontSize: "8px", 
-            fontFamily: "'MS Sans Serif', sans-serif",
-            color: "#000000"
-          }}>
-            Output:
-          </span>
-          <div style={styles.outputBar}>
-            <div style={styles.outputFill} />
+        <div style={styles.healthBars}>
+          <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+            <span style={{ 
+              fontSize: "8px", 
+              fontFamily: "'MS Sans Serif', sans-serif",
+              color: "#000000"
+            }}>
+              Output:
+            </span>
+            <div style={styles.outputBar}>
+              <div style={styles.outputFill} />
+            </div>
           </div>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-          <span style={styles.bloodSugarLabel}>
-            Blood Sugar:
-          </span>
-          <div style={styles.bloodSugarBar}>
-            <div style={styles.bloodSugarFill} />
+          <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+            <span style={styles.bloodSugarLabel}>
+              Blood Sugar:
+            </span>
+            <div style={styles.bloodSugarBar}>
+              <div style={styles.bloodSugarFill} />
+            </div>
           </div>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-          <span style={styles.cortisolLabel}>
-            Cortisol:
-          </span>
-          <div style={styles.cortisolBar}>
-            <div style={styles.cortisolFill} />
+          <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+            <span style={styles.cortisolLabel}>
+              Cortisol:
+            </span>
+            <div style={styles.cortisolBar}>
+              <div style={styles.cortisolFill} />
+            </div>
           </div>
         </div>
         <button
