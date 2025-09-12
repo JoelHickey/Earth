@@ -6,8 +6,7 @@ export const INPUT_SLIDERS = [
   { name: 'caffeineLevel', label: 'Coffee', unit: 'shots', multiplier: 1 },
   { name: 'foodLevel', label: 'Food', unit: 'cal', multiplier: 300 },
   { name: 'walkLevel', label: 'Walk', unit: 'km', multiplier: 1 },
-  { name: 'alcoholLevel', label: 'Alcohol', unit: 'drinks', multiplier: 1 },
-  { name: 'sugarLevel', label: 'Sugar', unit: 'g', multiplier: 10 }
+  { name: 'alcoholLevel', label: 'Alcohol', unit: 'drinks', multiplier: 1 }
 ];
 
 export const MEDICATION_SLIDERS = [

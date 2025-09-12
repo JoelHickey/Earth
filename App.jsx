@@ -28,7 +28,6 @@ function App() {
     foodLevel: 0,
     walkLevel: 0,
     alcoholLevel: 0,
-    sugarLevel: 0,
     medication1: 0,
     medication2: 0,
     vitaminD: 0,
