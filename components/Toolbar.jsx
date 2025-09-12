@@ -13,8 +13,8 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       borderTop: "1px solid #ffffff"
     },
     button: {
-      width: "24px",
-      height: "22px",
+      width: "32px",
+      height: "28px",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
       borderLeft: "2px solid #ffffff",
@@ -180,7 +180,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
           onMouseDown={handleButtonMouseDown}
           onMouseUp={handleButtonMouseUp}
         >
-          <img src={icon} alt={alt} style={{ width: "14px", height: "14px" }} />
+          <img src={icon} alt={alt} style={{ width: "18px", height: "18px" }} />
         </button>
       ))}
       
