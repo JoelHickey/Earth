@@ -1,7 +1,7 @@
 // Slider configurations
 export const INPUT_SLIDERS = [
   { name: 'sleepQuality', label: 'Sleep Quality' },
-  { name: 'sleepDuration', label: 'Sleep Duration', unit: 'hrs', multiplier: 0.5 },
+  { name: 'sleepDuration', label: 'Sleep Duration', unit: 'hrs', multiplier: 1 },
   { name: 'waterLevel', label: 'Water', unit: 'ml', multiplier: 300 },
   { name: 'caffeineLevel', label: 'Coffee', unit: 'shots', multiplier: 1 },
   { name: 'foodLevel', label: 'Food', unit: 'cal', multiplier: 300 },
