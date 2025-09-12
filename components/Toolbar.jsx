@@ -130,7 +130,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
     cortisolFill: {
       height: "100%",
       width: `${(cortisolLevel / 10) * 100}%`,
-      background: "#0000ff", // Always blue
+      background: "#000000", // Always black
       position: "absolute",
       left: "0",
       top: "0",
