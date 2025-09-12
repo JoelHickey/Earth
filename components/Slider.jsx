@@ -86,7 +86,7 @@ const Slider = ({
           <div
             style={{
               ...styles.sliderThumb,
-              top: `calc(100% - ${(value / 10) * 100}% - 10px)`
+              top: `${Math.max(0, Math.min(180, (10 - value) * 18))}px`
             }}
             onMouseDown={(e) => onMouseDown(e, onChange, value)}
           />
