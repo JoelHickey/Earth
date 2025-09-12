@@ -101,12 +101,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
         const normalized = Math.max(0, Math.min(100, ((bloodSugar - 60) / 120) * 100));
         return `${normalized}%`;
       })(),
-      background: (() => {
-        if (!bloodSugar) return "transparent";
-        if (bloodSugar < 70) return "#ff0000"; // Low - Red
-        if (bloodSugar > 140) return "#ff0000"; // High - Red
-        return "#008000"; // Normal - Green
-      })(),
+      background: "#ff0000", // Always red
       position: "absolute",
       left: "0",
       top: "0",
