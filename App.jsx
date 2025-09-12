@@ -7,7 +7,7 @@ import Divider from './components/Divider';
 import CheckboxGroup from './components/CheckboxGroup';
 import Timeline from './components/Timeline';
 import { useSliderDrag } from './hooks/useSliderDrag';
-import { INPUT_SLIDERS, EMOTION_SLIDERS } from './utils/constants';
+import { INPUT_SLIDERS, EMOTION_SLIDERS, MEDICATION_SLIDERS } from './utils/constants';
 
 function App() {
   console.log("App is rendering!");
@@ -29,6 +29,14 @@ function App() {
     walkLevel: 0,
     alcoholLevel: 0,
     sugarLevel: 0,
+    medication1: 0,
+    medication2: 0,
+    vitaminD: 0,
+    vitaminB12: 0,
+    vitaminC: 0,
+    magnesium: 0,
+    iron: 0,
+    zinc: 0,
     happiness: 0,
     anxiety: 0,
     energy: 0,
@@ -134,6 +142,13 @@ function App() {
         return (
           <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
             {renderSliderRow(EMOTION_SLIDERS, "flex-start")}
+          </div>
+        );
+      
+      case 'medication':
+        return (
+          <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
+            {renderSliderRow(MEDICATION_SLIDERS, "flex-start")}
           </div>
         );
       
