@@ -5,7 +5,7 @@ const Slider = ({
   onChange, 
   onMouseDown, 
   label, 
-  width = "65px",
+  width = "50px",
   gap = "2px",
   caffeineMg = null,
   waterMl = null,
@@ -49,7 +49,7 @@ const Slider = ({
       fontFamily: "'MS Sans Serif', sans-serif"
     },
     input: {
-      width: "50px",
+      width: "40px",
       height: "16px",
       fontSize: "8px",
       fontFamily: "'MS Sans Serif', sans-serif",
