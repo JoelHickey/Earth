@@ -5,7 +5,7 @@ const Slider = ({
   onChange, 
   onMouseDown, 
   label, 
-  width = "50px",
+  width = "55px",
   gap = "2px",
   caffeineMg = null,
   waterMl = null,
