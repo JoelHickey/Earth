@@ -34,6 +34,8 @@ function App() {
     vitaminC: 0,
     magnesium: 0,
     lTheanine: 0,
+    thc: 0,
+    cbd: 0,
     happiness: 0,
     anxiety: 0,
     energy: 0,

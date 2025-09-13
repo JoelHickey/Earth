@@ -12,7 +12,9 @@ export const INPUT_SLIDERS = [
   { name: 'vitaminB12', label: 'Vitamin B12', unit: 'mcg', multiplier: 1 },
   { name: 'vitaminC', label: 'Vitamin C', unit: 'mg', multiplier: 10 },
   { name: 'magnesium', label: 'Magnesium', unit: 'mg', multiplier: 10 },
-  { name: 'lTheanine', label: 'L-Theanine', unit: 'mg', multiplier: 1 }
+  { name: 'lTheanine', label: 'L-Theanine', unit: 'mg', multiplier: 1 },
+  { name: 'thc', label: 'THC', unit: 'mg', multiplier: 1 },
+  { name: 'cbd', label: 'CBD', unit: 'mg', multiplier: 1 }
 ];
 
 export const MEDICATION_SLIDERS = [
