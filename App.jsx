@@ -175,7 +175,7 @@ function App() {
   // Styles matching original
   const styles = {
     mainWindow: {
-      width: "900px",
+      width: "750px",
       height: "fit-content",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
