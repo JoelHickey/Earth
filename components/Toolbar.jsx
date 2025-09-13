@@ -256,11 +256,11 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
             ...styles.button,
             marginLeft: "8px"
           }}
-          onClick={() => console.log("Health button clicked")}
+          onClick={() => console.log("Login button clicked")}
           onMouseDown={handleButtonMouseDown}
           onMouseUp={handleButtonMouseUp}
         >
-          Health
+          Login
         </button>
       </div>
     </div>
