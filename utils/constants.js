@@ -11,7 +11,8 @@ export const INPUT_SLIDERS = [
   { name: 'vitaminD', label: 'Vitamin D', unit: 'IU', multiplier: 100 },
   { name: 'vitaminB12', label: 'Vitamin B12', unit: 'mcg', multiplier: 1 },
   { name: 'vitaminC', label: 'Vitamin C', unit: 'mg', multiplier: 10 },
-  { name: 'magnesium', label: 'Magnesium', unit: 'mg', multiplier: 10 }
+  { name: 'magnesium', label: 'Magnesium', unit: 'mg', multiplier: 10 },
+  { name: 'lTheanine', label: 'L-Theanine', unit: 'mg', multiplier: 1 }
 ];
 
 export const MEDICATION_SLIDERS = [
