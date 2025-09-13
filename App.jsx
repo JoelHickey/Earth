@@ -59,6 +59,10 @@ function App() {
 
   // Add state for timeline events
   const [timelineEvents, setTimelineEvents] = useState([]);
+  
+  // Design system state
+  const [activeTab, setActiveTab] = useState('design');
+  const [activeSubTab, setActiveSubTab] = useState('foundation');
 
   const handleSliderChange = (name, value) => {
     setSliderValues(prev => ({ ...prev, [name]: value }));
@@ -167,6 +171,104 @@ function App() {
               onAddEvent={addTimelineEvent}
               onDeleteEvent={deleteTimelineEvent}
             />
+          </div>
+        );
+      
+      case 'design':
+        return (
+          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
+            <div style={{ width: "100%", background: "#d4d0c8", border: "2px inset #c0c0c0", padding: "8px" }}>
+              {/* Windows 95 Style Tabs */}
+              <div style={{
+                display: "flex",
+                background: "#c0c0c0",
+                borderBottom: "1px solid #808080",
+                marginBottom: "8px"
+              }}>
+                <button
+                  onClick={() => setActiveTab('design')}
+                  style={{
+                    background: activeTab === 'design' ? "#d4d0c8" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'design' ? "1px solid #d4d0c8" : "1px solid #808080",
+                    padding: "4px 12px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "2px"
+                  }}
+                >
+                  Design Guide
+                </button>
+                <button
+                  onClick={() => setActiveTab('dev')}
+                  style={{
+                    background: activeTab === 'dev' ? "#d4d0c8" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'dev' ? "1px solid #d4d0c8" : "1px solid #808080",
+                    padding: "4px 12px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer"
+                  }}
+                >
+                  Developer Specs
+                </button>
+              </div>
+
+              {/* Design System Content */}
+              {activeTab === 'design' && (
+                <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
+                  <h3 style={{ margin: "0 0 8px 0", fontSize: "10px" }}>🎨 Windows 95 Design System</h3>
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Colors:</strong><br/>
+                    • Background: #d4d0c8<br/>
+                    • Light Grey: #c0c0c0<br/>
+                    • Dark Grey: #808080<br/>
+                    • White: #ffffff<br/>
+                    • Black: #000000
+                  </div>
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Typography:</strong><br/>
+                    • Font: MS Sans Serif<br/>
+                    • Sizes: 8px, 9px, 10px, 11px, 12px
+                  </div>
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Components:</strong><br/>
+                    • Buttons: 2px outset/inset borders<br/>
+                    • Windows: 2px outset borders<br/>
+                    • Title bars: 19px height<br/>
+                    • Status bars: 22px height
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'dev' && (
+                <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
+                  <h3 style={{ margin: "0 0 8px 0", fontSize: "10px" }}>⚙️ Developer Specifications</h3>
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Window Structure:</strong><br/>
+                    • Main Window: 1000px × 300px<br/>
+                    • Header: 19px height<br/>
+                    • Toolbar: Auto height<br/>
+                    • Content: 300px height<br/>
+                    • Status Bar: 22px height
+                  </div>
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Components:</strong><br/>
+                    • Sliders: 55px width, 150px height<br/>
+                    • Buttons: 32px × 28px<br/>
+                    • Inputs: 40px width, 16px height
+                  </div>
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Layout:</strong><br/>
+                    • Flexbox with Windows 95 styling<br/>
+                    • Consistent 2px gaps<br/>
+                    • Overflow: auto for scrolling
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         );
       
