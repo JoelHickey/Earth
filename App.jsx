@@ -33,8 +33,6 @@ function App() {
     vitaminB12: 0,
     vitaminC: 0,
     magnesium: 0,
-    iron: 0,
-    zinc: 0,
     happiness: 0,
     anxiety: 0,
     energy: 0,
