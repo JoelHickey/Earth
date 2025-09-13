@@ -139,7 +139,7 @@ function App() {
       
       case 'emotions':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
+          <div style={{ padding: "8px", width: "100%", height: "400px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
             {renderSliderRow(EMOTION_SLIDERS, "flex-start")}
           </div>
         );
@@ -154,14 +154,14 @@ function App() {
           { name: 'cleanliness', label: 'Cleanliness', checked: environmentCheckboxes.cleanliness, onChange: (checked) => updateEnvironmentCheckbox('cleanliness', checked) }
         ];
         return (
-          <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
+          <div style={{ padding: "8px", width: "100%", height: "400px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
             <CheckboxGroup checkboxes={environmentCheckboxConfig} columns={3} />
           </div>
         );
       
       case 'timeline':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "250px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "hidden" }}>
+          <div style={{ padding: "8px", width: "100%", height: "400px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
             <Timeline 
               events={timelineEvents}
               onAddEvent={addTimelineEvent}
