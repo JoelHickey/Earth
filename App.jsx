@@ -228,7 +228,7 @@ function App() {
                     marginRight: "2px"
                   }}
                 >
-                  Portfolio Strategy
+                  Program Strategy
                 </button>
                 <button
                   onClick={() => setActiveTab('design')}
@@ -278,7 +278,7 @@ function App() {
               {/* Design System Content */}
               {activeTab === 'portfolio' && (
                 <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
-                  <h3 style={{ margin: "0 0 8px 0", fontSize: "10px" }}>📋 Portfolio / Program Strategy</h3>
+                  <h3 style={{ margin: "0 0 8px 0", fontSize: "10px" }}>📋 Program Strategy</h3>
                   
                   <div style={{ marginBottom: "8px" }}>
                     <strong>Resource Allocation Strategy:</strong><br/>
