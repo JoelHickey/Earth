@@ -201,6 +201,20 @@ function App() {
                   Design Guide
                 </button>
                 <button
+                  onClick={() => setActiveTab('mission')}
+                  style={{
+                    background: activeTab === 'mission' ? "#d4d0c8" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'mission' ? "1px solid #d4d0c8" : "1px solid #808080",
+                    padding: "4px 12px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer"
+                  }}
+                >
+                  Company Mission
+                </button>
+                <button
                   onClick={() => setActiveTab('business')}
                   style={{
                     background: activeTab === 'business' ? "#d4d0c8" : "#c0c0c0",
@@ -267,6 +281,59 @@ function App() {
                     • Windows: 2px outset borders<br/>
                     • Title bars: 19px height<br/>
                     • Status bars: 22px height
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'mission' && (
+                <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
+                  <h3 style={{ margin: "0 0 8px 0", fontSize: "10px" }}>🎯 Company Mission & Purpose</h3>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Company Mission:</strong><br/>
+                    To democratize mental health awareness by creating technology that 
+                    makes wellness tracking accessible, private, and genuinely helpful 
+                    for everyone, regardless of their technical expertise or financial means.
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Organizational Purpose:</strong><br/>
+                    We exist to bridge the gap between modern mental health science 
+                    and everyday people who need simple, reliable tools to understand 
+                    and improve their wellbeing without compromising their privacy.
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Long-Term Ambition:</strong><br/>
+                    To become the most trusted name in private mental health technology, 
+                    empowering millions of people worldwide to take control of their 
+                    mental wellness through intuitive, secure, and scientifically-backed tools.
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Core Beliefs:</strong><br/>
+                    • Mental health is a fundamental human right<br/>
+                    • Privacy should never be compromised for convenience<br/>
+                    • Technology should serve people, not exploit them<br/>
+                    • Simple solutions are often the most powerful<br/>
+                    • Everyone deserves access to quality mental health tools
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Why We Exist:</strong><br/>
+                    Current mental health apps prioritize data collection over user benefit, 
+                    use addictive design patterns, and often fail to respect user privacy. 
+                    We believe there's a better way: technology that genuinely helps people 
+                    understand themselves while keeping their data secure and local.
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Impact Vision:</strong><br/>
+                    In 10 years, we envision a world where mental health awareness is 
+                    as common as physical fitness tracking, where people have the tools 
+                    and knowledge to maintain their wellbeing proactively, and where 
+                    technology serves as a genuine ally in mental health rather than 
+                    a source of anxiety or exploitation.
                   </div>
                 </div>
               )}
