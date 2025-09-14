@@ -165,7 +165,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
 
   return (
     <div style={styles.viewSwitcher}>
-      {viewButtons.map(({ id, icon, alt }) => (
+      {viewButtons.map(({ id, icon, alt, text }) => (
         <button
           key={id}
           style={{
@@ -176,7 +176,13 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
           onMouseDown={handleButtonMouseDown}
           onMouseUp={handleButtonMouseUp}
         >
-          <img src={icon} alt={alt} style={{ width: "18px", height: "18px" }} />
+          {text ? (
+            <span style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
+              {text}
+            </span>
+          ) : (
+            <img src={icon} alt={alt} style={{ width: "18px", height: "18px" }} />
+          )}
         </button>
       ))}
       
