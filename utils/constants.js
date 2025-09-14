@@ -19,16 +19,14 @@ export const INPUT_SLIDERS = [
 
 export const MEDICATION_SLIDERS = [
   { name: 'medication1', label: 'Zoloft', unit: 'mg', multiplier: 1 },
-  { name: 'medication2', label: 'Medication 2', unit: 'mg', multiplier: 1 },
   { name: 'vitaminD', label: 'Vitamin D', unit: 'IU', multiplier: 100 },
   { name: 'vitaminB12', label: 'Vitamin B', unit: 'mcg', multiplier: 1 },
   { name: 'vitaminC', label: 'Vitamin C', unit: 'mg', multiplier: 10 },
-  { name: 'magnesium', label: 'Magnesium', unit: 'mg', multiplier: 10 },
-  { name: 'iron', label: 'Iron', unit: 'mg', multiplier: 1 },
-  { name: 'zinc', label: 'Zinc', unit: 'mg', multiplier: 1 }
+  { name: 'magnesium', label: 'Magnesium', unit: 'mg', multiplier: 10 }
 ];
 
 export const EMOTION_SLIDERS = [
+  { name: 'happiness', label: 'Happiness' },
   { name: 'anxiety', label: 'Anxiety' },
   { name: 'stress', label: 'Stress' },
   { name: 'energy', label: 'Energy' },
