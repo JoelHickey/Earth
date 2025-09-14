@@ -161,7 +161,8 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
     }
   };
 
-  const viewButtons = VIEW_BUTTONS;
+  const viewButtons = VIEW_BUTTONS.filter(button => button.id !== 'design');
+  const aboutButton = VIEW_BUTTONS.find(button => button.id === 'design');
 
   return (
     <div style={styles.viewSwitcher}>
@@ -236,6 +237,19 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
           onMouseUp={handleButtonMouseUp}
         >
           Login
+        </button>
+        <button
+          style={{
+            ...styles.button,
+            width: "auto",
+            padding: "0 6px",
+            fontSize: "8px"
+          }}
+          onClick={() => setActiveView(aboutButton.id)}
+          onMouseDown={handleButtonMouseDown}
+          onMouseUp={handleButtonMouseUp}
+        >
+          {aboutButton.text}
         </button>
       </div>
       
