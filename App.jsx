@@ -216,6 +216,21 @@ function App() {
                   Business Strategy
                 </button>
                 <button
+                  onClick={() => setActiveTab('portfolio')}
+                  style={{
+                    background: activeTab === 'portfolio' ? "#d4d0c8" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'portfolio' ? "1px solid #d4d0c8" : "1px solid #808080",
+                    padding: "4px 12px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "2px"
+                  }}
+                >
+                  Portfolio Strategy
+                </button>
+                <button
                   onClick={() => setActiveTab('design')}
                   style={{
                     background: activeTab === 'design' ? "#d4d0c8" : "#c0c0c0",
@@ -261,6 +276,59 @@ function App() {
               </div>
 
               {/* Design System Content */}
+              {activeTab === 'portfolio' && (
+                <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
+                  <h3 style={{ margin: "0 0 8px 0", fontSize: "10px" }}>📋 Portfolio / Program Strategy</h3>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Resource Allocation Strategy:</strong><br/>
+                    • 70% Mental Health Monitor (core product)<br/>
+                    • 20% Enterprise Wellness Platform (expansion)<br/>
+                    • 10% Research & Development (innovation)
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Product Portfolio Priorities:</strong><br/>
+                    • Phase 1: Individual mental health tracking (current)<br/>
+                    • Phase 2: Family/group wellness monitoring<br/>
+                    • Phase 3: Healthcare provider integration<br/>
+                    • Phase 4: Corporate wellness solutions
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Cross-Product Dependencies:</strong><br/>
+                    • Core tracking engine shared across all products<br/>
+                    • Privacy framework extends to enterprise features<br/>
+                    • Windows 95 design system maintains consistency<br/>
+                    • Data export/import standards for interoperability
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Program Timeline:</strong><br/>
+                    • Q1-Q2: Core product stabilization and user feedback<br/>
+                    • Q3-Q4: Enterprise features and API development<br/>
+                    • Year 2: Healthcare provider partnerships<br/>
+                    • Year 3: Corporate wellness platform launch
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Success Criteria:</strong><br/>
+                    • Individual product: 10K+ active users<br/>
+                    • Enterprise product: 50+ organizations<br/>
+                    • Healthcare integration: 5+ provider partnerships<br/>
+                    • Revenue diversification: 40% enterprise, 60% individual
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Risk Management:</strong><br/>
+                    • Diversified product portfolio reduces single-point failure<br/>
+                    • Shared infrastructure reduces development costs<br/>
+                    • Multiple revenue streams provide stability<br/>
+                    • Regulatory compliance framework scales across products
+                  </div>
+                </div>
+              )}
+
               {activeTab === 'design' && (
                 <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
                   <h3 style={{ margin: "0 0 8px 0", fontSize: "10px" }}>🎨 Windows 95 Design System</h3>
