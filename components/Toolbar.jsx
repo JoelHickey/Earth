@@ -242,26 +242,6 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
             padding: "0 6px",
             fontSize: "8px"
           }}
-          onClick={() => console.log("Login button clicked")}
-          onMouseDown={handleButtonMouseDown}
-          onMouseUp={handleButtonMouseUp}
-        >
-          Login
-        </button>
-        <div style={{
-          width: "1px",
-          height: "16px",
-          background: "#808080",
-          borderLeft: "1px solid #ffffff",
-          margin: "0 4px"
-        }}></div>
-        <button
-          style={{
-            ...styles.button,
-            width: "auto",
-            padding: "0 6px",
-            fontSize: "8px"
-          }}
           onClick={() => setActiveView(aboutButton.id)}
           onMouseDown={handleButtonMouseDown}
           onMouseUp={handleButtonMouseUp}
