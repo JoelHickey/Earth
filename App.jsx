@@ -358,10 +358,26 @@ function App() {
               {activeTab === 'mission' && (
                 <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
                   <div style={{ marginBottom: "8px" }}>
+                    <strong>Why We Exist:</strong><br/>
+                    Current mental health apps prioritize data collection over user benefit, 
+                    use addictive design patterns, and often fail to respect user privacy. 
+                    We believe there's a better way: technology that genuinely helps people 
+                    understand themselves while keeping their data secure and local.
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
                     <strong>Company Mission:</strong><br/>
                     To democratize mental health awareness by creating technology that 
                     makes wellness tracking accessible, private, and genuinely helpful 
                     for everyone, regardless of their technical expertise or financial means.
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>North Star:</strong><br/>
+                    A world where mental health awareness is as common as physical fitness 
+                    tracking, where people have the tools and knowledge to maintain their 
+                    wellbeing proactively, and where technology serves as a genuine ally 
+                    in mental health rather than a source of anxiety or exploitation.
                   </div>
                   
                   <div style={{ marginBottom: "8px" }}>
