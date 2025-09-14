@@ -201,6 +201,20 @@ function App() {
                   Design Guide
                 </button>
                 <button
+                  onClick={() => setActiveTab('business')}
+                  style={{
+                    background: activeTab === 'business' ? "#d4d0c8" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'business' ? "1px solid #d4d0c8" : "1px solid #808080",
+                    padding: "4px 12px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer"
+                  }}
+                >
+                  Business Strategy
+                </button>
+                <button
                   onClick={() => setActiveTab('vision')}
                   style={{
                     background: activeTab === 'vision' ? "#d4d0c8" : "#c0c0c0",
@@ -253,6 +267,60 @@ function App() {
                     • Windows: 2px outset borders<br/>
                     • Title bars: 19px height<br/>
                     • Status bars: 22px height
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'business' && (
+                <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
+                  <h3 style={{ margin: "0 0 8px 0", fontSize: "10px" }}>🏢 Corporate / Business Strategy</h3>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Multi-Year Business Goals:</strong><br/>
+                    • Establish market presence in mental health tech (Year 1-2)<br/>
+                    • Achieve sustainable revenue through premium features (Year 2-3)<br/>
+                    • Expand to enterprise wellness programs (Year 3-4)<br/>
+                    • Build strategic partnerships with healthcare providers (Year 4-5)
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Market Strategy:</strong><br/>
+                    • Target underserved niche: privacy-focused mental health tools<br/>
+                    • Differentiate through nostalgic UX and offline-first approach<br/>
+                    • Focus on organic growth and word-of-mouth marketing<br/>
+                    • Position as premium alternative to data-hungry wellness apps
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Revenue Model:</strong><br/>
+                    • Freemium: Basic tracking free, advanced analytics paid<br/>
+                    • Enterprise: Team wellness dashboards and reporting<br/>
+                    • Partnerships: White-label solutions for healthcare providers<br/>
+                    • Data insights: Anonymized aggregate trends (with consent)
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Growth Targets:</strong><br/>
+                    • Year 1: 1,000 active users, $0 revenue (validation)<br/>
+                    • Year 2: 10,000 users, $50K ARR (monetization)<br/>
+                    • Year 3: 50,000 users, $500K ARR (scale)<br/>
+                    • Year 4: 200,000 users, $2M ARR (expansion)
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Risk Tolerance:</strong><br/>
+                    • Conservative approach to user data and privacy<br/>
+                    • Moderate risk on feature development<br/>
+                    • High risk tolerance for innovative UX approaches<br/>
+                    • Low risk tolerance for regulatory compliance
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Resource Allocation:</strong><br/>
+                    • 60% Product development and user experience<br/>
+                    • 20% Marketing and user acquisition<br/>
+                    • 15% Infrastructure and security<br/>
+                    • 5% Legal and compliance
                   </div>
                 </div>
               )}
