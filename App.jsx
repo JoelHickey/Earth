@@ -198,7 +198,7 @@ function App() {
                     marginRight: "2px"
                   }}
                 >
-                  Company Mission
+                  Company Mission & Purpose
                 </button>
                 <button
                   onClick={() => setActiveTab('business')}
@@ -357,8 +357,6 @@ function App() {
 
               {activeTab === 'mission' && (
                 <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
-                  <h3 style={{ margin: "0 0 8px 0", fontSize: "10px" }}>🎯 Company Mission & Purpose</h3>
-                  
                   <div style={{ marginBottom: "8px" }}>
                     <strong>Company Mission:</strong><br/>
                     To democratize mental health awareness by creating technology that 
