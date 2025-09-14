@@ -441,65 +441,29 @@ function App() {
                 <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
                   <div style={{ marginBottom: "8px" }}>
                     <strong>Why We Exist:</strong><br/>
-                    Current mental health apps prioritize data collection over user benefit, 
-                    use addictive design patterns, and often fail to respect user privacy. 
-                    We believe there's a better way: technology that genuinely helps people 
-                    understand themselves while keeping their data secure and local.
+                    Current mental health apps prioritize data collection over user benefit. 
+                    We create technology that genuinely helps people while keeping their 
+                    data secure and local.
                   </div>
                   
                   <div style={{ marginBottom: "8px" }}>
-                    <strong>Company Mission:</strong><br/>
-                    To democratize mental health awareness by creating technology that 
-                    makes wellness tracking accessible, private, and genuinely helpful 
-                    for everyone, regardless of their technical expertise or financial means.
+                    <strong>Mission:</strong><br/>
+                    Democratize mental health awareness through accessible, private, 
+                    and genuinely helpful wellness tracking technology.
                   </div>
                   
                   <div style={{ marginBottom: "8px" }}>
                     <strong>North Star:</strong><br/>
-                    A world where mental health awareness is as common as physical fitness 
-                    tracking, where people have the tools and knowledge to maintain their 
-                    wellbeing proactively, and where technology serves as a genuine ally 
-                    in mental health rather than a source of anxiety or exploitation.
+                    Mental health awareness as common as physical fitness tracking, 
+                    with technology as a genuine ally rather than a source of anxiety.
                   </div>
                   
                   <div style={{ marginBottom: "8px" }}>
-                    <strong>Organizational Purpose:</strong><br/>
-                    We exist to bridge the gap between modern mental health science 
-                    and everyday people who need simple, reliable tools to understand 
-                    and improve their wellbeing without compromising their privacy.
-                  </div>
-                  
-                  <div style={{ marginBottom: "8px" }}>
-                    <strong>Long-Term Ambition:</strong><br/>
-                    To become the most trusted name in private mental health technology, 
-                    empowering millions of people worldwide to take control of their 
-                    mental wellness through intuitive, secure, and scientifically-backed tools.
-                  </div>
-                  
-                  <div style={{ marginBottom: "8px" }}>
-                    <strong>Core Beliefs:</strong><br/>
-                    • Mental health is a fundamental human right<br/>
-                    • Privacy should never be compromised for convenience<br/>
-                    • Technology should serve people, not exploit them<br/>
-                    • Simple solutions are often the most powerful<br/>
-                    • Everyone deserves access to quality mental health tools
-                  </div>
-                  
-                  <div style={{ marginBottom: "8px" }}>
-                    <strong>Why We Exist:</strong><br/>
-                    Current mental health apps prioritize data collection over user benefit, 
-                    use addictive design patterns, and often fail to respect user privacy. 
-                    We believe there's a better way: technology that genuinely helps people 
-                    understand themselves while keeping their data secure and local.
-                  </div>
-                  
-                  <div style={{ marginBottom: "8px" }}>
-                    <strong>Impact Vision:</strong><br/>
-                    In 10 years, we envision a world where mental health awareness is 
-                    as common as physical fitness tracking, where people have the tools 
-                    and knowledge to maintain their wellbeing proactively, and where 
-                    technology serves as a genuine ally in mental health rather than 
-                    a source of anxiety or exploitation.
+                    <strong>Core Values:</strong><br/>
+                    • Privacy first - data stays local<br/>
+                    • Simplicity over complexity<br/>
+                    • Technology serves people<br/>
+                    • Mental health is a human right
                   </div>
                 </div>
               )}
