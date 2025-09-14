@@ -201,6 +201,20 @@ function App() {
                   Design Guide
                 </button>
                 <button
+                  onClick={() => setActiveTab('vision')}
+                  style={{
+                    background: activeTab === 'vision' ? "#d4d0c8" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'vision' ? "1px solid #d4d0c8" : "1px solid #808080",
+                    padding: "4px 12px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer"
+                  }}
+                >
+                  Product Vision
+                </button>
+                <button
                   onClick={() => setActiveTab('dev')}
                   style={{
                     background: activeTab === 'dev' ? "#d4d0c8" : "#c0c0c0",
@@ -239,6 +253,62 @@ function App() {
                     • Windows: 2px outset borders<br/>
                     • Title bars: 19px height<br/>
                     • Status bars: 22px height
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'vision' && (
+                <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
+                  <h3 style={{ margin: "0 0 8px 0", fontSize: "10px" }}>🎯 Product Vision & Strategy</h3>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Mission:</strong><br/>
+                    Empower individuals to take control of their mental health through intuitive, 
+                    nostalgic technology that makes wellness tracking accessible and engaging.
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Vision:</strong><br/>
+                    A mental health monitoring platform that combines the simplicity and 
+                    reliability of Windows 95 with modern wellness science, creating a 
+                    trusted companion for daily mental health management.
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Core Values:</strong><br/>
+                    • Simplicity: Easy-to-use interface that doesn't overwhelm<br/>
+                    • Reliability: Consistent, predictable functionality<br/>
+                    • Privacy: User data stays local and secure<br/>
+                    • Accessibility: Works for users of all technical levels<br/>
+                    • Nostalgia: Familiar, comforting design language
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Target Users:</strong><br/>
+                    • Mental health enthusiasts seeking better self-awareness<br/>
+                    • Individuals managing anxiety, depression, or stress<br/>
+                    • People who prefer simple, distraction-free tools<br/>
+                    • Users who value privacy and local data storage<br/>
+                    • Anyone who appreciates retro computing aesthetics
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Key Features:</strong><br/>
+                    • Sleep quality and duration tracking<br/>
+                    • Medication and supplement monitoring<br/>
+                    • Emotional state assessment<br/>
+                    • Environmental factor awareness<br/>
+                    • Timeline-based event logging<br/>
+                    • Offline-first data storage
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Success Metrics:</strong><br/>
+                    • Daily active usage<br/>
+                    • Data consistency and completeness<br/>
+                    • User-reported mental health improvements<br/>
+                    • Feature adoption rates<br/>
+                    • User retention and engagement
                   </div>
                 </div>
               )}
