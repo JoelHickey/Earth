@@ -245,6 +245,13 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
         >
           Login
         </button>
+        <div style={{
+          width: "1px",
+          height: "16px",
+          background: "#808080",
+          borderLeft: "1px solid #ffffff",
+          margin: "0 4px"
+        }}></div>
         <button
           style={{
             ...styles.button,
