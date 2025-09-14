@@ -186,6 +186,21 @@ function App() {
                 marginBottom: "8px"
               }}>
                 <button
+                  onClick={() => setActiveTab('mission')}
+                  style={{
+                    background: activeTab === 'mission' ? "#d4d0c8" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'mission' ? "1px solid #d4d0c8" : "1px solid #808080",
+                    padding: "4px 12px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "2px"
+                  }}
+                >
+                  Company Mission
+                </button>
+                <button
                   onClick={() => setActiveTab('design')}
                   style={{
                     background: activeTab === 'design' ? "#d4d0c8" : "#c0c0c0",
@@ -199,20 +214,6 @@ function App() {
                   }}
                 >
                   Design Guide
-                </button>
-                <button
-                  onClick={() => setActiveTab('mission')}
-                  style={{
-                    background: activeTab === 'mission' ? "#d4d0c8" : "#c0c0c0",
-                    border: "1px outset #c0c0c0",
-                    borderBottom: activeTab === 'mission' ? "1px solid #d4d0c8" : "1px solid #808080",
-                    padding: "4px 12px",
-                    fontSize: "8px",
-                    fontFamily: "'MS Sans Serif', sans-serif",
-                    cursor: "pointer"
-                  }}
-                >
-                  Company Mission
                 </button>
                 <button
                   onClick={() => setActiveTab('business')}
