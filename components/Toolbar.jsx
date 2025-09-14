@@ -223,7 +223,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
           onMouseDown={handleButtonMouseDown}
           onMouseUp={handleButtonMouseUp}
         >
-          Recall
+          Restore
         </button>
         <button
           style={{
