@@ -9,7 +9,6 @@ export const useAppState = () => {
     waterLevel: 0,
     walkLevel: 0,
     alcoholLevel: 0,
-    sugarLevel: 0,
     happiness: 0,
     anxiety: 0,
     energy: 0,
@@ -92,7 +91,6 @@ export const useAppState = () => {
     sliderValues.waterLevel,
     sliderValues.walkLevel,
     sliderValues.alcoholLevel,
-    sliderValues.sugarLevel,
     estimateBloodSugar,
     estimateCortisol
   ]);
@@ -118,7 +116,6 @@ export const useAppState = () => {
     const hasInputs = sliderValues.sleepQuality > 0 || sliderValues.foodLevel > 0 || 
                       sliderValues.caffeineLevel > 0 || sliderValues.waterLevel > 0 || 
                       sliderValues.walkLevel > 0 || sliderValues.alcoholLevel > 0 || 
-                      sliderValues.sugarLevel > 0;
     
     // If no inputs set, return neutral baseline
     if (!hasInputs) {
@@ -170,7 +167,6 @@ export const useAppState = () => {
     estimatedLevel += alcoholImpact;
     
     // Sugar impact (moderate impact)
-    const sugarGrams = sliderValues.sugarLevel * 10; // Convert slider to grams
     const sugarImpact = sugarGrams * 1.5; // Moderate impact: 1.5 points per gram
     estimatedLevel += sugarImpact;
     
@@ -187,7 +183,6 @@ export const useAppState = () => {
     const hasInputs = sliderValues.sleepQuality > 0 || sliderValues.foodLevel > 0 || 
                       sliderValues.caffeineLevel > 0 || sliderValues.waterLevel > 0 || 
                       sliderValues.walkLevel > 0 || sliderValues.alcoholLevel > 0 || 
-                      sliderValues.sugarLevel > 0;
     
     // If no inputs set, return neutral baseline
     if (!hasInputs) {
@@ -242,7 +237,6 @@ export const useAppState = () => {
     estimatedCortisol += alcoholImpact;
     
     // Sugar impact (sugar spikes can cause stress response)
-    const sugarGrams = sliderValues.sugarLevel * 10; // Convert slider to grams
     const sugarImpact = sugarGrams * 0.5; // Moderate cortisol impact: 0.5 points per gram
     estimatedCortisol += sugarImpact;
     
