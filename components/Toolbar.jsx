@@ -225,13 +225,16 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
         >
           Recall
         </button>
+      </div>
+      
+      <div style={{ display: "flex", gap: "2px", marginLeft: "8px", alignItems: "center" }}>
         <div style={{
           width: "1px",
           height: "16px",
           background: "#808080",
           borderLeft: "1px solid #ffffff",
-          margin: "0 4px"
-        }}></div>
+          marginRight: "4px"
+        }} />
         <button
           style={{
             ...styles.button,
