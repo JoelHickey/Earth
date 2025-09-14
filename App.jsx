@@ -246,6 +246,21 @@ function App() {
                   Product Vision
                 </button>
                 <button
+                  onClick={() => setActiveTab('requirements')}
+                  style={{
+                    background: activeTab === 'requirements' ? "#d4d0c8" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'requirements' ? "1px solid #d4d0c8" : "1px solid #808080",
+                    padding: "4px 12px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "2px"
+                  }}
+                >
+                  Product Requirements
+                </button>
+                <button
                   onClick={() => setActiveTab('design')}
                   style={{
                     background: activeTab === 'design' ? "#d4d0c8" : "#c0c0c0",
@@ -326,6 +341,72 @@ function App() {
                     • Shared infrastructure reduces development costs<br/>
                     • Multiple revenue streams provide stability<br/>
                     • Regulatory compliance framework scales across products
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'requirements' && (
+                <div style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
+                  <h3 style={{ margin: "0 0 8px 0", fontSize: "10px" }}>📋 Product Requirements</h3>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Core Functional Requirements:</strong><br/>
+                    • Sleep quality and duration tracking with visual sliders<br/>
+                    • Medication and supplement monitoring (Zoloft, vitamins, etc.)<br/>
+                    • Emotional state assessment (happiness, anxiety, stress, etc.)<br/>
+                    • Environmental factor tracking (noise, lighting, temperature)<br/>
+                    • Timeline-based event logging and history<br/>
+                    • Local data storage with privacy-first approach
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>User Experience Requirements:</strong><br/>
+                    • Windows 95 aesthetic with authentic visual design<br/>
+                    • Intuitive slider-based input system<br/>
+                    • Offline-first functionality (no internet required)<br/>
+                    • Responsive design for desktop and mobile<br/>
+                    • Accessibility compliance (keyboard navigation, screen readers)<br/>
+                    • Consistent 8px font sizing throughout interface
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Technical Requirements:</strong><br/>
+                    • React.js frontend with Vite build system<br/>
+                    • Local storage for data persistence<br/>
+                    • Cross-browser compatibility (Chrome, Firefox, Safari)<br/>
+                    • Performance: &lt; 2 second load time<br/>
+                    • Data export/import functionality<br/>
+                    • No external API dependencies for core features
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Security & Privacy Requirements:</strong><br/>
+                    • All data stored locally on user's device<br/>
+                    • No data transmission to external servers<br/>
+                    • User controls data export and deletion<br/>
+                    • No tracking or analytics collection<br/>
+                    • GDPR and HIPAA compliance considerations<br/>
+                    • Secure data encryption at rest
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Performance Requirements:</strong><br/>
+                    • App loads in &lt; 2 seconds on standard hardware<br/>
+                    • Smooth slider interactions with &lt; 100ms response time<br/>
+                    • Support for 1000+ timeline events without degradation<br/>
+                    • Memory usage &lt; 50MB for typical usage<br/>
+                    • Works offline with full functionality<br/>
+                    • Graceful degradation on older browsers
+                  </div>
+                  
+                  <div style={{ marginBottom: "8px" }}>
+                    <strong>Quality Requirements:</strong><br/>
+                    • Zero data loss during normal operation<br/>
+                    • Consistent Windows 95 visual styling<br/>
+                    • Cross-platform compatibility<br/>
+                    • Error handling with user-friendly messages<br/>
+                    • Regular automated testing coverage<br/>
+                    • Documentation for all user-facing features
                   </div>
                 </div>
               )}
