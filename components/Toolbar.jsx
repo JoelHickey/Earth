@@ -218,6 +218,19 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
         >
           Recall
         </button>
+        <button
+          style={{
+            ...styles.button,
+            width: "auto",
+            padding: "0 6px",
+            fontSize: "8px"
+          }}
+          onClick={() => console.log("Login button clicked")}
+          onMouseDown={handleButtonMouseDown}
+          onMouseUp={handleButtonMouseUp}
+        >
+          Login
+        </button>
       </div>
       
       <div style={styles.healthIndicators}>
@@ -251,17 +264,6 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
             </div>
           </div>
         </div>
-        <button
-          style={{
-            ...styles.button,
-            marginLeft: "8px"
-          }}
-          onClick={() => console.log("Login button clicked")}
-          onMouseDown={handleButtonMouseDown}
-          onMouseUp={handleButtonMouseUp}
-        >
-          Login
-        </button>
       </div>
     </div>
   );
