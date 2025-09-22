@@ -42,7 +42,7 @@ export const VIEW_BUTTONS = [
   { id: 'emotions', icon: '/Smiley face.ico', alt: 'Emotions' },
   { id: 'environment', icon: '/Tree.ico', alt: 'Tree' },
   { id: 'timeline', icon: '/Notepad.ico', alt: 'Notepad' },
-  { id: 'design', icon: null, alt: 'About', text: 'About' }
+  { id: 'about', icon: null, alt: 'About', text: 'About' }
 ];
 
 // Windows 95 color palette

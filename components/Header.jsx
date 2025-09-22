@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Header = () => {
+const Header = ({ onClose }) => {
   const styles = {
     header: {
       background: "linear-gradient(90deg, #000080 0%, #1084d0 100%)",
@@ -60,6 +60,7 @@ const Header = () => {
       </div>
       <button
         style={styles.closeButton}
+        onClick={onClose}
         onMouseDown={handleCloseButtonMouseDown}
         onMouseUp={handleCloseButtonMouseUp}
       >

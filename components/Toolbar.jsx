@@ -1,20 +1,21 @@
 import React from 'react';
 import { VIEW_BUTTONS } from '../utils/constants';
 
-const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodSugarStatus, saveSliderPositions, recallSliderPositions, hasSavedPositions, cortisolLevel = 0 }) => {
+const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodSugarStatus, saveSliderPositions, recallSliderPositions, hasSavedPositions, undoSliderChange, hasUndoAvailable, cortisolLevel = 0 }) => {
   const styles = {
     viewSwitcher: {
       display: "flex",
       alignItems: "center",
       gap: "2px",
-      padding: "4px",
-      background: "#d4d0c8",
+      padding: "2px",
+      background: "#c0c0c0",
       borderBottom: "1px solid #808080",
-      borderTop: "1px solid #ffffff"
+      borderTop: "1px solid #ffffff",
+      height: "32px"
     },
     button: {
       width: "32px",
-      height: "28px",
+      height: "26px",
       background: "#d4d0c8",
       borderTop: "2px solid #ffffff",
       borderLeft: "2px solid #ffffff",
@@ -39,8 +40,11 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
     outputBar: {
       width: "126px",
       height: "8px",
-      background: "#d4d0c8",
-      border: "2px inset #c0c0c0",
+      background: "#ffffff",
+      borderTop: "2px solid #808080",
+      borderLeft: "2px solid #808080",
+      borderBottom: "2px solid #ffffff",
+      borderRight: "2px solid #ffffff",
       display: "flex",
       alignItems: "center",
       padding: "0",
@@ -81,8 +85,11 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
     bloodSugarBar: {
       width: "126px",
       height: "8px",
-      background: "#d4d0c0",
-      border: "2px inset #c0c0c0",
+      background: "#ffffff",
+      borderTop: "2px solid #808080",
+      borderLeft: "2px solid #808080",
+      borderBottom: "2px solid #ffffff",
+      borderRight: "2px solid #ffffff",
       display: "flex",
       alignItems: "center",
       padding: "0",
@@ -115,8 +122,11 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
     cortisolBar: {
       width: "126px",
       height: "8px",
-      background: "#d4d0c8",
-      border: "2px inset #c0c0c0",
+      background: "#ffffff",
+      borderTop: "2px solid #808080",
+      borderLeft: "2px solid #808080",
+      borderBottom: "2px solid #ffffff",
+      borderRight: "2px solid #ffffff",
       display: "flex",
       alignItems: "center",
       padding: "0",
@@ -161,16 +171,14 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
     }
   };
 
-  const viewButtons = VIEW_BUTTONS.filter(button => button.id !== 'design');
-  const aboutButton = VIEW_BUTTONS.find(button => button.id === 'design');
-
   return (
     <div style={styles.viewSwitcher}>
-      {viewButtons.map(({ id, icon, alt, text }) => (
+      {VIEW_BUTTONS.filter(({ id }) => id !== 'about').map(({ id, icon, alt, text }) => (
         <button
           key={id}
           style={{
             ...styles.button,
+            ...(text && { width: "auto", padding: "0 8px" }),
             ...(activeView === id && styles.activeButton)
           }}
           onClick={() => setActiveView(id)}
@@ -186,69 +194,6 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
           )}
         </button>
       ))}
-      
-      <div style={{ display: "flex", gap: "2px", marginLeft: "8px", alignItems: "center" }}>
-        <div style={{
-          width: "1px",
-          height: "16px",
-          background: "#808080",
-          borderLeft: "1px solid #ffffff",
-          marginRight: "4px"
-        }} />
-        <button
-          onClick={saveSliderPositions}
-          style={{
-            ...styles.button,
-            width: "auto",
-            padding: "0 6px",
-            fontSize: "8px"
-          }}
-          onMouseDown={handleButtonMouseDown}
-          onMouseUp={handleButtonMouseUp}
-        >
-          Save
-        </button>
-        <button
-          onClick={recallSliderPositions}
-          disabled={!hasSavedPositions}
-          style={{
-            ...styles.button,
-            width: "auto",
-            padding: "0 6px",
-            fontSize: "8px",
-            background: hasSavedPositions ? "#d4d0c8" : "#c0c0c0",
-            cursor: hasSavedPositions ? "pointer" : "not-allowed",
-            color: hasSavedPositions ? "#000000" : "#808080"
-          }}
-          onMouseDown={handleButtonMouseDown}
-          onMouseUp={handleButtonMouseUp}
-        >
-          Recall
-        </button>
-      </div>
-      
-      <div style={{ display: "flex", gap: "2px", marginLeft: "8px", alignItems: "center" }}>
-        <div style={{
-          width: "1px",
-          height: "16px",
-          background: "#808080",
-          borderLeft: "1px solid #ffffff",
-          marginRight: "4px"
-        }} />
-        <button
-          style={{
-            ...styles.button,
-            width: "auto",
-            padding: "0 6px",
-            fontSize: "8px"
-          }}
-          onClick={() => setActiveView(aboutButton.id)}
-          onMouseDown={handleButtonMouseDown}
-          onMouseUp={handleButtonMouseUp}
-        >
-          {aboutButton.text}
-        </button>
-      </div>
       
       <div style={styles.healthIndicators}>
         <div style={styles.healthBars}>
