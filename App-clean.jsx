@@ -1,0 +1,903 @@
+import React, { useState } from 'react';
+import Header from './components/Header';
+import MenuBar from './components/MenuBar';
+import Toolbar from './components/Toolbar';
+import Slider from './components/Slider';
+import StatusBar from './components/StatusBar';
+import Divider from './components/Divider';
+import CheckboxGroup from './components/CheckboxGroup';
+import Timeline from './components/Timeline';
+import Taskbar from './components/Taskbar';
+import { useSliderDrag } from './hooks/useSliderDrag';
+import { INPUT_SLIDERS, EMOTION_SLIDERS } from './utils/constants';
+
+function App() {
+  console.log("App is rendering!");
+  
+  // Add state for Toolbar props
+  const [activeView, setActiveView] = useState('inputs');
+  const [outputValue] = useState(5);
+  const [bloodSugar] = useState(100);
+  const [cortisolLevel] = useState(3);
+  const getBloodSugarStatus = () => 'normal';
+  
+  // Add state for sliders
+  const [sliderValues, setSliderValues] = useState({
+    sleepQuality: 0,
+    sleepDuration: 0,
+    waterLevel: 0,
+    caffeineLevel: 0,
+    foodLevel: 0,
+    walkLevel: 0,
+    alcoholLevel: 0,
+    medication1: 0,
+    vitaminD: 0,
+    vitaminB12: 0,
+    vitaminC: 0,
+    magnesium: 0,
+    lTheanine: 0,
+    thc: 0,
+    cbd: 0,
+    happiness: 0,
+    anxiety: 0,
+    energy: 0,
+    focus: 0,
+    stress: 0,
+    sadness: 0,
+    anger: 0,
+    irritability: 0,
+    dread: 0
+  });
+
+  // Add state for environment checkboxes
+  const [environmentCheckboxes, setEnvironmentCheckboxes] = useState({
+    noise: false,
+    lighting: false,
+    temperature: false,
+    crowding: false,
+    airQuality: false,
+    cleanliness: false
+  });
+
+  // Add state for timeline events
+  const [timelineEvents, setTimelineEvents] = useState([]);
+  
+  // About section state
+  const [activeTab, setActiveTab] = useState('mission');
+  
+  // Undo functionality state
+  const [previousSliderValues, setPreviousSliderValues] = useState(null);
+  
+  // Window state
+  const [isWindowOpen, setIsWindowOpen] = useState(true);
+
+  const handleSliderChange = (name, value) => {
+    // Store current values as previous before making change
+    setPreviousSliderValues(sliderValues);
+    setSliderValues(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSliderMouseDown = useSliderDrag();
+
+  // Add functions for Save/Recall functionality
+  const saveSliderPositions = () => {
+    localStorage.setItem('sliderPositions', JSON.stringify(sliderValues));
+    console.log('Slider positions saved!');
+  };
+
+  const recallSliderPositions = () => {
+    const saved = localStorage.getItem('sliderPositions');
+    if (saved) {
+      setSliderValues(JSON.parse(saved));
+      console.log('Slider positions recalled!');
+    }
+  };
+
+  const undoSliderChange = () => {
+    if (previousSliderValues) {
+      setSliderValues(previousSliderValues);
+      setPreviousSliderValues(null);
+      console.log('Slider change undone!');
+    }
+  };
+
+  const closeWindow = () => {
+    setIsWindowOpen(false);
+    console.log('Window closed');
+  };
+
+  const openWindow = () => {
+    setIsWindowOpen(true);
+    console.log('Window opened');
+  };
+
+  const hasSavedPositions = () => {
+    return localStorage.getItem('sliderPositions') !== null;
+  };
+
+  // Add functions for environment checkboxes
+  const updateEnvironmentCheckbox = (name, checked) => {
+    setEnvironmentCheckboxes(prev => ({ ...prev, [name]: checked }));
+  };
+
+  // Add functions for timeline
+  const addTimelineEvent = (event) => {
+    setTimelineEvents(prev => [...prev, event]);
+  };
+
+  const deleteTimelineEvent = (id) => {
+    setTimelineEvents(prev => prev.filter(event => event.id !== id));
+  };
+
+  // Render slider row function
+  const renderSliderRow = (sliders, align = "center") => (
+    <div style={{ 
+      display: "flex", 
+      gap: "2px", 
+      justifyContent: align, 
+      alignItems: "flex-start",
+      width: "100%",
+      maxWidth: "100%",
+      position: "relative",
+      minHeight: sliders.length > 10 ? "380px" : "220px",
+      overflow: sliders.length > 10 ? "visible" : "hidden"
+    }}>
+      {sliders.map((slider, index) => (
+        <React.Fragment key={slider.name}>
+          <Slider
+            value={sliderValues[slider.name]}
+            onChange={(value) => handleSliderChange(slider.name, value)}
+            onMouseDown={handleSliderMouseDown}
+            label={slider.label}
+            unit={slider.unit}
+            multiplier={slider.multiplier}
+          />
+          {index < sliders.length - 1 && <Divider />}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+
+  // Render view content based on active view
+  const renderViewContent = () => {
+    switch (activeView) {
+      case 'inputs':
+        return (
+          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
+            {renderSliderRow(INPUT_SLIDERS, "flex-start")}
+          </div>
+        );
+      
+      case 'emotions':
+        return (
+          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
+            {renderSliderRow(EMOTION_SLIDERS, "flex-start")}
+          </div>
+        );
+      
+      case 'environment':
+        const environmentCheckboxConfig = [
+          { name: 'noise', label: 'Noise', checked: environmentCheckboxes.noise, onChange: (checked) => updateEnvironmentCheckbox('noise', checked) },
+          { name: 'lighting', label: 'Lighting', checked: environmentCheckboxes.lighting, onChange: (checked) => updateEnvironmentCheckbox('lighting', checked) },
+          { name: 'temperature', label: 'Temperature', checked: environmentCheckboxes.temperature, onChange: (checked) => updateEnvironmentCheckbox('temperature', checked) },
+          { name: 'crowding', label: 'Crowding', checked: environmentCheckboxes.crowding, onChange: (checked) => updateEnvironmentCheckbox('crowding', checked) },
+          { name: 'airQuality', label: 'Air Quality', checked: environmentCheckboxes.airQuality, onChange: (checked) => updateEnvironmentCheckbox('airQuality', checked) },
+          { name: 'cleanliness', label: 'Cleanliness', checked: environmentCheckboxes.cleanliness, onChange: (checked) => updateEnvironmentCheckbox('cleanliness', checked) }
+        ];
+        return (
+          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
+            <CheckboxGroup checkboxes={environmentCheckboxConfig} columns={3} />
+          </div>
+        );
+      
+      case 'timeline':
+        return (
+          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
+            <Timeline 
+              events={timelineEvents}
+              onAddEvent={addTimelineEvent}
+              onDeleteEvent={deleteTimelineEvent}
+            />
+          </div>
+        );
+      
+      case 'about':
+        return (
+          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
+            <div style={{ width: "100%", background: "#d4d0c8", border: "2px inset #c0c0c0", padding: "8px" }}>
+              {/* Authentic Windows 95 Property Sheet Tabs */}
+              <div style={{
+                display: "flex",
+                background: "#c0c0c0",
+                borderBottom: "1px solid #808080",
+                marginBottom: "8px"
+              }}>
+                <button
+                  onClick={() => setActiveTab('mission')}
+                  style={{
+                    background: activeTab === 'mission' ? "#ffffff" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'mission' ? "1px solid #ffffff" : "1px solid #808080",
+                    padding: "2px 6px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "1px"
+                  }}
+                >
+                  Company Mission
+                </button>
+                <button
+                  onClick={() => setActiveTab('business')}
+                  style={{
+                    background: activeTab === 'business' ? "#ffffff" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'business' ? "1px solid #ffffff" : "1px solid #808080",
+                    padding: "2px 6px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "1px"
+                  }}
+                >
+                  Business Strategy
+                </button>
+                <button
+                  onClick={() => setActiveTab('strategy')}
+                  style={{
+                    background: activeTab === 'strategy' ? "#ffffff" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'strategy' ? "1px solid #ffffff" : "1px solid #808080",
+                    padding: "2px 6px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "1px"
+                  }}
+                >
+                  Portfolio Strategy
+                </button>
+                <button
+                  onClick={() => setActiveTab('program')}
+                  style={{
+                    background: activeTab === 'program' ? "#ffffff" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'program' ? "1px solid #ffffff" : "1px solid #808080",
+                    padding: "2px 6px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "1px"
+                  }}
+                >
+                  Program Management
+                </button>
+                <button
+                  onClick={() => setActiveTab('project')}
+                  style={{
+                    background: activeTab === 'project' ? "#ffffff" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'project' ? "1px solid #ffffff" : "1px solid #808080",
+                    padding: "2px 6px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "1px"
+                  }}
+                >
+                  Project Management
+                </button>
+                <button
+                  onClick={() => setActiveTab('vision')}
+                  style={{
+                    background: activeTab === 'vision' ? "#ffffff" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'vision' ? "1px solid #ffffff" : "1px solid #808080",
+                    padding: "2px 6px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "1px"
+                  }}
+                >
+                  Product Vision
+                </button>
+                <button
+                  onClick={() => setActiveTab('requirements')}
+                  style={{
+                    background: activeTab === 'requirements' ? "#ffffff" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'requirements' ? "1px solid #ffffff" : "1px solid #808080",
+                    padding: "2px 6px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "1px"
+                  }}
+                >
+                  Product Requirements
+                </button>
+                <button
+                  onClick={() => setActiveTab('guidelines')}
+                  style={{
+                    background: activeTab === 'guidelines' ? "#ffffff" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'guidelines' ? "1px solid #ffffff" : "1px solid #808080",
+                    padding: "2px 6px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    marginRight: "1px"
+                  }}
+                >
+                  Interface Guidelines
+                </button>
+                <button
+                  onClick={() => setActiveTab('developer')}
+                  style={{
+                    background: activeTab === 'developer' ? "#ffffff" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    borderBottom: activeTab === 'developer' ? "1px solid #ffffff" : "1px solid #808080",
+                    padding: "2px 6px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer"
+                  }}
+                >
+                  Developer Specs
+                </button>
+              </div>
+
+              {/* Content Area */}
+              <div style={{ 
+                background: "#ffffff", 
+                border: "2px inset #c0c0c0", 
+                padding: "8px",
+                minHeight: "200px",
+                fontSize: "8px", 
+                fontFamily: "'MS Sans Serif', sans-serif",
+                overflow: "auto"
+              }}>
+                {activeTab === 'mission' && (
+                  <div>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>🏢 Company Mission</h3>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Mission:</strong><br/>
+                      Democratize mental health awareness through accessible, private wellness tracking.
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Values:</strong><br/>
+                      • Privacy first - data stays local<br/>
+                      • Simplicity over complexity<br/>
+                      • Technology serves people
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Vision:</strong><br/>
+                      A world where mental health tracking is as simple and private as using a calculator.
+                    </div>
+                    <div>
+                      <strong>Approach:</strong><br/>
+                      Windows 95 aesthetic meets modern web technology for a familiar, nostalgic user experience.
+                    </div>
+                  </div>
+                )}
+                {activeTab === 'business' && (
+                  <div>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>💼 Business Strategy</h3>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Market Analysis:</strong><br/>
+                      Mental health tech market: $5.6B (2023), growing 15.8% annually. Gap in privacy-focused, nostalgic UX tools.
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Competitive Landscape:</strong><br/>
+                      • Headspace, Calm: Premium, modern UX, subscription model<br/>
+                      • Moodpath, Daylio: Basic tracking, modern design<br/>
+                      • Opportunity: Nostalgic UX + privacy-first approach
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Target Market:</strong><br/>
+                      • Primary: Privacy-conscious individuals, 25-45, tech-savvy<br/>
+                      • Secondary: Mental health professionals seeking simple tools<br/>
+                      • Tertiary: Corporate wellness programs
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Go-to-Market Strategy:</strong><br/>
+                      • Phase 1: Open source community building<br/>
+                      • Phase 2: Healthcare provider partnerships<br/>
+                      • Phase 3: Corporate wellness platform launch
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Revenue Model:</strong><br/>
+                      • Freemium: Basic features free, premium analytics<br/>
+                      • Enterprise: Custom deployment, white-label solutions<br/>
+                      • Partnerships: Revenue sharing with healthcare providers
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Financial Projections:</strong><br/>
+                      • Year 1: Community building, 1K users<br/>
+                      • Year 2: Healthcare partnerships, 10K users<br/>
+                      • Year 3: Corporate platform, 50K users, $500K ARR
+                    </div>
+                    <div>
+                      <strong>Risk Assessment:</strong><br/>
+                      • Market risk: Competition from established players<br/>
+                      • Technical risk: Windows 95 UX may limit adoption<br/>
+                      • Mitigation: Focus on privacy advantage, healthcare partnerships
+                    </div>
+                  </div>
+                )}
+                {activeTab === 'strategy' && (
+                  <div>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>📊 Portfolio Strategy</h3>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Scope:</strong> Strategic portfolio management across multiple product lines<br/>
+                      <strong>Focus:</strong> How portfolio decisions drive business value and market coverage<br/>
+                      <strong>Example:</strong> "How do we allocate resources across Mental Health Monitor, Healthcare Platform, and Corporate Platform to maximize market coverage and revenue diversification?"
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Portfolio Composition:</strong><br/>
+                      • Individual Mental Health Monitor (current product)<br/>
+                      • Healthcare Provider Platform (planned product)<br/>
+                      • Corporate Wellness Platform (planned product)<br/>
+                      • Research & Development initiatives (ongoing)
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Resource Allocation Strategy:</strong><br/>
+                      • 70% Mental Health Monitor (core product)<br/>
+                      • 20% Healthcare Platform (expansion)<br/>
+                      • 10% Research & Development (innovation)
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Market Coverage Strategy:</strong><br/>
+                      • Individual consumers (B2C)<br/>
+                      • Healthcare providers (B2B)<br/>
+                      • Corporate clients (B2B)<br/>
+                      • Research institutions (B2B)
+                    </div>
+                    <div>
+                      <strong>Portfolio Benefits:</strong><br/>
+                      • Diversified revenue streams reduce risk<br/>
+                      • Shared infrastructure reduces costs<br/>
+                      • Multiple market segments increase growth potential<br/>
+                      • Regulatory compliance framework scales across products
+                    </div>
+                  </div>
+                )}
+                {activeTab === 'program' && (
+                  <div>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>📋 Program Management</h3>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Scope:</strong> Tactical coordination and execution of related projects within strategic domains<br/>
+                      <strong>Focus:</strong> How related projects work together to achieve strategic objectives<br/>
+                      <strong>Example:</strong> "How do we coordinate Individual → Family/Group → Healthcare Provider projects within the Mental Health Monitor Program?"
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Mental Health Monitor Program:</strong><br/>
+                      • Individual mental health tracking (current project)<br/>
+                      • Family/group wellness monitoring (planned project)<br/>
+                      • Healthcare provider integration (planned project)<br/>
+                      • Shared tracking engine and privacy framework across all projects
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Research & Development Program:</strong><br/>
+                      • Innovation projects and experimental features<br/>
+                      • Technology research and proof-of-concepts<br/>
+                      • User experience research and testing<br/>
+                      • Future product development and market expansion
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Cross-Program Coordination & Governance:</strong><br/>
+                      • Cross-program dependencies and shared resources<br/>
+                      • Program-level resource allocation and timeline coordination<br/>
+                      • Risk management and quality assurance across programs<br/>
+                      • Strategic alignment and portfolio integration
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Execution Framework:</strong><br/>
+                      Execute using coordinated execution models:<br/>
+                      Sequential build order designed for safe delivery and technical execution:<br/>
+                      <br/>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
+                        <thead>
+                          <tr>
+                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "10%" }}>Level</th>
+                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%" }}>Architecture Track</th>
+                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%" }}>Engineering Track</th>
+                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%" }}>UX/Design Track</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Local development topology (Architecture)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Repo, Dev DX & Local Stack (Eng/CTO)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Storybook, Tokens & A11y Baseline (Design/Eng)</td>
+                          </tr>
+                          <tr>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Runtime topology, API deployment, auth choices (Architecture)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>API, Data Model & Auth (Eng/Security)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Screen Contracts, Wireframes & Interaction (Design/Eng)</td>
+                          </tr>
+                          <tr>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#808080", padding: "2px", background: "#ffffff" }}>Secure enclaves, encryption, audit logs (Architecture)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Security & Compliance (Security/CTO)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Consent, Privacy & Compliance UX (Design/Security/PM)</td>
+                          </tr>
+                          <tr>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Backup architecture, monitoring integration (Architecture)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Observability & Reliability (CTO/EngOps)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Errors, States & Offline UX (Design/PM)</td>
+                          </tr>
+                          <tr>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 5</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>CI/CD topology, staging environments (Architecture)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Developer Productivity & Automation (Eng/CTO)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Design System & Handoff (Design/Eng)</td>
+                          </tr>
+                          <tr>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 6</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Functional/non-functional requirements (Architecture)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>UX/Design Finish (Design)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>UX & Vision (PM/Design/UX Researcher)</td>
+                          </tr>
+                          <tr>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Roof</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Cross-cutting rules & policies (Architecture)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Vision & Go-to-Market (PM)</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>UX & Vision (PM/Design/UX Researcher)</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <br/>
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Development Process:</strong><br/>
+                      • Requirements Phase: Define functional, business, and user requirements<br/>
+                      • Analysis Phase: System analysis and feasibility studies<br/>
+                      • Design Phase: Architecture, system design, and technical specifications<br/>
+                      • Development Phase: Implementation using coordinated execution models<br/>
+                      • Testing Phase: Unit, integration, system, and user acceptance testing<br/>
+                      • Deployment Phase: Release planning, staging, and production deployment<br/>
+                      • Maintenance Phase: Ongoing support, updates, and system evolution<br/>
+                      • Quality Assurance: Continuous monitoring, performance optimization, and compliance verification
+                    </div>
+                  </div>
+                )}
+                {activeTab === 'project' && (
+                  <div>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>📋 Project Management</h3>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Scope:</strong> Operational execution of individual projects<br/>
+                      <strong>Focus:</strong> How individual projects are delivered within program frameworks<br/>
+                      <strong>Example:</strong> "How do we manage the Individual Mental Health Tracking project within the Mental Health Monitor Program?"
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Project Planning:</strong><br/>
+                      • Project scope definition and requirements gathering<br/>
+                      • Timeline development and milestone planning<br/>
+                      • Resource allocation and budget management<br/>
+                      • Risk identification and mitigation planning
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Project Execution:</strong><br/>
+                      • Daily project coordination and progress tracking<br/>
+                      • Stakeholder communication and status reporting<br/>
+                      • Quality assurance and testing coordination<br/>
+                      • Change management and scope control
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Project Delivery:</strong><br/>
+                      • Deliverable completion and acceptance criteria<br/>
+                      • Project closure and lessons learned documentation<br/>
+                      • Knowledge transfer and documentation<br/>
+                      • Post-implementation support and maintenance handoff
+                    </div>
+                    <div>
+                      <strong>Project Quality Assurance:</strong><br/>
+                      • Code review and technical quality standards<br/>
+                      • User acceptance testing and feedback integration<br/>
+                      • Performance monitoring and optimization<br/>
+                      • Compliance verification and security validation
+                    </div>
+                  </div>
+                )}
+                {activeTab === 'vision' && (
+                  <div>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>🎯 Product Vision & Strategy</h3>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Mission:</strong><br/>
+                      Empower individuals to take control of their mental health through intuitive, 
+                      nostalgic technology that makes wellness tracking accessible and engaging.
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Vision:</strong><br/>
+                      A mental health monitoring platform that combines the simplicity and 
+                      reliability of Windows 95 with modern wellness science, creating a 
+                      trusted companion for daily mental health management.
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Core Values:</strong><br/>
+                      • Simplicity: Easy-to-use interface that doesn't overwhelm<br/>
+                      • Reliability: Consistent, predictable functionality<br/>
+                      • Privacy: User data stays local and secure<br/>
+                      • Accessibility: Works for users of all technical levels<br/>
+                      • Nostalgia: Familiar, comforting design language
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Target Users:</strong><br/>
+                      • Mental health enthusiasts seeking better self-awareness<br/>
+                      • Individuals managing anxiety, depression, or stress<br/>
+                      • People who prefer simple, distraction-free tools<br/>
+                      • Users who value privacy and data ownership
+                    </div>
+                    <div>
+                      <strong>Success Metrics:</strong><br/>
+                      • Daily active usage and engagement<br/>
+                      • User retention and satisfaction scores<br/>
+                      • Privacy compliance and data security<br/>
+                      • Accessibility and usability ratings
+                    </div>
+                  </div>
+                )}
+                {activeTab === 'requirements' && (
+                  <div>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>📝 Product Requirements</h3>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Core Features:</strong><br/>
+                      • Sleep, emotion, and environment tracking<br/>
+                      • Timeline events and local storage<br/>
+                      • Windows 95 authentic design
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Technical Requirements:</strong><br/>
+                      • React 19+ with Vite build system<br/>
+                      • Local storage for data persistence<br/>
+                      • No external API dependencies
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Design Requirements:</strong><br/>
+                      • 100% Windows 95 Guidelines compliance<br/>
+                      • MS Sans Serif, 8px typography<br/>
+                      • Authentic color palette and borders
+                    </div>
+                    <div>
+                      <strong>Performance Requirements:</strong><br/>
+                      • Fast load times (&lt; 2 seconds)<br/>
+                      • Offline-first functionality<br/>
+                      • Smooth slider interactions
+                    </div>
+                  </div>
+                )}
+                {activeTab === 'guidelines' && (
+                  <div>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>🎨 Interface Guidelines</h3>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>User-Centered Design Principles:</strong><br/>
+                      • Control<br/>
+                      • Directness<br/>
+                      • Consistency<br/>
+                      • Forgiveness<br/>
+                      • Feedback<br/>
+                      • Aesthetics<br/>
+                      • Simplicity
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Interface Elements:</strong><br/>
+                      • Title Bar, Menu Bar, Toolbar, Status Bar<br/>
+                      • Buttons, Checkboxes, Radio Buttons<br/>
+                      • Text Fields, Sliders, Progress Bars<br/>
+                      • Windows, Dialog Boxes, List Boxes, Tabs
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Color Palette:</strong><br/>
+                      • Background: #d4d0c8<br/>
+                      • Light Grey: #c0c0c0<br/>
+                      • Dark Grey: #808080<br/>
+                      • White: #ffffff<br/>
+                      • Black: #000000<br/>
+                      • Windows Blue: #000080
+                    </div>
+                    <div>
+                      <strong>Typography:</strong><br/>
+                      • Body Text: MS Sans Serif, 8px<br/>
+                      • Headings: MS Sans Serif, 10px<br/>
+                      • Title Bar: MS Sans Serif, 8px<br/>
+                      • Buttons: MS Sans Serif, 8px
+                    </div>
+                  </div>
+                )}
+                {activeTab === 'developer' && (
+                  <div>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>⚙️ Developer Information</h3>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Tech Stack:</strong><br/>
+                      • React 19.1.1 with Vite<br/>
+                      • MS Sans Serif, 8px typography<br/>
+                      • Authentic Windows 95 colors (#d4d0c8, #c0c0c0, #808080)
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Architecture:</strong><br/>
+                      • Component-based React architecture<br/>
+                      • Local storage for data persistence<br/>
+                      • No external dependencies for core functionality
+                    </div>
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Design System:</strong><br/>
+                      • Microsoft Windows 95 Guidelines compliance<br/>
+                      • Inset/outset border effects<br/>
+                      • 8px font size throughout
+                    </div>
+                    <div>
+                      <strong>Version:</strong> 1.0.0<br/>
+                      <strong>Build:</strong> Vite development server<br/>
+                      <strong>Browser Support:</strong> Modern browsers with CSS3 support
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      
+      default:
+        return null;
+    }
+  };
+
+  const styles = {
+    mainWindow: {
+      width: "1000px",
+      height: "fit-content",
+      background: "#d4d0c8",
+      borderTop: "2px solid #ffffff",
+      borderLeft: "2px solid #ffffff", 
+      borderBottom: "2px solid #808080",
+      borderRight: "2px solid #808080",
+      fontFamily: "'MS Sans Serif', sans-serif",
+      display: "flex",
+      flexDirection: "column",
+      padding: "0",
+      flexShrink: 0,
+      overflow: "hidden"
+    },
+    mainContent: {
+      background: "#d4d0c8",
+      flex: 1,
+      padding: "4px",
+      minHeight: "250px",
+      width: "100%",
+      flexShrink: 0,
+      overflow: "hidden",
+      display: "flex",
+      flexDirection: "row"
+    },
+    leftContent: {
+      flex: 1,
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden"
+    }
+  };
+
+  return (
+    <div style={{
+      background: "#008080",
+      minHeight: "100vh",
+      width: "100vw",
+      position: "relative",
+      paddingBottom: "28px" // Space for taskbar
+    }}>
+      {/* Desktop Icon */}
+      <div
+        style={{
+          position: "absolute",
+          top: "50px",
+          left: "50px",
+          width: "64px",
+          height: "64px",
+          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "transparent"
+        }}
+        onClick={openWindow}
+        onDoubleClick={openWindow}
+      >
+        <img src="/Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
+        <span style={{
+          fontSize: "8px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textAlign: "center",
+          textShadow: "1px 1px 0px #000000"
+        }}>
+          Earth
+        </span>
+      </div>
+
+      {/* Application Window */}
+      {isWindowOpen && (
+        <div style={{
+          position: "absolute",
+          top: "100px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 100
+        }}>
+          <div style={styles.mainWindow}>
+            <Header onClose={closeWindow} />
+            <MenuBar 
+              activeView={activeView}
+              setActiveView={setActiveView}
+              saveSliderPositions={saveSliderPositions}
+              recallSliderPositions={recallSliderPositions}
+              hasSavedPositions={hasSavedPositions()}
+              undoSliderChange={undoSliderChange}
+              hasUndoAvailable={previousSliderValues !== null}
+              resetAllSliders={() => setSliderValues({
+                sleepQuality: 0,
+                sleepDuration: 0,
+                waterLevel: 0,
+                caffeineLevel: 0,
+                foodLevel: 0,
+                walkLevel: 0,
+                alcoholLevel: 0,
+                medication1: 0,
+                vitaminD: 0,
+                vitaminB12: 0,
+                vitaminC: 0,
+                magnesium: 0,
+                lTheanine: 0,
+                thc: 0,
+                cbd: 0,
+                happiness: 0,
+                anxiety: 0,
+                energy: 0,
+                focus: 0,
+                stress: 0,
+                sadness: 0,
+                anger: 0,
+                irritability: 0,
+                dread: 0
+              })}
+            />
+            <Toolbar 
+              activeView={activeView}
+              setActiveView={setActiveView}
+              outputValue={outputValue}
+              bloodSugar={bloodSugar}
+              getBloodSugarStatus={getBloodSugarStatus}
+              saveSliderPositions={saveSliderPositions}
+              recallSliderPositions={recallSliderPositions}
+              hasSavedPositions={hasSavedPositions()}
+              undoSliderChange={undoSliderChange}
+              hasUndoAvailable={previousSliderValues !== null}
+              cortisolLevel={cortisolLevel}
+            />
+            <div style={styles.mainContent}>
+              <div style={styles.leftContent}>
+                {renderViewContent()}
+              </div>
+            </div>
+            <StatusBar 
+              caffeineLevel={sliderValues.caffeineLevel}
+              sliderValues={sliderValues}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Taskbar */}
+      <Taskbar onOpenWindow={openWindow} />
+    </div>
+  );
+}
+
+export default App;
+
+

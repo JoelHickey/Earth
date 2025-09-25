@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import Header from './components/Header';
-import MenuBar from './components/MenuBar';
 import Toolbar from './components/Toolbar';
 import Slider from './components/Slider';
 import StatusBar from './components/StatusBar';
 import Divider from './components/Divider';
 import CheckboxGroup from './components/CheckboxGroup';
 import Timeline from './components/Timeline';
-import Taskbar from './components/Taskbar';
 import { useSliderDrag } from './hooks/useSliderDrag';
 import { INPUT_SLIDERS, EMOTION_SLIDERS } from './utils/constants';
 
@@ -163,14 +161,14 @@ function App() {
     switch (activeView) {
       case 'inputs':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "400px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
+          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
             {renderSliderRow(INPUT_SLIDERS, "flex-start")}
           </div>
         );
       
       case 'emotions':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "400px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
+          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
             {renderSliderRow(EMOTION_SLIDERS, "flex-start")}
           </div>
         );
@@ -185,14 +183,14 @@ function App() {
           { name: 'cleanliness', label: 'Cleanliness', checked: environmentCheckboxes.cleanliness, onChange: (checked) => updateEnvironmentCheckbox('cleanliness', checked) }
         ];
         return (
-          <div style={{ padding: "8px", width: "100%", height: "400px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
+          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
             <CheckboxGroup checkboxes={environmentCheckboxConfig} columns={3} />
           </div>
         );
       
       case 'timeline':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "400px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
+          <div style={{ padding: "8px", width: "100%", height: "300px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
             <Timeline 
               events={timelineEvents}
               onAddEvent={addTimelineEvent}
@@ -203,336 +201,882 @@ function App() {
       
       case 'about':
         return (
-          <div style={{ padding: "8px", width: "100%", height: "400px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
-            <div style={{ width: "100%", background: "#d4d0c8", border: "2px inset #c0c0c0", padding: "8px" }}>
-              {/* Authentic Windows 95 Property Sheet Tabs */}
-              <div style={{
-                display: "flex",
-                background: "#c0c0c0",
-                borderBottom: "1px solid #808080",
-                marginBottom: "8px"
-              }}>
+          <div style={{ padding: "8px", width: "100%", height: "500px", display: "flex", alignItems: "flex-start", justifyContent: "flex-start", overflow: "auto" }}>
+            <div style={{ width: "100%", background: "#d4d0c8", border: "2px inset #c0c0c0", padding: "8px", display: "flex", flexDirection: "row" }}>
+              {/* Left Sidebar Menu */}
+                <div style={{
+                  width: "150px",
+                  background: "#c0c0c0",
+                  border: "2px inset #c0c0c0",
+                  padding: "4px",
+                  marginRight: "8px",
+                  fontSize: "8px",
+                  fontFamily: "'MS Sans Serif', sans-serif",
+                  overflow: "auto"
+                }}>
+                <div style={{ marginBottom: "8px", fontWeight: "bold", fontSize: "9px", color: "#000080" }}>
+                  Organizational Strategy & Delivery
+                </div>
+                
+                <div style={{ marginBottom: "6px", fontWeight: "bold", fontSize: "8px", color: "#000000" }}>
+                  Strategic Management
+                </div>
                 <button
                   onClick={() => setActiveTab('mission')}
                   style={{
                     background: activeTab === 'mission' ? "#ffffff" : "#c0c0c0",
                     border: "1px outset #c0c0c0",
-                    borderBottom: activeTab === 'mission' ? "1px solid #ffffff" : "1px solid #808080",
                     padding: "2px 6px",
                     fontSize: "8px",
                     fontFamily: "'MS Sans Serif', sans-serif",
                     cursor: "pointer",
-                    marginRight: "1px"
+                    width: "100%",
+                    textAlign: "left",
+                    marginBottom: "1px",
+                    display: "flex",
+                    alignItems: "center"
                   }}
                 >
-                  Company Mission
+                  🏢 Company Mission
                 </button>
                 <button
                   onClick={() => setActiveTab('business')}
                   style={{
                     background: activeTab === 'business' ? "#ffffff" : "#c0c0c0",
                     border: "1px outset #c0c0c0",
-                    borderBottom: activeTab === 'business' ? "1px solid #ffffff" : "1px solid #808080",
                     padding: "2px 6px",
                     fontSize: "8px",
                     fontFamily: "'MS Sans Serif', sans-serif",
                     cursor: "pointer",
-                    marginRight: "1px"
+                    width: "100%",
+                    textAlign: "left",
+                    marginBottom: "1px",
+                    display: "flex",
+                    alignItems: "center"
                   }}
                 >
-                  Business Strategy
+                  💼 Business Strategy
                 </button>
                 <button
                   onClick={() => setActiveTab('strategy')}
                   style={{
                     background: activeTab === 'strategy' ? "#ffffff" : "#c0c0c0",
                     border: "1px outset #c0c0c0",
-                    borderBottom: activeTab === 'strategy' ? "1px solid #ffffff" : "1px solid #808080",
                     padding: "2px 6px",
                     fontSize: "8px",
                     fontFamily: "'MS Sans Serif', sans-serif",
                     cursor: "pointer",
-                    marginRight: "1px"
+                    width: "100%",
+                    textAlign: "left",
+                    marginBottom: "1px",
+                    display: "flex",
+                    alignItems: "center"
                   }}
                 >
-                  Portfolio Strategy
+                  📊 Portfolio Strategy
                 </button>
+                
+                <div style={{ marginBottom: "6px", marginTop: "8px", fontWeight: "bold", fontSize: "8px", color: "#000000" }}>
+                  Tactical Management
+                </div>
                 <button
                   onClick={() => setActiveTab('program')}
                   style={{
                     background: activeTab === 'program' ? "#ffffff" : "#c0c0c0",
                     border: "1px outset #c0c0c0",
-                    borderBottom: activeTab === 'program' ? "1px solid #ffffff" : "1px solid #808080",
                     padding: "2px 6px",
                     fontSize: "8px",
                     fontFamily: "'MS Sans Serif', sans-serif",
                     cursor: "pointer",
-                    marginRight: "1px"
+                    width: "100%",
+                    textAlign: "left",
+                    marginBottom: "1px",
+                    display: "flex",
+                    alignItems: "center"
                   }}
                 >
-                  Program Management
+                  📋 Program Management
                 </button>
                 <button
                   onClick={() => setActiveTab('project')}
                   style={{
                     background: activeTab === 'project' ? "#ffffff" : "#c0c0c0",
                     border: "1px outset #c0c0c0",
-                    borderBottom: activeTab === 'project' ? "1px solid #ffffff" : "1px solid #808080",
                     padding: "2px 6px",
                     fontSize: "8px",
                     fontFamily: "'MS Sans Serif', sans-serif",
                     cursor: "pointer",
-                    marginRight: "1px"
+                    width: "100%",
+                    textAlign: "left",
+                    marginBottom: "1px",
+                    display: "flex",
+                    alignItems: "center"
                   }}
                 >
-                  Project Management
+                  📋 Project Management
                 </button>
+                
+                <div style={{ marginBottom: "6px", marginTop: "8px", fontWeight: "bold", fontSize: "8px", color: "#000000" }}>
+                  Product Information (Execution)
+                </div>
                 <button
                   onClick={() => setActiveTab('vision')}
                   style={{
                     background: activeTab === 'vision' ? "#ffffff" : "#c0c0c0",
                     border: "1px outset #c0c0c0",
-                    borderBottom: activeTab === 'vision' ? "1px solid #ffffff" : "1px solid #808080",
                     padding: "2px 6px",
                     fontSize: "8px",
                     fontFamily: "'MS Sans Serif', sans-serif",
                     cursor: "pointer",
-                    marginRight: "1px"
+                    width: "100%",
+                    textAlign: "left",
+                    marginBottom: "1px",
+                    display: "flex",
+                    alignItems: "center"
                   }}
                 >
-                  Product Vision
+                  🎯 Product Vision
                 </button>
                 <button
                   onClick={() => setActiveTab('requirements')}
                   style={{
                     background: activeTab === 'requirements' ? "#ffffff" : "#c0c0c0",
                     border: "1px outset #c0c0c0",
-                    borderBottom: activeTab === 'requirements' ? "1px solid #ffffff" : "1px solid #808080",
                     padding: "2px 6px",
                     fontSize: "8px",
                     fontFamily: "'MS Sans Serif', sans-serif",
                     cursor: "pointer",
-                    marginRight: "1px"
+                    width: "100%",
+                    textAlign: "left",
+                    marginBottom: "1px",
+                    display: "flex",
+                    alignItems: "center"
                   }}
                 >
-                  Product Requirements
+                  📝 Product Requirements (PRD)
                 </button>
                 <button
                   onClick={() => setActiveTab('guidelines')}
                   style={{
                     background: activeTab === 'guidelines' ? "#ffffff" : "#c0c0c0",
                     border: "1px outset #c0c0c0",
-                    borderBottom: activeTab === 'guidelines' ? "1px solid #ffffff" : "1px solid #808080",
                     padding: "2px 6px",
                     fontSize: "8px",
                     fontFamily: "'MS Sans Serif', sans-serif",
                     cursor: "pointer",
-                    marginRight: "1px"
+                    width: "100%",
+                    textAlign: "left",
+                    marginBottom: "1px",
+                    display: "flex",
+                    alignItems: "center"
                   }}
                 >
-                  Interface Guidelines
+                  🎨 Interface Guidelines / Design System
                 </button>
                 <button
                   onClick={() => setActiveTab('developer')}
                   style={{
                     background: activeTab === 'developer' ? "#ffffff" : "#c0c0c0",
                     border: "1px outset #c0c0c0",
-                    borderBottom: activeTab === 'developer' ? "1px solid #ffffff" : "1px solid #808080",
                     padding: "2px 6px",
                     fontSize: "8px",
                     fontFamily: "'MS Sans Serif', sans-serif",
-                    cursor: "pointer"
+                    cursor: "pointer",
+                    width: "100%",
+                    textAlign: "left",
+                    marginBottom: "1px",
+                    display: "flex",
+                    alignItems: "center"
                   }}
                 >
-                  Developer Specs
+                  ⚙️ Developer Specs / Architecture
+                </button>
+                <button
+                  onClick={() => setActiveTab('habits')}
+                  style={{
+                    background: activeTab === 'habits' ? "#ffffff" : "#c0c0c0",
+                    border: "1px outset #c0c0c0",
+                    padding: "2px 6px",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    cursor: "pointer",
+                    width: "100%",
+                    textAlign: "left",
+                    marginBottom: "1px",
+                    display: "flex",
+                    alignItems: "center"
+                  }}
+                >
+                  🔧 Build Habits / Engineering Practices
                 </button>
               </div>
 
               {/* Content Area */}
-              <div style={{ 
-                background: "#ffffff", 
-                border: "2px inset #c0c0c0", 
+              <div style={{
+                flex: 1,
+                background: "#ffffff",
+                border: "2px inset #c0c0c0",
                 padding: "8px",
-                minHeight: "200px",
-                fontSize: "8px", 
+                minHeight: "400px",
+                fontSize: "8px",
                 fontFamily: "'MS Sans Serif', sans-serif",
                 overflow: "auto"
               }}>
-                {activeTab === 'mission' && (
-                  <div>
-                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>🏢 Company Mission</h3>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Scope:</strong> Foundational purpose and organizational culture for mental health technology company<br/>
-                      <strong>Focus:</strong> How we define our identity and guide decision-making with Windows 95 aesthetic + privacy-first approach<br/>
-                      <strong>Goal:</strong> Establish clear mission, vision, and values that drive all business activities toward 1M users by 2030
-                    </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Owners:</strong><br/>
-                      • CEO: mission statement, organizational vision<br/>
-                      • Leadership Team: values definition, cultural alignment<br/>
-                      • All Employees: values implementation, mission-driven decisions<br/>
-                      • Board of Directors: mission oversight, strategic alignment
-                    </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Planning:</strong><br/>
-                      • Input: stakeholder feedback, market analysis, organizational needs, cultural assessment<br/>
-                      • Output: mission statement, vision statement, core values, cultural framework<br/>
-                      • Do: stakeholder interviews, values workshops, mission alignment sessions, cultural assessment<br/>
-                      • Done when: mission approved by board; values adopted by team; vision communicated company-wide<br/>
-                      <br/>
-                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
-                        <thead>
-                          <tr>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "8%" }}>Element</th>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "32%" }}>Definition</th>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "60%" }}>Statement</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Mission</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Why we exist (purpose)</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Democratize mental health awareness through accessible, private wellness tracking.</td>
-                          </tr>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Vision</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>What the world looks like when we succeed (aspiration)</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>A world where mental health tracking is as simple and private as using a calculator.</td>
-                          </tr>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Values</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>How we behave (principles)</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Privacy first (data stays local), Simplicity over complexity, Technology serves people</td>
-                          </tr>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>North Star</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Where we're heading (destination)</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>1 million people using our Windows 95-inspired mental health tools by 2030</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Execution:</strong><br/>
-                      • Input: mission/vision/values statements, business strategy, market feedback<br/>
-                      • Output: mission-driven decisions, values-based culture, aligned behaviors<br/>
-                      • Do: strategic mission implementation, market positioning alignment, partnership mission reviews, product decision framework application<br/>
-                      • Quality gates: mission alignment in major decisions; values consistency in hiring/promotions<br/>
-                      • Change control: mission changes require board approval; values updates need company-wide input
-                    </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Delivery:</strong><br/>
-                      • Input: mission-driven decisions, values-based culture, market feedback<br/>
-                      • Output: strong organizational culture, mission-driven outcomes, values-based reputation<br/>
-                      • Do: quarterly culture surveys, annual mission reviews, values recognition programs<br/>
-                      • Done when: mission drives daily decisions; values are consistently demonstrated; culture supports business goals
-                    </div>
+                  {activeTab === 'mission' && (
                     <div>
-                      <strong>Success Metrics:</strong><br/>
-                      • Progress toward North Star (users served)<br/>
-                      • Mission-driven product decisions percentage<br/>
-                      • Values consistency in performance reviews
+                      <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>🏢 Company Mission</h3>
+                      
+                      <div style={{ marginBottom: "6px" }}>
+                        <strong>What:</strong> Foundational purpose and organizational values that guide decisions<br/>
+                        <strong>Why:</strong> Align stakeholders and drive consistent decision-making toward the North Star<br/>
+                        <strong>How:</strong> Define mission, vision, core values; publish and embed into hiring, roadmaps, and product decisions
+                      </div>
+                      
+                      
+                      <div style={{ marginBottom: "6px" }}>
+                        <strong>Owners:</strong><br/>
+                        • <strong>CEO/Founder:</strong> mission & vision (owner)<br/>
+                        • <strong>Leadership Team:</strong> values, culture, operational alignment<br/>
+                        • <strong>All Employees:</strong> live the values and apply them in decisions<br/>
+                        • <strong>Board:</strong> oversight and approval for material changes
+                      </div>
+                    
+                    
+                      <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                        <div style={{ marginBottom: "4px" }}>
+                          <strong>Planning Framework:</strong> planning the mission (Input/Do/Output/Done)<br/>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
+                          <thead>
+                            <tr>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>CEO/Founder Track</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Leadership Team Track</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>All Team Members Track</th>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose: Plans mission</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Strategic planning, mission definition</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Operational planning, culture building</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Cultural planning, values embodiment</td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 0 — Launch</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Market research, user needs, competitive analysis<br/>
+                                <strong>Do:</strong> craft mission & core values<br/>
+                                <strong>Output:</strong> mission statement<br/>
+                                <strong>Done:</strong> mission statement approved by Board
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission statement, core values<br/>
+                                <strong>Do:</strong> create communication & rollout plan<br/>
+                                <strong>Output:</strong> rollout plan<br/>
+                                <strong>Done:</strong> rollout plan approved by CEO
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission statement, values framework<br/>
+                                <strong>Do:</strong> initial adoption activities<br/>
+                                <strong>Output:</strong> team readiness<br/>
+                                <strong>Done:</strong> team alignment achieved
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Vision & Metrics</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Mission statement, organizational values<br/>
+                                <strong>Do:</strong> author vision document & define North Star metrics<br/>
+                                <strong>Output:</strong> vision document + targets<br/>
+                                <strong>Done:</strong> vision document approved by Board
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> vision document, North Star<br/>
+                                <strong>Do:</strong> create implementation plan<br/>
+                                <strong>Output:</strong> culture framework<br/>
+                                <strong>Done:</strong> culture framework implemented
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> values framework, culture guidelines<br/>
+                                <strong>Do:</strong> adopt decision framework<br/>
+                                <strong>Output:</strong> decision guidelines<br/>
+                                <strong>Done:</strong> team trained on decision guidelines
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Strategy & Roadmap</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Vision document, strategic objectives<br/>
+                                <strong>Do:</strong> publish strategic roadmap<br/>
+                                <strong>Output:</strong> strategy & success metrics<br/>
+                                <strong>Done:</strong> strategic roadmap approved by Board
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> strategic roadmap<br/>
+                                <strong>Do:</strong> align org & processes<br/>
+                                <strong>Output:</strong> alignment plan<br/>
+                                <strong>Done:</strong> alignment plan executed
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <em>Team preparation complete</em>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Execute & Embed</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Strategic roadmap, governance requirements<br/>
+                                <strong>Do:</strong> maintain alignment, review progress<br/>
+                                <strong>Output:</strong> strategic updates<br/>
+                                <strong>Done:</strong> strategic updates published & reviewed (cadence: quarterly)
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Do:</strong> operationalize updates, maintain alignment<br/>
+                                <strong>Output:</strong> continued strategic updates<br/>
+                                <strong>Done:</strong> updates implemented
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <em>Team preparation complete</em>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        
+                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                          <strong>Artifacts:</strong> What gets produced (Mission Statement, Vision, etc.)<br/>
+                          • <strong>Mission Statement:</strong> Democratize mental health awareness through accessible, private wellness tracking<br/>
+                          • <strong>Vision Statement:</strong> A world where mental health tracking is as simple and private as using a calculator<br/>
+                          • <strong>Core Values:</strong> Privacy first — data stays local; Simplicity over complexity; Technology serves people<br/>
+                          • <strong>North Star:</strong> 1 million people using our Windows‑95‑inspired mental health tools by 2030
+                        </div>
+                        
+                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                          <strong>Success Criteria:</strong> How you know it's done (measurement)<br/>
+                          • Mission published + communicated<br/>
+                          • Vision & North Star approved<br/>
+                          • Culture adoption shown in quarterly survey and performance reviews<br/>
+                          • Monthly progress toward North Star
+                        </div>
+                        
+                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                          <strong>Next Steps:</strong> How to actually implement it (action items)<br/>
+                          • Publish the one-page mission doc to docs/ and intranet<br/>
+                          • Run a 30-minute all-hands to present mission + rollout plan<br/>
+                          • Add a "mission alignment" field to PRD and milestone reviews
+                        </div>
+                      </div>
+                    </div>
+                    
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Execution Framework:</strong> operationalizing the mission (Input/Do/Output/Done)<br/>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
+                          <thead>
+                            <tr>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>CEO/Founder Track</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Leadership Team Track</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>All Team Members Track</th>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose: Executes mission</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Strategic execution</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Operational execution & culture building</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Values embodiment & mission-driven actions</td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Start</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission approved, values documented<br/>
+                                <strong>Do:</strong> drive strategic execution<br/>
+                                <strong>Output:</strong> strategic direction & mission progress<br/>
+                                <strong>Done:</strong> quarterly strategic update published
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission approved, values documented<br/>
+                                <strong>Do:</strong> communicate mission & implement values<br/>
+                                <strong>Output:</strong> operational plans & comms framework<br/>
+                                <strong>Done:</strong> rollout executed and measured
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission approved, values documented<br/>
+                                <strong>Do:</strong> adopt values in work<br/>
+                                <strong>Output:</strong> mission-driven behaviors<br/>
+                                <strong>Done:</strong> initial alignment (pulse survey threshold met)
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Align</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> strategic direction, mission progress<br/>
+                                <strong>Do:</strong> align strategy across org<br/>
+                                <strong>Output:</strong> strategic roadmap & success metrics<br/>
+                                <strong>Done:</strong> roadmap approved
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> strategic direction, mission progress<br/>
+                                <strong>Do:</strong> implement culture plans<br/>
+                                <strong>Output:</strong> cultural framework & implementation plan<br/>
+                                <strong>Done:</strong> framework in place
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <em>Team preparation complete</em>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Measure</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> roadmap, success metrics<br/>
+                                <strong>Do:</strong> measure impact & progress vs North Star<br/>
+                                <strong>Output:</strong> mission impact report<br/>
+                                <strong>Done:</strong> monthly North Star report
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> roadmap, success metrics<br/>
+                                <strong>Do:</strong> evolve culture & align programs<br/>
+                                <strong>Output:</strong> alignment framework<br/>
+                                <strong>Done:</strong> cross‑program alignment validated
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <em>Team preparation complete</em>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4 — Embed</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission impact, North Star progress<br/>
+                                <strong>Do:</strong> confirm strategic alignment & scaling decisions<br/>
+                                <strong>Output:</strong> strategic alignment artifacts<br/>
+                                <strong>Done:</strong> executive sign‑off for scale
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission impact, North Star progress<br/>
+                                <strong>Do:</strong> reinforce communication & metrics<br/>
+                                <strong>Output:</strong> communication & alignment metrics<br/>
+                                <strong>Done:</strong> metrics tracked & acted on
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission impact, North Star progress<br/>
+                                <strong>Do:</strong> operate with mission in mind<br/>
+                                <strong>Output:</strong> consistent decision patterns<br/>
+                                <strong>Done:</strong> operational KPIs reflect mission
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 5 — Improve</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> strategic alignment, mission success<br/>
+                                <strong>Do:</strong> lead mission‑driven leadership & clarity<br/>
+                                <strong>Output:</strong> strategic clarity, public messaging<br/>
+                                <strong>Done:</strong> leadership reviews & updates
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> strategic alignment, mission success<br/>
+                                <strong>Do:</strong> run continuous improvement & feedback loops<br/>
+                                <strong>Output:</strong> improvement frameworks<br/>
+                                <strong>Done:</strong> feedback systems active
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> strategic alignment, mission success<br/>
+                                <strong>Do:</strong> integrate values into improvement<br/>
+                                <strong>Output:</strong> culture of iteration<br/>
+                                <strong>Done:</strong> improvement metrics
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 6 — Sustain</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission leadership, strategic clarity<br/>
+                                <strong>Do:</strong> validate mission achievement & long‑term direction<br/>
+                                <strong>Output:</strong> North Star progress & strategic decisions<br/>
+                                <strong>Done:</strong> annual mission review
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission leadership, strategic clarity<br/>
+                                <strong>Do:</strong> maintain mission communication & values outcomes<br/>
+                                <strong>Output:</strong> embedded mission frameworks<br/>
+                                <strong>Done:</strong> sustained metrics for values
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission leadership, strategic clarity<br/>
+                                <strong>Do:</strong> maintain mission‑driven culture<br/>
+                                <strong>Output:</strong> stakeholder satisfaction<br/>
+                                <strong>Done:</strong> target satisfaction met
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Roof — Impact</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission culture & stakeholder satisfaction<br/>
+                                <strong>Do:</strong> sustain and celebrate mission success<br/>
+                                <strong>Output:</strong> mission success & integrated framework<br/>
+                                <strong>Done:</strong> mission validated against North Star and stakeholder outcomes
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission culture & stakeholder satisfaction<br/>
+                                <strong>Do:</strong> sustain and celebrate mission success<br/>
+                                <strong>Output:</strong> mission success & integrated framework<br/>
+                                <strong>Done:</strong> mission validated against North Star and stakeholder outcomes
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission culture & stakeholder satisfaction<br/>
+                                <strong>Do:</strong> sustain mission success<br/>
+                                <strong>Output:</strong> mission success & integrated framework<br/>
+                                <strong>Done:</strong> mission validated against North Star
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        
+                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                          <strong>Artifacts:</strong><br/>
+                          • <strong>Strategic Roadmap:</strong> Detailed implementation plan with milestones and timelines<br/>
+                          • <strong>Communication Framework:</strong> Mission communication protocols and channels<br/>
+                          • <strong>Culture Building Systems:</strong> Values implementation processes and tools<br/>
+                          • <strong>Decision-Making Framework:</strong> Mission-driven decision criteria and processes<br/>
+                          • <strong>Improvement Systems:</strong> Continuous improvement processes and feedback loops<br/>
+                          • <strong>Progress Tracking:</strong> Mission achievement metrics and North Star progress monitoring
+                        </div>
+                        
+                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                          <strong>Success Criteria:</strong><br/>
+                          • Mission published & communicated<br/>
+                          • Vision & North Star approved<br/>
+                          • Rollout plan approved by CEO<br/>
+                          • Team readiness (pulse survey)<br/>
+                          • Strategic roadmap published & approved<br/>
+                          • Culture framework implemented & training started<br/>
+                          • Team trained on decision guidelines<br/>
+                          • Quarterly strategic updates published<br/>
+                          • Monthly progress toward North Star
+                        </div>
+                        
+                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                          <strong>Next Steps:</strong><br/>
+                          • Publish one‑page mission doc to docs/ and intranet<br/>
+                          • Run 30‑minute all‑hands to present mission + rollout plan<br/>
+                          • Add "mission alignment" field to PRD and milestone reviews<br/>
+                          • Assign owners and reporting cadence for each success metric<br/>
+                          • Publish Strategic Roadmap, Communication Framework, Culture Framework in docs/<br/>
+                          • Run initial pulse survey to measure team readiness<br/>
+                          • Produce first Monthly North Star report (baseline metrics)<br/>
+                          • Schedule recurring cadence: weekly standup, monthly metrics review, quarterly exec update
+                        </div>
+                      </div>
+                      
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Delivery Framework:</strong> validating & celebrating mission success (Input/Do/Output/Done)<br/>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
+                          <thead>
+                            <tr>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>CEO/Founder Track</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Leadership Team Track</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>All Team Members Track</th>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Strategic delivery & validation</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Operational delivery & culture validation</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Values delivery & mission validation</td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Validate</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission execution results, North Star progress<br/>
+                                <strong>Do:</strong> validate mission achievement<br/>
+                                <strong>Output:</strong> Mission Validation Report<br/>
+                                <strong>Done:</strong> report published (Owner: Head of Product — cadence: quarterly)
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission execution results, North Star progress<br/>
+                                <strong>Do:</strong> validate culture & values implementation<br/>
+                                <strong>Output:</strong> Culture Validation Report<br/>
+                                <strong>Done:</strong> assessment completed (Owner: Head of People — cadence: quarterly)
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> mission execution results, North Star progress<br/>
+                                <strong>Do:</strong> validate values lived<br/>
+                                <strong>Output:</strong> Values Validation Summary<br/>
+                                <strong>Done:</strong> values assessment completed (Owner: People/Managers)
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Measure</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> validation reports<br/>
+                                <strong>Do:</strong> measure impact & outcomes<br/>
+                                <strong>Output:</strong> Impact Metrics Report<br/>
+                                <strong>Done:</strong> metrics report published (Owner: Analytics — cadence: monthly)
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> validation reports<br/>
+                                <strong>Do:</strong> measure stakeholder satisfaction<br/>
+                                <strong>Output:</strong> Stakeholder Satisfaction Report<br/>
+                                <strong>Done:</strong> survey completed and analyzed (Owner: PMO — cadence: quarterly)
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <em>Team preparation complete</em>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Celebrate</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> impact metrics, stakeholder satisfaction<br/>
+                                <strong>Do:</strong> celebrate mission success<br/>
+                                <strong>Output:</strong> Success Celebration Plan & Execution<br/>
+                                <strong>Done:</strong> celebration executed (Owner: Comms/People)
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> impact metrics, stakeholder satisfaction<br/>
+                                <strong>Do:</strong> recognize values success<br/>
+                                <strong>Output:</strong> Values Recognition Program<br/>
+                                <strong>Done:</strong> program launched (Owner: People)
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <em>Team preparation complete</em>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4 — Sustain</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> celebration outcomes, recognition programs<br/>
+                                <strong>Do:</strong> sustain mission success<br/>
+                                <strong>Output:</strong> Sustainability Plan (processes + KPIs)<br/>
+                                <strong>Done:</strong> plan implemented (Owner: Leadership)
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> celebration outcomes, recognition programs<br/>
+                                <strong>Do:</strong> sustain culture success<br/>
+                                <strong>Output:</strong> Ongoing culture programs & metrics<br/>
+                                <strong>Done:</strong> sustained metrics meet targets (Owner: People)
+                              </td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <em>Team preparation complete</em>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        
+                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                          <strong>Artifacts:</strong><br/>
+                          • Mission Validation Report<br/>
+                          • Impact Metrics Report<br/>
+                          • Culture Assessment Report<br/>
+                          • Success Celebration Plan<br/>
+                          • Values Recognition Program docs<br/>
+                          • Sustainability Plans
+                        </div>
+                        
+                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                          <strong>Success criteria (simple):</strong><br/>
+                          • Mission validation report published<br/>
+                          • Impact metrics reported monthly<br/>
+                          • Stakeholder satisfaction targets met (define %)<br/>
+                          • Celebration executed & recognition program launched<br/>
+                          • Sustainability plans implemented and tracked
+                        </div>
+                        
+                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                          <strong>Next steps (first actions):</strong><br/>
+                          • Run mission validation assessment and publish report (quarterly).<br/>
+                          • Launch stakeholder satisfaction survey and publish findings.<br/>
+                          • Plan success celebration and values recognition program.<br/>
+                          • Draft sustainability plan and assign owners.
+                        </div>
+                      </div>
+                      
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Governance:</strong><br/>
+                        • Monthly mission alignment reviews, quarterly values assessment, annual strategic planning<br/>
+                        • Continuous culture building, values-based recognition, mission-driven decision making<br/>
+                        • Required artifacts: Mission statement, Values framework, Vision document, North Star metrics, Culture assessment
+                      </div>
+                    </div>
+                    
+                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div>
+                        <strong>Mission success:</strong><br/>
+                        • Progress toward North Star (users served)<br/>
+                        • % decisions explicitly tied to mission in quarterly reviews<br/>
+                        • Values reflected in performance reviews / recognition rate<br/>
+                        • Team engagement and mission alignment scores
+                      </div>
                     </div>
                   </div>
                 )}
                 {activeTab === 'business' && (
                   <div>
                     <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>💼 Business Strategy</h3>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Scope:</strong> Strategic business decisions and market positioning in mental health tech<br/>
-                      <strong>Focus:</strong> How to win with Windows 95 aesthetic + privacy-first approach in $5.6B market<br/>
-                      <strong>Goal:</strong> Capture 1% market share (50K users) with $500K ARR by Year 3
+                      <strong>What:</strong> Strategic decisions and market positioning in mental-health tech<br/>
+                      <strong>Why:</strong> Capture market share and achieve financial targets through differentiated approach<br/>
+                      <strong>How:</strong> How to win with Windows-95 aesthetic + privacy-first approach in $5.6B market
                     </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
                       <strong>Owners:</strong><br/>
-                      • CEO: overall strategy, market positioning, partnerships<br/>
-                      • Head of Product: product strategy, Windows 95 UX consistency<br/>
-                      • Head of Business Development: healthcare partnerships, revenue model<br/>
-                      • Finance Director: financial projections, funding strategy
+                      • CEO/Founder: strategic direction, market positioning, investor relations<br/>
+                      • Business Development: partnerships, revenue model, market expansion<br/>
+                      • Marketing Lead: brand positioning, customer acquisition, market research<br/>
+                      • Finance Lead: financial planning, revenue optimization, risk management
                     </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Planning:</strong><br/>
+                        • <strong>Input:</strong> market research, competitive analysis, user needs, financial targets<br/>
+                        • <strong>Do:</strong> define market position, create go-to-market strategy, establish revenue model<br/>
+                        • <strong>Output:</strong> business strategy document, market analysis, revenue projections, risk assessment<br/>
+                        • <strong>Done when:</strong> strategy approved, market position defined, revenue model established
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Execution:</strong><br/>
+                        • <strong>Input:</strong> business strategy, market analysis, partnership opportunities, customer feedback<br/>
+                        • <strong>Do:</strong> execute go-to-market, build partnerships, acquire customers, optimize revenue<br/>
+                        • <strong>Output:</strong> market traction, customer acquisition, revenue growth, partnership success<br/>
+                        • <strong>Done when:</strong> market position achieved, customers acquired, revenue targets met
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Delivery:</strong><br/>
+                        • <strong>Input:</strong> market traction, customer base, revenue performance, competitive response<br/>
+                        • <strong>Do:</strong> scale operations, expand market, optimize profitability, strategic pivots<br/>
+                        • <strong>Output:</strong> market leadership, sustainable growth, competitive advantage, stakeholder value<br/>
+                        • <strong>Done when:</strong> market leadership achieved, sustainable growth, competitive advantage
+                      </div>
+                    </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Planning:</strong><br/>
-                      • Input: market research, competitive analysis, organizational capabilities, financial resources<br/>
-                      • Output: market analysis, competitive positioning, go-to-market strategy<br/>
-                      • Do: market research (15.8% annual growth), competitive analysis (Headspace/Calm vs our nostalgic UX), target market definition (privacy-conscious 25-45), revenue model design (freemium + enterprise)<br/>
-                      • Done when: strategy approved; unique positioning defined; go-to-market plan established
+                      <strong>Core Strategy Elements:</strong><br/>
+                      • <strong>Market Analysis:</strong> $5.6B mental health tech market, 15.8% annual growth, privacy-focused gap<br/>
+                      • <strong>Competitive Advantage:</strong> Nostalgic UX + privacy-first approach vs. premium modern competitors<br/>
+                      • <strong>Target Market:</strong> Privacy-conscious individuals (25-45), mental health professionals, corporate wellness<br/>
+                      • <strong>Revenue Model:</strong> Freemium → Enterprise → Healthcare partnerships progression
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Execution:</strong><br/>
-                      • Input: business strategy, market analysis, partnership opportunities, resource allocation<br/>
-                      • Output: market entry, partnerships, revenue generation<br/>
-                      • Do: open source community building, healthcare provider partnerships, corporate wellness platform launch<br/>
-                      • Quality gates: partnership agreements signed; revenue targets met<br/>
-                      • Change control: strategic pivots require board approval
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Governance:</strong><br/>
+                        • Monthly strategy reviews, quarterly market analysis, annual strategic planning<br/>
+                        • Continuous competitive monitoring, customer feedback, financial performance tracking<br/>
+                        • Required artifacts: Business strategy, Market analysis, Revenue projections, Risk assessment, Performance metrics
+                      </div>
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Delivery:</strong><br/>
-                      • Input: market entry results, partnership outcomes, revenue performance<br/>
-                      • Output: market leadership, sustainable revenue, brand recognition<br/>
-                      • Do: quarterly business reviews, market expansion, competitive response<br/>
-                      • Done when: market position established; sustainable growth achieved; competitive advantage maintained
-                    </div>
-                    <div>
-                      <strong>Success Metrics:</strong><br/>
-                      • Year 1: 1K users (community building)<br/>
-                      • Year 2: 10K users (healthcare partnerships)<br/>
-                      • Year 3: 50K users, $500K ARR (corporate platform)
+                    
+                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div>
+                        <strong>Success metrics:</strong><br/>
+                        • Market share and competitive position<br/>
+                        • Customer acquisition and retention rates<br/>
+                        • Revenue growth and profitability<br/>
+                        • Partnership success and market expansion
+                      </div>
                     </div>
                   </div>
                 )}
                 {activeTab === 'strategy' && (
                   <div>
                     <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>📊 Portfolio Strategy</h3>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Scope:</strong> Strategic portfolio management across mental health technology product lines<br/>
-                      <strong>Focus:</strong> How portfolio decisions drive business value and market coverage with Windows 95 aesthetic + privacy-first approach<br/>
-                      <strong>Goal:</strong> Maximize market coverage and revenue diversification through Individual → Family/Group → Healthcare Provider → Corporate Wellness progression
+                      <strong>What:</strong> Strategic portfolio management across multiple product lines<br/>
+                      <strong>Why:</strong> Drive business value and market coverage through diversified product portfolio<br/>
+                      <strong>How:</strong> How portfolio decisions maximize market coverage and revenue diversification
                     </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
                       <strong>Owners:</strong><br/>
-                      • Portfolio Manager: strategic planning, resource allocation, market coverage<br/>
-                      • Business Strategy Lead: market analysis, competitive positioning<br/>
-                      • Product Strategy Lead: product roadmap, feature prioritization<br/>
-                      • Finance Director: budget allocation, revenue planning
+                      • CEO/Founder: portfolio strategy, resource allocation, strategic direction<br/>
+                      • Product Portfolio Manager: portfolio coordination, resource optimization, market coverage<br/>
+                      • Business Development: market expansion, partnership strategy, revenue diversification<br/>
+                      • Finance Lead: portfolio ROI, resource allocation, financial optimization
                     </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Planning:</strong><br/>
+                        • <strong>Input:</strong> market analysis, business strategy, resource constraints, competitive landscape<br/>
+                        • <strong>Do:</strong> define portfolio composition, allocate resources, prioritize products, map market coverage<br/>
+                        • <strong>Output:</strong> portfolio strategy document, resource allocation plan, market coverage map, product roadmap<br/>
+                        • <strong>Done when:</strong> portfolio strategy approved, resources allocated, market coverage defined
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Execution:</strong><br/>
+                        • <strong>Input:</strong> portfolio strategy, resource allocation, product roadmaps, market opportunities<br/>
+                        • <strong>Do:</strong> execute product development, manage resources, coordinate products, expand market<br/>
+                        • <strong>Output:</strong> product portfolio, market coverage, revenue streams, competitive position<br/>
+                        • <strong>Done when:</strong> products delivered, market covered, revenue diversified
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Delivery:</strong><br/>
+                        • <strong>Input:</strong> product portfolio, market coverage, revenue performance, competitive response<br/>
+                        • <strong>Do:</strong> optimize portfolio, scale operations, expand market, strategic pivots<br/>
+                        • <strong>Output:</strong> optimized portfolio, market leadership, sustainable growth, stakeholder value<br/>
+                        • <strong>Done when:</strong> portfolio optimized, market leadership achieved, sustainable growth
+                      </div>
+                    </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Planning:</strong><br/>
-                      • Input: business strategy, market analysis, resource constraints, competitive landscape<br/>
-                      • Output: portfolio roadmap, resource allocation plan, market analysis<br/>
-                      • Do: market research (15.8% growth), competitive analysis (vs Headspace/Calm), portfolio composition definition (Individual → Family/Group → Healthcare Provider → Corporate Wellness)<br/>
-                      • Done when: portfolio strategy approved; resource allocation finalized
+                      <strong>Core Portfolio Elements:</strong><br/>
+                      • <strong>Portfolio Composition:</strong> Individual Mental Health Monitor, Healthcare Provider Platform, Corporate Wellness Platform, R&D initiatives<br/>
+                      • <strong>Resource Allocation:</strong> 70% Mental Health Monitor (core), 20% Healthcare Platform (expansion), 10% R&D (innovation)<br/>
+                      • <strong>Market Coverage:</strong> Individual consumers (B2C), Healthcare providers (B2B), Corporate clients (B2B), Research institutions (B2B)<br/>
+                      • <strong>Portfolio Benefits:</strong> Diversified revenue streams, shared infrastructure, multiple market segments, scalable compliance
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Execution:</strong><br/>
-                      • Input: portfolio roadmap, resource allocation, market feedback, development capacity<br/>
-                      • Output: coordinated product development, shared infrastructure (tracking engine, privacy framework, Windows 95 design system)<br/>
-                      • Do: quarterly portfolio reviews, resource reallocation, market expansion<br/>
-                      • Quality gates: market validation, competitive positioning review<br/>
-                      • Change control: portfolio changes require executive approval
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Governance:</strong><br/>
+                        • Monthly portfolio reviews, quarterly resource allocation, annual strategic planning<br/>
+                        • Continuous market monitoring, competitive analysis, portfolio optimization<br/>
+                        • Required artifacts: Portfolio strategy, Resource allocation plan, Market coverage map, Product roadmaps, Performance metrics
+                      </div>
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Delivery:</strong><br/>
-                      • Input: coordinated product development, shared infrastructure, market launches<br/>
-                      • Output: market penetration, revenue diversification, portfolio metrics<br/>
-                      • Do: market launch coordination, revenue tracking, portfolio optimization<br/>
-                      • Done when: portfolio objectives achieved; market coverage targets met
-                    </div>
-                    <div>
-                      <strong>Success Metrics:</strong><br/>
-                      • Progress toward 50K users by Year 3<br/>
-                      • Portfolio revenue growth %<br/>
-                      • Shared infrastructure utilization %
+                    
+                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div>
+                        <strong>Success metrics:</strong><br/>
+                        • Portfolio revenue diversification %<br/>
+                        • Market coverage and penetration rates<br/>
+                        • Resource allocation efficiency<br/>
+                        • Product portfolio ROI and growth
+                      </div>
                     </div>
                   </div>
                 )}
                 {activeTab === 'program' && (
                   <div>
                     <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>📋 Program Management</h3>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Scope:</strong> Tactical coordination across related projects within strategic domains<br/>
-                      <strong>Focus:</strong> How related projects work together to achieve shared objectives<br/>
-                      <strong>Goal:</strong> Coordinate projects via shared infrastructure and unified roadmap to maximize impact and reduce duplication
+                      <strong>What:</strong> Tactical coordination across related projects within strategic domains<br/>
+                      <strong>Why:</strong> Coordinate projects via shared infrastructure and unified roadmap to maximize impact and reduce duplication<br/>
+                      <strong>How:</strong> How related projects work together to achieve shared objectives
                     </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
                       <strong>Owners:</strong><br/>
                       • Program Manager: coordination, stakeholder comms, governance<br/>
@@ -540,33 +1084,43 @@ function App() {
                       • Head of R&D: Research & Development Program<br/>
                       • Program Director/PMO: cross-program coordination, portfolio decisions
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Planning:</strong><br/>
-                      • Input: portfolio strategy, project requirements, resource constraints, architectural standards<br/>
-                      • Output: program roadmap, dependency register, shared architecture docs<br/>
-                      • Do: define program scope, resource allocation, timeline coordination<br/>
-                      • Done when: roadmap approved; dependencies mapped; architecture standards defined
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Planning:</strong><br/>
+                        • <strong>Input:</strong> portfolio strategy, project requirements, resource constraints, architectural standards<br/>
+                        • <strong>Do:</strong> define program scope, resource allocation, timeline coordination<br/>
+                        • <strong>Output:</strong> program roadmap, dependency register, shared architecture docs<br/>
+                        • <strong>Done when:</strong> roadmap approved, dependencies mapped, architecture standards defined
+                      </div>
                     </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Execution:</strong><br/>
+                        • <strong>Input:</strong> program roadmap, shared architecture docs, project deliverables<br/>
+                        • <strong>Do:</strong> weekly program standup, dependency management, change control<br/>
+                        • <strong>Output:</strong> coordinated project delivery, shared infrastructure, execution framework<br/>
+                        • <strong>Done when:</strong> Projects coordinated, dependencies managed, shared infrastructure delivered
+                      </div>
+                    </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Execution:</strong><br/>
-                      • Input: program roadmap, shared architecture docs, project deliverables, execution framework<br/>
-                      • Output: coordinated project delivery, shared infrastructure<br/>
-                      • Do: weekly program standup, dependency management, change control<br/>
-                      • Quality gates: architecture review board approval for changes<br/>
-                      • Change control: maintain dependency register; require sign-offs before milestone changes
-                      <br/><br/>
-                      <strong>Execution Framework:</strong><br/>
-                      • Sequential build order designed for safe delivery and technical execution<br/>
-                      • Program‑level artifact that guides project execution (so multiple projects share the same rules)<br/>
-                      • Enforces consistent, cross‑project sequencing, shared policies, dependency rules, and governance<br/>
+                      <strong>Execution Framework:</strong> Sequential build order for safe delivery and technical execution with shared rules, policies, and governance across multiple projects<br/>
                       <br/>
                       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
                         <thead>
                           <tr>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "10%" }}>Level</th>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%" }}>Architecture Track</th>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%" }}>Engineering Track</th>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%" }}>UX/Design Track</th>
+                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%" }}>Level</th>
+                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Architecture Track</th>
+                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Engineering Track</th>
+                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>UX/Design Track</th>
+                          </tr>
+                          <tr>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Defines technical foundation</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Builds implementation</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Creates user experience</td>
+                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}></td>
                           </tr>
                         </thead>
                         <tbody>
@@ -615,207 +1169,481 @@ function App() {
                         </tbody>
                       </table>
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Delivery:</strong><br/>
-                      • Input: coordinated project delivery, shared infrastructure, release artifacts<br/>
-                      • Output: integrated program outcomes, lessons learned, release artifacts<br/>
-                      • Do: monthly exec summary, quarterly portfolio review, risk management, release planning, staging, production deployment, handoff to operations<br/>
-                      • Done when: program objectives achieved; portfolio priorities aligned; all projects successfully delivered
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Delivery:</strong><br/>
+                        • <strong>Input:</strong> coordinated project delivery, shared infrastructure, release artifacts<br/>
+                        • <strong>Do:</strong> monthly exec summary, quarterly portfolio review, risk management, release planning, staging, production deployment, handoff to operations<br/>
+                        • <strong>Output:</strong> integrated program outcomes, lessons learned, release artifacts<br/>
+                        • <strong>Done when:</strong> program objectives achieved, portfolio priorities aligned, all projects successfully delivered
+                      </div>
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Governance:</strong><br/>
-                      • Weekly program standup, biweekly cross-program planning<br/>
-                      • Monthly exec summary, quarterly portfolio review<br/>
-                      • Required artifacts: Program roadmap, Dependency register, Shared architecture docs, Risk register, Release calendar
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Governance:</strong><br/>
+                        • Weekly program standup, biweekly cross-program planning<br/>
+                        • Monthly exec summary, quarterly portfolio review<br/>
+                        • Required artifacts: Program roadmap, Dependency register, Shared architecture docs, Risk register, Release calendar
+                      </div>
                     </div>
-                    <div>
-                      <strong>Success Metrics:</strong><br/>
-                      • Program milestone achievement %<br/>
-                      • Cross-program dependency delivery rate<br/>
-                      • Shared infrastructure utilization %
+                    
+                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div>
+                        <strong>Success metrics:</strong><br/>
+                        • Program milestone achievement %<br/>
+                        • Cross-program dependency delivery rate<br/>
+                        • Shared infrastructure utilization %
+                      </div>
                     </div>
                   </div>
                 )}
                 {activeTab === 'project' && (
                   <div>
                     <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>📋 Project Management</h3>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Scope:</strong> Planning, execution, delivery<br/>
-                      <strong>Focus:</strong> How to build it and when<br/>
-                      <strong>Goal:</strong> Deliver projects on time, on budget, within scope
+                      <strong>What:</strong> Operational execution of individual projects within program frameworks<br/>
+                      <strong>Why:</strong> Deliver specific project outcomes that contribute to program objectives<br/>
+                      <strong>How:</strong> How individual projects are managed and delivered within program constraints
                     </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
                       <strong>Owners:</strong><br/>
-                      • Project Manager: schedule, scope, stakeholder comms<br/>
-                      • Tech Lead: technical quality, code reviews, releases<br/>
-                      • QA: test strategy & UAT<br/>
-                      • Product Owner: acceptance/sign-off
+                      • Project Manager: day-to-day execution, stakeholder communication, delivery<br/>
+                      • Technical Lead: architecture decisions, code quality, technical delivery<br/>
+                      • Product Owner: requirements, acceptance criteria, user validation<br/>
+                      • Program Manager: program alignment, dependency coordination
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Planning:</strong><br/>
-                      • Input: program requirements, resource constraints, technical specifications, stakeholder needs<br/>
-                      • Output: one-page PRD + milestones, named resources, budget<br/>
-                      • Do: define scope, acceptance criteria, timeline, risk register<br/>
-                      • Done when: PRD signed; milestones & budget approved
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Planning:</strong><br/>
+                        • <strong>Input:</strong> program roadmap, project requirements, resource availability, technical constraints<br/>
+                        • <strong>Do:</strong> define project scope, create timeline, allocate resources, identify risks<br/>
+                        • <strong>Output:</strong> project charter, work breakdown structure, resource plan, risk register<br/>
+                        • <strong>Done when:</strong> project approved, team assigned, baseline established
+                      </div>
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Execution:</strong><br/>
-                      • Input: PRD, milestones, named resources, execution framework<br/>
-                      • Output: working increments, weekly status<br/>
-                      • Do: daily standups, sprint planning, track blockers, stakeholder updates<br/>
-                      • Quality gates: PRs require tests + CI green + 1-2 reviewers<br/>
-                      • Change control: log change requests; approve before scope change
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Execution:</strong><br/>
+                        • <strong>Input:</strong> project charter, work breakdown structure, team resources<br/>
+                        • <strong>Do:</strong> daily standups, sprint planning, code reviews, testing, stakeholder updates<br/>
+                        • <strong>Output:</strong> working software, test results, progress reports, lessons learned<br/>
+                        • <strong>Done when:</strong> features delivered, quality gates passed, stakeholders satisfied
+                      </div>
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Delivery:</strong><br/>
-                      • Input: working increments, weekly status, UAT results<br/>
-                      • Output: release artifacts, runbooks, handoff<br/>
-                      • Do: UAT, release checklist (CI green, backups, rollback plan), docs, lessons learned<br/>
-                      • Done when: PO + Ops sign off; runbook handed to support
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Delivery:</strong><br/>
+                        • <strong>Input:</strong> completed features, test results, deployment artifacts<br/>
+                        • <strong>Do:</strong> user acceptance testing, production deployment, documentation, training<br/>
+                        • <strong>Output:</strong> live system, user documentation, support materials, project closure<br/>
+                        • <strong>Done when:</strong> system live, users trained, project closed, knowledge transferred
+                      </div>
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Risk & Incidents:</strong><br/>
-                      • Maintain risk register (owner, mitigation); review weekly<br/>
-                      • Incident flow: page → triage → fix → postmortem within 72h
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Governance:</strong><br/>
+                        • Daily standups, weekly sprint reviews, biweekly retrospectives<br/>
+                        • Monthly project reviews, quarterly program alignment<br/>
+                        • Required artifacts: Project charter, Work breakdown structure, Risk register, Progress reports, Lessons learned
+                      </div>
                     </div>
-                    <div>
-                      <strong>Success Metrics:</strong><br/>
-                      • On-time milestones %<br/>
-                      • Budget variance<br/>
-                      • Escaped defects or MTTR
+                    
+                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div>
+                        <strong>Success metrics:</strong><br/>
+                        • Project delivery on time and within budget %<br/>
+                        • Quality gate pass rate %<br/>
+                        • Stakeholder satisfaction score<br/>
+                        • Team velocity and burndown rate
+                      </div>
                     </div>
                   </div>
                 )}
                 {activeTab === 'vision' && (
                   <div>
                     <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>🎯 Product Vision & Strategy</h3>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Mission:</strong><br/>
-                      Empower individuals to take control of their mental health through intuitive, 
-                      nostalgic technology that makes wellness tracking accessible and engaging.
+                      <strong>What:</strong> Long-term product direction and strategic positioning<br/>
+                      <strong>Why:</strong> Guide product development decisions and align stakeholders on future direction<br/>
+                      <strong>How:</strong> How product vision drives feature prioritization and market positioning
                     </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Vision:</strong><br/>
-                      A mental health monitoring platform that combines the simplicity and 
-                      reliability of Windows 95 with modern wellness science, creating a 
-                      trusted companion for daily mental health management.
+                      <strong>Owners:</strong><br/>
+                      • Product Manager: vision definition, roadmap alignment, market positioning<br/>
+                      • Design Lead: user experience vision, design language, usability standards<br/>
+                      • Engineering Lead: technical feasibility, architecture alignment, scalability<br/>
+                      • Business Stakeholders: market validation, business model alignment, funding
                     </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Planning:</strong><br/>
+                        • <strong>Input:</strong> market research, user feedback, competitive analysis, business objectives<br/>
+                        • <strong>Do:</strong> define vision statement, create product roadmap, prioritize features, validate assumptions<br/>
+                        • <strong>Output:</strong> product vision document, strategic roadmap, feature prioritization, validation results<br/>
+                        • <strong>Done when:</strong> vision approved, roadmap published, stakeholders aligned
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Execution:</strong><br/>
+                        • <strong>Input:</strong> product roadmap, feature specifications, user stories, design mockups<br/>
+                        • <strong>Do:</strong> sprint planning, feature development, user testing, iteration cycles<br/>
+                        • <strong>Output:</strong> working features, user feedback, performance metrics, iteration learnings<br/>
+                        • <strong>Done when:</strong> features shipped, users engaged, metrics improved
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Delivery:</strong><br/>
+                        • <strong>Input:</strong> completed features, user feedback, market data, performance metrics<br/>
+                        • <strong>Do:</strong> market launch, user onboarding, feedback collection, performance monitoring<br/>
+                        • <strong>Output:</strong> market-ready product, user adoption, revenue generation, market position<br/>
+                        • <strong>Done when:</strong> product launched, users adopting, business objectives met
+                      </div>
+                    </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Core Values:</strong><br/>
-                      • Simplicity: Easy-to-use interface that doesn't overwhelm<br/>
-                      • Reliability: Consistent, predictable functionality<br/>
-                      • Privacy: User data stays local and secure<br/>
-                      • Accessibility: Works for users of all technical levels<br/>
-                      • Nostalgia: Familiar, comforting design language
+                      <strong>Core Vision Elements:</strong><br/>
+                      • <strong>Mission:</strong> Empower individuals to take control of their mental health through intuitive, nostalgic technology<br/>
+                      • <strong>Vision:</strong> A mental health monitoring platform that combines Windows 95 simplicity with modern wellness science<br/>
+                      • <strong>Values:</strong> Privacy first, Simplicity over complexity, Technology serves people<br/>
+                      • <strong>North Star:</strong> 1 million people using our Windows-95-inspired mental health tools by 2030
                     </div>
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Target Users:</strong><br/>
-                      • Mental health enthusiasts seeking better self-awareness<br/>
-                      • Individuals managing anxiety, depression, or stress<br/>
-                      • People who prefer simple, distraction-free tools<br/>
-                      • Users who value privacy and data ownership
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Governance:</strong><br/>
+                        • Weekly product reviews, monthly roadmap updates, quarterly vision alignment<br/>
+                        • Annual strategic planning, market analysis, competitive positioning<br/>
+                        • Required artifacts: Product vision document, Strategic roadmap, Feature specifications, Market analysis
+                      </div>
                     </div>
-                    <div>
-                      <strong>Success Metrics:</strong><br/>
-                      • Daily active usage and engagement<br/>
-                      • User retention and satisfaction scores<br/>
-                      • Privacy compliance and data security<br/>
-                      • Accessibility and usability ratings
+                    
+                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div>
+                        <strong>Success metrics:</strong><br/>
+                        • User adoption and retention rates<br/>
+                        • Feature usage and engagement metrics<br/>
+                        • Market share and competitive position<br/>
+                        • Revenue growth and business objectives achievement
+                      </div>
                     </div>
                   </div>
                 )}
                 {activeTab === 'requirements' && (
                   <div>
                     <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>📝 Product Requirements</h3>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Core Features:</strong><br/>
-                      • Sleep, emotion, and environment tracking<br/>
-                      • Timeline events and local storage<br/>
-                      • Windows 95 authentic design
+                      <strong>What:</strong> Detailed specifications for product features and functionality<br/>
+                      <strong>Why:</strong> Ensure development team builds exactly what users need and business requires<br/>
+                      <strong>How:</strong> How requirements drive development priorities and quality standards
                     </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Technical Requirements:</strong><br/>
-                      • React 19+ with Vite build system<br/>
-                      • Local storage for data persistence<br/>
-                      • No external API dependencies
+                      <strong>Owners:</strong><br/>
+                      • Product Manager: business requirements, user stories, acceptance criteria<br/>
+                      • UX Designer: user experience requirements, interaction specifications, usability standards<br/>
+                      • Technical Lead: technical requirements, architecture constraints, performance standards<br/>
+                      • QA Lead: quality requirements, testing criteria, validation standards
                     </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Planning:</strong><br/>
+                        • <strong>Input:</strong> user research, business objectives, technical constraints, market analysis<br/>
+                        • <strong>Do:</strong> gather requirements, define user stories, create acceptance criteria, prioritize features<br/>
+                        • <strong>Output:</strong> requirements document, user stories, acceptance criteria, feature prioritization<br/>
+                        • <strong>Done when:</strong> requirements approved, user stories ready, development can begin
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Execution:</strong><br/>
+                        • <strong>Input:</strong> requirements document, user stories, design mockups, technical specifications<br/>
+                        • <strong>Do:</strong> sprint planning, feature development, code reviews, testing, requirement validation<br/>
+                        • <strong>Output:</strong> working features, test results, requirement traceability, quality metrics<br/>
+                        • <strong>Done when:</strong> features meet requirements, quality gates passed, stakeholders approve
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Delivery:</strong><br/>
+                        • <strong>Input:</strong> completed features, test results, user feedback, requirement validation<br/>
+                        • <strong>Do:</strong> user acceptance testing, requirement verification, documentation, training<br/>
+                        • <strong>Output:</strong> requirement-compliant product, user documentation, validation reports<br/>
+                        • <strong>Done when:</strong> all requirements met, users trained, product validated
+                      </div>
+                    </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Design Requirements:</strong><br/>
-                      • 100% Windows 95 Guidelines compliance<br/>
-                      • MS Sans Serif, 8px typography<br/>
-                      • Authentic color palette and borders
+                      <strong>Core Requirements Categories:</strong><br/>
+                      • <strong>Functional:</strong> Sleep, emotion, and environment tracking, Timeline events, Local storage<br/>
+                      • <strong>Technical:</strong> React 19+ with Vite, Local storage persistence, No external API dependencies<br/>
+                      • <strong>Design:</strong> 100% Windows 95 Guidelines compliance, MS Sans Serif 8px typography, Authentic color palette<br/>
+                      • <strong>Performance:</strong> Fast load times (&lt; 2 seconds), Offline-first functionality, Smooth interactions
                     </div>
-                    <div>
-                      <strong>Performance Requirements:</strong><br/>
-                      • Fast load times (&lt; 2 seconds)<br/>
-                      • Offline-first functionality<br/>
-                      • Smooth slider interactions
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Governance:</strong><br/>
+                        • Weekly requirement reviews, biweekly user story refinement, monthly requirement validation<br/>
+                        • Quarterly requirement audits, stakeholder alignment, change management<br/>
+                        • Required artifacts: Requirements document, User stories, Acceptance criteria, Test cases, Validation reports
+                      </div>
+                    </div>
+                    
+                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div>
+                        <strong>Success metrics:</strong><br/>
+                        • Requirement coverage and traceability %<br/>
+                        • User story completion rate %<br/>
+                        • Quality gate pass rate %<br/>
+                        • Stakeholder satisfaction with delivered features
+                      </div>
                     </div>
                   </div>
                 )}
                 {activeTab === 'guidelines' && (
                   <div>
                     <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>🎨 Interface Guidelines</h3>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>User-Centered Design Principles:</strong><br/>
-                      • Control<br/>
-                      • Directness<br/>
-                      • Consistency<br/>
-                      • Forgiveness<br/>
-                      • Feedback<br/>
-                      • Aesthetics<br/>
-                      • Simplicity
+                      <strong>What:</strong> Design standards and visual specifications for consistent user experience<br/>
+                      <strong>Why:</strong> Ensure all interfaces follow Windows 95 design principles for authentic user experience<br/>
+                      <strong>How:</strong> How design guidelines drive consistent implementation across all components
                     </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Interface Elements:</strong><br/>
-                      • Title Bar, Menu Bar, Toolbar, Status Bar<br/>
-                      • Buttons, Checkboxes, Radio Buttons<br/>
-                      • Text Fields, Sliders, Progress Bars<br/>
-                      • Windows, Dialog Boxes, List Boxes, Tabs
+                      <strong>Owners:</strong><br/>
+                      • Design Lead: visual standards, component specifications, design system maintenance<br/>
+                      • Frontend Developer: implementation standards, component library, code quality<br/>
+                      • UX Researcher: usability standards, accessibility guidelines, user testing protocols<br/>
+                      • Product Manager: design consistency, brand alignment, user experience validation
                     </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Planning:</strong><br/>
+                        • <strong>Input:</strong> Windows 95 Guidelines, user research, accessibility standards, brand requirements<br/>
+                        • <strong>Do:</strong> define design system, create component library, establish style guide, validate usability<br/>
+                        • <strong>Output:</strong> design system documentation, component specifications, style guide, usability standards<br/>
+                        • <strong>Done when:</strong> design system approved, components documented, developers trained
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Execution:</strong><br/>
+                        • <strong>Input:</strong> design system, component specifications, design mockups, implementation requirements<br/>
+                        • <strong>Do:</strong> component development, design reviews, code reviews, accessibility testing<br/>
+                        • <strong>Output:</strong> implemented components, design compliance reports, accessibility validation<br/>
+                        • <strong>Done when:</strong> components implemented, design standards met, accessibility validated
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Delivery:</strong><br/>
+                        • <strong>Input:</strong> implemented components, design validation, user feedback, accessibility reports<br/>
+                        • <strong>Do:</strong> design audits, user testing, accessibility validation, documentation updates<br/>
+                        • <strong>Output:</strong> design-compliant product, user documentation, accessibility certification<br/>
+                        • <strong>Done when:</strong> design standards met, users satisfied, accessibility validated
+                      </div>
+                    </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Color Palette:</strong><br/>
-                      • Background: #d4d0c8<br/>
-                      • Light Grey: #c0c0c0<br/>
-                      • Dark Grey: #808080<br/>
-                      • White: #ffffff<br/>
-                      • Black: #000000<br/>
-                      • Windows Blue: #000080
+                      <strong>Core Design Principles:</strong><br/>
+                      • <strong>User-Centered Design:</strong> Control, Directness, Consistency, Forgiveness, Feedback, Aesthetics, Simplicity<br/>
+                      • <strong>Interface Elements:</strong> Title Bar, Menu Bar, Toolbar, Status Bar, Buttons, Checkboxes, Radio Buttons<br/>
+                      • <strong>Color Palette:</strong> Background #d4d0c8, Light Grey #c0c0c0, Dark Grey #808080, White #ffffff, Black #000000<br/>
+                      • <strong>Typography:</strong> MS Sans Serif 8px body text, 10px headings, consistent throughout
                     </div>
-                    <div>
-                      <strong>Typography:</strong><br/>
-                      • Body Text: MS Sans Serif, 8px<br/>
-                      • Headings: MS Sans Serif, 10px<br/>
-                      • Title Bar: MS Sans Serif, 8px<br/>
-                      • Buttons: MS Sans Serif, 8px
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Governance:</strong><br/>
+                        • Weekly design reviews, biweekly component audits, monthly accessibility assessments<br/>
+                        • Quarterly design system updates, user testing, brand alignment reviews<br/>
+                        • Required artifacts: Design system, Component library, Style guide, Accessibility standards, Usability reports
+                      </div>
+                    </div>
+                    
+                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div>
+                        <strong>Success metrics:</strong><br/>
+                        • Design compliance rate %<br/>
+                        • Component reusability and consistency %<br/>
+                        • Accessibility compliance score<br/>
+                        • User satisfaction with visual design
+                      </div>
                     </div>
                   </div>
                 )}
                 {activeTab === 'developer' && (
                   <div>
-                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>⚙️ Developer Information</h3>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>⚙️ Developer Specs</h3>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Tech Stack:</strong><br/>
-                      • React 19.1.1 with Vite<br/>
-                      • MS Sans Serif, 8px typography<br/>
-                      • Authentic Windows 95 colors (#d4d0c8, #c0c0c0, #808080)
+                      <strong>What:</strong> Technical specifications and development standards for implementation<br/>
+                      <strong>Why:</strong> Ensure consistent, maintainable, and scalable code across the development team<br/>
+                      <strong>How:</strong> How technical standards drive code quality and development efficiency
                     </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Architecture:</strong><br/>
-                      • Component-based React architecture<br/>
-                      • Local storage for data persistence<br/>
-                      • No external dependencies for core functionality
+                      <strong>Owners:</strong><br/>
+                      • Technical Lead: architecture decisions, code standards, technical debt management<br/>
+                      • Senior Developer: implementation patterns, code reviews, mentoring<br/>
+                      • DevOps Engineer: deployment standards, infrastructure, monitoring<br/>
+                      • QA Engineer: testing standards, quality gates, automation
                     </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Planning:</strong><br/>
+                        • <strong>Input:</strong> technical requirements, architecture constraints, performance targets, security standards<br/>
+                        • <strong>Do:</strong> define tech stack, establish coding standards, create development guidelines, set up tooling<br/>
+                        • <strong>Output:</strong> technical specification document, coding standards, development environment, tooling setup<br/>
+                        • <strong>Done when:</strong> tech stack approved, standards documented, development environment ready
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Execution:</strong><br/>
+                        • <strong>Input:</strong> technical specs, coding standards, feature requirements, design mockups<br/>
+                        • <strong>Do:</strong> code development, code reviews, testing, documentation, deployment<br/>
+                        • <strong>Output:</strong> working code, test coverage, documentation, deployed features<br/>
+                        • <strong>Done when:</strong> code meets standards, tests pass, features deployed
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Delivery:</strong><br/>
+                        • <strong>Input:</strong> completed code, test results, performance metrics, user feedback<br/>
+                        • <strong>Do:</strong> production deployment, monitoring setup, performance optimization, maintenance<br/>
+                        • <strong>Output:</strong> production-ready system, monitoring dashboards, performance reports<br/>
+                        • <strong>Done when:</strong> system stable, performance targets met, monitoring active
+                      </div>
+                    </div>
+                    
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>Design System:</strong><br/>
-                      • Microsoft Windows 95 Guidelines compliance<br/>
-                      • Inset/outset border effects<br/>
-                      • 8px font size throughout
+                      <strong>Core Technical Specifications:</strong><br/>
+                      • <strong>Tech Stack:</strong> React 19.1.1 with Vite, MS Sans Serif 8px typography, Windows 95 color palette<br/>
+                      • <strong>Architecture:</strong> Component-based React architecture, Local storage for data persistence, No external dependencies<br/>
+                      • <strong>Design System:</strong> Microsoft Windows 95 Guidelines compliance, Inset/outset border effects, 8px font size throughout<br/>
+                      • <strong>Performance:</strong> Fast load times (&lt; 2 seconds), Offline-first functionality, Smooth interactions
                     </div>
-                    <div>
-                      <strong>Version:</strong> 1.0.0<br/>
-                      <strong>Build:</strong> Vite development server<br/>
-                      <strong>Browser Support:</strong> Modern browsers with CSS3 support
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Governance:</strong><br/>
+                        • Daily code reviews, weekly technical debt reviews, monthly architecture reviews<br/>
+                        • Quarterly tech stack updates, performance audits, security assessments<br/>
+                        • Required artifacts: Technical specification, Code standards, Architecture documentation, Performance reports
+                      </div>
+                    </div>
+                    
+                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div>
+                        <strong>Success metrics:</strong><br/>
+                        • Code quality and maintainability score<br/>
+                        • Test coverage percentage<br/>
+                        • Performance benchmarks achievement<br/>
+                        • Developer productivity and satisfaction
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {activeTab === 'habits' && (
+                  <div>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>🔧 Build Habits / Engineering Practices</h3>
+                    
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>What:</strong> Development workflow and version control best practices<br/>
+                      <strong>Why:</strong> Establish consistent habits that prevent lost work and enable smooth collaboration<br/>
+                      <strong>How:</strong> How development habits drive code quality and team productivity
+                    </div>
+                    
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Owners:</strong><br/>
+                      • Development Team: daily workflow execution, code quality, collaboration<br/>
+                      • Technical Lead: workflow standards, tooling decisions, process improvement<br/>
+                      • DevOps Engineer: CI/CD pipeline, automation, deployment processes<br/>
+                      • Project Manager: workflow compliance, team productivity, delivery tracking
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Planning:</strong><br/>
+                        • <strong>Input:</strong> team capabilities, project requirements, tooling constraints, collaboration needs<br/>
+                        • <strong>Do:</strong> define workflow standards, establish tooling, create guidelines, train team<br/>
+                        • <strong>Output:</strong> workflow documentation, tooling setup, team training, process guidelines<br/>
+                        • <strong>Done when:</strong> workflow established, team trained, tools configured
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Execution:</strong><br/>
+                        • <strong>Input:</strong> workflow guidelines, development tasks, code changes, team coordination<br/>
+                        • <strong>Do:</strong> daily commits, code reviews, testing, documentation, collaboration<br/>
+                        • <strong>Output:</strong> version-controlled code, quality reviews, test coverage, team coordination<br/>
+                        • <strong>Done when:</strong> code committed, reviewed, tested, documented
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Delivery:</strong><br/>
+                        • <strong>Input:</strong> completed features, tested code, documentation, team feedback<br/>
+                        • <strong>Do:</strong> deployment, monitoring, feedback collection, process improvement<br/>
+                        • <strong>Output:</strong> deployed features, performance metrics, process improvements, team satisfaction<br/>
+                        • <strong>Done when:</strong> features deployed, performance monitored, processes improved
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "6px" }}>
+                      <strong>Core Development Habits:</strong><br/>
+                      • <strong>Version Control:</strong> Commit often, Write good commit messages, Push regularly, Check status<br/>
+                      • <strong>Daily Workflow:</strong> Start with git status, Work on changes, Stage files, Commit with descriptive message, Push to backup<br/>
+                      • <strong>Code Quality:</strong> Write tests, Code reviews, Documentation, Refactoring, Performance monitoring<br/>
+                      • <strong>Collaboration:</strong> Clear communication, Shared standards, Knowledge sharing, Conflict resolution
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Governance:</strong><br/>
+                        • Daily workflow checks, weekly process reviews, monthly tooling assessments<br/>
+                        • Quarterly workflow optimization, team training, process improvement<br/>
+                        • Required artifacts: Workflow documentation, Code standards, Process guidelines, Team training materials
+                      </div>
+                    </div>
+                    
+                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div>
+                        <strong>Success metrics:</strong><br/>
+                        • Commit frequency and message quality<br/>
+                        • Code review completion rate %<br/>
+                        • Test coverage and quality metrics<br/>
+                        • Team productivity and satisfaction scores
+                      </div>
                     </div>
                   </div>
                 )}
@@ -865,8 +1693,8 @@ function App() {
   };
 
   return (
-    <div style={{
-      background: "#008080",
+    <div style={{ 
+      background: "#008080", 
       minHeight: "100vh",
       width: "100vw",
       position: "relative",
@@ -881,10 +1709,10 @@ function App() {
           width: "64px",
           height: "64px",
           cursor: "pointer",
-          display: "flex",
+      display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+      alignItems: "center",
+      justifyContent: "center",
           background: "transparent"
         }}
         onClick={openWindow}
@@ -910,74 +1738,39 @@ function App() {
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 100
-        }}>
-          <div style={styles.mainWindow}>
+    }}>
+      <div style={styles.mainWindow}>
             <Header onClose={closeWindow} />
-            <MenuBar 
-              activeView={activeView}
-              setActiveView={setActiveView}
-              saveSliderPositions={saveSliderPositions}
-              recallSliderPositions={recallSliderPositions}
-              hasSavedPositions={hasSavedPositions()}
+        <Toolbar 
+          activeView={activeView}
+          setActiveView={setActiveView}
+          outputValue={outputValue}
+          bloodSugar={bloodSugar}
+          getBloodSugarStatus={getBloodSugarStatus}
+          saveSliderPositions={saveSliderPositions}
+          recallSliderPositions={recallSliderPositions}
+          hasSavedPositions={hasSavedPositions()}
               undoSliderChange={undoSliderChange}
               hasUndoAvailable={previousSliderValues !== null}
-              resetAllSliders={() => setSliderValues({
-                sleepQuality: 0,
-                sleepDuration: 0,
-                waterLevel: 0,
-                caffeineLevel: 0,
-                foodLevel: 0,
-                walkLevel: 0,
-                alcoholLevel: 0,
-                medication1: 0,
-                vitaminD: 0,
-                vitaminB12: 0,
-                vitaminC: 0,
-                magnesium: 0,
-                lTheanine: 0,
-                thc: 0,
-                cbd: 0,
-                happiness: 0,
-                anxiety: 0,
-                energy: 0,
-                focus: 0,
-                stress: 0,
-                sadness: 0,
-                anger: 0,
-                irritability: 0,
-                dread: 0
-              })}
-            />
-            <Toolbar 
-              activeView={activeView}
-              setActiveView={setActiveView}
-              outputValue={outputValue}
-              bloodSugar={bloodSugar}
-              getBloodSugarStatus={getBloodSugarStatus}
-              saveSliderPositions={saveSliderPositions}
-              recallSliderPositions={recallSliderPositions}
-              hasSavedPositions={hasSavedPositions()}
-              undoSliderChange={undoSliderChange}
-              hasUndoAvailable={previousSliderValues !== null}
-              cortisolLevel={cortisolLevel}
-            />
-            <div style={styles.mainContent}>
-              <div style={styles.leftContent}>
-                {renderViewContent()}
-              </div>
-            </div>
-            <StatusBar 
-              caffeineLevel={sliderValues.caffeineLevel}
-              sliderValues={sliderValues}
-            />
+          cortisolLevel={cortisolLevel}
+        />
+        <div style={styles.mainContent}>
+          <div style={styles.leftContent}>
+            {renderViewContent()}
           </div>
+        </div>
+        <StatusBar 
+          caffeineLevel={sliderValues.caffeineLevel}
+          sliderValues={sliderValues}
+        />
+      </div>
         </div>
       )}
 
-      {/* Taskbar */}
-      <Taskbar onOpenWindow={openWindow} />
     </div>
   );
 }
 
 export default App;
+
+

@@ -173,26 +173,35 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
 
   return (
     <div style={styles.viewSwitcher}>
-      {VIEW_BUTTONS.filter(({ id }) => id !== 'about').map(({ id, icon, alt, text }) => (
-        <button
-          key={id}
-          style={{
-            ...styles.button,
-            ...(text && { width: "auto", padding: "0 8px" }),
-            ...(activeView === id && styles.activeButton)
-          }}
-          onClick={() => setActiveView(id)}
-          onMouseDown={handleButtonMouseDown}
-          onMouseUp={handleButtonMouseUp}
-        >
-          {text ? (
-            <span style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
-              {text}
-            </span>
-          ) : (
-            <img src={icon} alt={alt} style={{ width: "18px", height: "18px" }} />
+      {VIEW_BUTTONS.map(({ id, icon, alt, text }) => (
+        <React.Fragment key={id}>
+          <button
+            style={{
+              ...styles.button,
+              ...(text && { width: "auto", padding: "0 8px" }),
+              ...(activeView === id && styles.activeButton)
+            }}
+            onClick={() => setActiveView(id)}
+            onMouseDown={handleButtonMouseDown}
+            onMouseUp={handleButtonMouseUp}
+          >
+            {text ? (
+              <span style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
+                {text}
+              </span>
+            ) : (
+              <img src={icon} alt={alt} style={{ width: "18px", height: "18px" }} />
+            )}
+          </button>
+          {id === 'timeline' && (
+            <div style={{
+              width: "1px",
+              height: "20px",
+              background: "#808080",
+              margin: "0 2px"
+            }} />
           )}
-        </button>
+        </React.Fragment>
       ))}
       
       <div style={styles.healthIndicators}>
