@@ -449,9 +449,9 @@ function App() {
                           <thead>
                             <tr>
                               <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%" }}>Level</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>CEO/Founder Track</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Leadership Team Track</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>All Team Members Track</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>CEO/Founder </th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Leadership Team </th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>All Team Members </th>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose: Plans mission</td>
@@ -464,58 +464,50 @@ function App() {
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 0 — Launch</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Market research, user needs, competitive analysis<br/>
-                                <strong>Do:</strong> craft mission & core values<br/>
-                                <strong>Output:</strong> mission statement<br/>
-                                <strong>Done:</strong> mission statement approved by Board
+                                <strong>Input:</strong> Market research & user needs analysis<br/>
+                                <strong>Output:</strong> mission statement, core values document<br/>
+                                <strong>Done:</strong> Board approval
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission statement, core values<br/>
-                                <strong>Do:</strong> create communication & rollout plan<br/>
                                 <strong>Output:</strong> rollout plan<br/>
-                                <strong>Done:</strong> rollout plan approved by CEO
+                                <strong>Done:</strong> CEO approval
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission statement, values framework<br/>
-                                <strong>Do:</strong> initial adoption activities<br/>
                                 <strong>Output:</strong> team readiness<br/>
-                                <strong>Done:</strong> team alignment achieved
+                                <strong>Done:</strong> team alignment
                               </td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Vision & Metrics</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Mission statement, organizational values<br/>
-                                <strong>Do:</strong> author vision document & define North Star metrics<br/>
-                                <strong>Output:</strong> vision document + targets<br/>
-                                <strong>Done:</strong> vision document approved by Board
+                                <strong>Input:</strong> Mission statement, core values<br/>
+                                <strong>Output:</strong> vision document + North Star metrics<br/>
+                                <strong>Done:</strong> Board approval
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> vision document, North Star<br/>
-                                <strong>Do:</strong> create implementation plan<br/>
                                 <strong>Output:</strong> culture framework<br/>
-                                <strong>Done:</strong> culture framework implemented
+                                <strong>Done:</strong> framework ready
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> values framework, culture guidelines<br/>
-                                <strong>Do:</strong> adopt decision framework<br/>
                                 <strong>Output:</strong> decision guidelines<br/>
-                                <strong>Done:</strong> team trained on decision guidelines
+                                <strong>Done:</strong> team trained
                               </td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Strategy & Roadmap</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Vision document, strategic objectives<br/>
-                                <strong>Do:</strong> publish strategic roadmap<br/>
                                 <strong>Output:</strong> strategy & success metrics<br/>
-                                <strong>Done:</strong> strategic roadmap approved by Board
+                                <strong>Done:</strong> Board approval
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> strategic roadmap<br/>
-                                <strong>Do:</strong> align org & processes<br/>
                                 <strong>Output:</strong> alignment plan<br/>
-                                <strong>Done:</strong> alignment plan executed
+                                <strong>Done:</strong> plan executed
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <em>Team preparation complete</em>
@@ -525,12 +517,11 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Execute & Embed</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Strategic roadmap, governance requirements<br/>
-                                <strong>Do:</strong> maintain alignment, review progress<br/>
                                 <strong>Output:</strong> strategic updates<br/>
-                                <strong>Done:</strong> strategic updates published & reviewed (cadence: quarterly)
+                                <strong>Done:</strong> quarterly review
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Do:</strong> operationalize updates, maintain alignment<br/>
+                                <strong>Input:</strong> strategic updates<br/>
                                 <strong>Output:</strong> continued strategic updates<br/>
                                 <strong>Done:</strong> updates implemented
                               </td>
@@ -546,7 +537,7 @@ function App() {
                           • <strong>Mission Statement:</strong> Democratize mental health awareness through accessible, private wellness tracking<br/>
                           • <strong>Vision Statement:</strong> A world where mental health tracking is as simple and private as using a calculator<br/>
                           • <strong>Core Values:</strong> Privacy first — data stays local; Simplicity over complexity; Technology serves people<br/>
-                          • <strong>North Star:</strong> 1 million people using our Windows‑95‑inspired mental health tools by 2030
+                          • <strong>North Star:</strong> 1 million people using our Windows‑95‑inspired mental health tools by 2030 (Owner: CEO/Founder — tracking: Head of Product)
                         </div>
                         
                         <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
@@ -554,7 +545,7 @@ function App() {
                           • Mission published + communicated<br/>
                           • Vision & North Star approved<br/>
                           • Culture adoption shown in quarterly survey and performance reviews<br/>
-                          • Monthly progress toward North Star
+                          • Monthly progress toward North Star (Owner: Head of Product)
                         </div>
                         
                         <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
@@ -574,9 +565,9 @@ function App() {
                           <thead>
                             <tr>
                               <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%" }}>Level</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>CEO/Founder Track</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Leadership Team Track</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>All Team Members Track</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>CEO/Founder </th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Leadership Team </th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>All Team Members </th>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose: Executes mission</td>
@@ -737,7 +728,7 @@ function App() {
                           • <strong>Culture Building Systems:</strong> Values implementation processes and tools<br/>
                           • <strong>Decision-Making Framework:</strong> Mission-driven decision criteria and processes<br/>
                           • <strong>Improvement Systems:</strong> Continuous improvement processes and feedback loops<br/>
-                          • <strong>Progress Tracking:</strong> Mission achievement metrics and North Star progress monitoring
+                          • <strong>Progress ing:</strong> Mission achievement metrics and North Star progress monitoring
                         </div>
                         
                         <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
@@ -761,7 +752,7 @@ function App() {
                           • Assign owners and reporting cadence for each success metric<br/>
                           • Publish Strategic Roadmap, Communication Framework, Culture Framework in docs/<br/>
                           • Run initial pulse survey to measure team readiness<br/>
-                          • Produce first Monthly North Star report (baseline metrics)<br/>
+                          • Produce first Monthly North Star report (baseline metrics) (Owner: Head of Product)<br/>
                           • Schedule recurring cadence: weekly standup, monthly metrics review, quarterly exec update
                         </div>
                       </div>
@@ -775,9 +766,9 @@ function App() {
                           <thead>
                             <tr>
                               <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%" }}>Level</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>CEO/Founder Track</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Leadership Team Track</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>All Team Members Track</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>CEO/Founder </th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Leadership Team </th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>All Team Members </th>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
@@ -1112,9 +1103,9 @@ function App() {
                         <thead>
                           <tr>
                             <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%" }}>Level</th>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Architecture Track</th>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Engineering Track</th>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>UX/Design Track</th>
+                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Architecture </th>
+                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.83%" }}>Engineering </th>
+                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30.84%" }}>UX/Design </th>
                           </tr>
                           <tr>
                             <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Defines technical foundation</td>
