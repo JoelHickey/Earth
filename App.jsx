@@ -62,6 +62,7 @@ function App() {
   
   // About section state
   const [activeTab, setActiveTab] = useState('mission');
+  const [isDetailedView, setIsDetailedView] = useState(true);
   
   // Undo functionality state
   const [previousSliderValues, setPreviousSliderValues] = useState(null);
@@ -424,13 +425,31 @@ function App() {
               }}>
                   {activeTab === 'mission' && (
                     <div>
-                      <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>🏢 Company Mission</h3>
-                      
-                      <div style={{ marginBottom: "6px" }}>
-                        <strong>What:</strong> Foundational purpose and organizational values that guide decisions<br/>
-                        <strong>Why:</strong> Align stakeholders and drive consistent decision-making toward the North Star<br/>
-                        <strong>How:</strong> Define mission, vision, core values; publish and embed into hiring, roadmaps, and product decisions
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                        <h3 style={{ margin: "0", fontSize: "10px" }}>🏢 Company Mission</h3>
+                        <button
+                          onClick={() => setIsDetailedView(!isDetailedView)}
+                          style={{
+                            background: isDetailedView ? "#c0c0c0" : "#ffffff",
+                            border: "1px outset #c0c0c0",
+                            padding: "2px 6px",
+                            fontSize: "8px",
+                            fontFamily: "'MS Sans Serif', sans-serif",
+                            cursor: "pointer",
+                            minWidth: "80px"
+                          }}
+                        >
+                          {isDetailedView ? "Simplified view" : "Detailed view"}
+                        </button>
                       </div>
+                      
+                      {isDetailedView ? (
+                        <>
+                          <div style={{ marginBottom: "6px" }}>
+                            <strong>What:</strong> Foundational purpose and organizational values that guide decisions<br/>
+                            <strong>Why:</strong> Align stakeholders and drive consistent decision-making toward the North Star<br/>
+                            <strong>How:</strong> Define mission, vision, core values; publish and embed into hiring, roadmaps, and product decisions
+                          </div>
                       
                       
                       <div style={{ marginBottom: "6px" }}>
@@ -899,7 +918,71 @@ function App() {
                         • Team engagement and mission alignment scores
                       </div>
                     </div>
-                  </div>
+                        </>
+                      ) : (
+                        <div>
+                          <div style={{ marginBottom: "6px" }}>
+                            <strong>What:</strong> Foundational purpose and organizational values that guide decisions<br/>
+                            <strong>Why:</strong> Align stakeholders and drive consistent decision-making toward the North Star<br/>
+                            <strong>How:</strong> Define mission, vision, core values; publish and embed into hiring, roadmaps, and product decisions
+                          </div>
+                          
+                          <div style={{ marginBottom: "6px" }}>
+                            <strong>Owners:</strong><br/>
+                            • <strong>CEO/Founder:</strong> owner of mission & vision; approves strategic direction<br/>
+                            • <strong>Leadership Team:</strong> defines values, drives culture, ensures operational alignment<br/>
+                            • <strong>All Employees:</strong> live the values and apply them in day‑to‑day decisions<br/>
+                            • <strong>Board of Directors:</strong> oversight and approval for material changes (e.g., mission/vision updates)
+                          </div>
+                          
+                          <div style={{ marginBottom: "6px" }}>
+                            <strong>Planning:</strong><br/>
+                            • <strong>Input:</strong> market research & user needs analysis, strategic objectives<br/>
+                            • <strong>Output:</strong> mission statement, core values document, aspirational vision and measurable North‑Star<br/>
+                            • <strong>Done when:</strong> Board approval (go/no‑go gate), Board approval
+                          </div>
+                          
+                          <div style={{ marginBottom: "6px" }}>
+                            <strong>Execution:</strong><br/>
+                            • <strong>Input:</strong> mission approved, values documented, strategic direction<br/>
+                            • <strong>Output:</strong> strategic direction & mission progress, operational plans, mission-driven behaviors<br/>
+                            • <strong>Done when:</strong> quarterly strategic update published, rollout executed and measured, initial alignment achieved
+                          </div>
+                          
+                          <div style={{ marginBottom: "6px" }}>
+                            <strong>Delivery:</strong><br/>
+                            • <strong>Input:</strong> mission execution results, North Star progress, validation reports<br/>
+                            • <strong>Output:</strong> Mission Validation Report, Impact Metrics Report, Success Celebration Plan<br/>
+                            • <strong>Done when:</strong> report published, metrics report published, celebration executed
+                          </div>
+                          
+                          <div style={{ marginBottom: "6px" }}>
+                            <strong>Artifacts:</strong><br/>
+                            • Mission Statement: Democratize mental health awareness through accessible, private wellness tracking<br/>
+                            • Core Values: Privacy first — data stays local; Simplicity over complexity; Technology serves people<br/>
+                            • Vision Statement: A world where mental health tracking is as simple and private as using a calculator<br/>
+                            • North Star: 1 million people using our Windows‑95‑inspired mental health tools by 2030<br/>
+                            • Roadmap: Strategic implementation plan with milestones and timelines<br/>
+                            • Success Metrics / KPI dashboard: Measurable outcomes and progress tracking system
+                          </div>
+                          
+                          <div style={{ marginBottom: "6px" }}>
+                            <strong>Governance:</strong><br/>
+                            • Monthly mission alignment reviews, quarterly values assessment, annual strategic planning<br/>
+                            • Continuous culture building, values-based recognition, mission-driven decision making<br/>
+                            • Required artifacts: Mission statement, Values framework, Vision document, North Star metrics, Culture assessment
+                          </div>
+                          
+                          <div>
+                            <strong>Mission success:</strong><br/>
+                            • Progress toward North Star (users served)<br/>
+                            • % decisions explicitly tied to mission in quarterly reviews<br/>
+                            • Values reflected in performance reviews / recognition rate<br/>
+                            • Team engagement and mission alignment scores
+                          </div>
+                        </div>
+                      )}
+                    </div>
                 )}
                 {activeTab === 'business' && (
                   <div>
@@ -1407,7 +1490,7 @@ function App() {
                 )}
                 {activeTab === 'guidelines' && (
                   <div>
-                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>🎨 Interface Guidelines</h3>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "14px" }}>🎨 Interface Guidelines</h3>
                     
                     <div style={{ marginBottom: "6px" }}>
                       <strong>What:</strong> Design standards and visual specifications for consistent user experience<br/>
@@ -1421,6 +1504,136 @@ function App() {
                       • Frontend Developer: implementation standards, component library, code quality<br/>
                       • UX Researcher: usability standards, accessibility guidelines, user testing protocols<br/>
                       • Product Manager: design consistency, brand alignment, user experience validation
+                    </div>
+                    
+                    
+                    
+                    <div style={{ marginBottom: "6px" }}>
+                      <div style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "4px" }}>Fundamentals of designing user interaction</div>
+                      <div style={{ fontSize: "10px", fontWeight: "bold", marginBottom: "4px" }}>User-Centered Design Principles:</div>
+                      • <strong>User in Control:</strong> Users should feel in control of the interface and their actions<br/>
+                      • <strong>Directness:</strong> Interface should be direct and straightforward in its interactions<br/>
+                      • <strong>Consistency:</strong> Consistent behavior and appearance across all interface elements<br/>
+                      • <strong>Forgiveness:</strong> Interface should be forgiving of user errors and provide recovery options<br/>
+                      • <strong>Feedback:</strong> Provide clear feedback for all user actions and system states<br/>
+                      • <strong>Aesthetics:</strong> Interface should be visually appealing and professional<br/>
+                      • <strong>Simplicity:</strong> Keep the interface simple and avoid unnecessary complexity
+                    </div>
+                    
+                    <div style={{ marginBottom: "6px" }}>
+                      <div style={{ fontSize: "10px", fontWeight: "bold", marginBottom: "4px" }}>Design Methodology</div>
+                      <strong>A Balanced Design Team:</strong><br/>
+                      • Include users, developers, and designers in the design process<br/>
+                      • Ensure diverse perspectives and expertise<br/>
+                      • Foster collaboration and communication<br/>
+                      <br/>
+                      <strong>The Design Cycle:</strong><br/>
+                      • Plan: Define requirements and user needs<br/>
+                      • Design: Create interface concepts and prototypes<br/>
+                      • Build: Implement the design<br/>
+                      • Test: Evaluate with users and iterate<br/>
+                      <br/>
+                      <strong>Usability Assessment in the Design Process:</strong><br/>
+                      • Conduct user testing throughout development<br/>
+                      • Gather feedback early and often<br/>
+                      • Measure usability metrics and user satisfaction<br/>
+                      • Iterate based on findings<br/>
+                      <br/>
+                      <strong>Understanding Users:</strong><br/>
+                      • Research user needs, goals, and behaviors<br/>
+                      • Create user personas and scenarios<br/>
+                      • Understand context of use and constraints<br/>
+                      <br/>
+                      <strong>Design Tradeoffs:</strong><br/>
+                      • Balance functionality with simplicity<br/>
+                      • Consider performance vs. features<br/>
+                      • Evaluate cost vs. user benefit<br/>
+                      • Make informed decisions based on user research
+                    </div>
+                    
+                    <div style={{ marginBottom: "6px" }}>
+                      <div style={{ fontSize: "10px", fontWeight: "bold", marginBottom: "4px" }}>Basic Concepts</div>
+                      <strong>Data-Centered Design:</strong><br/>
+                      • Design interfaces around data structures and user workflows<br/>
+                      • Organize information hierarchically and logically<br/>
+                      • Make data relationships clear and intuitive<br/>
+                      <br/>
+                      <strong>Objects as Metaphor:</strong><br/>
+                      • Use familiar real-world objects as interface metaphors<br/>
+                      • Leverage user's existing mental models<br/>
+                      • Create intuitive associations between interface elements and real objects<br/>
+                      <br/>
+                      <strong>Object Characteristics:</strong><br/>
+                      • Define clear properties and behaviors for interface objects<br/>
+                      • Ensure consistent appearance and interaction patterns<br/>
+                      • Make object states and changes visually apparent<br/>
+                      <br/>
+                      <strong>Relationships:</strong><br/>
+                      • Show clear connections between related interface elements<br/>
+                      • Use visual cues to indicate object relationships<br/>
+                      • Make navigation and hierarchy obvious to users<br/>
+                      <br/>
+                      <strong>Composition:</strong><br/>
+                      • Build complex interfaces from simple, reusable components<br/>
+                      • Maintain consistency in component design and behavior<br/>
+                      • Create modular, maintainable interface structures<br/>
+                      <br/>
+                      <strong>Persistence:</strong><br/>
+                      • Save user data and preferences automatically<br/>
+                      • Maintain state across sessions and interactions<br/>
+                      • Provide clear feedback about data saving and loading<br/>
+                      <br/>
+                      <strong>Putting Theory into Practice:</strong><br/>
+                      • Apply design principles consistently across all interface elements<br/>
+                      • Test designs with real users and iterate based on feedback<br/>
+                      • Document design decisions and rationale for future reference
+                    </div>
+                    
+                    <div style={{ marginBottom: "6px" }}>
+                      <div style={{ fontSize: "10px", fontWeight: "bold", marginBottom: "4px" }}>Windows Environment (Shell)</div>
+                      <strong>The Desktop:</strong><br/>
+                      • Primary workspace area for user interaction<br/>
+                      • Background for application windows and icons<br/>
+                      • Supports wallpaper and desktop icons<br/>
+                      <br/>
+                      <strong>The Taskbar:</strong><br/>
+                      • Bottom bar providing access to running applications<br/>
+                      • Shows open windows and allows switching between them<br/>
+                      • Contains Start button and system status area<br/>
+                      <br/>
+                      <strong>The Start Button:</strong><br/>
+                      • Primary entry point to system functions and applications<br/>
+                      • Opens Start menu with program access and system options<br/>
+                      • Located at the left end of the taskbar<br/>
+                      <br/>
+                      <strong>Window Buttons:</strong><br/>
+                      • Taskbar buttons representing open applications<br/>
+                      • Allow switching between running programs<br/>
+                      • Show application state and provide quick access<br/>
+                      <br/>
+                      <strong>The Status Area:</strong><br/>
+                      • System tray area on the right side of taskbar<br/>
+                      • Displays system status and background applications<br/>
+                      • Provides access to system settings and notifications<br/>
+                      <br/>
+                      <strong>Icons:</strong><br/>
+                      • Visual representations of files, folders, and applications<br/>
+                      • Provide quick access to programs and documents<br/>
+                      • Support drag and drop operations<br/>
+                      <br/>
+                      <strong>Windows:</strong><br/>
+                      • Primary containers for application content<br/>
+                      • Standard window controls: title bar, menu bar, status bar<br/>
+                      • Support resizing, moving, and layering operations
+                    </div>
+                    
+                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                      <div style={{ marginBottom: "4px" }}>
+                        <strong>Governance:</strong><br/>
+                        • Weekly design reviews, biweekly component audits, monthly accessibility assessments<br/>
+                        • Quarterly design system updates, user testing, brand alignment reviews<br/>
+                        • Required artifacts: Design system, Component library, Style guide, Accessibility standards, Usability reports
+                      </div>
                     </div>
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
@@ -1450,23 +1663,6 @@ function App() {
                         • <strong>Do:</strong> design audits, user testing, accessibility validation, documentation updates<br/>
                         • <strong>Output:</strong> design-compliant product, user documentation, accessibility certification<br/>
                         • <strong>Done when:</strong> design standards met, users satisfied, accessibility validated
-                      </div>
-                    </div>
-                    
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Core Design Principles:</strong><br/>
-                      • <strong>User-Centered Design:</strong> Control, Directness, Consistency, Forgiveness, Feedback, Aesthetics, Simplicity<br/>
-                      • <strong>Interface Elements:</strong> Title Bar, Menu Bar, Toolbar, Status Bar, Buttons, Checkboxes, Radio Buttons<br/>
-                      • <strong>Color Palette:</strong> Background #d4d0c8, Light Grey #c0c0c0, Dark Grey #808080, White #ffffff, Black #000000<br/>
-                      • <strong>Typography:</strong> MS Sans Serif 8px body text, 10px headings, consistent throughout
-                    </div>
-                    
-                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
-                      <div style={{ marginBottom: "4px" }}>
-                        <strong>Governance:</strong><br/>
-                        • Weekly design reviews, biweekly component audits, monthly accessibility assessments<br/>
-                        • Quarterly design system updates, user testing, brand alignment reviews<br/>
-                        • Required artifacts: Design system, Component library, Style guide, Accessibility standards, Usability reports
                       </div>
                     </div>
                     
