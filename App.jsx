@@ -63,6 +63,15 @@ function App() {
   // About section state
   const [activeTab, setActiveTab] = useState('mission');
   const [isDetailedView, setIsDetailedView] = useState(true);
+  const [collapsedSections, setCollapsedSections] = useState({});
+  
+  // Toggle function for collapsible sections
+  const toggleSection = (sectionId) => {
+    setCollapsedSections(prev => ({
+      ...prev,
+      [sectionId]: !prev[sectionId]
+    }));
+  };
   
   // Undo functionality state
   const [previousSliderValues, setPreviousSliderValues] = useState(null);
@@ -446,9 +455,9 @@ function App() {
                       {isDetailedView ? (
                         <>
                           <div style={{ marginBottom: "6px" }}>
-                            <strong>What:</strong> Foundational purpose and organizational values that guide decisions<br/>
-                            <strong>Why:</strong> Align stakeholders and drive consistent decision-making toward the North Star<br/>
-                            <strong>How:</strong> Define mission, vision, core values; publish and embed into hiring, roadmaps, and product decisions
+                            <strong>What:</strong> A concise statement outlining the organization's core purpose, what it does, who it serves, and its fundamental objectives and values.<br/>
+                            <strong>Why:</strong> It acts as a guiding principle for daily operations, strategic decision-making, and stakeholder communication, ensuring everyone is aligned towards common goals.<br/>
+                            <strong>How:</strong> Define mission, vision, and core values; publish them; embed into hiring, roadmaps, and product decisions
                           </div>
                       
                       
@@ -500,11 +509,11 @@ function App() {
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Vision & Metrics</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Mission statement, core values<br/>
-                                <strong>Output:</strong> aspirational vision and measurable North‑Star<br/>
-                                <strong>Done:</strong> Board approval
-                              </td>
+                                <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                  <strong>Input:</strong> Mission statement, core values<br/>
+                                  <strong>Output:</strong> aspirational vision, measurable North‑Star, and strategic objectives<br/>
+                                  <strong>Done:</strong> Board approval
+                                </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> vision document, North Star<br/>
                                 <strong>Output:</strong> culture framework<br/>
@@ -518,11 +527,11 @@ function App() {
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Strategy & Roadmap</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Vision document, strategic objectives<br/>
-                                <strong>Output:</strong> Strategic roadmap and success metrics (milestones, owners, timelines, KPIs)<br/>
-                                <strong>Done:</strong> Board approval
-                              </td>
+                                <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                  <strong>Input:</strong> Vision document, North Star, strategic objectives<br/>
+                                  <strong>Output:</strong> Strategic roadmap and success metrics (milestones, owners, timelines, KPIs)<br/>
+                                  <strong>Done:</strong> Board approval
+                                </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> strategic roadmap<br/>
                                 <strong>Output:</strong> alignment plan<br/>
@@ -552,28 +561,34 @@ function App() {
                         </table>
                         
                         <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Artifacts:</strong> What gets produced<br/>
-                          • <strong>Mission Statement:</strong> Democratize mental health awareness through accessible, private wellness tracking<br/>
-                          • <strong>Core Values:</strong> Privacy first — data stays local; Simplicity over complexity; Technology serves people<br/>
-                          • <strong>Vision Statement:</strong> A world where mental health tracking is as simple and private as using a calculator<br/>
-                          • <strong>North Star:</strong> 1 million people using our Windows‑95‑inspired mental health tools by 2030 (Owner: CEO/Founder — tracking: Head of Product)<br/>
-                          • <strong>Roadmap:</strong> Strategic implementation plan with milestones and timelines<br/>
-                          • <strong>Success Metrics / KPI dashboard:</strong> Measurable outcomes and progress tracking system
+                            <strong>Artifacts:</strong> What gets produced<br/>
+                            • <strong>Mission Statement:</strong> Democratize mental health awareness through accessible, private wellness tracking<br/>
+                            • <strong>Core Values:</strong> Privacy first — data stays local; Simplicity over complexity; Technology serves people<br/>
+                            • <strong>Vision Statement:</strong> A world where mental health tracking is as simple and private as using a calculator<br/>
+                            • <strong>North Star:</strong> 1 million people using our Windows‑95‑inspired mental health tools by 2030 (Owner: CEO/Founder — tracking: Head of Product)<br/>
+                            • <strong>Strategic Objectives:</strong> High-level goals that support the mission and drive toward the North Star<br/>
+                            • <strong>Roadmap:</strong> Strategic implementation plan with milestones and timelines<br/>
+                            • <strong>Success Metrics / KPI dashboard:</strong> Measurable outcomes and progress tracking system
                         </div>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Success Criteria:</strong> How you know it's done (measurement)<br/>
-                          • Mission published + communicated<br/>
-                          • Vision & North Star approved<br/>
-                          • Culture adoption shown in quarterly survey and performance reviews<br/>
-                          • Monthly progress toward North Star (Owner: Head of Product)
-                        </div>
+                          <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                            <strong>Success Criteria:</strong> How you know it's done (measurement)<br/>
+                            • Mission published + communicated<br/>
+                            • Vision & North Star approved<br/>
+                            • Strategic objectives defined and approved<br/>
+                            • Strategic roadmap published with milestones and timelines<br/>
+                            • Success metrics framework established<br/>
+                            • Board approval for all planning artifacts
+                          </div>
                         
                         <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
                           <strong>Next Steps:</strong> How to actually implement it (action items)<br/>
                           • Publish the one-page mission doc to docs/ and intranet (Owner: CEO/Founder)<br/>
                           • Run a 30-minute all-hands to present mission + rollout plan (Owner: Leadership Team)<br/>
-                          • Add a "mission alignment" field to PRD and milestone reviews (Owner: Head of Product)
+                          • Define strategic objectives and get Board approval (Owner: CEO/Founder)<br/>
+                          • Publish strategic roadmap with milestones and timelines (Owner: Head of Product)<br/>
+                          • Establish success metrics framework and reporting cadence (Owner: Head of Product)<br/>
+                          • Get Board approval for all planning artifacts (Owner: CEO/Founder)
                         </div>
                       </div>
                     </div>
@@ -603,20 +618,17 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission approved, values documented<br/>
                                 <strong>Output:</strong> strategic direction & mission progress<br/>
-                                <strong>Done:</strong> quarterly strategic update published (Owner: CEO — Cadence: quarterly)<br/>
-                                <em>Acceptance checks: Update published to docs/strategy/quarterly_update.md; Exec meeting held and actions recorded in decision log</em>
+                                  <strong>Done:</strong> quarterly strategic update published
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission approved, values documented<br/>
                                 <strong>Output:</strong> operational plans & communications framework<br/>
-                                <strong>Done:</strong> rollout executed and measured (Owner: Head of Comms — Cadence: monthly)<br/>
-                                <em>Acceptance checks: Rollout metrics (open rates, page views) reach targets; trainings scheduled</em>
+                                <strong>Done:</strong> rollout executed and measured
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission approved, values documented<br/>
                                 <strong>Output:</strong> mission-driven behaviors<br/>
-                                <strong>Done:</strong> initial alignment achieved (Owner: Head of People — Cadence: once after rollout)<br/>
-                                <em>Acceptance checks: Pulse survey ≥ 70% clarity/agreement OR training completion ≥ 80%</em>
+                                <strong>Done:</strong> initial alignment achieved
                               </td>
                             </tr>
                             <tr>
@@ -624,20 +636,17 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> strategic direction, mission progress<br/>
                                 <strong>Output:</strong> strategic roadmap & success metrics<br/>
-                                <strong>Done:</strong> roadmap approved (Owner: CEO — Cadence: annual; update: monthly)<br/>
-                                <em>Acceptance checks: Roadmap published to docs/roadmap.md with owners & dates; KPIs and reporting cadence defined</em>
+                                <strong>Done:</strong> roadmap approved
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> strategic direction, mission progress<br/>
                                 <strong>Output:</strong> cultural framework & implementation plan<br/>
-                                <strong>Done:</strong> framework in place (Owner: Head of People — Cadence: quarterly)<br/>
-                                <em>Acceptance checks: Training curriculum published; pilot cohorts completed</em>
+                                <strong>Done:</strong> framework in place
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> strategic direction, mission progress<br/>
                                 <strong>Output:</strong> consistent decisions & alignment<br/>
-                                <strong>Done:</strong> trained + demonstrated in milestones (Owner: Product Ops / Eng Lead — Cadence: per sprint)<br/>
-                                <em>Acceptance checks: ≥ X% of PRDs include "mission alignment" field and sign‑offs</em>
+                                <strong>Done:</strong> trained + demonstrated in milestones
                               </td>
                             </tr>
                             <tr>
@@ -645,20 +654,17 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> roadmap, success metrics<br/>
                                 <strong>Output:</strong> mission impact report<br/>
-                                <strong>Done:</strong> monthly North Star report published (Owner: Head of Product — Cadence: monthly)<br/>
-                                <em>Acceptance checks: Monthly report saved to docs/metrics/monthly_north_star.md; Variance explanations and corrective actions logged</em>
+                                <strong>Done:</strong> monthly North Star report published
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> roadmap, success metrics<br/>
                                 <strong>Output:</strong> alignment framework<br/>
-                                <strong>Done:</strong> cross‑program alignment validated (Owner: Program Director / PMO — Cadence: monthly)<br/>
-                                <em>Acceptance checks: Dependency register updated; integration test pass rates reported</em>
+                                <strong>Done:</strong> cross‑program alignment validated
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> roadmap, success metrics<br/>
                                 <strong>Output:</strong> values‑driven behavior patterns<br/>
-                                <strong>Done:</strong> behaviors observed and recorded (Owner: Managers — Cadence: ongoing)<br/>
-                                <em>Acceptance checks: Spot audits or review notes show examples; manager sign‑offs in performance reviews</em>
+                                <strong>Done:</strong> behaviors observed and recorded
                               </td>
                             </tr>
                             <tr>
@@ -666,20 +672,17 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission impact, North Star progress<br/>
                                 <strong>Output:</strong> strategic alignment artifacts (scale playbook, budgets)<br/>
-                                <strong>Done:</strong> executive sign‑off for scale (Owner: CEO / CFO — Cadence: as needed)<br/>
-                                <em>Acceptance checks: Scale sign‑off doc in docs/scale_signoff.md; budget committed</em>
+                                <strong>Done:</strong> executive sign‑off for scale
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission impact, North Star progress<br/>
                                 <strong>Output:</strong> communication & alignment metrics<br/>
-                                <strong>Done:</strong> metrics tracked & acted on (Owner: Head of Comms / Head of Ops — Cadence: weekly → monthly)<br/>
-                                <em>Acceptance checks: Dashboard shows metric trends; top issues have owners & timelines</em>
+                                <strong>Done:</strong> metrics tracked & acted on
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission impact, North Star progress<br/>
                                 <strong>Output:</strong> consistent decision patterns<br/>
-                                <strong>Done:</strong> operational KPIs reflect mission (Owner: Ops / Team Leads — Cadence: monthly)<br/>
-                                <em>Acceptance checks: Operational KPIs meet mission-aligned targets (uptime, response time, feature adoption)</em>
+                                <strong>Done:</strong> operational KPIs reflect mission
                               </td>
                             </tr>
                             <tr>
@@ -687,20 +690,17 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> strategic alignment, mission success<br/>
                                 <strong>Output:</strong> strategic clarity & public messaging<br/>
-                                <strong>Done:</strong> leadership reviews & updates (Owner: CEO — Cadence: quarterly)<br/>
-                                <em>Acceptance checks: Leadership review notes published; public comms aligned</em>
+                                <strong>Done:</strong> leadership reviews & updates
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> strategic alignment, mission success<br/>
                                 <strong>Output:</strong> improvement frameworks<br/>
-                                <strong>Done:</strong> feedback systems active (Owner: Head of People / PMO — Cadence: ongoing)<br/>
-                                <em>Acceptance checks: Retrospectives scheduled; improvement backlog items tracked & closed</em>
+                                <strong>Done:</strong> feedback systems active
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> strategic alignment, mission success<br/>
                                 <strong>Output:</strong> culture of iteration<br/>
-                                <strong>Done:</strong> improvement metrics (Owner: Team Leads — Cadence: quarterly)<br/>
-                                <em>Acceptance checks: Improvement KPIs (cycle time, NPS) show positive trends</em>
+                                <strong>Done:</strong> improvement metrics
                               </td>
                             </tr>
                             <tr>
@@ -708,20 +708,17 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission leadership, strategic clarity<br/>
                                 <strong>Output:</strong> North Star progress & strategic decisions<br/>
-                                <strong>Done:</strong> annual mission review (Owner: CEO / Board — Cadence: annual)<br/>
-                                <em>Acceptance checks: Annual review published; Board sign‑off if warranted</em>
+                                <strong>Done:</strong> annual mission review
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission leadership, strategic clarity<br/>
                                 <strong>Output:</strong> embedded mission frameworks<br/>
-                                <strong>Done:</strong> sustained metrics for values (Owner: Head of People — Cadence: annual)<br/>
-                                <em>Acceptance checks: Values metrics (survey, turnover) meet target thresholds</em>
+                                <strong>Done:</strong> sustained metrics for values
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission leadership, strategic clarity<br/>
                                 <strong>Output:</strong> stakeholder satisfaction<br/>
-                                <strong>Done:</strong> target satisfaction met (Owner: Head of Customer / Ops — Cadence: quarterly)<br/>
-                                <em>Acceptance checks: Stakeholder satisfaction metrics reach defined targets</em>
+                                <strong>Done:</strong> target satisfaction met
                               </td>
                             </tr>
                             <tr>
@@ -745,27 +742,32 @@ function App() {
                           </tbody>
                         </table>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Artifacts & links:</strong><br/>
-                          • Mission statement & core values<br/>
-                          • Vision & North Star<br/>
-                          • Strategic roadmap & milestones<br/>
-                          • North Star monthly reports<br/>
-                          • Scale sign‑off and budget artifacts<br/>
-                          • Strategic decisions and approvals<br/>
-                          <em>Note: These same artifacts become living, operational artifacts during Execution (updated reports, sign‑offs, decisions, and runbooks)</em>
-                        </div>
+                          <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                            <strong>Artifacts:</strong><br/>
+                            • Mission progress tracking reports<br/>
+                            • Active roadmap with current status<br/>
+                            • North Star monthly tracking reports<br/>
+                            • Operational runbooks and procedures<br/>
+                            • Current strategic decisions and approvals<br/>
+                            • Execution metrics and dashboards<br/>
+                            <em>Note: These are the living, operational artifacts that guide daily execution and track progress toward the mission</em>
+                          </div>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Success Criteria:</strong><br/>
-                          • Mission published — Owner: Head of Comms<br/>
-                          • Vision & North Star approved — Owner: CEO<br/>
-                          • Rollout plan approved — Owner: CEO<br/>
-                          • Roadmap published — Owner: Head of Product<br/>
-                          • Culture framework implemented — Owner: Head of People<br/>
-                          • Pulse survey ≥ 70% favorable<br/>
-                          • Monthly North Star report published (Owner: Head of Product)
-                        </div>
+                          <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                            <strong>Success Criteria:</strong><br/>
+                            • Mission published — Owner: Head of Comms<br/>
+                            • Vision & North Star approved — Owner: CEO<br/>
+                            • Strategic objectives defined and approved — Owner: CEO<br/>
+                            • Strategic roadmap published — Owner: Head of Product<br/>
+                            • Success metrics framework established — Owner: Head of Product<br/>
+                            • Board approval for all planning artifacts — Owner: CEO<br/>
+                            • Culture adoption shown in quarterly survey and performance reviews — Owner: Head of People<br/>
+                            • Monthly progress toward North Star — Owner: Head of Product<br/>
+                            • Progress toward North Star (users served) — Owner: Head of Product<br/>
+                            • % decisions explicitly tied to mission in quarterly reviews — Owner: CEO<br/>
+                            • Values reflected in performance reviews / recognition rate — Owner: Head of People<br/>
+                            • Team engagement and mission alignment scores — Owner: Head of People
+                          </div>
                         
                         <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
                           <strong>Next Steps:</strong><br/>
@@ -783,8 +785,8 @@ function App() {
                     </div>
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
-                      <div style={{ marginBottom: "4px" }}>
-                        <strong>Delivery Framework:</strong> validating & celebrating mission success<br/>
+                        <div style={{ marginBottom: "4px" }}>
+                          <strong>Delivery Framework:</strong> validate, measure and celebrate mission success<br/>
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
                           <thead>
                             <tr>
@@ -803,20 +805,20 @@ function App() {
                           <tbody>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Validate</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> mission execution results, North Star progress<br/>
-                                <strong>Output:</strong> Mission Validation Report<br/>
-                                <strong>Done:</strong> report published (Owner: Head of Product — cadence: quarterly)
-                              </td>
+                                <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                  <strong>Input:</strong> mission execution results, North Star progress<br/>
+                                  <strong>Output:</strong> Mission Validation Report<br/>
+                                  <strong>Done:</strong> report published
+                                </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission execution results, North Star progress<br/>
                                 <strong>Output:</strong> Culture Validation Report<br/>
-                                <strong>Done:</strong> assessment completed (Owner: Head of People — cadence: quarterly)
+                                <strong>Done:</strong> assessment completed
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> mission execution results, North Star progress<br/>
                                 <strong>Output:</strong> Values Validation Summary<br/>
-                                <strong>Done:</strong> values assessment completed (Owner: People/Managers)
+                                <strong>Done:</strong> values assessment completed
                               </td>
                             </tr>
                             <tr>
@@ -824,15 +826,17 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> validation reports<br/>
                                 <strong>Output:</strong> Impact Metrics Report<br/>
-                                <strong>Done:</strong> metrics report published (Owner: Analytics — cadence: monthly)
+                                <strong>Done:</strong> metrics report published
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> validation reports<br/>
                                 <strong>Output:</strong> Stakeholder Satisfaction Report<br/>
-                                <strong>Done:</strong> survey completed and analyzed (Owner: PMO — cadence: quarterly)
+                                <strong>Done:</strong> survey completed and analyzed
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <em>Team preparation complete</em>
+                                <strong>Input:</strong> validation reports<br/>
+                                <strong>Output:</strong> Values Impact Assessment<br/>
+                                <strong>Done:</strong> values impact measured
                               </td>
                             </tr>
                             <tr>
@@ -840,15 +844,17 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> impact metrics, stakeholder satisfaction<br/>
                                 <strong>Output:</strong> Success Celebration Plan & Execution<br/>
-                                <strong>Done:</strong> celebration executed (Owner: Comms/People)
+                                <strong>Done:</strong> celebration executed
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> impact metrics, stakeholder satisfaction<br/>
                                 <strong>Output:</strong> Values Recognition Program<br/>
-                                <strong>Done:</strong> program launched (Owner: People)
+                                <strong>Done:</strong> program launched
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <em>Team preparation complete</em>
+                                <strong>Input:</strong> impact metrics, stakeholder satisfaction<br/>
+                                <strong>Output:</strong> Values Celebration Participation<br/>
+                                <strong>Done:</strong> team celebration completed
                               </td>
                             </tr>
                             <tr>
@@ -856,15 +862,17 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> celebration outcomes, recognition programs<br/>
                                 <strong>Output:</strong> Sustainability Plan (processes + KPIs)<br/>
-                                <strong>Done:</strong> plan implemented (Owner: Leadership)
+                                <strong>Done:</strong> plan implemented
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> celebration outcomes, recognition programs<br/>
                                 <strong>Output:</strong> Ongoing culture programs & metrics<br/>
-                                <strong>Done:</strong> sustained metrics meet targets (Owner: People)
+                                <strong>Done:</strong> sustained metrics meet targets
                               </td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <em>Team preparation complete</em>
+                                <strong>Input:</strong> celebration outcomes, recognition programs<br/>
+                                <strong>Output:</strong> Values Sustainability Engagement<br/>
+                                <strong>Done:</strong> values sustainability achieved
                               </td>
                             </tr>
                           </tbody>
@@ -880,51 +888,43 @@ function App() {
                           • Sustainability Plans
                         </div>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Success criteria:</strong><br/>
-                          • Mission validation report published — Owner: Head of Product<br/>
-                          • Impact metrics reported monthly — Owner: Analytics<br/>
-                          • Stakeholder satisfaction targets met (define %) — Owner: PMO<br/>
-                          • Celebration executed & recognition program launched — Owner: Comms/People<br/>
-                          • Sustainability plans implemented and tracked — Owner: Leadership
-                        </div>
+                          <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                            <strong>Success criteria:</strong><br/>
+                            • Mission validation report published<br/>
+                            • Impact metrics reported monthly<br/>
+                            • Stakeholder satisfaction targets met<br/>
+                            • Celebration executed & recognition program launched<br/>
+                            • Sustainability plans implemented and tracked
+                          </div>
                         
                         <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
                           <strong>Next steps:</strong><br/>
-                          • Run mission validation assessment and publish report (quarterly) — Owner: Head of Product<br/>
-                          • Launch stakeholder satisfaction survey and publish findings — Owner: PMO<br/>
-                          • Plan success celebration and values recognition program — Owner: Comms/People<br/>
-                          • Draft sustainability plan and assign owners — Owner: Leadership
+                          • Run mission validation assessment and publish report<br/>
+                          • Launch stakeholder satisfaction survey and publish findings<br/>
+                          • Plan success celebration and values recognition program<br/>
+                          • Draft sustainability plan and assign owners
                         </div>
                       </div>
                       
                     </div>
                     
                     <div style={{ marginBottom: "8px" }}>
-                      <div style={{ marginBottom: "4px" }}>
-                        <strong>Governance:</strong><br/>
-                        • Monthly mission alignment reviews, quarterly values assessment, annual strategic planning<br/>
-                        • Continuous culture building, values-based recognition, mission-driven decision making<br/>
-                        • Required artifacts: Mission statement, Values framework, Vision document, North Star metrics, Culture assessment
-                      </div>
+                        <div style={{ marginBottom: "4px" }}>
+                          <strong>Governance:</strong><br/>
+                          • Monthly mission alignment reviews<br/>
+                          • Quarterly values assessment<br/>
+                          • Annual strategic planning<br/>
+                          • Continuous culture building and values-based recognition
+                        </div>
                     </div>
                     
-                    <div>
-                      <div>
-                        <strong>Mission success:</strong><br/>
-                        • Progress toward North Star (users served)<br/>
-                        • % decisions explicitly tied to mission in quarterly reviews<br/>
-                        • Values reflected in performance reviews / recognition rate<br/>
-                        • Team engagement and mission alignment scores
-                      </div>
-                    </div>
                         </>
                       ) : (
                         <div>
                           <div style={{ marginBottom: "6px" }}>
-                            <strong>What:</strong> Foundational purpose and organizational values that guide decisions<br/>
-                            <strong>Why:</strong> Align stakeholders and drive consistent decision-making toward the North Star<br/>
-                            <strong>How:</strong> Define mission, vision, core values; publish and embed into hiring, roadmaps, and product decisions
+                            <strong>What:</strong> A concise statement outlining the organization's core purpose, what it does, who it serves, and its fundamental objectives and values.<br/>
+                            <strong>Why:</strong> It acts as a guiding principle for daily operations, strategic decision-making, and stakeholder communication, ensuring everyone is aligned towards common goals.<br/>
+                            <strong>How:</strong> Define mission, vision, and core values; publish them; embed into hiring, roadmaps, and product decisions
                           </div>
                           
                           <div style={{ marginBottom: "6px" }}>
@@ -935,51 +935,36 @@ function App() {
                             • <strong>Board of Directors:</strong> oversight and approval for material changes (e.g., mission/vision updates)
                           </div>
                           
-                          <div style={{ marginBottom: "6px" }}>
-                            <strong>Planning:</strong><br/>
-                            • <strong>Input:</strong> market research & user needs analysis, strategic objectives<br/>
-                            • <strong>Output:</strong> mission statement, core values document, aspirational vision and measurable North‑Star<br/>
-                            • <strong>Done when:</strong> Board approval (go/no‑go gate), Board approval
-                          </div>
+                            <div style={{ marginBottom: "6px" }}>
+                              <strong>Planning:</strong><br/>
+                              • <strong>Input:</strong> Market research & user needs analysis<br/>
+                              • <strong>Output:</strong> mission statement, core values document, aspirational vision, measurable North‑Star, strategic objectives, roadmap, and success metrics<br/>
+                              • <strong>Done when:</strong> Board approval (go/no‑go gate), Board approval, Board approval
+                            </div>
                           
                           <div style={{ marginBottom: "6px" }}>
                             <strong>Execution:</strong><br/>
-                            • <strong>Input:</strong> mission approved, values documented, strategic direction<br/>
-                            • <strong>Output:</strong> strategic direction & mission progress, operational plans, mission-driven behaviors<br/>
-                            • <strong>Done when:</strong> quarterly strategic update published, rollout executed and measured, initial alignment achieved
+                            • <strong>Input:</strong> mission approved, values documented<br/>
+                            • <strong>Output:</strong> strategic direction & mission progress, operational plans, mission-driven behaviors, progress tracking reports, active roadmap, operational runbooks, execution metrics<br/>
+                            • <strong>Done when:</strong> mission validated against North Star and stakeholder outcomes
                           </div>
                           
                           <div style={{ marginBottom: "6px" }}>
                             <strong>Delivery:</strong><br/>
-                            • <strong>Input:</strong> mission execution results, North Star progress, validation reports<br/>
-                            • <strong>Output:</strong> Mission Validation Report, Impact Metrics Report, Success Celebration Plan<br/>
-                            • <strong>Done when:</strong> report published, metrics report published, celebration executed
+                            • <strong>Input:</strong> mission execution results, North Star progress<br/>
+                            • <strong>Output:</strong> Mission Validation Report, Impact Metrics Report, Culture Assessment Report, Success Celebration Plan, Values Recognition Program, Sustainability Plans<br/>
+                            • <strong>Done when:</strong> values sustainability achieved
                           </div>
                           
-                          <div style={{ marginBottom: "6px" }}>
-                            <strong>Artifacts:</strong><br/>
-                            • Mission Statement: Democratize mental health awareness through accessible, private wellness tracking<br/>
-                            • Core Values: Privacy first — data stays local; Simplicity over complexity; Technology serves people<br/>
-                            • Vision Statement: A world where mental health tracking is as simple and private as using a calculator<br/>
-                            • North Star: 1 million people using our Windows‑95‑inspired mental health tools by 2030<br/>
-                            • Roadmap: Strategic implementation plan with milestones and timelines<br/>
-                            • Success Metrics / KPI dashboard: Measurable outcomes and progress tracking system
-                          </div>
                           
                           <div style={{ marginBottom: "6px" }}>
                             <strong>Governance:</strong><br/>
-                            • Monthly mission alignment reviews, quarterly values assessment, annual strategic planning<br/>
-                            • Continuous culture building, values-based recognition, mission-driven decision making<br/>
-                            • Required artifacts: Mission statement, Values framework, Vision document, North Star metrics, Culture assessment
+                            • Monthly mission alignment reviews<br/>
+                            • Quarterly values assessment<br/>
+                            • Annual strategic planning<br/>
+                            • Continuous culture building and values-based recognition
                           </div>
                           
-                          <div>
-                            <strong>Mission success:</strong><br/>
-                            • Progress toward North Star (users served)<br/>
-                            • % decisions explicitly tied to mission in quarterly reviews<br/>
-                            • Values reflected in performance reviews / recognition rate<br/>
-                            • Team engagement and mission alignment scores
-                          </div>
                         </div>
                       )}
                     </div>
@@ -1510,121 +1495,305 @@ function App() {
                     
                     <div style={{ marginBottom: "6px" }}>
                       <div style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "4px" }}>Fundamentals of designing user interaction</div>
-                      <div style={{ fontSize: "10px", fontWeight: "bold", marginBottom: "4px" }}>User-Centered Design Principles:</div>
-                      • <strong>User in Control:</strong> Users should feel in control of the interface and their actions<br/>
-                      • <strong>Directness:</strong> Interface should be direct and straightforward in its interactions<br/>
-                      • <strong>Consistency:</strong> Consistent behavior and appearance across all interface elements<br/>
-                      • <strong>Forgiveness:</strong> Interface should be forgiving of user errors and provide recovery options<br/>
-                      • <strong>Feedback:</strong> Provide clear feedback for all user actions and system states<br/>
-                      • <strong>Aesthetics:</strong> Interface should be visually appealing and professional<br/>
-                      • <strong>Simplicity:</strong> Keep the interface simple and avoid unnecessary complexity
+                      <div 
+                        style={{ 
+                          fontSize: "10px", 
+                          fontWeight: "bold", 
+                          marginBottom: "4px", 
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center"
+                        }}
+                        onClick={() => toggleSection('principles')}
+                      >
+                        <span style={{ marginRight: "4px" }}>
+                          {collapsedSections['principles'] ? '▶' : '▼'}
+                        </span>
+                        User-Centered Design Principles:
+                      </div>
+                      {!collapsedSections['principles'] && (
+                        <>
+                          <strong>User in Control:</strong> Users should always feel in control of the software, not controlled by it, with the ability to customize the interface and avoid restrictive modes.<br/>
+                          <br/>
+                          <strong>Directness:</strong> Users should be able to directly manipulate software representations of information with visible results and familiar metaphors that transfer real-world knowledge.<br/>
+                          <br/>
+                          <strong>Consistency:</strong> Maintain consistent behavior, appearance, and command names across the interface to allow users to transfer existing knowledge to new tasks.<br/>
+                          <br/>
+                          <strong>Forgiveness:</strong> Design interfaces that allow users to explore safely, make actions reversible, and provide clear recovery from mistakes.<br/>
+                          <br/>
+                          <strong>Feedback:</strong> Always provide timely visual and audio feedback for user actions to confirm the software is responding and communicate the nature of the action.<br/>
+                          <br/>
+                          <strong>Aesthetics:</strong> Create visually appealing interfaces that contribute to user understanding while avoiding visual clutter that competes for attention.<br/>
+                          <br/>
+                          <strong>Simplicity:</strong> Design interfaces that are simple, easy to learn, and easy to use while providing access to all functionality through progressive disclosure and natural organization.
+                        </>
+                      )}
                     </div>
                     
                     <div style={{ marginBottom: "6px" }}>
-                      <div style={{ fontSize: "10px", fontWeight: "bold", marginBottom: "4px" }}>Design Methodology</div>
-                      <strong>A Balanced Design Team:</strong><br/>
-                      • Include users, developers, and designers in the design process<br/>
-                      • Ensure diverse perspectives and expertise<br/>
-                      • Foster collaboration and communication<br/>
-                      <br/>
-                      <strong>The Design Cycle:</strong><br/>
-                      • Plan: Define requirements and user needs<br/>
-                      • Design: Create interface concepts and prototypes<br/>
-                      • Build: Implement the design<br/>
-                      • Test: Evaluate with users and iterate<br/>
-                      <br/>
-                      <strong>Usability Assessment in the Design Process:</strong><br/>
-                      • Conduct user testing throughout development<br/>
-                      • Gather feedback early and often<br/>
-                      • Measure usability metrics and user satisfaction<br/>
-                      • Iterate based on findings<br/>
-                      <br/>
-                      <strong>Understanding Users:</strong><br/>
-                      • Research user needs, goals, and behaviors<br/>
-                      • Create user personas and scenarios<br/>
-                      • Understand context of use and constraints<br/>
-                      <br/>
-                      <strong>Design Tradeoffs:</strong><br/>
-                      • Balance functionality with simplicity<br/>
-                      • Consider performance vs. features<br/>
-                      • Evaluate cost vs. user benefit<br/>
-                      • Make informed decisions based on user research
+                      <div 
+                        style={{ 
+                          fontSize: "10px", 
+                          fontWeight: "bold", 
+                          marginBottom: "4px", 
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center"
+                        }}
+                        onClick={() => toggleSection('methodology')}
+                      >
+                        <span style={{ marginRight: "4px" }}>
+                          {collapsedSections['methodology'] ? '▶' : '▼'}
+                        </span>
+                        Design Methodology
+                      </div>
+                      {!collapsedSections['methodology'] && (
+                        <>
+                          <strong>A Balanced Design Team:</strong><br/>
+                          • Include users, developers, and designers in the design process<br/>
+                          • Ensure diverse perspectives and expertise<br/>
+                          • Foster collaboration and communication<br/>
+                          <br/>
+                          <strong>The Design Cycle:</strong><br/>
+                          • Plan: Define requirements and user needs<br/>
+                          • Design: Create interface concepts and prototypes<br/>
+                          • Build: Implement the design<br/>
+                          • Test: Evaluate with users and iterate<br/>
+                          <br/>
+                          <strong>Usability Assessment in the Design Process:</strong><br/>
+                          • Conduct user testing throughout development<br/>
+                          • Gather feedback early and often<br/>
+                          • Measure usability metrics and user satisfaction<br/>
+                          • Iterate based on findings<br/>
+                          <br/>
+                          <strong>Understanding Users:</strong><br/>
+                          • Research user needs, goals, and behaviors<br/>
+                          • Create user personas and scenarios<br/>
+                          • Understand context of use and constraints<br/>
+                          <br/>
+                          <strong>Design Tradeoffs:</strong><br/>
+                          • Balance functionality with simplicity<br/>
+                          • Consider performance vs. features<br/>
+                          • Evaluate cost vs. user benefit<br/>
+                          • Make informed decisions based on user research
+                        </>
+                      )}
                     </div>
                     
                     <div style={{ marginBottom: "6px" }}>
-                      <div style={{ fontSize: "10px", fontWeight: "bold", marginBottom: "4px" }}>Basic Concepts</div>
-                      <strong>Data-Centered Design:</strong><br/>
-                      • Design interfaces around data structures and user workflows<br/>
-                      • Organize information hierarchically and logically<br/>
-                      • Make data relationships clear and intuitive<br/>
-                      <br/>
-                      <strong>Objects as Metaphor:</strong><br/>
-                      • Use familiar real-world objects as interface metaphors<br/>
-                      • Leverage user's existing mental models<br/>
-                      • Create intuitive associations between interface elements and real objects<br/>
-                      <br/>
-                      <strong>Object Characteristics:</strong><br/>
-                      • Define clear properties and behaviors for interface objects<br/>
-                      • Ensure consistent appearance and interaction patterns<br/>
-                      • Make object states and changes visually apparent<br/>
-                      <br/>
-                      <strong>Relationships:</strong><br/>
-                      • Show clear connections between related interface elements<br/>
-                      • Use visual cues to indicate object relationships<br/>
-                      • Make navigation and hierarchy obvious to users<br/>
-                      <br/>
-                      <strong>Composition:</strong><br/>
-                      • Build complex interfaces from simple, reusable components<br/>
-                      • Maintain consistency in component design and behavior<br/>
-                      • Create modular, maintainable interface structures<br/>
-                      <br/>
-                      <strong>Persistence:</strong><br/>
-                      • Save user data and preferences automatically<br/>
-                      • Maintain state across sessions and interactions<br/>
-                      • Provide clear feedback about data saving and loading<br/>
-                      <br/>
-                      <strong>Putting Theory into Practice:</strong><br/>
-                      • Apply design principles consistently across all interface elements<br/>
-                      • Test designs with real users and iterate based on feedback<br/>
-                      • Document design decisions and rationale for future reference
+                      <div 
+                        style={{ 
+                          fontSize: "10px", 
+                          fontWeight: "bold", 
+                          marginBottom: "4px", 
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center"
+                        }}
+                        onClick={() => toggleSection('concepts')}
+                      >
+                        <span style={{ marginRight: "4px" }}>
+                          {collapsedSections['concepts'] ? '▶' : '▼'}
+                        </span>
+                        Basic Concepts
+                      </div>
+                      {!collapsedSections['concepts'] && (
+                        <>
+                          <strong>Data-Centered Design:</strong><br/>
+                          • Design interfaces around data structures and user workflows<br/>
+                          • Organize information hierarchically and logically<br/>
+                          • Make data relationships clear and intuitive<br/>
+                          <br/>
+                          <strong>Objects as Metaphor:</strong><br/>
+                          • Use familiar real-world objects as interface metaphors<br/>
+                          • Leverage user's existing mental models<br/>
+                          • Create intuitive associations between interface elements and real objects<br/>
+                          <br/>
+                            <strong>Object Characteristics:</strong><br/>
+                            • Define clear properties and behaviors for interface objects<br/>
+                            • Ensure consistent appearance and interaction patterns<br/>
+                            • Make object states visible and understandable<br/>
+                            <br/>
+                            <strong>Relationships:</strong><br/>
+                            • Establish clear relationships between interface objects<br/>
+                            • Use visual hierarchy to show object importance<br/>
+                            • Create logical groupings and associations<br/>
+                            <br/>
+                            <strong>Composition:</strong><br/>
+                            • Build complex interfaces from simple components<br/>
+                            • Maintain consistency in component design<br/>
+                            • Allow for flexible arrangement and customization<br/>
+                            <br/>
+                            <strong>Persistence:</strong><br/>
+                            • Remember user preferences and settings<br/>
+                            • Maintain state across sessions<br/>
+                            • Provide clear feedback about saved changes<br/>
+                            <br/>
+                            <strong>Putting Theory into Practice:</strong><br/>
+                            • Apply design principles consistently<br/>
+                            • Test with real users regularly<br/>
+                            • Iterate based on feedback and usage data<br/>
+                            <br/>
+                          • Use visual cues to indicate object relationships<br/>
+                          • Make navigation and hierarchy obvious to users<br/>
+                          <br/>
+                          <strong>Composition:</strong><br/>
+                          • Build complex interfaces from simple, reusable components<br/>
+                          • Maintain consistency in component design and behavior<br/>
+                          • Create modular, maintainable interface structures<br/>
+                          <br/>
+                          <strong>Persistence:</strong><br/>
+                          • Save user data and preferences automatically<br/>
+                          • Maintain state across sessions and interactions<br/>
+                          • Provide clear feedback about data saving and loading<br/>
+                          <br/>
+                          <strong>Putting Theory into Practice:</strong><br/>
+                          • Apply design principles consistently across all interface elements<br/>
+                          • Test designs with real users and iterate based on feedback<br/>
+                          • Document design decisions and rationale for future reference
+                        </>
+                      )}
                     </div>
                     
                     <div style={{ marginBottom: "6px" }}>
-                      <div style={{ fontSize: "10px", fontWeight: "bold", marginBottom: "4px" }}>Windows Environment (Shell)</div>
-                      <strong>The Desktop:</strong><br/>
-                      • Primary workspace area for user interaction<br/>
-                      • Background for application windows and icons<br/>
-                      • Supports wallpaper and desktop icons<br/>
-                      <br/>
-                      <strong>The Taskbar:</strong><br/>
-                      • Bottom bar providing access to running applications<br/>
-                      • Shows open windows and allows switching between them<br/>
-                      • Contains Start button and system status area<br/>
-                      <br/>
-                      <strong>The Start Button:</strong><br/>
-                      • Primary entry point to system functions and applications<br/>
-                      • Opens Start menu with program access and system options<br/>
-                      • Located at the left end of the taskbar<br/>
-                      <br/>
-                      <strong>Window Buttons:</strong><br/>
-                      • Taskbar buttons representing open applications<br/>
-                      • Allow switching between running programs<br/>
-                      • Show application state and provide quick access<br/>
-                      <br/>
-                      <strong>The Status Area:</strong><br/>
-                      • System tray area on the right side of taskbar<br/>
-                      • Displays system status and background applications<br/>
-                      • Provides access to system settings and notifications<br/>
-                      <br/>
-                      <strong>Icons:</strong><br/>
-                      • Visual representations of files, folders, and applications<br/>
-                      • Provide quick access to programs and documents<br/>
-                      • Support drag and drop operations<br/>
-                      <br/>
-                      <strong>Windows:</strong><br/>
-                      • Primary containers for application content<br/>
-                      • Standard window controls: title bar, menu bar, status bar<br/>
-                      • Support resizing, moving, and layering operations
+                      <div 
+                        style={{ 
+                          fontSize: "10px", 
+                          fontWeight: "bold", 
+                          marginBottom: "4px", 
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center"
+                        }}
+                        onClick={() => toggleSection('windows')}
+                      >
+                        <span style={{ marginRight: "4px" }}>
+                          {collapsedSections['windows'] ? '▶' : '▼'}
+                        </span>
+                        Windows Environment (Shell)
+                      </div>
+                      {!collapsedSections['windows'] && (
+                        <>
+                          <strong>The Desktop:</strong><br/>
+                          • Primary workspace area for user interaction<br/>
+                          • Background for application windows and icons<br/>
+                          • Supports wallpaper and desktop icons<br/>
+                          <br/>
+                          <strong>The Taskbar:</strong><br/>
+                          • Bottom bar providing access to running applications<br/>
+                          • Shows open windows and allows switching between them<br/>
+                          • Contains Start button and system status area<br/>
+                          <br/>
+                          <strong>The Start Button:</strong><br/>
+                          • Primary entry point to system functions and applications<br/>
+                          • Opens Start menu with program access and system options<br/>
+                          • Located at the left end of the taskbar<br/>
+                          <br/>
+                          <strong>Window Buttons:</strong><br/>
+                          • Taskbar buttons representing open applications<br/>
+                          • Allow switching between running programs<br/>
+                          • Show application state and provide quick access<br/>
+                          <br/>
+                          <strong>The Status Area:</strong><br/>
+                          • System tray area on the right side of taskbar<br/>
+                          • Displays system status and background applications<br/>
+                          • Provides access to system settings and notifications<br/>
+                          <br/>
+                          <strong>Icons:</strong><br/>
+                          • Visual representations of files, folders, and applications<br/>
+                          • Provide quick access to programs and documents<br/>
+                          • Support drag and drop operations<br/>
+                          <br/>
+                          <strong>Windows:</strong><br/>
+                          • Primary containers for application content<br/>
+                          • Standard window controls: title bar, menu bar, status bar<br/>
+                          • Support resizing, moving, and layering operations
+                        </>
+                      )}
+                    </div>
+                    
+                    <div style={{ marginBottom: "6px" }}>
+                      <div 
+                        style={{ 
+                          fontSize: "10px", 
+                          fontWeight: "bold", 
+                          marginBottom: "4px", 
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center"
+                        }}
+                        onClick={() => toggleSection('inputBasics')}
+                      >
+                        <span style={{ marginRight: "4px" }}>
+                          {collapsedSections['inputBasics'] ? '▶' : '▼'}
+                        </span>
+                        Input Basics
+                      </div>
+                      {!collapsedSections['inputBasics'] && (
+                        <>
+                          <strong>Input Methods:</strong><br/>
+                          • Mouse: Pointing, clicking, dragging, and scrolling<br/>
+                          • Keyboard: Text entry, shortcuts, and navigation<br/>
+                          • Touch: Direct manipulation for touch-enabled devices<br/>
+                          <br/>
+                          <strong>Accessibility:</strong><br/>
+                          • Design for inclusive interaction across all abilities<br/>
+                          • Provide alternative input methods and feedback<br/>
+                          • Support assistive technologies and screen readers<br/>
+                          <br/>
+                          <strong>Input Affordances:</strong><br/>
+                          • Clear visual cues for interactive elements<br/>
+                          • Consistent feedback for user actions<br/>
+                          • Obvious states for buttons, links, and controls<br/>
+                          <br/>
+                          <strong>User Skill Levels:</strong><br/>
+                          • Support both novice and expert users<br/>
+                          • Provide progressive disclosure of advanced features<br/>
+                          • Include help and guidance for complex interactions
+                        </>
+                      )}
+                    </div>
+                    
+                    <div style={{ marginBottom: "6px" }}>
+                      <div 
+                        style={{ 
+                          fontSize: "10px", 
+                          fontWeight: "bold", 
+                          marginBottom: "4px", 
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center"
+                        }}
+                        onClick={() => toggleSection('interactionTechniques')}
+                      >
+                        <span style={{ marginRight: "4px" }}>
+                          {collapsedSections['interactionTechniques'] ? '▶' : '▼'}
+                        </span>
+                        General interaction techniques
+                      </div>
+                      {!collapsedSections['interactionTechniques'] && (
+                        <>
+                          <strong>Standard Patterns:</strong><br/>
+                          • Use familiar interaction patterns users expect<br/>
+                          • Follow established conventions and behaviors<br/>
+                          • Maintain consistency across the application<br/>
+                          <br/>
+                          <strong>Multiple Task Paths:</strong><br/>
+                          • Provide different ways to accomplish the same task<br/>
+                          • Support both mouse and keyboard interactions<br/>
+                          • Include context menus and toolbar options<br/>
+                          <br/>
+                          <strong>Efficiency and Learnability:</strong><br/>
+                          • Design for both efficiency and ease of learning<br/>
+                          • Balance power user features with simplicity<br/>
+                          • Provide clear feedback and error prevention<br/>
+                          <br/>
+                          <strong>Keyboard Shortcuts:</strong><br/>
+                          • Include keyboard accelerators for common actions<br/>
+                          • Display shortcut keys in menus and tooltips<br/>
+                          • Support customizable keyboard mappings
+                        </>
+                      )}
                     </div>
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
