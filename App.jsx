@@ -456,9 +456,9 @@ function App() {
                       {isDetailedView ? (
                         <>
                           <div style={{ marginBottom: "6px" }}>
-                            <strong>What:</strong> A framework that establishes organizational purpose, direction, and execution through mission, vision, and values.<br/>
-                            <strong>Why:</strong> Ensures organizational alignment and consistent decision-making from planning through delivery.<br/>
-                            <strong>How:</strong> Plan → Execute → Validate mission success
+                            <strong>What:</strong> A framework that defines organizational purpose, direction, and execution through mission, vision, and values.<br/>
+                            <strong>Why:</strong> Provides a clear sense of purpose that guides all organizational decisions and creates shared understanding of the company's impact.<br/>
+                            <strong>How:</strong> Define mission, vision, and core values; publish them; embed into hiring, roadmaps, and product decisions
                           </div>
                       
                       
@@ -477,8 +477,8 @@ function App() {
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
                           <thead>
                             <tr>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>CEO/Founder </th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "70%", fontWeight: "bold" }}>CEO/Founder </th>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
@@ -487,7 +487,7 @@ function App() {
                           </thead>
                           <tbody>
                             <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 0 = Foundation</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 0 — Foundation</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Market research & user needs analysis<br/>
                                 <strong>Output:</strong> mission statement, core values document<br/>
@@ -503,7 +503,7 @@ function App() {
                               </td>
                             </tr>
                             <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Strategy & Roadmap</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Strategic Roadmap & Success Metrics</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Vision document, North Star, strategic objectives<br/>
                                 <strong>Output:</strong> Strategic roadmap and success metrics (milestones, owners, timelines, KPIs)<br/>
@@ -511,10 +511,10 @@ function App() {
                               </td>
                             </tr>
                             <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Planning Complete</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Planning Complete & Execution Readiness</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Strategic roadmap, success metrics<br/>
-                                <strong>Output:</strong> Planning artifacts finalized, execution readiness confirmed<br/>
+                                <strong>Output:</strong> Planning artifacts finalized, execution readiness confirmed & execution plans<br/>
                                 <strong>Done:</strong> Planning phase complete, ready for execution
                               </td>
                             </tr>
@@ -523,17 +523,18 @@ function App() {
                         
                         <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
                             <strong>Artifacts:</strong><br/>
-                            • <strong>Mission Statement:</strong> Democratize mental health awareness through accessible, private wellness tracking<br/>
-                            • <strong>Core Values:</strong> Privacy first — data stays local; Simplicity over complexity; Technology serves people<br/>
-                            • <strong>Vision Statement:</strong> A world where mental health tracking is as simple and private as using a calculator<br/>
-                            • <strong>North Star:</strong> 1 million people using our Windows‑95‑inspired mental health tools by 2030 (Owner: CEO/Founder — tracking: Head of Product)<br/>
-                            • <strong>Strategic Objectives:</strong> Launch privacy-first MVP by Q2 2024; Achieve 10K active users by end of 2024; Establish healthcare partnerships by Q3 2024<br/>
-                            • <strong>Roadmap:</strong> Strategic Roadmap Document v1.0 (Q1-Q4 2024)<br/>
-                            • <strong>Success Metrics / KPI dashboard:</strong> User acquisition rate: 1K/month; Retention rate: 70%+; Revenue target: $100K ARR by EOY<br/>
-                            • <strong>Execution Readiness Checklist:</strong> Planning artifacts finalized, execution framework approved, team alignment confirmed
+                            • Mission Statement<br/>
+                            • Core Values<br/>
+                            • Vision Statement<br/>
+                            • North Star<br/>
+                            • Strategic Objectives<br/>
+                            • Strategic Roadmap<br/>
+                            • Success Metrics / KPI dashboard<br/>
+                            • Execution Plans<br/>
+                            • Execution Readiness Checklist
                         </div>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                        {/* <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
                             <strong>Success Criteria:</strong><br/>
                             • Mission published + communicated<br/>
                             • Core values published + communicated<br/>
@@ -543,17 +544,8 @@ function App() {
                             • Success metrics framework established<br/>
                             • Board approval for all planning artifacts<br/>
                             • Execution readiness confirmed (planning phase complete, ready for execution)
-                          </div>
+                          </div> */}
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Next Steps:</strong><br/>
-                          • Publish the one-page mission doc to docs/ and intranet (Owner: CEO/Founder)<br/>
-                          • Run a 30-minute all-hands to present mission + rollout plan (Owner: Leadership Team)<br/>
-                          • Define strategic objectives and get Board approval (Owner: CEO/Founder)<br/>
-                          • Publish strategic roadmap with milestones and timelines (Owner: Head of Product)<br/>
-                          • Establish success metrics framework and reporting cadence (Owner: Head of Product)<br/>
-                          • Get Board approval for all planning artifacts (Owner: CEO/Founder)
-                        </div>
                       </div>
                     </div>
                     
@@ -576,7 +568,7 @@ function App() {
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Start</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Planning artifacts finalized, execution readiness confirmed<br/>
+                                <strong>Input:</strong> Planning artifacts finalized, execution readiness confirmed & execution plans<br/>
                                 <strong>Output:</strong> Mission execution started<br/>
                                 <strong>Done:</strong> quarterly execution update published
                               </td>
@@ -584,15 +576,15 @@ function App() {
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Align</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Strategic roadmap, Mission execution started<br/>
-                                <strong>Output:</strong> Department alignment (engineering, operations, support teams) & execution plans<br/>
-                                <strong>Done:</strong> departments aligned with strategic roadmap and execution plans created
+                                <strong>Input:</strong> Mission execution started, Strategic roadmap<br/>
+                                <strong>Output:</strong> Department alignment (engineering, operations, support teams)<br/>
+                                <strong>Done:</strong> departments aligned with strategic roadmap
                               </td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Measure</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Execution plans, progress data<br/>
+                                <strong>Input:</strong> Department alignment (engineering, operations, support teams), progress data<br/>
                                 <strong>Output:</strong> Mission progress tracking & North Star monitoring<br/>
                                 <strong>Done:</strong> monthly North Star report published
                               </td>
@@ -600,7 +592,7 @@ function App() {
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4 — Embed</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Mission progress tracking, North Star monitoring<br/>
+                                <strong>Input:</strong> Mission progress tracking & North Star monitoring, department alignment<br/>
                                 <strong>Output:</strong> Scale playbook, budgets<br/>
                                 <strong>Done:</strong> executive sign‑off for scale
                               </td>
@@ -608,7 +600,7 @@ function App() {
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 5 — Improve</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Scale playbook, budgets<br/>
+                                <strong>Input:</strong> Scale playbook, budgets, mission progress tracking & North Star monitoring<br/>
                                 <strong>Output:</strong> Strategic clarity & public messaging<br/>
                                 <strong>Done:</strong> leadership reviews & updates
                               </td>
@@ -616,15 +608,15 @@ function App() {
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 6 — Sustain</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Strategic clarity, public messaging<br/>
+                                <strong>Input:</strong> Strategic clarity & public messaging, scale playbook & budgets<br/>
                                 <strong>Output:</strong> North Star progress & strategic decisions<br/>
                                 <strong>Done:</strong> annual mission review
                               </td>
                             </tr>
                             <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Roof — Impact</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 7 — Impact</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> North Star progress, strategic decisions<br/>
+                                <strong>Input:</strong> North Star progress & strategic decisions, strategic clarity & public messaging<br/>
                                 <strong>Output:</strong> Mission success validated<br/>
                                 <strong>Done:</strong> mission validated against North Star and stakeholder outcomes
                               </td>
@@ -641,9 +633,9 @@ function App() {
                             • Current strategic decisions and approvals<br/>
                             • Execution metrics and dashboards<br/>
                             <em>Note: These are the living, operational artifacts that guide daily execution and track progress toward the mission</em>
-                          </div>
+                        </div>
                         
-                          <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                          {/* <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
                             <strong>Success Criteria:</strong><br/>
                             • Mission execution launch completed — Owner: CEO/Founder<br/>
                             • Department plans aligned with strategic roadmap — Owner: Leadership Team<br/>
@@ -652,17 +644,8 @@ function App() {
                             • Leadership reviews & updates completed — Owner: CEO<br/>
                             • Annual mission review completed — Owner: CEO<br/>
                             • Mission validated against North Star and stakeholder outcomes — Owner: CEO
-                          </div>
+                          </div> */}
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Next Steps:</strong><br/>
-                          • Launch mission execution (Owner: CEO/Founder)<br/>
-                          • Align departments with strategic roadmap (Owner: Leadership Team)<br/>
-                          • Establish monthly North Star reporting (Owner: Head of Product)<br/>
-                          • Create scale playbook and budgets (Owner: CEO/Founder)<br/>
-                          • Schedule leadership reviews & updates (Owner: CEO)<br/>
-                          • Plan annual mission review (Owner: CEO)
-                        </div>
                       </div>
                       
                     </div>
@@ -685,7 +668,7 @@ function App() {
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Validate</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Mission execution results, North Star progress<br/>
+                                <strong>Input:</strong> Mission success validated, North Star progress<br/>
                                 <strong>Output:</strong> Mission Validation Report<br/>
                                 <strong>Done:</strong> report published
                               </td>
@@ -721,30 +704,19 @@ function App() {
                           <strong>Artifacts:</strong><br/>
                           • Mission Validation Report<br/>
                           • Impact Metrics Report<br/>
-                          • Culture Assessment Report<br/>
                           • Success Celebration Plan<br/>
-                          • Values Recognition Program docs<br/>
                           • Sustainability Plans
                         </div>
                         
-                          <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
+                          {/* <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
                             <strong>Success criteria:</strong><br/>
                             • Mission validation report published — Owner: CEO/Founder<br/>
                             • Impact metrics report published — Owner: Head of Analytics<br/>
                             • Stakeholder satisfaction targets met — Owner: Head of People<br/>
                             • Celebration executed & recognition program launched — Owner: Comms/People<br/>
                             • Sustainability plans implemented and tracked — Owner: Leadership
-                          </div>
+                          </div> */}
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Next steps:</strong><br/>
-                          • Run mission validation assessment and publish report (Owner: CEO/Founder)<br/>
-                          • Launch stakeholder satisfaction survey and publish findings (Owner: Head of People)<br/>
-                          • Plan success celebration and values recognition program (Owner: Comms/People)<br/>
-                          • Draft sustainability plan and assign owners (Owner: Leadership)<br/>
-                          • Establish monthly impact metrics reporting (Owner: Head of Product)<br/>
-                          • Implement sustainability plans and track progress (Owner: Leadership)
-                        </div>
                       </div>
                       
                     </div>
@@ -813,7 +785,7 @@ function App() {
                 {activeTab === 'business' && (
                   <div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                      <h3 style={{ margin: "0", fontSize: "10px" }}>💼 Business Strategy - how we'll compete to achieve our mission</h3>
+                      <h3 style={{ margin: "0", fontSize: "14px" }}>💼 Business Strategy - how we'll achieve our mission</h3>
                       <button
                         onClick={() => setIsBusinessDetailedView(!isBusinessDetailedView)}
                         style={{
@@ -833,17 +805,17 @@ function App() {
                       {isBusinessDetailedView ? (
                         <>
                           <div style={{ marginBottom: "6px" }}>
-                            <strong>What:</strong> A master plan for achieving long‑term goals and objectives.<br/>
-                            <strong>Why:</strong> Ensures proactive growth and success in a competitive market.<br/>
+                            <strong>What:</strong> A framework that defines how a company will position itself in the market, compete against rivals, and achieve its long-term objectives.<br/>
+                            <strong>Why:</strong> Enables consistent decision-making, efficient resource allocation, and sustainable competitive advantage in a dynamic market.<br/>
                             <strong>How:</strong> Use mission & vision → analyze market → set strategic objectives (3–5) → allocate resources & create roadmap → execute, monitor, and iterate.
                           </div>
                           
                           <div style={{ marginBottom: "6px" }}>
                             <strong>Owners:</strong><br/>
-                            • CEO/Founder: strategic direction, market positioning, investor relations<br/>
-                            • Business Development: partnerships, revenue model, market expansion<br/>
-                            • Marketing Lead: brand positioning, customer acquisition, market research<br/>
-                            • Finance Lead: financial planning, revenue optimization, risk management
+                            • <strong>CEO/Founder:</strong> strategic direction, market positioning, investor relations<br/>
+                            • <strong>Business Development:</strong> partnerships, revenue model, market expansion<br/>
+                            • <strong>Marketing Lead:</strong> brand positioning, customer acquisition, market research<br/>
+                            • <strong>Finance Lead:</strong> financial planning, revenue optimization, risk management
                           </div>
                           
                           <div style={{ marginBottom: "6px" }}>
@@ -885,143 +857,81 @@ function App() {
                       ) : (
                         <>
                           <div style={{ marginBottom: "6px" }}>
-                            <strong>What:</strong> A master plan for achieving long‑term goals and objectives.<br/>
-                            <strong>Why:</strong> Ensures proactive growth and success in a competitive market.<br/>
+                            <strong>What:</strong> A framework that defines how a company will position itself in the market, compete against rivals, and achieve its long-term objectives.<br/>
+                            <strong>Why:</strong> Enables consistent decision-making, efficient resource allocation, and sustainable competitive advantage in a dynamic market.<br/>
                             <strong>How:</strong> Use mission & vision → analyze market → set strategic objectives (3–5) → allocate resources & create roadmap → execute, monitor, and iterate.
                           </div>
                           
                           <div style={{ marginBottom: "6px" }}>
                             <strong>Owners:</strong><br/>
-                            • CEO/Founder: strategic direction, market positioning, investor relations<br/>
-                            • Business Development: partnerships, revenue model, market expansion<br/>
-                            • Marketing Lead: brand positioning, customer acquisition, market research<br/>
-                            • Finance Lead: financial planning, revenue optimization, risk management
+                            • <strong>CEO/Founder:</strong> strategic direction, market positioning, investor relations<br/>
+                            • <strong>Business Development:</strong> partnerships, revenue model, market expansion<br/>
+                            • <strong>Marketing Lead:</strong> brand positioning, customer acquisition, market research<br/>
+                            • <strong>Finance Lead:</strong> financial planning, revenue optimization, risk management
                           </div>
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
                       <div style={{ marginBottom: "4px" }}>
-                        <strong>Planning Framework</strong><br/>
+                        <strong>Planning Framework:</strong> business strategy definition and market positioning<br/>
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
                           <thead>
                             <tr>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%", fontWeight: "bold" }}>Level</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>CEO/Founder </th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>Leadership Team </th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "32.5%", fontWeight: "bold" }}>All Team Members </th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "70%", fontWeight: "bold" }}>CEO/Founder </th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Strategic direction & market positioning</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Operational strategy & department alignment</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Strategy adoption & team readiness</td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 0 — Foundation</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> mission & vision, market opportunity, competitive landscape, financial targets<br/>
-                                <strong>Output:</strong> business strategy foundation & market positioning<br/>
+                                <strong>Input:</strong> Mission statement, vision, strategic objectives, market opportunity, competitive landscape, financial targets<br/>
+                                <strong>Output:</strong> business strategy foundation, market positioning, market analysis & risk assessment<br/>
                                 <strong>Done:</strong> Board approval (go/no‑go gate)
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> market opportunity, competitive landscape<br/>
-                                <strong>Output:</strong> market analysis & competitive positioning<br/>
-                                <strong>Done:</strong> Leadership approval
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> market research, user feedback<br/>
-                                <strong>Output:</strong> market readiness assessment<br/>
-                                <strong>Done:</strong> team alignment achieved (recommend: pulse survey threshold)
                               </td>
                             </tr>
                             <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Strategy</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Strategy Definition & Market Positioning</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> market analysis, business vision<br/>
+                                <strong>Input:</strong> business strategy foundation & market positioning, market analysis<br/>
                                 <strong>Output:</strong> business strategy document & go‑to‑market plan<br/>
                                 <strong>Done:</strong> Board approval (or CEO approval if no material funding/policy change)
                               </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> market analysis, strategic direction<br/>
-                                <strong>Output:</strong> department strategies & implementation plans<br/>
-                                <strong>Done:</strong> leadership approval
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> business strategy, department plans<br/>
-                                <strong>Output:</strong> role‑specific strategy understanding<br/>
-                                <strong>Done:</strong> strategy adoption readiness (training completed / manager sign‑off)
-                              </td>
                             </tr>
                             <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Roadmap</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Business Roadmap & Success Metrics</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> business strategy, market feedback<br/>
-                                <strong>Output:</strong> Strategic roadmap & success metrics (milestones, owners, timelines, KPIs)<br/>
+                                <strong>Input:</strong> business strategy document & go-to-market plan, market feedback<br/>
+                                <strong>Output:</strong> Business roadmap & success metrics (milestones, owners, timelines, KPIs)<br/>
                                 <strong>Done:</strong> roadmap approved (Owner: CEO / Head of Product)
                               </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> strategic roadmap, success metrics<br/>
-                                <strong>Output:</strong> department roadmaps & resource allocation<br/>
-                                <strong>Done:</strong> leadership approval (budget & resource commitments)
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> strategic roadmap, department plans<br/>
-                                <strong>Output:</strong> Team preparation & readiness (tickets, OKRs assigned)<br/>
-                                <strong>Done:</strong> team preparation complete (staffing, training, OKRs set)
-                              </td>
                             </tr>
                             <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Preparation</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Execution Preparation & Launch Plan</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> strategic roadmap, market conditions<br/>
+                                <strong>Input:</strong> Business roadmap & success metrics, market conditions<br/>
                                 <strong>Output:</strong> execution readiness & launch plan<br/>
                                 <strong>Done:</strong> execution approval & launch authorization
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> strategic roadmap, market conditions<br/>
-                                <strong>Output:</strong> department execution readiness<br/>
-                                <strong>Done:</strong> department readiness confirmed
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> strategic roadmap, department plans<br/>
-                                <strong>Output:</strong> execution readiness & team alignment<br/>
-                                <strong>Done:</strong> execution readiness achieved (all systems go)
                               </td>
                             </tr>
                           </tbody>
                         </table>
                         
                         <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Artifacts:</strong> What gets produced<br/>
-                          • <strong>Business Strategy Document:</strong> comprehensive strategic plan with market positioning and go-to-market strategy<br/>
-                          • <strong>Market Analysis Report:</strong> competitive landscape, market opportunity, and positioning analysis<br/>
-                          • <strong>Strategic Roadmap:</strong> implementation plan with milestones, owners, timelines, and KPIs<br/>
-                          • <strong>Resource Allocation Plan:</strong> budget, staffing, and resource distribution across departments<br/>
-                          • <strong>Launch Plan:</strong> execution readiness plan with launch strategy, timeline, and success criteria<br/>
-                          • <strong>Success Metrics Dashboard:</strong> measurable outcomes and progress tracking system<br/>
-                          • <strong>Risk Assessment Report:</strong> identified risks, mitigation strategies, and contingency plans
+                          <strong>Artifacts:</strong><br/>
+                          • Business Strategy Document<br/>
+                          • Market Analysis Report<br/>
+                          • Business Roadmap<br/>
+                          • Resource Allocation Plan<br/>
+                          • Launch Plan<br/>
+                          • Success Metrics Dashboard<br/>
+                          • Risk Assessment Report
                         </div>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Success Criteria:</strong> How you know planning is complete<br/>
-                          • Business strategy approved by Board<br/>
-                          • Market analysis completed and validated<br/>
-                          • Strategic roadmap approved with clear milestones<br/>
-                          • Resource allocation plan approved and budget allocated<br/>
-                          • Launch plan approved and execution readiness confirmed<br/>
-                          • Success metrics defined and tracking systems established
-                        </div>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Next Steps:</strong> How to actually implement planning<br/>
-                          • Conduct comprehensive market analysis and competitive research (Owner: Marketing Lead)<br/>
-                          • Develop business strategy document with go-to-market plan (Owner: CEO/Founder)<br/>
-                          • Create strategic roadmap with milestones and KPIs (Owner: Head of Product)<br/>
-                          • Allocate resources and establish budget (Owner: Finance Lead)<br/>
-                          • Develop launch plan and execution readiness checklist (Owner: Leadership Team)<br/>
-                          • Set up success metrics dashboard and tracking systems (Owner: Analytics Lead)
-                        </div>
                       </div>
                     </div>
                     
@@ -1031,18 +941,14 @@ function App() {
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
                           <thead>
                             <tr>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%", fontWeight: "bold" }}>Level</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>CEO/Founder </th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>Leadership Team </th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "32.5%", fontWeight: "bold" }}>All Team Members </th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>CEO/Founder </th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Strategic execution & market leadership</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Operational execution & department performance</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Tactical execution & goal achievement</td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Launch</td>
@@ -1051,103 +957,45 @@ function App() {
                                 <strong>Output:</strong> market launch execution & initial traction<br/>
                                 <strong>Done:</strong> launch completed & initial metrics achieved
                               </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> execution readiness, department plans<br/>
-                                <strong>Output:</strong> department launch execution & performance<br/>
-                                <strong>Done:</strong> department launch completed & targets met
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> execution readiness, team plans<br/>
-                                <strong>Output:</strong> tactical execution & deliverables<br/>
-                                <strong>Done:</strong> sprint/milestone commitments met
-                              </td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Scale</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> launch results, market feedback<br/>
+                                <strong>Input:</strong> market launch execution & initial traction, market feedback<br/>
                                 <strong>Output:</strong> scaling strategy & market expansion<br/>
                                 <strong>Done:</strong> scaling plan approved & resources allocated
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> launch results, department performance<br/>
-                                <strong>Output:</strong> department scaling & optimization<br/>
-                                <strong>Done:</strong> department scaling implemented
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> launch results, team performance<br/>
-                                <strong>Output:</strong> team scaling & capability building<br/>
-                                <strong>Done:</strong> team scaling & training completed
                               </td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Optimize</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> scaling results, market conditions<br/>
+                                <strong>Input:</strong> scaling strategy & market expansion, market conditions<br/>
                                 <strong>Output:</strong> optimization strategy & competitive advantage<br/>
                                 <strong>Done:</strong> optimization plan executed & competitive position achieved
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> scaling results, department performance<br/>
-                                <strong>Output:</strong> department optimization & efficiency gains<br/>
-                                <strong>Done:</strong> department optimization completed
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> scaling results, team performance<br/>
-                                <strong>Output:</strong> team optimization & productivity gains<br/>
-                                <strong>Done:</strong> team optimization & performance improved
                               </td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4 — Sustain</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> optimization results, market position<br/>
+                                <strong>Input:</strong> optimization strategy & competitive advantage, market position<br/>
                                 <strong>Output:</strong> sustainable growth strategy & market leadership<br/>
                                 <strong>Done:</strong> sustainable growth achieved & market leadership established
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> optimization results, department performance<br/>
-                                <strong>Output:</strong> sustainable operations & continuous improvement<br/>
-                                <strong>Done:</strong> sustainable operations & continuous improvement established
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> optimization results, team performance<br/>
-                                <strong>Output:</strong> sustainable performance & continuous learning<br/>
-                                <strong>Done:</strong> sustainable performance & continuous learning established
                               </td>
                             </tr>
                           </tbody>
                         </table>
                         
                         <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Artifacts:</strong> What gets produced<br/>
-                          • <strong>Launch Execution Report:</strong> market launch results, initial traction metrics, and performance analysis<br/>
-                          • <strong>Scaling Strategy Document:</strong> market expansion plan, scaling approach, and resource requirements<br/>
-                          • <strong>Optimization Plan:</strong> efficiency improvements, competitive advantage strategies, and performance enhancements<br/>
-                          • <strong>Sustainability Framework:</strong> long-term growth strategy, continuous improvement processes, and market leadership plan<br/>
-                          • <strong>Performance Dashboards:</strong> real-time execution metrics, KPI tracking, and progress monitoring systems<br/>
-                          • <strong>Execution Reports:</strong> quarterly performance reviews, risk assessments, and strategic updates
+                          <strong>Artifacts:</strong><br/>
+                          • Launch Execution Report<br/>
+                          • Scaling Strategy Document<br/>
+                          • Optimization Plan<br/>
+                          • Sustainability Framework<br/>
+                          • Performance Dashboards<br/>
+                          • Execution Reports
                         </div>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Success Criteria:</strong> How you know execution is successful<br/>
-                          • Market launch completed with initial traction achieved<br/>
-                          • Scaling strategy implemented and market expansion underway<br/>
-                          • Optimization initiatives delivering measurable efficiency gains<br/>
-                          • Sustainable growth achieved and market leadership established<br/>
-                          • Performance metrics consistently meeting or exceeding targets<br/>
-                          • Execution reports showing continuous progress and risk mitigation
-                        </div>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Next Steps:</strong> How to actually execute the strategy<br/>
-                          • Execute market launch according to launch plan (Owner: Marketing Lead)<br/>
-                          • Monitor initial traction and adjust strategy as needed (Owner: CEO/Founder)<br/>
-                          • Implement scaling strategy and expand market reach (Owner: Business Development)<br/>
-                          • Optimize operations and build competitive advantage (Owner: Operations Lead)<br/>
-                          • Establish sustainable growth processes and market leadership (Owner: Leadership Team)<br/>
-                          • Track performance metrics and generate execution reports (Owner: Analytics Lead)
-                        </div>
                       </div>
                     </div>
                     
@@ -1157,18 +1005,14 @@ function App() {
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
                           <thead>
                             <tr>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%", fontWeight: "bold" }}>Level</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>CEO/Founder </th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>Leadership Team </th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "32.5%", fontWeight: "bold" }}>All Team Members </th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>CEO/Founder </th>
                             </tr>
                           </thead>
                           <tbody>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Strategic delivery & market validation</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Operational delivery & performance validation</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Tactical delivery & goal validation</td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Validate</td>
@@ -1176,16 +1020,6 @@ function App() {
                                 <strong>Input:</strong> execution results, market performance<br/>
                                 <strong>Output:</strong> market validation report & strategic assessment<br/>
                                 <strong>Done:</strong> market validation completed & strategic position confirmed
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> execution results, department performance<br/>
-                                <strong>Output:</strong> operational validation report & performance assessment<br/>
-                                <strong>Done:</strong> operational validation completed & performance confirmed
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> execution results, team performance<br/>
-                                <strong>Output:</strong> tactical validation report & goal assessment<br/>
-                                <strong>Done:</strong> tactical validation completed & goals confirmed
                               </td>
                             </tr>
                             <tr>
@@ -1195,16 +1029,6 @@ function App() {
                                 <strong>Output:</strong> strategic impact metrics & market analysis<br/>
                                 <strong>Done:</strong> strategic metrics measured & market analysis completed
                               </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> validation reports, operational metrics<br/>
-                                <strong>Output:</strong> operational impact metrics & performance analysis<br/>
-                                <strong>Done:</strong> operational metrics measured & performance analysis completed
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> validation reports, tactical metrics<br/>
-                                <strong>Output:</strong> tactical impact metrics & goal analysis<br/>
-                                <strong>Done:</strong> tactical metrics measured & goal analysis completed
-                              </td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Celebrate</td>
@@ -1213,16 +1037,6 @@ function App() {
                                 <strong>Output:</strong> strategic success celebration & market recognition<br/>
                                 <strong>Done:</strong> strategic celebration executed & market recognition achieved
                               </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> impact metrics, operational success<br/>
-                                <strong>Output:</strong> operational success celebration & team recognition<br/>
-                                <strong>Done:</strong> operational celebration executed & team recognition achieved
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> impact metrics, tactical success<br/>
-                                <strong>Output:</strong> tactical success celebration & individual recognition<br/>
-                                <strong>Done:</strong> tactical celebration executed & individual recognition achieved
-                              </td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4 — Sustain</td>
@@ -1230,16 +1044,6 @@ function App() {
                                 <strong>Input:</strong> celebration outcomes, market position<br/>
                                 <strong>Output:</strong> sustainable market leadership & continuous growth<br/>
                                 <strong>Done:</strong> sustainable market leadership established & continuous growth achieved
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> celebration outcomes, operational excellence<br/>
-                                <strong>Output:</strong> sustainable operations & continuous improvement<br/>
-                                <strong>Done:</strong> sustainable operations established & continuous improvement achieved
-                              </td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> celebration outcomes, tactical excellence<br/>
-                                <strong>Output:</strong> sustainable performance & continuous learning<br/>
-                                <strong>Done:</strong> sustainable performance established & continuous learning achieved
                               </td>
                             </tr>
                           </tbody>
@@ -1255,25 +1059,7 @@ function App() {
                           • <strong>Continuous Improvement Plan:</strong> ongoing strategy for operational excellence and learning
                         </div>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Success Criteria:</strong> How you know delivery is complete<br/>
-                          • Market validation completed with strategic position confirmed<br/>
-                          • Impact metrics measured across all levels (strategic, operational, tactical)<br/>
-                          • Success celebrations executed and recognition programs established<br/>
-                          • Sustainability framework implemented for continuous growth<br/>
-                          • Performance recognition program launched and operational<br/>
-                          • Continuous improvement processes established and functioning
-                        </div>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Next Steps:</strong> How to actually deliver and validate success<br/>
-                          • Conduct comprehensive market validation assessment (Owner: CEO/Founder)<br/>
-                          • Measure impact metrics across all execution levels (Owner: Analytics Lead)<br/>
-                          • Plan and execute success celebrations (Owner: Leadership Team)<br/>
-                          • Establish sustainability framework for continuous growth (Owner: CEO/Founder)<br/>
-                          • Launch performance recognition program (Owner: People Lead)<br/>
-                          • Implement continuous improvement processes (Owner: Operations Lead)
-                        </div>
                       </div>
                     </div>
                     
