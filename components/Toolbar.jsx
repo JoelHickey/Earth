@@ -1,41 +1,44 @@
 import React from 'react';
 import { VIEW_BUTTONS } from '../utils/constants';
 
-const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodSugarStatus, saveSliderPositions, recallSliderPositions, hasSavedPositions, undoSliderChange, hasUndoAvailable, cortisolLevel = 0 }) => {
+const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodSugarStatus, saveSliderPositions, recallSliderPositions, hasSavedPositions, undoSliderChange, hasUndoAvailable, cortisolLevel = 0, isMacOS8Theme = false }) => {
   const styles = {
     viewSwitcher: {
       display: "flex",
       alignItems: "center",
-      gap: "2px",
-      padding: "2px",
-      background: "#c0c0c0",
-      borderBottom: "1px solid #808080",
-      borderTop: "1px solid #ffffff",
-      height: "32px"
+      gap: isMacOS8Theme ? "4px" : "2px",
+      padding: isMacOS8Theme ? "4px" : "2px",
+      background: isMacOS8Theme ? "#c0c0c0" : "#c0c0c0",
+      borderBottom: isMacOS8Theme ? "1px solid #808080" : "1px solid #808080",
+      borderTop: isMacOS8Theme ? "1px solid #ffffff" : "1px solid #ffffff",
+      height: isMacOS8Theme ? "28px" : "32px",
+      boxShadow: isMacOS8Theme ? "inset 1px 1px 0px #ffffff, inset -1px -1px 0px #808080" : "none"
     },
     button: {
-      width: "32px",
-      height: "26px",
-      background: "#d4d0c8",
-      borderTop: "2px solid #ffffff",
-      borderLeft: "2px solid #ffffff",
-      borderBottom: "2px solid #808080",
-      borderRight: "2px solid #808080",
-      fontSize: "8px",
+      width: isMacOS8Theme ? "28px" : "32px",
+      height: isMacOS8Theme ? "20px" : "26px",
+      background: isMacOS8Theme ? "#c0c0c0" : "#d4d0c8",
+      borderTop: isMacOS8Theme ? "1px solid #ffffff" : "2px solid #ffffff",
+      borderLeft: isMacOS8Theme ? "1px solid #ffffff" : "2px solid #ffffff",
+      borderBottom: isMacOS8Theme ? "1px solid #808080" : "2px solid #808080",
+      borderRight: isMacOS8Theme ? "1px solid #808080" : "2px solid #808080",
+      fontSize: isMacOS8Theme ? "10px" : "8px",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontFamily: "'MS Sans Serif', sans-serif",
-      fontWeight: "normal",
+      fontFamily: isMacOS8Theme ? "'Chicago', 'Geneva', 'Helvetica', sans-serif" : "'MS Sans Serif', sans-serif",
+      fontWeight: isMacOS8Theme ? "normal" : "normal",
       padding: "0",
-      boxSizing: "border-box"
+      boxSizing: "border-box",
+      boxShadow: isMacOS8Theme ? "inset 1px 1px 0px #ffffff, inset -1px -1px 0px #808080" : "none"
     },
     activeButton: {
-      borderTop: "2px solid #808080",
-      borderLeft: "2px solid #808080",
-      borderBottom: "2px solid #ffffff",
-      borderRight: "2px solid #ffffff"
+      borderTop: isMacOS8Theme ? "1px solid #808080" : "2px solid #808080",
+      borderLeft: isMacOS8Theme ? "1px solid #808080" : "2px solid #808080",
+      borderBottom: isMacOS8Theme ? "1px solid #ffffff" : "2px solid #ffffff",
+      borderRight: isMacOS8Theme ? "1px solid #ffffff" : "2px solid #ffffff",
+      boxShadow: isMacOS8Theme ? "inset 1px 1px 0px #808080, inset -1px -1px 0px #ffffff" : "none"
     },
     outputBar: {
       width: "126px",

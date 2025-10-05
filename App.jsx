@@ -79,6 +79,35 @@ function App() {
   
   // Window state
   const [isWindowOpen, setIsWindowOpen] = useState(true);
+  const [isWindowMinimized, setIsWindowMinimized] = useState(false);
+  
+  // Second app window state
+  const [isSecondAppOpen, setIsSecondAppOpen] = useState(false);
+  const [isSecondAppMinimized, setIsSecondAppMinimized] = useState(false);
+  
+  // Third app window state (Travel)
+  const [isTravelAppOpen, setIsTravelAppOpen] = useState(false);
+  const [isTravelAppMinimized, setIsTravelAppMinimized] = useState(false);
+  
+  // Window position state - center windows on initial load
+  const [windowPosition, setWindowPosition] = useState(() => ({
+    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 1000) / 2) : 50,
+    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 600) / 2) : 100
+  }));
+  const [secondWindowPosition, setSecondWindowPosition] = useState(() => ({
+    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 400) / 2) : 200,
+    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 300) / 2) : 120
+  }));
+  const [travelWindowPosition, setTravelWindowPosition] = useState(() => ({
+    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 700) / 2) : 300,
+    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 600) / 2) : 150
+  }));
+  const [isDragging, setIsDragging] = useState(false);
+  const [isSecondDragging, setIsSecondDragging] = useState(false);
+  const [isTravelDragging, setIsTravelDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingComponent, setEditingComponent] = useState(null);
 
   const handleSliderChange = (name, value) => {
     // Store current values as previous before making change
@@ -112,17 +141,197 @@ function App() {
 
   const closeWindow = () => {
     setIsWindowOpen(false);
+    setIsWindowMinimized(false);
     console.log('Window closed');
+  };
+
+  const minimizeWindow = () => {
+    setIsWindowMinimized(true);
+    console.log('Window minimized');
+  };
+
+  const restoreWindow = () => {
+    setIsWindowMinimized(false);
+    console.log('Window restored');
   };
 
   const openWindow = () => {
     setIsWindowOpen(true);
+    setIsWindowMinimized(false);
+    // Center the window on desktop
+    setWindowPosition({
+      x: Math.max(0, (window.innerWidth - 1000) / 2), // Main window is 1000px wide
+      y: Math.max(0, (window.innerHeight - 600) / 2) // Estimated height
+    });
     console.log('Window opened');
+  };
+
+  // Second app functions
+  const closeSecondApp = () => {
+    setIsSecondAppOpen(false);
+    setIsSecondAppMinimized(false);
+    console.log('Second app closed');
+  };
+
+  const minimizeSecondApp = () => {
+    setIsSecondAppMinimized(true);
+    console.log('Second app minimized');
+  };
+
+  const restoreSecondApp = () => {
+    setIsSecondAppMinimized(false);
+    console.log('Second app restored');
+  };
+
+  const openSecondApp = () => {
+    setIsSecondAppOpen(true);
+    setIsSecondAppMinimized(false);
+    // Center the Notepad window on desktop
+    setSecondWindowPosition({
+      x: Math.max(0, (window.innerWidth - 400) / 2), // Notepad width is 400px
+      y: Math.max(0, (window.innerHeight - 300) / 2) // Notepad height is 300px
+    });
+    console.log('Second app opened');
+  };
+
+  // Travel app functions
+  const closeTravelApp = () => {
+    setIsTravelAppOpen(false);
+    setIsTravelAppMinimized(false);
+    console.log('Travel app closed');
+  };
+
+  const minimizeTravelApp = () => {
+    setIsTravelAppMinimized(true);
+    console.log('Travel app minimized');
+  };
+
+  const restoreTravelApp = () => {
+    setIsTravelAppMinimized(false);
+    console.log('Travel app restored');
+  };
+
+  const openTravelApp = () => {
+    setIsTravelAppOpen(true);
+    setIsTravelAppMinimized(false);
+    // Center the Travel window on desktop
+    setTravelWindowPosition({
+      x: Math.max(0, (window.innerWidth - 700) / 2), // Travel app width is 700px
+      y: Math.max(0, (window.innerHeight - 600) / 2) // Travel app height is 600px
+    });
+    console.log('Travel app opened');
+  };
+
+  const handleEditComponent = (componentName) => {
+    setEditingComponent(componentName);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingComponent(null);
+  };
+
+  // Drag handlers for main window
+  const handleWindowMouseDown = (e) => {
+    if (e.target.closest('button')) return; // Don't drag if clicking a button
+    setIsDragging(true);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+    e.preventDefault();
+  };
+
+  const handleWindowMouseMove = (e) => {
+    if (!isDragging) return;
+    setWindowPosition({
+      x: e.clientX - dragOffset.x,
+      y: e.clientY - dragOffset.y
+    });
+  };
+
+  const handleWindowMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Drag handlers for second window
+  const handleSecondWindowMouseDown = (e) => {
+    if (e.target.closest('button')) return; // Don't drag if clicking a button
+    setIsSecondDragging(true);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+    e.preventDefault();
+  };
+
+  const handleSecondWindowMouseMove = (e) => {
+    if (!isSecondDragging) return;
+    setSecondWindowPosition({
+      x: e.clientX - dragOffset.x,
+      y: e.clientY - dragOffset.y
+    });
+  };
+
+  const handleSecondWindowMouseUp = () => {
+    setIsSecondDragging(false);
+  };
+
+  // Drag handlers for travel window
+  const handleTravelWindowMouseDown = (e) => {
+    if (e.target.closest('button')) return; // Don't drag if clicking a button
+    setIsTravelDragging(true);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+    e.preventDefault();
+  };
+
+  const handleTravelWindowMouseMove = (e) => {
+    if (!isTravelDragging) return;
+    setTravelWindowPosition({
+      x: e.clientX - dragOffset.x,
+      y: e.clientY - dragOffset.y
+    });
+  };
+
+  const handleTravelWindowMouseUp = () => {
+    setIsTravelDragging(false);
   };
 
   const hasSavedPositions = () => {
     return localStorage.getItem('sliderPositions') !== null;
   };
+
+  // Add global mouse event listeners for dragging
+  React.useEffect(() => {
+    const handleGlobalMouseMove = (e) => {
+      handleWindowMouseMove(e);
+      handleSecondWindowMouseMove(e);
+      handleTravelWindowMouseMove(e);
+    };
+
+    const handleGlobalMouseUp = () => {
+      handleWindowMouseUp();
+      handleSecondWindowMouseUp();
+      handleTravelWindowMouseUp();
+    };
+
+    if (isDragging || isSecondDragging || isTravelDragging) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [isDragging, isSecondDragging, isTravelDragging, dragOffset]);
 
   // Add functions for environment checkboxes
   const updateEnvironmentCheckbox = (name, checked) => {
@@ -477,12 +686,8 @@ function App() {
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
                           <thead>
                             <tr>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>Level</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "70%", fontWeight: "bold" }}>CEO/Founder </th>
-                            </tr>
-                            <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Mission definition, strategic planning</td>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>CEO/Founder </th>
                             </tr>
                           </thead>
                           <tbody>
@@ -491,7 +696,6 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Market research & user needs analysis<br/>
                                 <strong>Output:</strong> mission statement, core values document<br/>
-                                <strong>Done:</strong> Board approval (go/no‑go gate)
                               </td>
                             </tr>
                             <tr>
@@ -499,7 +703,6 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Mission statement, core values, market opportunity<br/>
                                 <strong>Output:</strong> Vision, measurable North‑Star, strategic objectives<br/>
-                                <strong>Done:</strong> Board approval
                               </td>
                             </tr>
                             <tr>
@@ -507,32 +710,18 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Vision document, North Star, strategic objectives<br/>
                                 <strong>Output:</strong> Strategic roadmap and success metrics (milestones, owners, timelines, KPIs)<br/>
-                                <strong>Done:</strong> Board approval
                               </td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Planning Complete & Execution Readiness</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Strategic roadmap, success metrics<br/>
-                                <strong>Output:</strong> Planning artifacts finalized, execution readiness confirmed & execution plans<br/>
-                                <strong>Done:</strong> Planning phase complete, ready for execution
+                                <strong>Output:</strong> Execution plans created, planning artifacts finalized, execution readiness confirmed<br/>
                               </td>
                             </tr>
                           </tbody>
                         </table>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                            <strong>Artifacts:</strong><br/>
-                            • Mission Statement<br/>
-                            • Core Values<br/>
-                            • Vision Statement<br/>
-                            • North Star<br/>
-                            • Strategic Objectives<br/>
-                            • Strategic Roadmap<br/>
-                            • Success Metrics / KPI dashboard<br/>
-                            • Execution Plans<br/>
-                            • Execution Readiness Checklist
-                        </div>
                         
                         {/* <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
                             <strong>Success Criteria:</strong><br/>
@@ -559,10 +748,6 @@ function App() {
                               <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
                               <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>CEO/Founder </th>
                             </tr>
-                            <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Operationalizes mission</td>
-                            </tr>
                           </thead>
                           <tbody>
                             <tr>
@@ -570,7 +755,6 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Planning artifacts finalized, execution readiness confirmed & execution plans<br/>
                                 <strong>Output:</strong> Mission execution started<br/>
-                                <strong>Done:</strong> quarterly execution update published
                               </td>
                             </tr>
                             <tr>
@@ -578,62 +762,25 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Mission execution started, Strategic roadmap<br/>
                                 <strong>Output:</strong> Department alignment (engineering, operations, support teams)<br/>
-                                <strong>Done:</strong> departments aligned with strategic roadmap
                               </td>
                             </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Measure</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Department alignment (engineering, operations, support teams), progress data<br/>
+                                <strong>Input:</strong> Department alignment (engineering, operations, support teams), Strategic execution plans<br/>
                                 <strong>Output:</strong> Mission progress tracking & North Star monitoring<br/>
-                                <strong>Done:</strong> monthly North Star report published
                               </td>
                             </tr>
                             <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4 — Embed</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4 — Impact</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Mission progress tracking & North Star monitoring, department alignment<br/>
-                                <strong>Output:</strong> Scale playbook, budgets<br/>
-                                <strong>Done:</strong> executive sign‑off for scale
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 5 — Improve</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Scale playbook, budgets, mission progress tracking & North Star monitoring<br/>
-                                <strong>Output:</strong> Strategic clarity & public messaging<br/>
-                                <strong>Done:</strong> leadership reviews & updates
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 6 — Sustain</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> Strategic clarity & public messaging, scale playbook & budgets<br/>
-                                <strong>Output:</strong> North Star progress & strategic decisions<br/>
-                                <strong>Done:</strong> annual mission review
-                              </td>
-                            </tr>
-                            <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 7 — Impact</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
-                                <strong>Input:</strong> North Star progress & strategic decisions, strategic clarity & public messaging<br/>
+                                <strong>Input:</strong> Mission progress tracking & North Star monitoring, Strategic execution plans<br/>
                                 <strong>Output:</strong> Mission success validated<br/>
-                                <strong>Done:</strong> mission validated against North Star and stakeholder outcomes
                               </td>
                             </tr>
                           </tbody>
                         </table>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                            <strong>Artifacts:</strong><br/>
-                            • Mission progress tracking reports<br/>
-                            • Active roadmap with current status<br/>
-                            • North Star monthly tracking reports<br/>
-                            • Operational runbooks and procedures<br/>
-                            • Current strategic decisions and approvals<br/>
-                            • Execution metrics and dashboards<br/>
-                            <em>Note: These are the living, operational artifacts that guide daily execution and track progress toward the mission</em>
-                        </div>
                         
                           {/* <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
                             <strong>Success Criteria:</strong><br/>
@@ -659,10 +806,6 @@ function App() {
                               <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
                               <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>CEO/Founder </th>
                             </tr>
-                            <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Strategic delivery & validation</td>
-                            </tr>
                           </thead>
                           <tbody>
                             <tr>
@@ -670,7 +813,6 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Mission success validated, North Star progress<br/>
                                 <strong>Output:</strong> Mission Validation Report<br/>
-                                <strong>Done:</strong> report published
                               </td>
                             </tr>
                             <tr>
@@ -678,7 +820,6 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Mission Validation Report<br/>
                                 <strong>Output:</strong> Impact Metrics Report<br/>
-                                <strong>Done:</strong> metrics report published
                               </td>
                             </tr>
                             <tr>
@@ -686,7 +827,6 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Impact Metrics Report<br/>
                                 <strong>Output:</strong> Success Celebration Plan & Execution<br/>
-                                <strong>Done:</strong> celebration executed
                               </td>
                             </tr>
                             <tr>
@@ -694,19 +834,11 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Success Celebration Plan & Execution<br/>
                                 <strong>Output:</strong> Sustainability Plan (processes + KPIs)<br/>
-                                <strong>Done:</strong> plan implemented
                               </td>
                             </tr>
                           </tbody>
                         </table>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Artifacts:</strong><br/>
-                          • Mission Validation Report<br/>
-                          • Impact Metrics Report<br/>
-                          • Success Celebration Plan<br/>
-                          • Sustainability Plans
-                        </div>
                         
                           {/* <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
                             <strong>Success criteria:</strong><br/>
@@ -721,15 +853,6 @@ function App() {
                       
                     </div>
                     
-                    <div style={{ marginBottom: "8px" }}>
-                        <div style={{ marginBottom: "4px" }}>
-                          <strong>Governance:</strong><br/>
-                          • Monthly mission alignment reviews<br/>
-                          • Quarterly values assessment<br/>
-                          • Annual strategic planning<br/>
-                          • Continuous culture building and values-based recognition
-                        </div>
-                    </div>
                     
                         </>
                       ) : (
@@ -770,13 +893,6 @@ function App() {
                           </div>
                           
                           
-                          <div style={{ marginBottom: "6px" }}>
-                            <strong>Governance:</strong><br/>
-                            • Monthly mission alignment reviews<br/>
-                            • Quarterly values assessment<br/>
-                            • Annual strategic planning<br/>
-                            • Continuous culture building and values-based recognition
-                          </div>
                           
                         </div>
                       )}
@@ -805,9 +921,9 @@ function App() {
                       {isBusinessDetailedView ? (
                         <>
                           <div style={{ marginBottom: "6px" }}>
-                            <strong>What:</strong> A framework that defines how a company will position itself in the market, compete against rivals, and achieve its long-term objectives.<br/>
-                            <strong>Why:</strong> Enables consistent decision-making, efficient resource allocation, and sustainable competitive advantage in a dynamic market.<br/>
-                            <strong>How:</strong> Use mission & vision → analyze market → set strategic objectives (3–5) → allocate resources & create roadmap → execute, monitor, and iterate.
+                            <strong>What:</strong> How we'll position ourselves in the market and compete effectively<br/>
+                            <strong>Why:</strong> Enables consistent decisions and sustainable competitive advantage<br/>
+                            <strong>How:</strong> Analyze market → set objectives → allocate resources → execute & iterate
                           </div>
                           
                           <div style={{ marginBottom: "6px" }}>
@@ -839,27 +955,13 @@ function App() {
                             • <strong>Done when:</strong> market validation completed, impact measured, celebrations executed, sustainability achieved
                           </div>
                           
-                          <div style={{ marginBottom: "6px" }}>
-                            <strong>Core Strategy Elements:</strong><br/>
-                            • Market Analysis: $5.6B mental health tech market, 15.8% annual growth, privacy-focused gap<br/>
-                            • Competitive Advantage: Nostalgic UX + privacy-first approach vs. premium modern competitors<br/>
-                            • Target Market: Privacy-conscious individuals (25-45), mental health professionals, corporate wellness<br/>
-                            • Revenue Model: Freemium → Enterprise → Healthcare partnerships progression
-                          </div>
-                          
-                          <div style={{ marginBottom: "6px" }}>
-                            <strong>Governance:</strong><br/>
-                            • Monthly strategy reviews, quarterly market analysis, annual strategic planning<br/>
-                            • Continuous competitive monitoring, customer feedback, financial performance tracking<br/>
-                            • Required artifacts: Business strategy, Market analysis, Revenue projections, Risk assessment, Performance metrics
-                          </div>
                         </>
                       ) : (
                         <>
                           <div style={{ marginBottom: "6px" }}>
-                            <strong>What:</strong> A framework that defines how a company will position itself in the market, compete against rivals, and achieve its long-term objectives.<br/>
-                            <strong>Why:</strong> Enables consistent decision-making, efficient resource allocation, and sustainable competitive advantage in a dynamic market.<br/>
-                            <strong>How:</strong> Use mission & vision → analyze market → set strategic objectives (3–5) → allocate resources & create roadmap → execute, monitor, and iterate.
+                            <strong>What:</strong> How we'll position ourselves in the market and compete effectively<br/>
+                            <strong>Why:</strong> Enables consistent decisions and sustainable competitive advantage<br/>
+                            <strong>How:</strong> Analyze market → set objectives → allocate resources → execute & iterate
                           </div>
                           
                           <div style={{ marginBottom: "6px" }}>
@@ -876,21 +978,16 @@ function App() {
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
                           <thead>
                             <tr>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>Level</th>
-                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "70%", fontWeight: "bold" }}>CEO/Founder </th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>CEO/Founder </th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Strategic direction & market positioning</td>
-                            </tr>
                             <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 0 — Foundation</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Mission statement, vision, strategic objectives, market opportunity, competitive landscape, financial targets<br/>
                                 <strong>Output:</strong> business strategy foundation, market positioning, market analysis & risk assessment<br/>
-                                <strong>Done:</strong> Board approval (go/no‑go gate)
                               </td>
                             </tr>
                             <tr>
@@ -898,7 +995,7 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> business strategy foundation & market positioning, market analysis<br/>
                                 <strong>Output:</strong> business strategy document & go‑to‑market plan<br/>
-                                <strong>Done:</strong> Board approval (or CEO approval if no material funding/policy change)
+ (or CEO approval if no material funding/policy change)
                               </td>
                             </tr>
                             <tr>
@@ -906,7 +1003,6 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> business strategy document & go-to-market plan, market feedback<br/>
                                 <strong>Output:</strong> Business roadmap & success metrics (milestones, owners, timelines, KPIs)<br/>
-                                <strong>Done:</strong> roadmap approved (Owner: CEO / Head of Product)
                               </td>
                             </tr>
                             <tr>
@@ -914,22 +1010,11 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> Business roadmap & success metrics, market conditions<br/>
                                 <strong>Output:</strong> execution readiness & launch plan<br/>
-                                <strong>Done:</strong> execution approval & launch authorization
                               </td>
                             </tr>
                           </tbody>
                         </table>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Artifacts:</strong><br/>
-                          • Business Strategy Document<br/>
-                          • Market Analysis Report<br/>
-                          • Business Roadmap<br/>
-                          • Resource Allocation Plan<br/>
-                          • Launch Plan<br/>
-                          • Success Metrics Dashboard<br/>
-                          • Risk Assessment Report
-                        </div>
                         
                         
                       </div>
@@ -937,7 +1022,7 @@ function App() {
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
                       <div style={{ marginBottom: "4px" }}>
-                        <strong>Execution Framework</strong><br/>
+                        <strong>Execution Framework:</strong> executes business strategy & market positioning<br/>
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
                           <thead>
                             <tr>
@@ -947,15 +1032,10 @@ function App() {
                           </thead>
                           <tbody>
                             <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Strategic execution & market leadership</td>
-                            </tr>
-                            <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Launch</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> execution readiness, launch plan<br/>
                                 <strong>Output:</strong> market launch execution & initial traction<br/>
-                                <strong>Done:</strong> launch completed & initial metrics achieved
                               </td>
                             </tr>
                             <tr>
@@ -963,7 +1043,6 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> market launch execution & initial traction, market feedback<br/>
                                 <strong>Output:</strong> scaling strategy & market expansion<br/>
-                                <strong>Done:</strong> scaling plan approved & resources allocated
                               </td>
                             </tr>
                             <tr>
@@ -971,7 +1050,6 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> scaling strategy & market expansion, market conditions<br/>
                                 <strong>Output:</strong> optimization strategy & competitive advantage<br/>
-                                <strong>Done:</strong> optimization plan executed & competitive position achieved
                               </td>
                             </tr>
                             <tr>
@@ -979,21 +1057,11 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> optimization strategy & competitive advantage, market position<br/>
                                 <strong>Output:</strong> sustainable growth strategy & market leadership<br/>
-                                <strong>Done:</strong> sustainable growth achieved & market leadership established
                               </td>
                             </tr>
                           </tbody>
                         </table>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Artifacts:</strong><br/>
-                          • Launch Execution Report<br/>
-                          • Scaling Strategy Document<br/>
-                          • Optimization Plan<br/>
-                          • Sustainability Framework<br/>
-                          • Performance Dashboards<br/>
-                          • Execution Reports
-                        </div>
                         
                         
                       </div>
@@ -1001,7 +1069,7 @@ function App() {
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
                       <div style={{ marginBottom: "4px" }}>
-                        <strong>Delivery Framework</strong><br/>
+                        <strong>Delivery Framework:</strong> validate, measure, celebrate and sustain business success<br/>
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
                           <thead>
                             <tr>
@@ -1011,15 +1079,10 @@ function App() {
                           </thead>
                           <tbody>
                             <tr>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Purpose</td>
-                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Strategic delivery & market validation</td>
-                            </tr>
-                            <tr>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Validate</td>
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> execution results, market performance<br/>
                                 <strong>Output:</strong> market validation report & strategic assessment<br/>
-                                <strong>Done:</strong> market validation completed & strategic position confirmed
                               </td>
                             </tr>
                             <tr>
@@ -1027,7 +1090,6 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> validation reports, market metrics<br/>
                                 <strong>Output:</strong> strategic impact metrics & market analysis<br/>
-                                <strong>Done:</strong> strategic metrics measured & market analysis completed
                               </td>
                             </tr>
                             <tr>
@@ -1035,7 +1097,6 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> impact metrics, market success<br/>
                                 <strong>Output:</strong> strategic success celebration & market recognition<br/>
-                                <strong>Done:</strong> strategic celebration executed & market recognition achieved
                               </td>
                             </tr>
                             <tr>
@@ -1043,120 +1104,170 @@ function App() {
                               <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
                                 <strong>Input:</strong> celebration outcomes, market position<br/>
                                 <strong>Output:</strong> sustainable market leadership & continuous growth<br/>
-                                <strong>Done:</strong> sustainable market leadership established & continuous growth achieved
                               </td>
                             </tr>
                           </tbody>
                         </table>
                         
-                        <div style={{ marginTop: "8px", border: "1px solid #808080", padding: "4px", background: "#f0f0f0" }}>
-                          <strong>Artifacts:</strong> What gets produced<br/>
-                          • <strong>Market Validation Report:</strong> comprehensive assessment of market performance and strategic position<br/>
-                          • <strong>Impact Metrics Dashboard:</strong> detailed measurement of strategic, operational, and tactical outcomes<br/>
-                          • <strong>Success Celebration Plan:</strong> structured approach to recognizing and celebrating achievements<br/>
-                          • <strong>Sustainability Framework:</strong> long-term strategy for maintaining market leadership and continuous growth<br/>
-                          • <strong>Performance Recognition Program:</strong> systematic approach to recognizing individual and team contributions<br/>
-                          • <strong>Continuous Improvement Plan:</strong> ongoing strategy for operational excellence and learning
-                        </div>
                         
                         
                       </div>
                     </div>
                     
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Core Strategy Elements:</strong><br/>
-                      • <strong>Market Analysis:</strong> $5.6B mental health tech market, 15.8% annual growth, privacy-focused gap<br/>
-                      • <strong>Competitive Advantage:</strong> Nostalgic UX + privacy-first approach vs. premium modern competitors<br/>
-                      • <strong>Target Market:</strong> Privacy-conscious individuals (25-45), mental health professionals, corporate wellness<br/>
-                      • <strong>Revenue Model:</strong> Freemium → Enterprise → Healthcare partnerships progression
-                    </div>
-                    
-                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
-                      <div style={{ marginBottom: "4px" }}>
-                        <strong>Governance:</strong><br/>
-                        • Monthly strategy reviews, quarterly market analysis, annual strategic planning<br/>
-                        • Continuous competitive monitoring, customer feedback, financial performance tracking<br/>
-                        • Required artifacts: Business strategy, Market analysis, Revenue projections, Risk assessment, Performance metrics
-                      </div>
-                    </div>
                         </>
                       )}
                   </div>
                 )}
                 {activeTab === 'strategy' && (
                   <div>
-                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>📊 Portfolio Strategy - what we'll build to collectively achieve the mission</h3>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "14px" }}>📊 Portfolio Strategy - what we'll build to collectively achieve the mission</h3>
                     
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>What:</strong> Strategic portfolio management across multiple product lines<br/>
-                      <strong>Why:</strong> Drive business value and market coverage through diversified product portfolio<br/>
-                      <strong>How:</strong> How portfolio decisions maximize market coverage and revenue diversification
+                      <strong>What:</strong> What products we'll build to achieve our mission<br/>
+                      <strong>Why:</strong> Drive business value through diversified product portfolio<br/>
+                      <strong>How:</strong> Prioritize products → allocate resources → maximize market coverage
                     </div>
                     
                     <div style={{ marginBottom: "6px" }}>
                       <strong>Owners:</strong><br/>
-                      • CEO/Founder: portfolio strategy, resource allocation, strategic direction<br/>
-                      • Product Portfolio Manager: portfolio coordination, resource optimization, market coverage<br/>
-                      • Business Development: market expansion, partnership strategy, revenue diversification<br/>
-                      • Finance Lead: portfolio ROI, resource allocation, financial optimization
+                      • <strong>CEO/Founder:</strong> portfolio strategy, resource allocation, strategic direction<br/>
+                      • <strong>Product Portfolio Manager:</strong> portfolio coordination, resource optimization, market coverage<br/>
+                      • <strong>Business Development:</strong> market expansion, partnership strategy, revenue diversification<br/>
+                      • <strong>Finance Lead:</strong> portfolio ROI, resource allocation, financial optimization
                     </div>
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
                       <div style={{ marginBottom: "4px" }}>
-                        <strong>Planning:</strong><br/>
-                        • <strong>Input:</strong> market analysis, business strategy, resource constraints, competitive landscape<br/>
-                        • <strong>Do:</strong> define portfolio composition, allocate resources, prioritize products, map market coverage<br/>
-                        • <strong>Output:</strong> portfolio strategy document, resource allocation plan, market coverage map, product roadmap<br/>
-                        • <strong>Done when:</strong> portfolio strategy approved, resources allocated, market coverage defined
+                        <strong>Planning Framework:</strong> portfolio planning and product prioritization<br/>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
+                          <thead>
+                            <tr>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>CEO/Founder </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 0 — Foundation</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Business strategy, market analysis, resource constraints<br/>
+                                <strong>Output:</strong> portfolio foundation, product categories, resource allocation framework
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Product Definition</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> portfolio foundation, product categories, market feedback<br/>
+                                <strong>Output:</strong> product specifications, feature requirements, user stories
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Portfolio Roadmap</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> product specifications, feature requirements, resource constraints<br/>
+                                <strong>Output:</strong> Portfolio roadmap & success metrics (milestones, owners, timelines, KPIs)
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Development Preparation</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Portfolio roadmap & success metrics, technical requirements<br/>
+                                <strong>Output:</strong> development readiness & launch plan
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
                       <div style={{ marginBottom: "4px" }}>
-                        <strong>Execution:</strong><br/>
-                        • <strong>Input:</strong> portfolio strategy, resource allocation, product roadmaps, market opportunities<br/>
-                        • <strong>Do:</strong> execute product development, manage resources, coordinate products, expand market<br/>
-                        • <strong>Output:</strong> product portfolio, market coverage, revenue streams, competitive position<br/>
-                        • <strong>Done when:</strong> products delivered, market covered, revenue diversified
+                        <strong>Execution Framework:</strong> executes portfolio strategy & product delivery<br/>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
+                          <thead>
+                            <tr>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>CEO/Founder </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Launch</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Portfolio roadmap, development readiness & launch plan<br/>
+                                <strong>Output:</strong> product development execution & initial market traction
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Align</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> product development execution & initial market traction<br/>
+                                <strong>Output:</strong> team alignment & development processes
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Measure</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> team alignment & development processes<br/>
+                                <strong>Output:</strong> portfolio performance tracking & product metrics
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4 — Impact</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> portfolio performance tracking & product metrics<br/>
+                                <strong>Output:</strong> portfolio success validated & market leadership achieved
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
                       <div style={{ marginBottom: "4px" }}>
-                        <strong>Delivery:</strong><br/>
-                        • <strong>Input:</strong> product portfolio, market coverage, revenue performance, competitive response<br/>
-                        • <strong>Do:</strong> optimize portfolio, scale operations, expand market, strategic pivots<br/>
-                        • <strong>Output:</strong> optimized portfolio, market leadership, sustainable growth, stakeholder value<br/>
-                        • <strong>Done when:</strong> portfolio optimized, market leadership achieved, sustainable growth
+                        <strong>Delivery Framework:</strong> validate, measure and celebrate portfolio success<br/>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
+                          <thead>
+                            <tr>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>CEO/Founder </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Validate</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> portfolio success validated & market leadership achieved<br/>
+                                <strong>Output:</strong> Portfolio Validation Report
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Measure</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Portfolio Validation Report<br/>
+                                <strong>Output:</strong> Portfolio Impact Metrics Report
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Celebrate</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Portfolio Impact Metrics Report<br/>
+                                <strong>Output:</strong> Portfolio Success Celebration Plan & Execution
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4 — Sustain</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Portfolio Success Celebration Plan & Execution<br/>
+                                <strong>Output:</strong> Portfolio Sustainability Plan (processes + KPIs)
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                     
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Core Portfolio Elements:</strong><br/>
-                      • <strong>Portfolio Composition:</strong> Individual Mental Health Monitor, Healthcare Provider Platform, Corporate Wellness Platform, R&D initiatives<br/>
-                      • <strong>Resource Allocation:</strong> 70% Mental Health Monitor (core), 20% Healthcare Platform (expansion), 10% R&D (innovation)<br/>
-                      • <strong>Market Coverage:</strong> Individual consumers (B2C), Healthcare providers (B2B), Corporate clients (B2B), Research institutions (B2B)<br/>
-                      • <strong>Portfolio Benefits:</strong> Diversified revenue streams, shared infrastructure, multiple market segments, scalable compliance
-                    </div>
-                    
-                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
-                      <div style={{ marginBottom: "4px" }}>
-                        <strong>Governance:</strong><br/>
-                        • Monthly portfolio reviews, quarterly resource allocation, annual strategic planning<br/>
-                        • Continuous market monitoring, competitive analysis, portfolio optimization<br/>
-                        • Required artifacts: Portfolio strategy, Resource allocation plan, Market coverage map, Product roadmaps, Performance metrics
-                      </div>
-                    </div>
-                    
-                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
-                      <div>
-                        <strong>Success metrics:</strong><br/>
-                        • Portfolio revenue diversification %<br/>
-                        • Market coverage and penetration rates<br/>
-                        • Resource allocation efficiency<br/>
-                        • Product portfolio ROI and growth
-                      </div>
-                    </div>
                   </div>
                 )}
                 {activeTab === 'program' && (
@@ -1164,9 +1275,9 @@ function App() {
                     <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>📋 Program Management</h3>
                     
                     <div style={{ marginBottom: "6px" }}>
-                      <strong>What:</strong> Tactical coordination across related projects within strategic domains<br/>
-                      <strong>Why:</strong> Coordinate projects via shared infrastructure and unified roadmap to maximize impact and reduce duplication<br/>
-                      <strong>How:</strong> How related projects work together to achieve shared objectives
+                      <strong>What:</strong> Coordinate related projects within strategic domains to achieve shared objectives<br/>
+                      <strong>Why:</strong> Maximize impact and reduce duplication through shared infrastructure and unified roadmaps<br/>
+                      <strong>How:</strong> Align projects → manage dependencies → track progress → deliver outcomes
                     </div>
                     
                     <div style={{ marginBottom: "6px" }}>
@@ -1179,116 +1290,136 @@ function App() {
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
                       <div style={{ marginBottom: "4px" }}>
-                        <strong>Planning:</strong><br/>
-                        • <strong>Input:</strong> portfolio strategy, project requirements, resource constraints, architectural standards<br/>
-                        • <strong>Do:</strong> define program scope, resource allocation, timeline coordination<br/>
-                        • <strong>Output:</strong> program roadmap, dependency register, shared architecture docs<br/>
-                        • <strong>Done when:</strong> roadmap approved, dependencies mapped, architecture standards defined
+                        <strong>Planning Framework:</strong> program coordination and resource planning<br/>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
+                          <thead>
+                            <tr>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>Program Manager</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 0 — Foundation</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Portfolio strategy, project requirements, resource constraints<br/>
+                                <strong>Output:</strong> Program roadmap, dependency register, shared architecture docs
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Program Definition</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Program roadmap, dependency register, shared architecture docs<br/>
+                                <strong>Output:</strong> Program scope, resource allocation, timeline coordination
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Program Roadmap & Success Metrics</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Program scope, resource allocation, timeline coordination<br/>
+                                <strong>Output:</strong> Program roadmap & success metrics (milestones, owners, timelines, KPIs)
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Program Readiness</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Program roadmap & success metrics, stakeholder alignment<br/>
+                                <strong>Output:</strong> Program readiness confirmed & execution plan
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
                       <div style={{ marginBottom: "4px" }}>
-                        <strong>Execution:</strong><br/>
-                        • <strong>Input:</strong> program roadmap, shared architecture docs, project deliverables<br/>
-                        • <strong>Do:</strong> weekly program standup, dependency management, change control<br/>
-                        • <strong>Output:</strong> coordinated project delivery, shared infrastructure, execution framework<br/>
-                        • <strong>Done when:</strong> Projects coordinated, dependencies managed, shared infrastructure delivered
-                      </div>
-                    </div>
-                    
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Execution Framework:</strong> Sequential build order for safe delivery and technical execution with shared rules, policies, and governance across multiple projects<br/>
-                      <br/>
-                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
-                        <thead>
-                          <tr>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "7.5%", fontWeight: "bold" }}>Level</th>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>Architecture </th>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "30%", fontWeight: "bold" }}>Engineering </th>
-                            <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "32.5%", fontWeight: "bold" }}>UX/Design </th>
-                          </tr>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Defines technical foundation</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Builds implementation</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}>Creates user experience</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", fontSize: "7px", fontStyle: "italic" }}></td>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Local development topology</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Repo, Dev DX & Local Stack</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Storybook, Tokens & A11y Baseline (design system foundations)</td>
-                          </tr>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Runtime topology, API deployment, auth choices</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>API, Data Model & Auth</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Screen Contracts, Wireframes & Interaction</td>
-                          </tr>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Secure enclaves, encryption, audit logs</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Security & Compliance</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Consent, Privacy & Compliance UX</td>
-                          </tr>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Backup architecture, monitoring integration</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Observability & Reliability</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Errors, States & Offline UX</td>
-                          </tr>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 5</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>CI/CD topology, staging environments</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Developer Productivity & Automation</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Design System & Handoff</td>
-                          </tr>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 6</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Functional/non-functional requirements</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>UX/Design Finish</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>UX & Vision</td>
-                          </tr>
-                          <tr>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Roof</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Cross-cutting rules & policies</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Vision & Go-to-Market</td>
-                            <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>UX & Vision</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    
-                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
-                      <div style={{ marginBottom: "4px" }}>
-                        <strong>Delivery:</strong><br/>
-                        • <strong>Input:</strong> coordinated project delivery, shared infrastructure, release artifacts<br/>
-                        • <strong>Do:</strong> monthly exec summary, quarterly portfolio review, risk management, release planning, staging, production deployment, handoff to operations<br/>
-                        • <strong>Output:</strong> integrated program outcomes, lessons learned, release artifacts<br/>
-                        • <strong>Done when:</strong> program objectives achieved, portfolio priorities aligned, all projects successfully delivered
+                        <strong>Execution Framework:</strong> executes program coordination & project delivery<br/>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
+                          <thead>
+                            <tr>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>Program Manager</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Start</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Program readiness confirmed & execution plan<br/>
+                                <strong>Output:</strong> Program execution started & coordination framework established
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Align</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Program execution started & coordination framework established<br/>
+                                <strong>Output:</strong> Cross-project alignment & dependency management
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Measure</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Cross-project alignment & dependency management<br/>
+                                <strong>Output:</strong> Program performance tracking & milestone monitoring
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4 — Impact</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Program performance tracking & milestone monitoring<br/>
+                                <strong>Output:</strong> Program success validated & objectives achieved
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                     
                     <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
                       <div style={{ marginBottom: "4px" }}>
-                        <strong>Governance:</strong><br/>
-                        • Weekly program standup, biweekly cross-program planning<br/>
-                        • Monthly exec summary, quarterly portfolio review<br/>
-                        • Required artifacts: Program roadmap, Dependency register, Shared architecture docs, Risk register, Release calendar
+                        <strong>Delivery Framework:</strong> validate, measure and celebrate program success<br/>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif", marginTop: "4px" }}>
+                          <thead>
+                            <tr>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "20%", fontWeight: "bold" }}>Level</th>
+                              <th style={{ border: "1px solid #808080", padding: "2px", background: "#c0c0c0", textAlign: "left", width: "80%", fontWeight: "bold" }}>Program Manager</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 1 — Validate</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Program execution results, project deliverables<br/>
+                                <strong>Output:</strong> Program Validation Report
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 2 — Measure</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Program Validation Report<br/>
+                                <strong>Output:</strong> Program Impact Metrics Report
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 3 — Celebrate</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Program Impact Metrics Report<br/>
+                                <strong>Output:</strong> Program Success Celebration Plan & Execution
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>Level 4 — Sustain</td>
+                              <td style={{ border: "1px solid #808080", padding: "2px", background: "#ffffff" }}>
+                                <strong>Input:</strong> Program Success Celebration Plan & Execution<br/>
+                                <strong>Output:</strong> Program Sustainability Plan (processes + KPIs)
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                     
-                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
-                      <div>
-                        <strong>Success metrics:</strong><br/>
-                        • Program milestone achievement %<br/>
-                        • Cross-program dependency delivery rate<br/>
-                        • Shared infrastructure utilization %
-                      </div>
-                    </div>
                   </div>
                 )}
                 {activeTab === 'project' && (
@@ -1886,76 +2017,353 @@ function App() {
                 )}
                 {activeTab === 'developer' && (
                   <div>
-                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>⚙️ Developer Specs</h3>
-                    
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>What:</strong> Technical specifications and development standards for implementation<br/>
-                      <strong>Why:</strong> Ensure consistent, maintainable, and scalable code across the development team<br/>
-                      <strong>How:</strong> How technical standards drive code quality and development efficiency
-                    </div>
-                    
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Owners:</strong><br/>
-                      • Technical Lead: architecture decisions, code standards, technical debt management<br/>
-                      • Senior Developer: implementation patterns, code reviews, mentoring<br/>
-                      • DevOps Engineer: deployment standards, infrastructure, monitoring<br/>
-                      • QA Engineer: testing standards, quality gates, automation
-                    </div>
-                    
-                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
+                    <h3 style={{ margin: "0 0 6px 0", fontSize: "10px" }}>🏗️ Solutions Architecture</h3>
+ 
+                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#f0f0f0" }}>
                       <div style={{ marginBottom: "4px" }}>
-                        <strong>Planning:</strong><br/>
-                        • <strong>Input:</strong> technical requirements, architecture constraints, performance targets, security standards<br/>
-                        • <strong>Do:</strong> define tech stack, establish coding standards, create development guidelines, set up tooling<br/>
-                        • <strong>Output:</strong> technical specification document, coding standards, development environment, tooling setup<br/>
-                        • <strong>Done when:</strong> tech stack approved, standards documented, development environment ready
+                        <strong>🏗️ Solutions Architecture Blueprint</strong><br/>
                       </div>
-                    </div>
-                    
-                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
-                      <div style={{ marginBottom: "4px" }}>
-                        <strong>Execution:</strong><br/>
-                        • <strong>Input:</strong> technical specs, coding standards, feature requirements, design mockups<br/>
-                        • <strong>Do:</strong> code development, code reviews, testing, documentation, deployment<br/>
-                        • <strong>Output:</strong> working code, test coverage, documentation, deployed features<br/>
-                        • <strong>Done when:</strong> code meets standards, tests pass, features deployed
-                      </div>
-                    </div>
-                    
-                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
-                      <div style={{ marginBottom: "4px" }}>
-                        <strong>Delivery:</strong><br/>
-                        • <strong>Input:</strong> completed code, test results, performance metrics, user feedback<br/>
-                        • <strong>Do:</strong> production deployment, monitoring setup, performance optimization, maintenance<br/>
-                        • <strong>Output:</strong> production-ready system, monitoring dashboards, performance reports<br/>
-                        • <strong>Done when:</strong> system stable, performance targets met, monitoring active
-                      </div>
-                    </div>
-                    
-                    <div style={{ marginBottom: "6px" }}>
-                      <strong>Core Technical Specifications:</strong><br/>
-                      • <strong>Tech Stack:</strong> React 19.1.1 with Vite, MS Sans Serif 8px typography, Windows 95 color palette<br/>
-                      • <strong>Architecture:</strong> Component-based React architecture, Local storage for data persistence, No external dependencies<br/>
-                      • <strong>Design System:</strong> Microsoft Windows 95 Guidelines compliance, Inset/outset border effects, 8px font size throughout<br/>
-                      • <strong>Performance:</strong> Fast load times (&lt; 2 seconds), Offline-first functionality, Smooth interactions
-                    </div>
-                    
-                    <div style={{ marginBottom: "8px", border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
-                      <div style={{ marginBottom: "4px" }}>
-                        <strong>Governance:</strong><br/>
-                        • Daily code reviews, weekly technical debt reviews, monthly architecture reviews<br/>
-                        • Quarterly tech stack updates, performance audits, security assessments<br/>
-                        • Required artifacts: Technical specification, Code standards, Architecture documentation, Performance reports
-                      </div>
-                    </div>
-                    
-                    <div style={{ border: "1px solid #808080", padding: "6px", background: "#ffffff" }}>
-                      <div>
-                        <strong>Success metrics:</strong><br/>
-                        • Code quality and maintainability score<br/>
-                        • Test coverage percentage<br/>
-                        • Performance benchmarks achievement<br/>
-                        • Developer productivity and satisfaction
+                       
+                      <div style={{ fontSize: "8px", lineHeight: "1.4" }}>
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>📋 Executive Summary</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>🏗️ System Architecture Overview</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>🎯 Application Domains</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>📁 Directory Structure</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>🔄 Data Flow Architecture</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>🗄️ Database Schema (Supabase)</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>🔐 Security Architecture</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>🎨 UI/UX Architecture</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>📊 Performance Architecture</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>🚀 Deployment Architecture</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>🛠️ Technology Recommendations</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>📋 Implementation Roadmap</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>🎯 Success Metrics</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>👨‍💼 Solutions Architect Involvement by Stage</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>🔗 Integration Architecture</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>🔒 Compliance & Governance</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>📊 Monitoring & Observability</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>📝 Architecture Decision Records (ADRs)</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>📈 Scalability & Capacity Planning</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: "6px" }}>
+                          <div 
+                            style={{ 
+                              cursor: "pointer", 
+                              padding: "2px 4px", 
+                              background: "#f0f0f0",
+                              border: "1px solid #c0c0c0",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            <strong>📄 Full Documentation</strong>
+                            <span style={{ fontSize: "10px", fontWeight: "bold" }}>▶</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2089,7 +2497,7 @@ function App() {
       position: "relative",
       paddingBottom: "28px" // Space for taskbar
     }}>
-      {/* Desktop Icon */}
+      {/* Desktop Icons */}
       <div
         style={{
           position: "absolute",
@@ -2115,21 +2523,114 @@ function App() {
           textAlign: "center",
           textShadow: "1px 1px 0px #000000"
         }}>
-          Earth
+          Mental Health Monitor
+        </span>
+      </div>
+
+      {/* Second Desktop Icon - Notepad */}
+      <div
+        style={{
+          position: "absolute",
+          top: "50px",
+          left: "150px",
+          width: "64px",
+          height: "64px",
+          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "transparent"
+        }}
+        onClick={openSecondApp}
+        onDoubleClick={openSecondApp}
+      >
+        <div style={{
+          width: "32px",
+          height: "32px",
+          background: "transparent",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "4px"
+        }}>
+          <span style={{
+            fontSize: "32px",
+            fontFamily: "'MS Sans Serif', sans-serif",
+            color: "#ffffff",
+            textShadow: "1px 1px 0px #000000"
+          }}>📝</span>
+        </div>
+        <span style={{
+          fontSize: "8px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textAlign: "center",
+          textShadow: "1px 1px 0px #000000"
+        }}>
+          Notepad
+        </span>
+      </div>
+
+      {/* Third Desktop Icon - Travel */}
+      <div
+        style={{
+          position: "absolute",
+          top: "50px",
+          left: "250px",
+          width: "64px",
+          height: "64px",
+          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "transparent"
+        }}
+        onClick={openTravelApp}
+        onDoubleClick={openTravelApp}
+      >
+        <div style={{
+          width: "32px",
+          height: "32px",
+          background: "transparent",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "4px"
+        }}>
+          <span style={{
+            fontSize: "32px",
+            fontFamily: "'MS Sans Serif', sans-serif",
+            color: "#ffffff",
+            textShadow: "1px 1px 0px #000000"
+          }}>✈️</span>
+        </div>
+        <span style={{
+          fontSize: "8px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textAlign: "center",
+          textShadow: "1px 1px 0px #000000"
+        }}>
+          Travel Planner
         </span>
       </div>
 
       {/* Application Window */}
-      {isWindowOpen && (
-        <div style={{
-          position: "absolute",
-          top: "100px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 100
-    }}>
+      {isWindowOpen && !isWindowMinimized && (
+        <div 
+          style={{
+            position: "absolute",
+            left: `${windowPosition.x}px`,
+            top: `${windowPosition.y}px`,
+            zIndex: 100,
+            cursor: isDragging ? "grabbing" : "grab"
+          }}
+          onMouseDown={handleWindowMouseDown}
+        >
       <div style={styles.mainWindow}>
-            <Header onClose={closeWindow} />
+            <Header onClose={closeWindow} onMinimize={minimizeWindow} />
         <Toolbar 
           activeView={activeView}
           setActiveView={setActiveView}
@@ -2139,8 +2640,8 @@ function App() {
           saveSliderPositions={saveSliderPositions}
           recallSliderPositions={recallSliderPositions}
           hasSavedPositions={hasSavedPositions()}
-              undoSliderChange={undoSliderChange}
-              hasUndoAvailable={previousSliderValues !== null}
+                  undoSliderChange={undoSliderChange}
+                  hasUndoAvailable={previousSliderValues !== null}
           cortisolLevel={cortisolLevel}
         />
         <div style={styles.mainContent}>
@@ -2155,6 +2656,934 @@ function App() {
       </div>
         </div>
       )}
+
+      {/* Second Application Window - Notepad */}
+      {isSecondAppOpen && !isSecondAppMinimized && (
+        <div 
+          style={{
+            position: "absolute",
+            left: `${secondWindowPosition.x}px`,
+            top: `${secondWindowPosition.y}px`,
+            zIndex: 99,
+            cursor: isSecondDragging ? "grabbing" : "grab"
+          }}
+          onMouseDown={handleSecondWindowMouseDown}
+        >
+          <div style={{
+            background: "#c0c0c0",
+            border: "2px outset #c0c0c0",
+            width: "400px",
+            height: "300px",
+            display: "flex",
+            flexDirection: "column",
+            fontFamily: "'MS Sans Serif', sans-serif"
+          }}>
+            {/* Notepad Header */}
+            <div style={{
+              background: "linear-gradient(90deg, #000080 0%, #1084d0 100%)",
+              color: "#ffffff",
+              padding: "2px 4px",
+              fontSize: "8px",
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              borderBottom: "1px solid #808080",
+              height: "19px",
+              boxSizing: "border-box"
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                <div style={{
+                  width: "14px",
+                  height: "14px",
+                  background: "#ffffff",
+                  border: "1px solid #808080",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}>
+                  <span style={{ fontSize: "8px", color: "#000000" }}>📝</span>
+                </div>
+                <span>Untitled - Notepad</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <button
+                  style={{
+                    width: "16px",
+                    height: "14px",
+                    background: "#d4d0c8",
+                    borderTop: "1px solid #ffffff",
+                    borderLeft: "1px solid #ffffff",
+                    borderBottom: "1px solid #808080",
+                    borderRight: "1px solid #808080",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    color: "#000000",
+                    padding: "0",
+                    lineHeight: "1",
+                    fontWeight: "normal",
+                    marginLeft: "2px"
+                  }}
+                  onClick={minimizeSecondApp}
+                  title="Minimize"
+                >
+                  −
+                </button>
+                <button
+                  style={{
+                    width: "16px",
+                    height: "14px",
+                    background: "#d4d0c8",
+                    borderTop: "1px solid #ffffff",
+                    borderLeft: "1px solid #ffffff",
+                    borderBottom: "1px solid #808080",
+                    borderRight: "1px solid #808080",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    color: "#000000",
+                    padding: "0",
+                    lineHeight: "1",
+                    fontWeight: "normal",
+                    marginLeft: "2px"
+                  }}
+                  onClick={closeSecondApp}
+                  title="Close"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Notepad Menu Bar */}
+            <div style={{
+              background: "#c0c0c0",
+              borderBottom: "1px solid #808080",
+              padding: "2px 4px",
+              fontSize: "8px",
+              fontFamily: "'MS Sans Serif', sans-serif"
+            }}>
+              <span style={{ marginRight: "12px", cursor: "pointer" }}>File</span>
+              <span style={{ marginRight: "12px", cursor: "pointer" }}>Edit</span>
+              <span style={{ marginRight: "12px", cursor: "pointer" }}>Search</span>
+              <span style={{ marginRight: "12px", cursor: "pointer" }}>Help</span>
+            </div>
+
+            {/* Notepad Content Area */}
+            <div style={{
+              flex: 1,
+              background: "#ffffff",
+              padding: "8px",
+              fontSize: "12px",
+              fontFamily: "'Courier New', monospace",
+              color: "#000000",
+              overflow: "auto",
+              border: "1px inset #c0c0c0",
+              margin: "2px"
+            }}>
+              <div style={{ whiteSpace: "pre-wrap", lineHeight: "1.2" }}>
+{`Welcome to Windows 95 Notepad!
+
+This is a simple text editor that comes with Windows 95.
+You can use it to create and edit text files.
+
+Features:
+• Create new documents
+• Open existing files
+• Save your work
+• Print documents
+• Find and replace text
+
+This is a demo implementation showing how multiple
+applications can run simultaneously on the Windows 95
+desktop environment.
+
+Try opening the Mental Health Monitor application
+as well to see multiple windows in action!`}
+              </div>
+            </div>
+
+            {/* Notepad Status Bar */}
+            <div style={{
+              background: "#c0c0c0",
+              borderTop: "1px solid #808080",
+              padding: "2px 4px",
+              fontSize: "8px",
+              fontFamily: "'MS Sans Serif', sans-serif",
+              height: "16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between"
+            }}>
+              <span>Line 1, Col 1</span>
+              <span>Ready</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Third Application Window - Travel Planner */}
+      {isTravelAppOpen && !isTravelAppMinimized && (
+        <div 
+          style={{
+            position: "absolute",
+            left: `${travelWindowPosition.x}px`,
+            top: `${travelWindowPosition.y}px`,
+            zIndex: 98,
+            cursor: isTravelDragging ? "grabbing" : "grab"
+          }}
+          onMouseDown={handleTravelWindowMouseDown}
+        >
+          <div style={{
+            background: "#c0c0c0",
+            border: "2px outset #c0c0c0",
+            width: "700px",
+            height: "600px",
+            display: "flex",
+            flexDirection: "column",
+            fontFamily: "'MS Sans Serif', sans-serif"
+          }}>
+            {/* Travel App Header */}
+            <div style={{
+              background: "linear-gradient(90deg, #000080 0%, #1084d0 100%)",
+              color: "#ffffff",
+              padding: "2px 4px",
+              fontSize: "8px",
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              borderBottom: "1px solid #808080",
+              height: "19px",
+              boxSizing: "border-box"
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                <div style={{
+                  width: "14px",
+                  height: "14px",
+                  background: "transparent",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}>
+                  <span style={{ fontSize: "8px", color: "#000000" }}>✈️</span>
+                </div>
+                <span>Travel Planner</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <button
+                  style={{
+                    width: "16px",
+                    height: "14px",
+                    background: "#d4d0c8",
+                    borderTop: "1px solid #ffffff",
+                    borderLeft: "1px solid #ffffff",
+                    borderBottom: "1px solid #808080",
+                    borderRight: "1px solid #808080",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    color: "#000000",
+                    padding: "0",
+                    lineHeight: "1",
+                    fontWeight: "normal",
+                    marginLeft: "2px"
+                  }}
+                  onClick={minimizeTravelApp}
+                  title="Minimize"
+                >
+                  −
+                </button>
+                <button
+                  style={{
+                    width: "16px",
+                    height: "14px",
+                    background: "#d4d0c8",
+                    borderTop: "1px solid #ffffff",
+                    borderLeft: "1px solid #ffffff",
+                    borderBottom: "1px solid #808080",
+                    borderRight: "1px solid #808080",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "8px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    color: "#000000",
+                    padding: "0",
+                    lineHeight: "1",
+                    fontWeight: "normal",
+                    marginLeft: "2px"
+                  }}
+                  onClick={closeTravelApp}
+                  title="Close"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Travel App Menu Bar */}
+            <div style={{
+              background: "#c0c0c0",
+              borderBottom: "1px solid #808080",
+              padding: "2px 4px",
+              fontSize: "8px",
+              fontFamily: "'MS Sans Serif', sans-serif"
+            }}>
+              <span style={{ marginRight: "12px", cursor: "pointer" }}>File</span>
+              <span style={{ marginRight: "12px", cursor: "pointer" }}>Edit</span>
+              <span style={{ marginRight: "12px", cursor: "pointer" }}>View</span>
+              <span style={{ marginRight: "12px", cursor: "pointer" }}>Tools</span>
+              <span style={{ marginRight: "12px", cursor: "pointer" }}>Help</span>
+            </div>
+
+            {/* Travel App Content Area */}
+            <div style={{
+              flex: 1,
+              background: "#ffffff",
+              padding: "8px",
+              fontSize: "11px",
+              fontFamily: "'MS Sans Serif', sans-serif",
+              color: "#000000",
+              overflow: "auto",
+              border: "1px inset #c0c0c0",
+              margin: "2px"
+            }}>
+              <div style={{ marginBottom: "12px" }}>
+                {/* Trip Info Container */}
+                <div style={{
+                  border: "1px inset #c0c0c0",
+                  background: "#c0c0c0",
+                  padding: "8px",
+                  marginBottom: "12px"
+                }}>
+                  <h4 style={{ margin: "0 0 8px 0", fontSize: "12px", fontWeight: "bold" }}>Trip Info</h4>
+                </div>
+
+                {/* Components Container */}
+                <div style={{
+                  border: "1px inset #c0c0c0",
+                  background: "#c0c0c0",
+                  padding: "8px",
+                  marginBottom: "12px"
+                }}>
+                  
+                  {/* Add Component Buttons */}
+                  <div style={{ display: "flex", gap: "4px", marginBottom: "8px", flexWrap: "wrap" }}>
+                    <button style={{
+                      background: "#c0c0c0",
+                      border: "2px outset #c0c0c0",
+                      padding: "2px 6px",
+                      fontSize: "10px",
+                      fontFamily: "'MS Sans Serif', sans-serif",
+                      cursor: "pointer",
+                      height: "18px"
+                    }}>
+                      + Hotel
+                    </button>
+                    <button style={{
+                      background: "#c0c0c0",
+                      border: "2px outset #c0c0c0",
+                      padding: "2px 6px",
+                      fontSize: "10px",
+                      fontFamily: "'MS Sans Serif', sans-serif",
+                      cursor: "pointer",
+                      height: "18px"
+                    }}>
+                      + Car
+                    </button>
+                    <button style={{
+                      background: "#c0c0c0",
+                      border: "2px outset #c0c0c0",
+                      padding: "2px 6px",
+                      fontSize: "10px",
+                      fontFamily: "'MS Sans Serif', sans-serif",
+                      cursor: "pointer",
+                      height: "18px"
+                    }}>
+                      + Activity
+                    </button>
+                    <button style={{
+                      background: "#c0c0c0",
+                      border: "2px outset #c0c0c0",
+                      padding: "2px 6px",
+                      fontSize: "10px",
+                      fontFamily: "'MS Sans Serif', sans-serif",
+                      cursor: "pointer",
+                      height: "18px"
+                    }}>
+                      + Insurance
+                    </button>
+                  </div>
+                  
+
+                  {/* Hotel Component */}
+                  <div style={{
+                    border: "1px outset #c0c0c0",
+                    background: "#d4d0c8",
+                    padding: "6px",
+                    marginBottom: "6px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                  }}>
+                    <div style={{ fontSize: "9px", color: "#000000", lineHeight: "1.2", display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                      <span><strong>Hotel:</strong> Grand Plaza Resort</span>
+                      <span><strong>Location:</strong> 123 Beach Drive, Miami</span>
+                      <span><strong>Check-in:</strong> Jan 15, 2024</span>
+                      <span><strong>Check-out:</strong> Jan 18, 2024</span>
+                      <span><strong>Rate:</strong> $189/night</span>
+                    </div>
+                    <div style={{ display: "flex", gap: "2px" }}>
+                      <button 
+                        style={{
+                          background: "#d4d0c8",
+                          border: "1px outset #c0c0c0",
+                          padding: "1px",
+                          fontSize: "8px",
+                          fontFamily: "'MS Sans Serif', sans-serif",
+                          cursor: "pointer",
+                          width: "16px",
+                          height: "14px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                        title="Edit"
+                        onClick={() => handleEditComponent("Hotel")}
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        style={{
+                          background: "#d4d0c8",
+                          border: "1px outset #c0c0c0",
+                          padding: "1px",
+                          fontSize: "8px",
+                          fontFamily: "'MS Sans Serif', sans-serif",
+                          cursor: "pointer",
+                          width: "16px",
+                          height: "14px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                        title="Delete"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Car Rental Component */}
+                  <div style={{
+                    border: "1px outset #c0c0c0",
+                    background: "#d4d0c8",
+                    padding: "6px",
+                    marginBottom: "6px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                  }}>
+                    <h5 style={{ margin: "0", fontSize: "11px", fontWeight: "bold" }}>🚗 Car Rental</h5>
+                    <div style={{ display: "flex", gap: "2px" }}>
+                      <button 
+                        style={{
+                          background: "#d4d0c8",
+                          border: "1px outset #c0c0c0",
+                          padding: "1px",
+                          fontSize: "8px",
+                          fontFamily: "'MS Sans Serif', sans-serif",
+                          cursor: "pointer",
+                          width: "16px",
+                          height: "14px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                        title="Edit"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        style={{
+                          background: "#d4d0c8",
+                          border: "1px outset #c0c0c0",
+                          padding: "1px",
+                          fontSize: "8px",
+                          fontFamily: "'MS Sans Serif', sans-serif",
+                          cursor: "pointer",
+                          width: "16px",
+                          height: "14px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                        title="Delete"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Activities Component */}
+                  <div style={{
+                    border: "1px outset #c0c0c0",
+                    background: "#d4d0c8",
+                    padding: "6px",
+                    marginBottom: "6px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                  }}>
+                    <h5 style={{ margin: "0", fontSize: "11px", fontWeight: "bold" }}>🎯 Activities</h5>
+                    <div style={{ display: "flex", gap: "2px" }}>
+                      <button 
+                        style={{
+                          background: "#d4d0c8",
+                          border: "1px outset #c0c0c0",
+                          padding: "1px",
+                          fontSize: "8px",
+                          fontFamily: "'MS Sans Serif', sans-serif",
+                          cursor: "pointer",
+                          width: "16px",
+                          height: "14px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                        title="Edit"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        style={{
+                          background: "#d4d0c8",
+                          border: "1px outset #c0c0c0",
+                          padding: "1px",
+                          fontSize: "8px",
+                          fontFamily: "'MS Sans Serif', sans-serif",
+                          cursor: "pointer",
+                          width: "16px",
+                          height: "14px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                        title="Delete"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+
+
+                  {/* Insurance Component */}
+                  <div style={{
+                    border: "1px outset #c0c0c0",
+                    background: "#d4d0c8",
+                    padding: "6px",
+                    marginBottom: "0",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                  }}>
+                    <h5 style={{ margin: "0", fontSize: "11px", fontWeight: "bold" }}>🛡️ Insurance</h5>
+                    <div style={{ display: "flex", gap: "2px" }}>
+                      <button 
+                        style={{
+                          background: "#d4d0c8",
+                          border: "1px outset #c0c0c0",
+                          padding: "1px",
+                          fontSize: "8px",
+                          fontFamily: "'MS Sans Serif', sans-serif",
+                          cursor: "pointer",
+                          width: "16px",
+                          height: "14px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                        title="Edit"
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        style={{
+                          background: "#d4d0c8",
+                          border: "1px outset #c0c0c0",
+                          padding: "1px",
+                          fontSize: "8px",
+                          fontFamily: "'MS Sans Serif', sans-serif",
+                          cursor: "pointer",
+                          width: "16px",
+                          height: "14px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                        title="Delete"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Travel App Status Bar */}
+            <div style={{
+              background: "#c0c0c0",
+              borderTop: "1px solid #808080",
+              padding: "2px 4px",
+              fontSize: "8px",
+              fontFamily: "'MS Sans Serif', sans-serif",
+              height: "16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between"
+            }}>
+              <span>Ready</span>
+              <span>Travel Planner v1.0</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Component Modal */}
+      {isEditModalOpen && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.3)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1001,
+          fontFamily: "'MS Sans Serif', sans-serif"
+        }}>
+          <div style={{
+            background: "#c0c0c0",
+            border: "2px outset #c0c0c0",
+            width: "400px",
+            height: "300px",
+            display: "flex",
+            flexDirection: "column"
+          }}>
+            {/* Modal Header */}
+            <div style={{
+              background: "linear-gradient(90deg, #000080 0%, #1084d0 100%)",
+              color: "#ffffff",
+              padding: "4px 8px",
+              fontSize: "11px",
+              fontWeight: "bold",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              borderBottom: "1px solid #808080"
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                <span>Edit {editingComponent}</span>
+              </div>
+              <button
+                style={{
+                  width: "16px",
+                  height: "14px",
+                  background: "#d4d0c8",
+                  borderTop: "1px solid #ffffff",
+                  borderLeft: "1px solid #ffffff",
+                  borderBottom: "1px solid #808080",
+                  borderRight: "1px solid #808080",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "8px",
+                  fontFamily: "'MS Sans Serif', sans-serif",
+                  color: "#000000",
+                  padding: "0",
+                  lineHeight: "1",
+                  fontWeight: "normal"
+                }}
+                onClick={closeEditModal}
+                title="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div style={{
+              flex: 1,
+              background: "#ffffff",
+              padding: "12px",
+              fontSize: "11px",
+              fontFamily: "'MS Sans Serif', sans-serif",
+              color: "#000000",
+              overflow: "auto"
+            }}>
+              <div style={{ marginBottom: "12px" }}>
+                <label style={{ display: "block", marginBottom: "4px", fontWeight: "bold" }}>
+                  {editingComponent} Name:
+                </label>
+                <input
+                  type="text"
+                  style={{
+                    width: "100%",
+                    padding: "2px 4px",
+                    border: "1px inset #c0c0c0",
+                    background: "#ffffff",
+                    fontSize: "11px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    boxSizing: "border-box"
+                  }}
+                  defaultValue={`My ${editingComponent}`}
+                />
+              </div>
+              
+              <div style={{ marginBottom: "12px" }}>
+                <label style={{ display: "block", marginBottom: "4px", fontWeight: "bold" }}>
+                  Description:
+                </label>
+                <textarea
+                  style={{
+                    width: "100%",
+                    height: "80px",
+                    padding: "4px",
+                    border: "1px inset #c0c0c0",
+                    background: "#ffffff",
+                    fontSize: "11px",
+                    fontFamily: "'MS Sans Serif', sans-serif",
+                    resize: "none",
+                    boxSizing: "border-box"
+                  }}
+                  defaultValue={`Enter ${editingComponent.toLowerCase()} details here...`}
+                />
+              </div>
+
+              <div style={{ marginBottom: "12px" }}>
+                <label style={{ display: "block", marginBottom: "4px", fontWeight: "bold" }}>
+                  Date:
+                </label>
+                <input
+                  type="date"
+                  style={{
+                    padding: "2px 4px",
+                    border: "1px inset #c0c0c0",
+                    background: "#ffffff",
+                    fontSize: "11px",
+                    fontFamily: "'MS Sans Serif', sans-serif"
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div style={{
+              background: "#c0c0c0",
+              padding: "8px",
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "8px",
+              borderTop: "1px solid #808080"
+            }}>
+              <button
+                style={{
+                  background: "#d4d0c8",
+                  border: "2px outset #c0c0c0",
+                  padding: "4px 12px",
+                  fontSize: "11px",
+                  fontFamily: "'MS Sans Serif', sans-serif",
+                  cursor: "pointer",
+                  fontWeight: "bold"
+                }}
+                onClick={closeEditModal}
+              >
+                Cancel
+              </button>
+              <button
+                style={{
+                  background: "#d4d0c8",
+                  border: "2px outset #c0c0c0",
+                  padding: "4px 12px",
+                  fontSize: "11px",
+                  fontFamily: "'MS Sans Serif', sans-serif",
+                  cursor: "pointer",
+                  fontWeight: "bold"
+                }}
+                onClick={() => {
+                  alert(`${editingComponent} saved!`);
+                  closeEditModal();
+                }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Windows 95 Taskbar */}
+      <div style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: "28px",
+        background: "#c0c0c0",
+        borderTop: "2px outset #c0c0c0",
+        display: "flex",
+        alignItems: "center",
+        zIndex: 1000,
+        fontFamily: "'MS Sans Serif', sans-serif",
+        fontSize: "11px"
+      }}>
+        {/* Start Button */}
+        <div style={{
+          height: "24px",
+          minWidth: "54px",
+          background: "#c0c0c0",
+          border: "2px outset #c0c0c0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          marginLeft: "2px",
+          marginRight: "2px"
+        }}>
+          <span style={{ fontWeight: "bold" }}>Start</span>
+        </div>
+
+        {/* Taskbar Area */}
+        <div style={{
+          flex: 1,
+          height: "24px",
+          background: "#c0c0c0",
+          border: "1px inset #c0c0c0",
+          display: "flex",
+          alignItems: "center",
+          marginRight: "2px"
+        }}>
+          {/* Mental Health Monitor Button (when window is open) */}
+          {isWindowOpen && (
+            <div 
+              style={{
+                height: "20px",
+                minWidth: "120px",
+                background: "#c0c0c0",
+                border: isWindowMinimized ? "1px inset #c0c0c0" : "1px outset #c0c0c0",
+                display: "flex",
+                alignItems: "center",
+                padding: "0 4px",
+                cursor: "pointer",
+                margin: "2px"
+              }}
+              onClick={isWindowMinimized ? restoreWindow : minimizeWindow}
+            >
+              <img src="/Earth.ico" alt="Earth" style={{ width: "16px", height: "16px", marginRight: "4px" }} />
+              <span style={{ fontSize: "11px" }}>Mental Health Monitor</span>
+            </div>
+          )}
+          
+          {/* Notepad Button (when window is open) */}
+          {isSecondAppOpen && (
+            <div 
+              style={{
+                height: "20px",
+                minWidth: "80px",
+                background: "#c0c0c0",
+                border: isSecondAppMinimized ? "1px inset #c0c0c0" : "1px outset #c0c0c0",
+                display: "flex",
+                alignItems: "center",
+                padding: "0 4px",
+                cursor: "pointer",
+                margin: "2px"
+              }}
+              onClick={isSecondAppMinimized ? restoreSecondApp : minimizeSecondApp}
+            >
+              <div style={{
+                width: "16px",
+                height: "16px",
+                background: "#ffffff",
+                border: "1px solid #808080",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: "4px"
+              }}>
+                <span style={{ fontSize: "8px", color: "#000000" }}>📝</span>
+              </div>
+              <span style={{ fontSize: "11px" }}>Notepad</span>
+            </div>
+          )}
+          
+          {/* Travel Planner Button (when window is open) */}
+          {isTravelAppOpen && (
+            <div 
+              style={{
+                height: "20px",
+                minWidth: "100px",
+                background: "#c0c0c0",
+                border: isTravelAppMinimized ? "1px inset #c0c0c0" : "1px outset #c0c0c0",
+                display: "flex",
+                alignItems: "center",
+                padding: "0 4px",
+                cursor: "pointer",
+                margin: "2px"
+              }}
+              onClick={isTravelAppMinimized ? restoreTravelApp : minimizeTravelApp}
+            >
+              <div style={{
+                width: "16px",
+                height: "16px",
+                background: "transparent",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: "4px"
+              }}>
+                <span style={{ fontSize: "8px", color: "#000000" }}>✈️</span>
+              </div>
+              <span style={{ fontSize: "11px" }}>Travel Planner</span>
+            </div>
+          )}
+        </div>
+
+        {/* System Tray */}
+        <div style={{
+          height: "24px",
+          background: "#c0c0c0",
+          border: "1px inset #c0c0c0",
+          display: "flex",
+          alignItems: "center",
+          padding: "0 4px",
+          marginRight: "2px"
+        }}>
+          {/* Clock */}
+          <div style={{
+            fontSize: "11px",
+            color: "#000000",
+            whiteSpace: "nowrap"
+          }}>
+            {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </div>
+        </div>
+      </div>
 
     </div>
   );
