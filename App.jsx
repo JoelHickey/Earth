@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import Header from './components/Header';
 import Toolbar from './components/Toolbar';
 import Slider from './components/Slider';
@@ -3706,7 +3707,7 @@ function App() {
       >
         <img src="/Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
         <span style={{
-          fontSize: "8px",
+          fontSize: "12px",
           fontFamily: "'MS Sans Serif', sans-serif",
           color: "#ffffff",
           textAlign: "center",
@@ -3751,7 +3752,7 @@ function App() {
           }}>📄</span>
         </div>
         <span style={{
-          fontSize: "8px",
+          fontSize: "12px",
           fontFamily: "'MS Sans Serif', sans-serif",
           color: "#ffffff",
           textAlign: "center",
@@ -3796,7 +3797,7 @@ function App() {
         }}>✈️</span>
       </div>
       <span style={{
-        fontSize: "8px",
+        fontSize: "12px",
         fontFamily: "'MS Sans Serif', sans-serif",
         color: "#ffffff",
         textAlign: "center",
@@ -3841,13 +3842,99 @@ function App() {
         }}>🧠</span>
       </div>
       <span style={{
-        fontSize: "8px",
+        fontSize: "12px",
         fontFamily: "'MS Sans Serif', sans-serif",
         color: "#ffffff",
         textAlign: "center",
         textShadow: "1px 1px 0px #000000"
       }}>
         AI Learnings
+      </span>
+    </div>
+
+    {/* Fifth Desktop Icon - Lucky Stars */}
+    <div
+      style={{
+        position: "absolute",
+        top: "370px",
+        left: "50px",
+        width: "64px",
+        height: "64px",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "transparent"
+      }}
+    >
+      <div style={{
+        width: "32px",
+        height: "32px",
+        background: "transparent",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "4px"
+      }}>
+        <span style={{
+          fontSize: "32px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textShadow: "1px 1px 0px #000000"
+        }}>💫</span>
+      </div>
+      <span style={{
+        fontSize: "12px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        color: "#ffffff",
+        textAlign: "center",
+        textShadow: "1px 1px 0px #000000"
+      }}>
+        Lucky Stars
+      </span>
+    </div>
+
+    {/* Sixth Desktop Icon - Powertramp */}
+    <div
+      style={{
+        position: "absolute",
+        top: "450px",
+        left: "50px",
+        width: "64px",
+        height: "64px",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "transparent"
+      }}
+    >
+      <div style={{
+        width: "32px",
+        height: "32px",
+        background: "transparent",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "4px"
+      }}>
+        <span style={{
+          fontSize: "32px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textShadow: "1px 1px 0px #000000"
+        }}>⚡</span>
+      </div>
+      <span style={{
+        fontSize: "12px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        color: "#ffffff",
+        textAlign: "center",
+        textShadow: "1px 1px 0px #000000"
+      }}>
+        Powertramp
       </span>
     </div>
 
@@ -5202,6 +5289,7 @@ function App() {
         </div>
       )}
 
+      <Analytics />
     </div>
   );
 }
