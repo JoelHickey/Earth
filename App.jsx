@@ -3713,7 +3713,7 @@ function App() {
           textAlign: "center",
           textShadow: "1px 1px 0px #000000"
         }}>
-          Mental Health Monitor
+          Earth
         </span>
       </div>
 
@@ -3756,7 +3756,8 @@ function App() {
           fontFamily: "'MS Sans Serif', sans-serif",
           color: "#ffffff",
           textAlign: "center",
-          textShadow: "1px 1px 0px #000000"
+          textShadow: "1px 1px 0px #000000",
+          whiteSpace: "nowrap"
         }}>
           Joel Hickey CV
         </span>
@@ -3801,7 +3802,8 @@ function App() {
         fontFamily: "'MS Sans Serif', sans-serif",
         color: "#ffffff",
         textAlign: "center",
-        textShadow: "1px 1px 0px #000000"
+        textShadow: "1px 1px 0px #000000",
+        whiteSpace: "nowrap"
       }}>
         Travel Planner
       </span>
@@ -3846,7 +3848,8 @@ function App() {
         fontFamily: "'MS Sans Serif', sans-serif",
         color: "#ffffff",
         textAlign: "center",
-        textShadow: "1px 1px 0px #000000"
+        textShadow: "1px 1px 0px #000000",
+        whiteSpace: "nowrap"
       }}>
         AI Learnings
       </span>
@@ -3889,7 +3892,8 @@ function App() {
         fontFamily: "'MS Sans Serif', sans-serif",
         color: "#ffffff",
         textAlign: "center",
-        textShadow: "1px 1px 0px #000000"
+        textShadow: "1px 1px 0px #000000",
+        whiteSpace: "nowrap"
       }}>
         Lucky Stars
       </span>
@@ -3932,7 +3936,8 @@ function App() {
         fontFamily: "'MS Sans Serif', sans-serif",
         color: "#ffffff",
         textAlign: "center",
-        textShadow: "1px 1px 0px #000000"
+        textShadow: "1px 1px 0px #000000",
+        whiteSpace: "nowrap"
       }}>
         Powertramp
       </span>
