@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Toolbar from './components/Toolbar';
 import Slider from './components/Slider';
@@ -68,6 +68,7 @@ function App() {
   const [isDetailedView, setIsDetailedView] = useState(true);
   const [isBusinessDetailedView, setIsBusinessDetailedView] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState({});
+  const [cvDesignStyle, setCvDesignStyle] = useState('apple'); // apple, figma, tesla, material
   
   // Toggle function for collapsible sections
   const toggleSection = (sectionId) => {
@@ -87,6 +88,23 @@ function App() {
   // Second app window state
   const [isSecondAppOpen, setIsSecondAppOpen] = useState(false);
   const [isSecondAppMinimized, setIsSecondAppMinimized] = useState(false);
+  const [isAILearningsOpen, setIsAILearningsOpen] = useState(false);
+  const [isAILearningsMinimized, setIsAILearningsMinimized] = useState(false);
+  const [aiLearningsContent, setAILearningsContent] = useState(() => {
+    // Load from localStorage on initial render
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('aiLearningsContent');
+      return saved || '';
+    }
+    return '';
+  });
+
+  // Save AI Learnings content to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('aiLearningsContent', aiLearningsContent);
+    }
+  }, [aiLearningsContent]);
   
   // Third app window state (Travel)
   const [isTravelAppOpen, setIsTravelAppOpen] = useState(false);
@@ -98,12 +116,16 @@ function App() {
     y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 600) / 2) : 100
   }));
   const [secondWindowPosition, setSecondWindowPosition] = useState(() => ({
-    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 400) / 2) : 200,
-    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 300) / 2) : 120
+    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 800) / 2) : 200,
+    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 600 - 28) / 2) : 120
   }));
   const [travelWindowPosition, setTravelWindowPosition] = useState(() => ({
     x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 700) / 2) : 300,
     y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 600) / 2) : 150
+  }));
+  const [aiLearningsPosition, setAILearningsPosition] = useState(() => ({
+    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 926) / 2) : 100,
+    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 1310 - 28) / 2) : 50
   }));
   const [isDragging, setIsDragging] = useState(false);
   const [isSecondDragging, setIsSecondDragging] = useState(false);
@@ -205,10 +227,18 @@ function App() {
   const openSecondApp = () => {
     setIsSecondAppOpen(true);
     setIsSecondAppMinimized(false);
-    // Center the Notepad window on desktop
+    // Center the CV window on desktop (accounting for 28px taskbar at bottom)
+    const centerX = Math.max(0, (window.innerWidth - 800) / 2);
+    const centerY = Math.max(0, (window.innerHeight - 600 - 28) / 2);
+    console.log('Centering CV:', { 
+      windowWidth: window.innerWidth, 
+      windowHeight: window.innerHeight, 
+      centerX, 
+      centerY 
+    });
     setSecondWindowPosition({
-      x: Math.max(0, (window.innerWidth - 400) / 2), // Notepad width is 400px
-      y: Math.max(0, (window.innerHeight - 300) / 2) // Notepad height is 300px
+      x: centerX,
+      y: centerY
     });
     console.log('Second app opened');
   };
@@ -218,6 +248,24 @@ function App() {
     setIsTravelAppOpen(false);
     setIsTravelAppMinimized(false);
     console.log('Travel app closed');
+  };
+
+  // AI Learnings app functions
+  const openAILearnings = () => {
+    setIsAILearningsOpen(true);
+    setIsAILearningsMinimized(false);
+    console.log('AI Learnings opened');
+  };
+
+  const closeAILearnings = () => {
+    setIsAILearningsOpen(false);
+    setIsAILearningsMinimized(false);
+    console.log('AI Learnings closed');
+  };
+
+  const minimizeAILearnings = () => {
+    setIsAILearningsMinimized(true);
+    console.log('AI Learnings minimized');
   };
 
   const minimizeTravelApp = () => {
@@ -3631,11 +3679,12 @@ function App() {
 
   return (
     <div style={{ 
-      background: "#008080", 
+      background: "url('/wp2625478-windows-95-desktop-background.jpg')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
       minHeight: "100vh",
       width: "100vw",
-      position: "relative",
-      paddingBottom: "28px" // Space for taskbar
+      position: "relative"
     }}>
       {/* Desktop Icons */}
       <div
@@ -3699,7 +3748,7 @@ function App() {
             fontFamily: "'MS Sans Serif', sans-serif",
             color: "#ffffff",
             textShadow: "1px 1px 0px #000000"
-          }}>📝</span>
+          }}>📄</span>
         </div>
         <span style={{
           fontSize: "8px",
@@ -3708,7 +3757,7 @@ function App() {
           textAlign: "center",
           textShadow: "1px 1px 0px #000000"
         }}>
-          Notepad
+          Joel Hickey CV
         </span>
       </div>
 
@@ -3757,6 +3806,51 @@ function App() {
       </span>
     </div>
 
+    {/* Fourth Desktop Icon - AI Learnings */}
+    <div
+      style={{
+        position: "absolute",
+        top: "290px",
+        left: "50px",
+        width: "64px",
+        height: "64px",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "transparent"
+      }}
+      onClick={openAILearnings}
+      onDoubleClick={openAILearnings}
+    >
+      <div style={{
+        width: "32px",
+        height: "32px",
+        background: "transparent",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "4px"
+      }}>
+        <span style={{
+          fontSize: "32px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textShadow: "1px 1px 0px #000000"
+        }}>🧠</span>
+      </div>
+      <span style={{
+        fontSize: "8px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        color: "#ffffff",
+        textAlign: "center",
+        textShadow: "1px 1px 0px #000000"
+      }}>
+        AI Learnings
+      </span>
+    </div>
+
 
       {/* Application Window */}
       {isWindowOpen && !isWindowMinimized && (
@@ -3796,174 +3890,298 @@ function App() {
         </div>
       )}
 
-      {/* Second Application Window - Notepad */}
+      {/* Second Application Window - Clean Document */}
       {isSecondAppOpen && !isSecondAppMinimized && (
         <div 
           style={{
-            position: "absolute",
-            left: `${secondWindowPosition.x}px`,
-            top: `${secondWindowPosition.y}px`,
-            zIndex: 99
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 99,
+            background: "#ffffff",
+            width: "926px",
+            maxWidth: "90vw",
+            height: "1310px",
+            maxHeight: "90vh",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+            borderRadius: "10px",
+            display: "flex",
+            flexDirection: "column"
           }}
         >
-          <div style={{
-            background: "#c0c0c0",
-            border: "2px outset #c0c0c0",
-            width: "400px",
-            height: "300px",
-            display: "flex",
-            flexDirection: "column",
-            fontFamily: "'MS Sans Serif', sans-serif"
-          }}>
-            {/* Notepad Header */}
-            <div style={{
-              background: "linear-gradient(90deg, #000080 0%, #1084d0 100%)",
-              color: "#ffffff",
-              padding: "2px 4px",
-              fontSize: "8px",
-              fontWeight: "bold",
+          {/* Close Button - Absolute position in top-right */}
+          <button
+            onClick={closeSecondApp}
+            style={{
+              position: "absolute",
+              top: "16px",
+              right: "16px",
+              width: "32px",
+              height: "32px",
+              borderRadius: "50%",
+              border: "none",
+              background: "#e0e0e0",
+              color: "#666",
+              fontSize: "18px",
+              cursor: "pointer",
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-between",
-              borderBottom: "1px solid #808080",
-              height: "19px",
-              boxSizing: "border-box",
-              cursor: "move"
+              justifyContent: "center",
+              transition: "background 0.2s",
+              fontWeight: "300",
+              lineHeight: "1",
+              zIndex: 100
             }}
-            onMouseDown={handleSecondWindowMouseDown}>
-              <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                <div style={{
-                  width: "14px",
-                  height: "14px",
-                  background: "#ffffff",
-                  border: "1px solid #808080",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}>
-                  <span style={{ fontSize: "8px", color: "#000000" }}>📝</span>
+            onMouseOver={(e) => e.currentTarget.style.background = "#d0d0d0"}
+            onMouseOut={(e) => e.currentTarget.style.background = "#e0e0e0"}
+          >
+            ✕
+          </button>
+          
+          {/* Scrollable content area */}
+          <div style={{
+            flex: 1,
+            overflow: "auto",
+            padding: "48px 64px",
+            fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif",
+            fontSize: "15px",
+            lineHeight: "1.6",
+            color: "#1d1d1f",
+            WebkitFontSmoothing: "antialiased"
+          }}>
+              <div style={{ maxWidth: "700px", margin: "0 auto" }}>
+                {/* Header */}
+                <div style={{ marginBottom: "48px" }}>
+                  <h1 style={{ fontSize: "48px", fontWeight: "600", margin: "0 0 8px 0", color: "#1d1d1f", letterSpacing: "-0.5px" }}>Joel Hickey</h1>
+                  <div style={{ fontSize: "21px", fontWeight: "300", color: "#86868b", letterSpacing: "-0.2px" }}>Human Experience Designer</div>
                 </div>
-                <span>Untitled - Notepad</span>
+
+                {/* Introduction */}
+                <div style={{ marginBottom: "48px" }}>
+                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "16px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Introduction</h2>
+                  <p style={{ margin: "0 0 12px 0", fontSize: "15px", lineHeight: "1.6", color: "#1d1d1f" }}>
+                    At an early age I was blessed with a passion for design, growing up with a unique lens that combined both design and artistry. I bring with me a special set of skills from a background in interface and sound design, finding joy in the many aspects of digital and physical design.
+                  </p>
+                  <p style={{ margin: "0", fontSize: "15px", lineHeight: "1.6", color: "#1d1d1f" }}>
+                    I strive to shape and deliver valuable, delightful solutions that solve the right problems for the user and the business efficiently and effectively.
+                  </p>
+                </div>
+
+                {/* Experience */}
+                <div style={{ marginBottom: "48px" }}>
+                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Experience</h2>
+                  
+                  {/* FCTG */}
+                  <div style={{ marginBottom: "32px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                      <strong style={{ fontSize: "17px", fontWeight: "600" }}>Senior UI/UX Designer</strong>
+                      <span style={{ color: "#86868b", fontSize: "15px" }}>2021-2025</span>
+                    </div>
+                    <div style={{ marginBottom: "12px", color: "#86868b", fontSize: "15px" }}>Flight Centre Travel Group</div>
+                    <p style={{ margin: "0 0 16px 0", fontSize: "15px", lineHeight: "1.6" }}>
+                      Improved productivity of the consultant booking platform by reducing the steps required to manage bookings. Involved in all parts of the design process from discovery to post release enhancements with both internal and external teams.
+                    </p>
+                    
+                    <div style={{ marginBottom: "12px" }}>
+                      <strong style={{ fontSize: "15px" }}>Amendments</strong> <span style={{ color: "#007AFF", fontSize: "13px", cursor: "pointer" }}>View the story</span>
+                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#86868b" }}>
+                        <span>Efficiency +67%</span>
+                        <span>ROI +67%</span>
+                        <span>CSAT +67%</span>
+                      </div>
+                    </div>
+                    
+                    <div style={{ marginBottom: "16px" }}>
+                      <strong style={{ fontSize: "15px" }}>Travel insurance</strong> <span style={{ color: "#007AFF", fontSize: "13px", cursor: "pointer" }}>View the story</span>
+                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#86868b" }}>
+                        <span>Efficiency +67%</span>
+                        <span>ROI +67%</span>
+                        <span>CSAT +67%</span>
+                      </div>
+                    </div>
+
+                    <div style={{ padding: "16px", background: "#f5f5f7", borderRadius: "8px" }}>
+                      <strong style={{ fontSize: "15px", fontWeight: "600" }}>Awards</strong>
+                      <div style={{ marginTop: "8px", fontSize: "14px", lineHeight: "1.8" }}>
+                        • Selected to attend FCTG Global Lisbon, Portugal 2024<br/>
+                        • Buzz night award winner 2022, 2023
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Canstar */}
+                  <div style={{ marginBottom: "32px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                      <strong style={{ fontSize: "17px", fontWeight: "600" }}>Lead UI/UX Designer</strong>
+                      <span style={{ color: "#86868b", fontSize: "15px" }}>2019-2020</span>
+                    </div>
+                    <div style={{ marginBottom: "12px", color: "#86868b", fontSize: "15px" }}>Canstar</div>
+                    <div style={{ fontSize: "14px", lineHeight: "1.8" }}>
+                      • Focused on customer product verticals and internal software<br/>
+                      • Transitioned Canstar to a scalable design tool (Figma)<br/>
+                      • UI/UX representative for all agile ceremonies (internal & external)<br/>
+                      • Established a UI/UX repository and documentation guidelines<br/>
+                      • Wrote a usability testing framework and carried out multiple stakeholder sessions with recommended design updates<br/>
+                      • Worked on a design system for efficient design/developer process
+                    </div>
+                  </div>
+
+                  {/* Temando */}
+                  <div style={{ marginBottom: "32px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                      <strong style={{ fontSize: "17px", fontWeight: "600" }}>UI/UX Designer</strong>
+                      <span style={{ color: "#86868b", fontSize: "15px" }}>2015-2019</span>
+                    </div>
+                    <div style={{ marginBottom: "12px", color: "#86868b", fontSize: "15px" }}>Temando</div>
+                    <p style={{ margin: "0 0 16px 0", fontSize: "15px", lineHeight: "1.6" }}>
+                      Improved the productivity of merchants using Magento Shipping by enabling multiple shipments to be dispatched quickly in a single flow.
+                    </p>
+                    
+                    <div style={{ marginBottom: "16px" }}>
+                      <strong style={{ fontSize: "15px" }}>Bulk shipments</strong> <span style={{ color: "#007AFF", fontSize: "13px", cursor: "pointer" }}>View the story</span>
+                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#86868b" }}>
+                        <span>Efficiency +67%</span>
+                        <span>ROI +67%</span>
+                        <span>CSAT +67%</span>
+                      </div>
+                    </div>
+
+                    <div style={{ fontSize: "14px", lineHeight: "1.8" }}>
+                      • Designed multiple software proposals for Nike, Myer and Asos<br/>
+                      • Designed entire workflows from wire frames to high fidelity<br/>
+                      • Established design frameworks and a UX guild<br/>
+                      • UI/UX representative for all agile ceremonies (internal & offshore)
+                    </div>
+                  </div>
+                </div>
+
+                {/* Education */}
+                <div style={{ marginBottom: "48px" }}>
+                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Education</h2>
+                  
+                  <div style={{ marginBottom: "20px" }}>
+                    <strong style={{ fontSize: "17px", fontWeight: "600" }}>Masters of Interactive Media</strong>
+                    <div style={{ color: "#86868b", fontSize: "14px", marginTop: "4px" }}>Queensland College of Art</div>
+                    <div style={{ color: "#86868b", fontSize: "14px" }}>2015-2016</div>
+                  </div>
+
+                  <div style={{ marginBottom: "20px" }}>
+                    <strong style={{ fontSize: "17px", fontWeight: "600" }}>Bachelor of Audio Engineering and Sound Production</strong>
+                    <div style={{ color: "#86868b", fontSize: "14px", marginTop: "4px" }}>JMC Academy</div>
+                    <div style={{ color: "#86868b", fontSize: "14px" }}>2011-2013</div>
+                  </div>
+                </div>
+
+                {/* Tools */}
+                <div style={{ marginBottom: "48px" }}>
+                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Tools</h2>
+                  <div style={{ display: "flex", gap: "24px", fontSize: "15px", flexWrap: "wrap" }}>
+                    <span>Figma</span>
+                    <span>Miro</span>
+                    <span>Fullstory</span>
+                    <span>Confluence</span>
+                  </div>
+                </div>
+
+                {/* Say Hello */}
+                <div style={{ marginBottom: "48px" }}>
+                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Say Hello</h2>
+                  <div style={{ fontSize: "15px", lineHeight: "1.8" }}>
+                    <div style={{ marginBottom: "6px" }}>0421 366 486</div>
+                    <div style={{ marginBottom: "6px" }}>joelhickeydesigns@gmail.com</div>
+                    <div style={{ marginBottom: "6px" }}>Brisbane or remote</div>
+                    <div style={{ marginBottom: "6px", color: "#007AFF", cursor: "pointer" }}>dribbble.com/joelhickey</div>
+                  </div>
+                </div>
+
+                {/* References */}
+                <div>
+                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>References</h2>
+                  <div style={{ fontSize: "15px", color: "#86868b" }}>Available upon request</div>
+                </div>
               </div>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <button
-                  style={{
-                    width: "16px",
-                    height: "14px",
-                    background: "#d4d0c8",
-                    borderTop: "1px solid #ffffff",
-                    borderLeft: "1px solid #ffffff",
-                    borderBottom: "1px solid #808080",
-                    borderRight: "1px solid #808080",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "8px",
-                    fontFamily: "'MS Sans Serif', sans-serif",
-                    color: "#000000",
-                    padding: "0",
-                    lineHeight: "1",
-                    fontWeight: "normal",
-                    marginLeft: "2px"
-                  }}
-                  onClick={minimizeSecondApp}
-                  title="Minimize"
-                >
-                  −
-                </button>
-                <button
-                  style={{
-                    width: "16px",
-                    height: "14px",
-                    background: "#d4d0c8",
-                    borderTop: "1px solid #ffffff",
-                    borderLeft: "1px solid #ffffff",
-                    borderBottom: "1px solid #808080",
-                    borderRight: "1px solid #808080",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "8px",
-                    fontFamily: "'MS Sans Serif', sans-serif",
-                    color: "#000000",
-                    padding: "0",
-                    lineHeight: "1",
-                    fontWeight: "normal",
-                    marginLeft: "2px"
-                  }}
-                  onClick={closeSecondApp}
-                  title="Close"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
+          </div>
+        </div>
+      )}
 
-            {/* Notepad Menu Bar */}
-            <div style={{
-              background: "#c0c0c0",
-              borderBottom: "1px solid #808080",
-              padding: "2px 4px",
-              fontSize: "8px",
-              fontFamily: "'MS Sans Serif', sans-serif"
-            }}>
-              <span style={{ marginRight: "12px", cursor: "pointer" }}>File</span>
-              <span style={{ marginRight: "12px", cursor: "pointer" }}>Edit</span>
-              <span style={{ marginRight: "12px", cursor: "pointer" }}>Search</span>
-              <span style={{ marginRight: "12px", cursor: "pointer" }}>Help</span>
-            </div>
-
-            {/* Notepad Content Area */}
-            <div style={{
-              flex: 1,
-              background: "#ffffff",
-              padding: "8px",
-              fontSize: "12px",
-              fontFamily: "'Courier New', monospace",
-              color: "#000000",
-              overflow: "auto",
-              border: "1px inset #c0c0c0",
-              margin: "2px"
-            }}>
-              <div style={{ whiteSpace: "pre-wrap", lineHeight: "1.2" }}>
-{`Welcome to Windows 95 Notepad!
-
-This is a simple text editor that comes with Windows 95.
-You can use it to create and edit text files.
-
-Features:
-• Create new documents
-• Open existing files
-• Save your work
-• Print documents
-• Find and replace text
-
-This is a demo implementation showing how multiple
-applications can run simultaneously on the Windows 95
-desktop environment.
-
-Try opening the Mental Health Monitor application
-as well to see multiple windows in action!`}
-              </div>
-            </div>
-
-            {/* Notepad Status Bar */}
-            <div style={{
-              background: "#c0c0c0",
-              borderTop: "1px solid #808080",
-              padding: "2px 4px",
-              fontSize: "8px",
-              fontFamily: "'MS Sans Serif', sans-serif",
-              height: "16px",
+      {/* AI Learnings Window - Editable Document */}
+      {isAILearningsOpen && !isAILearningsMinimized && (
+        <div 
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 99,
+            background: "#ffffff",
+            width: "926px",
+            maxWidth: "90vw",
+            height: "1310px",
+            maxHeight: "90vh",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+            borderRadius: "10px",
+            display: "flex",
+            flexDirection: "column"
+          }}
+        >
+          {/* Close Button */}
+          <button
+            onClick={closeAILearnings}
+            style={{
+              position: "absolute",
+              top: "16px",
+              right: "16px",
+              width: "32px",
+              height: "32px",
+              borderRadius: "50%",
+              border: "none",
+              background: "#e0e0e0",
+              color: "#666",
+              fontSize: "18px",
+              cursor: "pointer",
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-between"
-            }}>
-              <span>Line 1, Col 1</span>
-              <span>Ready</span>
-            </div>
+              justifyContent: "center",
+              transition: "background 0.2s",
+              fontWeight: "300",
+              lineHeight: "1",
+              zIndex: 100
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = "#d0d0d0"}
+            onMouseOut={(e) => e.currentTarget.style.background = "#e0e0e0"}
+          >
+            ✕
+          </button>
+          
+          {/* Editable Text Area */}
+          <div style={{
+            flex: 1,
+            overflow: "auto",
+            padding: "48px 64px",
+            fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif",
+            fontSize: "15px",
+            lineHeight: "1.6",
+            color: "#1d1d1f",
+            WebkitFontSmoothing: "antialiased"
+          }}>
+            <textarea
+              value={aiLearningsContent}
+              onChange={(e) => setAILearningsContent(e.target.value)}
+              placeholder="Start typing your AI learnings..."
+              style={{
+                width: "100%",
+                height: "100%",
+                border: "none",
+                outline: "none",
+                fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif",
+                fontSize: "15px",
+                lineHeight: "1.6",
+                color: "#1d1d1f",
+                resize: "none",
+                background: "transparent"
+              }}
+            />
           </div>
         </div>
       )}
@@ -4983,7 +5201,6 @@ as well to see multiple windows in action!`}
           </div>
         </div>
       )}
-
 
     </div>
   );
