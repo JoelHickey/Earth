@@ -6,7 +6,9 @@ const TravelPlannerMUI = ({
   onMinimize,
   position,
   onDragStart,
-  isMinimized
+  isMinimized,
+  onBackToCaseStudy,
+  showBackButton = false
 }) => {
   const [editingId, setEditingId] = useState(null);
   const [editingTripName, setEditingTripName] = useState(false);
@@ -261,6 +263,24 @@ const TravelPlannerMUI = ({
         alignItems: 'center'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {showBackButton && (
+            <button
+              onClick={onBackToCaseStudy}
+              style={{
+                padding: '8px 12px',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#0071e3',
+                background: 'transparent',
+                border: '1px solid #0071e3',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif"
+              }}
+            >
+              ← Back to Case Study
+            </button>
+          )}
           <span style={{ fontSize: '20px' }}>✈️</span>
           <h1 style={{ 
             fontSize: '20px', 
@@ -281,6 +301,18 @@ const TravelPlannerMUI = ({
           }}>
             {tripData.tripNo}
           </span>
+          {showBackButton && (
+            <span style={{
+              padding: '4px 8px',
+              background: '#d4edda',
+              color: '#155724',
+              borderRadius: '4px',
+              fontSize: '13px',
+              fontWeight: '600'
+            }}>
+              NEW FLOW ✨
+            </span>
+          )}
         </div>
 
         {/* Close Button */}

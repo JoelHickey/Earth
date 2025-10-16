@@ -12,6 +12,9 @@ import { INPUT_SLIDERS, EMOTION_SLIDERS } from './utils/constants';
 import { useTravelSearch } from './src/hooks/useTravelSearch';
 import { SearchProgress, ErrorMessage, NoResultsMessage, HotelSkeleton } from './src/components/LoadingComponents';
 import TravelPlannerMUI from './src/components/TravelPlannerMUI';
+import AmendmentsCaseStudy from './src/components/AmendmentsCaseStudy';
+import InsuranceCaseStudy from './src/components/InsuranceCaseStudy';
+import TravelOldFlow from './src/components/TravelOldFlow';
 
 function App() {
   console.log("App is rendering!");
@@ -91,6 +94,20 @@ function App() {
   const [isSecondAppMinimized, setIsSecondAppMinimized] = useState(false);
   const [isAILearningsOpen, setIsAILearningsOpen] = useState(false);
   const [isAILearningsMinimized, setIsAILearningsMinimized] = useState(false);
+  const [isPortfolioOpen, setIsPortfolioOpen] = useState(() => {
+    // Open portfolio for first-time visitors
+    if (typeof window !== 'undefined') {
+      const hasVisited = localStorage.getItem('hasVisitedPortfolio');
+      console.log('Portfolio check - hasVisited:', hasVisited);
+      if (!hasVisited) {
+        localStorage.setItem('hasVisitedPortfolio', 'true');
+        console.log('First-time visitor! Opening portfolio...');
+        return true; // Open portfolio for first-time visitors
+      }
+      console.log('Returning visitor, portfolio stays closed');
+    }
+    return false;
+  });
   const [aiLearningsContent, setAILearningsContent] = useState(() => {
     // Load from localStorage on initial render
     if (typeof window !== 'undefined') {
@@ -107,9 +124,13 @@ function App() {
     }
   }, [aiLearningsContent]);
   
-  // Third app window state (Travel)
+  // Third app window state (Travel Amendments)
   const [isTravelAppOpen, setIsTravelAppOpen] = useState(false);
   const [isTravelAppMinimized, setIsTravelAppMinimized] = useState(false);
+  const [travelPlannerView, setTravelPlannerView] = useState('caseStudy'); // 'caseStudy', 'oldFlow', 'newFlow'
+  
+  // Fourth app window state (Insurance)
+  const [isInsuranceAppOpen, setIsInsuranceAppOpen] = useState(false);
   
   // Window position state - center windows on initial load
   const [windowPosition, setWindowPosition] = useState(() => ({
@@ -282,12 +303,23 @@ function App() {
   const openTravelApp = () => {
     setIsTravelAppOpen(true);
     setIsTravelAppMinimized(false);
+    setTravelPlannerView('caseStudy'); // Start with case study
     // Center the Travel window on desktop
     setTravelWindowPosition({
       x: Math.max(0, (window.innerWidth - 700) / 2), // Travel app width is 700px
       y: Math.max(0, (window.innerHeight - 600) / 2) // Travel app height is 600px
     });
     console.log('Travel app opened');
+  };
+
+  const openInsuranceApp = () => {
+    setIsInsuranceAppOpen(true);
+    console.log('Insurance app opened');
+  };
+
+  const closeInsuranceApp = () => {
+    setIsInsuranceAppOpen(false);
+    console.log('Insurance app closed');
   };
 
   const handleEditComponent = (componentName) => {
@@ -3687,7 +3719,18 @@ function App() {
       width: "100vw",
       position: "relative"
     }}>
+      {/* Semi-transparent overlay for better text contrast */}
+      <div style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "rgba(0, 0, 0, 0.2)",
+        pointerEvents: "none"
+      }} />
       {/* Desktop Icons */}
+      {/* First Desktop Icon - CV */}
       <div
         style={{
           position: "absolute",
@@ -3700,36 +3743,6 @@ function App() {
           flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-          background: "transparent"
-        }}
-        onClick={openWindow}
-        onDoubleClick={openWindow}
-      >
-        <img src="/Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
-        <span style={{
-          fontSize: "12px",
-          fontFamily: "'MS Sans Serif', sans-serif",
-          color: "#ffffff",
-          textAlign: "center",
-          textShadow: "1px 1px 0px #000000"
-        }}>
-          Earth
-        </span>
-      </div>
-
-      {/* Second Desktop Icon - Notepad */}
-      <div
-        style={{
-          position: "absolute",
-          top: "130px",
-          left: "50px",
-          width: "64px",
-          height: "64px",
-          cursor: "pointer",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
           background: "transparent"
         }}
         onClick={openSecondApp}
@@ -3759,11 +3772,42 @@ function App() {
           textShadow: "1px 1px 0px #000000",
           whiteSpace: "nowrap"
         }}>
-          Joel Hickey CV
+          CV
         </span>
       </div>
 
-    {/* Third Desktop Icon - Travel */}
+      {/* Second Desktop Icon - Earth */}
+      <div
+        style={{
+          position: "absolute",
+          top: "130px",
+          left: "50px",
+          width: "64px",
+          height: "64px",
+          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "transparent"
+        }}
+        onClick={openWindow}
+        onDoubleClick={openWindow}
+      >
+        <img src="/Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
+        <span style={{
+          fontSize: "12px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textAlign: "center",
+          textShadow: "1px 1px 0px #000000",
+          whiteSpace: "nowrap"
+        }}>
+          Earth
+        </span>
+      </div>
+
+    {/* Third Desktop Icon - FCTG Amendments */}
     <div
       style={{
         position: "absolute",
@@ -3805,15 +3849,61 @@ function App() {
         textShadow: "1px 1px 0px #000000",
         whiteSpace: "nowrap"
       }}>
-        Travel Planner
+        FCTG Amendments
       </span>
     </div>
 
-    {/* Fourth Desktop Icon - AI Learnings */}
+    {/* Fourth Desktop Icon - Insurance */}
     <div
       style={{
         position: "absolute",
         top: "290px",
+        left: "50px",
+        width: "64px",
+        height: "64px",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "transparent"
+      }}
+      onClick={openInsuranceApp}
+      onDoubleClick={openInsuranceApp}
+    >
+      <div style={{
+        width: "32px",
+        height: "32px",
+        background: "transparent",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "4px"
+      }}>
+        <span style={{
+          fontSize: "32px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textShadow: "1px 1px 0px #000000"
+        }}>🛡️</span>
+      </div>
+      <span style={{
+        fontSize: "12px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        color: "#ffffff",
+        textAlign: "center",
+        textShadow: "1px 1px 0px #000000",
+        whiteSpace: "nowrap"
+      }}>
+        FCTG Insurance
+      </span>
+    </div>
+
+    {/* Fifth Desktop Icon - AI Learnings */}
+    <div
+      style={{
+        position: "absolute",
+        top: "370px",
         left: "50px",
         width: "64px",
         height: "64px",
@@ -3855,11 +3945,11 @@ function App() {
       </span>
     </div>
 
-    {/* Fifth Desktop Icon - Lucky Stars */}
+    {/* Sixth Desktop Icon - Lucky Stars */}
     <div
       style={{
         position: "absolute",
-        top: "370px",
+        top: "450px",
         left: "50px",
         width: "64px",
         height: "64px",
@@ -3899,11 +3989,11 @@ function App() {
       </span>
     </div>
 
-    {/* Sixth Desktop Icon - Powertramp */}
+    {/* Seventh Desktop Icon - Powertramp */}
     <div
       style={{
         position: "absolute",
-        top: "450px",
+        top: "530px",
         left: "50px",
         width: "64px",
         height: "64px",
@@ -4278,15 +4368,304 @@ function App() {
         </div>
       )}
 
-      {/* Third Application Window - Travel Planner */}
+      {/* Portfolio Window */}
+      {isPortfolioOpen && (
+        <div 
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 99,
+            background: "#ffffff",
+            width: "800px",
+            maxWidth: "90vw",
+            height: "600px",
+            maxHeight: "90vh",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+            borderRadius: "10px",
+            display: "flex",
+            flexDirection: "column"
+          }}
+        >
+          {/* Close Button */}
+          <button
+            onClick={() => setIsPortfolioOpen(false)}
+            style={{
+              position: "absolute",
+              top: "16px",
+              right: "16px",
+              width: "32px",
+              height: "32px",
+              borderRadius: "50%",
+              border: "none",
+              background: "#e0e0e0",
+              color: "#666",
+              fontSize: "18px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "background 0.2s",
+              fontWeight: "300",
+              lineHeight: "1",
+              zIndex: 100
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = "#d0d0d0"}
+            onMouseOut={(e) => e.currentTarget.style.background = "#e0e0e0"}
+          >
+            ✕
+          </button>
+          
+          {/* Portfolio Content */}
+          <div style={{
+            flex: 1,
+            overflow: "auto",
+            padding: "48px 64px",
+            fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif",
+            fontSize: "15px",
+            lineHeight: "1.6",
+            color: "#1d1d1f",
+            WebkitFontSmoothing: "antialiased"
+          }}>
+            <h1 style={{
+              fontSize: "48px",
+              fontWeight: "600",
+              letterSpacing: "-0.5px",
+              marginBottom: "16px",
+              color: "#1d1d1f"
+            }}>
+              Joel Hickey
+            </h1>
+            
+            <p style={{
+              fontSize: "21px",
+              lineHeight: "1.4",
+              color: "#6e6e73",
+              marginBottom: "48px"
+            }}>
+              Product & Program Leader — Building tools that help people thrive
+            </p>
+
+            <div style={{
+              marginBottom: "32px",
+              padding: "24px",
+              background: "#f5f5f7",
+              borderRadius: "12px"
+            }}>
+              <h2 style={{
+                fontSize: "28px",
+                fontWeight: "600",
+                marginBottom: "16px",
+                color: "#1d1d1f"
+              }}>
+                Welcome to My Portfolio
+              </h2>
+              <p style={{
+                fontSize: "17px",
+                lineHeight: "1.5",
+                color: "#1d1d1f",
+                marginBottom: "16px"
+              }}>
+                This desktop is my portfolio. Each icon represents a project, case study, or tool I've built.
+              </p>
+              <p style={{
+                fontSize: "17px",
+                lineHeight: "1.5",
+                color: "#1d1d1f"
+              }}>
+                Click around and explore—every window tells a story.
+              </p>
+            </div>
+
+            <div style={{
+              marginBottom: "32px"
+            }}>
+              <h2 style={{
+                fontSize: "24px",
+                fontWeight: "600",
+                marginBottom: "16px",
+                color: "#1d1d1f"
+              }}>
+                What You'll Find Here
+              </h2>
+              
+              <div style={{
+                display: "grid",
+                gap: "16px"
+              }}>
+                <div style={{
+                  padding: "20px",
+                  background: "#ffffff",
+                  border: "1px solid #d2d2d7",
+                  borderRadius: "12px"
+                }}>
+                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>🌍</div>
+                  <h3 style={{
+                    fontSize: "19px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#1d1d1f"
+                  }}>
+                    Mental Health Monitor
+                  </h3>
+                  <p style={{
+                    fontSize: "15px",
+                    lineHeight: "1.5",
+                    color: "#6e6e73"
+                  }}>
+                    A comprehensive framework for understanding how daily inputs affect mental wellbeing. Features planning, execution, and delivery frameworks across multiple organizational levels.
+                  </p>
+                </div>
+
+                <div style={{
+                  padding: "20px",
+                  background: "#ffffff",
+                  border: "1px solid #d2d2d7",
+                  borderRadius: "12px"
+                }}>
+                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>✈️</div>
+                  <h3 style={{
+                    fontSize: "19px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#1d1d1f"
+                  }}>
+                    Flight Centre - Amendments
+                  </h3>
+                  <p style={{
+                    fontSize: "15px",
+                    lineHeight: "1.5",
+                    color: "#6e6e73"
+                  }}>
+                    Streamlined travel amendments (hotels, cars, activities, transfers) to increase consultant productivity by 67%. Reduced handling time from 8-12 minutes to 2-3 minutes.
+                  </p>
+                </div>
+
+                <div style={{
+                  padding: "20px",
+                  background: "#ffffff",
+                  border: "1px solid #d2d2d7",
+                  borderRadius: "12px"
+                }}>
+                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>🛡️</div>
+                  <h3 style={{
+                    fontSize: "19px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#1d1d1f"
+                  }}>
+                    Flight Centre - Insurance
+                  </h3>
+                  <p style={{
+                    fontSize: "15px",
+                    lineHeight: "1.5",
+                    color: "#6e6e73"
+                  }}>
+                    Integrated travel insurance into booking workflow, increasing attachment rates by 45% and generating $2.4M additional annual revenue. Reduced insurance addition time by 90%.
+                  </p>
+                </div>
+
+                <div style={{
+                  padding: "20px",
+                  background: "#ffffff",
+                  border: "1px solid #d2d2d7",
+                  borderRadius: "12px"
+                }}>
+                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>📄</div>
+                  <h3 style={{
+                    fontSize: "19px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#1d1d1f"
+                  }}>
+                    Joel Hickey CV
+                  </h3>
+                  <p style={{
+                    fontSize: "15px",
+                    lineHeight: "1.5",
+                    color: "#6e6e73"
+                  }}>
+                    Traditional CV format showcasing experience as VP of Product & Program Management at Headspace, with expertise in mental health technology and cross-functional leadership.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              marginTop: "48px",
+              paddingTop: "32px",
+              borderTop: "1px solid #d2d2d7"
+            }}>
+              <h2 style={{
+                fontSize: "24px",
+                fontWeight: "600",
+                marginBottom: "16px",
+                color: "#1d1d1f"
+              }}>
+                My Approach
+              </h2>
+              <p style={{
+                fontSize: "17px",
+                lineHeight: "1.5",
+                color: "#1d1d1f",
+                marginBottom: "16px"
+              }}>
+                I believe great products come from understanding the full stack—from company mission to user experience. My work spans:
+              </p>
+              <ul style={{
+                fontSize: "17px",
+                lineHeight: "1.8",
+                color: "#1d1d1f",
+                paddingLeft: "24px"
+              }}>
+                <li><strong>Strategic Planning:</strong> Aligning product vision with business goals</li>
+                <li><strong>Cross-Functional Leadership:</strong> Coordinating engineering, design, and business teams</li>
+                <li><strong>User-Centered Design:</strong> Building tools that solve real problems</li>
+                <li><strong>Execution Excellence:</strong> Shipping products that matter</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Third Application Window - Travel Amendments */}
       {isTravelAppOpen && !isTravelAppMinimized && (
-        <TravelPlannerMUI
-          isOpen={isTravelAppOpen}
-          onClose={closeTravelApp}
-          onMinimize={minimizeTravelApp}
-          position={travelWindowPosition}
-          onDragStart={handleTravelWindowMouseDown}
-          isMinimized={isTravelAppMinimized}
+        <>
+          {travelPlannerView === 'caseStudy' && (
+            <AmendmentsCaseStudy
+              onViewOldFlow={() => setTravelPlannerView('oldFlow')}
+              onViewNewFlow={() => setTravelPlannerView('newFlow')}
+              onClose={closeTravelApp}
+            />
+          )}
+          
+          {travelPlannerView === 'oldFlow' && (
+            <TravelOldFlow
+              onBackToCaseStudy={() => setTravelPlannerView('caseStudy')}
+              onClose={closeTravelApp}
+            />
+          )}
+          
+          {travelPlannerView === 'newFlow' && (
+            <TravelPlannerMUI
+              isOpen={isTravelAppOpen}
+              onClose={closeTravelApp}
+              onMinimize={minimizeTravelApp}
+              position={travelWindowPosition}
+              onDragStart={handleTravelWindowMouseDown}
+              isMinimized={isTravelAppMinimized}
+              showBackButton={true}
+              onBackToCaseStudy={() => setTravelPlannerView('caseStudy')}
+            />
+          )}
+        </>
+      )}
+
+      {/* Fourth Application Window - Insurance */}
+      {isInsuranceAppOpen && (
+        <InsuranceCaseStudy
+          onClose={closeInsuranceApp}
         />
       )}
 
