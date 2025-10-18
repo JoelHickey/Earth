@@ -1557,8 +1557,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             setSelectedHotel(hotel);
-                                            setShowPayment(true);
                                             setConfirmingHotelIdx(idx);
+                                            setShowPayment(true);
                                           }}
                                           disabled={confirmingHotelIdx === idx && !showPayment}
                                           style={{
