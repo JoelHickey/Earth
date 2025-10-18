@@ -678,12 +678,13 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                           setProcessingStep('Syncing itinerary...');
                                           setTimeout(() => {
                                             setProcessingStep('');
-                                            setIsConfirming(false);
+                                            // Keep success message visible longer (5s undo window)
                                             setTimeout(() => {
                                               setShowDreamFlow(false);
                                               setConfirmingHotelIdx(null);
                                               setSelectedPayment(null);
-                                            }, 3000); // 3s undo window
+                                              setIsConfirming(false);
+                                            }, 5000); // 5s to see success and undo if needed
                                           }, 800);
                                         }, 900);
                                       }, 1000);
@@ -745,10 +746,13 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                     <div style={{ fontSize: "14px" }}>✓</div>
                                     <div style={{ flex: 1 }}>
                                       <div style={{ fontSize: "10px", fontWeight: "600", color: "#155724" }}>
-                                        Booking Updated Successfully
+                                        ✓ Payment Confirmed · Booking Updated
                                       </div>
                                       <div style={{ fontSize: "8px", color: "#155724", marginTop: "2px" }}>
-                                        Changes saved · Client itinerary updated · Undo available
+                                        {selectedPayment === 'card' && 'Visa ****4242 charged • '}
+                                        {selectedPayment === 'apple' && 'Apple Pay completed • '}
+                                        {selectedPayment === 'booking' && 'Card on file charged • '}
+                                        Client itinerary synced
                                       </div>
                                     </div>
                                   </>
