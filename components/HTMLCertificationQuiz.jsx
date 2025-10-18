@@ -81,38 +81,38 @@ const HTMLCertificationQuiz = ({ onClose }) => {
     {
       id: 'intermediate',
       title: 'Intermediate Development',
-      subtitle: 'Forms, semantics, accessibility basics',
+      subtitle: 'Forms, tables, semantics, file paths, responsive design',
       icon: '🔨',
       passRate: 75,
       color: '#0071e3',
-      questionCount: 10
+      questionCount: 30
     },
     {
       id: 'advanced',
       title: 'Advanced Concepts',
-      subtitle: 'Performance, SEO, modern HTML5',
+      subtitle: 'Canvas, SVG, Video/Audio, Web APIs, Geolocation, Storage',
       icon: '🚀',
       passRate: 80,
       color: '#667eea',
-      questionCount: 10
+      questionCount: 25
     },
     {
       id: 'professional',
       title: 'Professional Level',
-      subtitle: 'Security, optimization, PWA',
+      subtitle: 'Security, WCAG accessibility, responsive, URL encoding, entities',
       icon: '💼',
       passRate: 85,
       color: '#ff9500',
-      questionCount: 10
+      questionCount: 20
     },
     {
       id: 'expert',
       title: 'Expert & Architect',
-      subtitle: 'Architecture, scaling, cutting-edge',
+      subtitle: 'HTTP/3, Core Web Vitals, cutting-edge APIs, browser internals',
       icon: '🏆',
       passRate: 90,
       color: '#ff3b30',
-      questionCount: 10
+      questionCount: 15
     }
   ];
 
@@ -611,6 +611,242 @@ const HTMLCertificationQuiz = ({ onClose }) => {
         ],
         correct: 1,
         explanation: '<aside> is for content tangentially related to main content, like sidebars or callouts.'
+      },
+      {
+        id: 'i11',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create a checkbox?',
+        options: [
+          '<input type="check">',
+          '<input type="checkbox">',
+          '<checkbox>',
+          '<check>'
+        ],
+        correct: 1,
+        explanation: '<input type="checkbox"> creates a checkbox. Use name attribute to group related checkboxes.'
+      },
+      {
+        id: 'i12',
+        type: 'practical',
+        question: 'PRACTICAL: Which creates a radio button group?',
+        options: [
+          '<input type="radio" name="group">',
+          '<radio name="group">',
+          '<input type="button-radio">',
+          '<radio-group>'
+        ],
+        correct: 0,
+        explanation: 'Radio buttons with same name attribute create a group where only one can be selected.'
+      },
+      {
+        id: 'i13',
+        type: 'multiple',
+        question: 'What is the difference between block and inline elements?',
+        options: [
+          'No difference',
+          'Block starts new line and takes full width, inline flows with text',
+          'Block is for text, inline for images',
+          'Block is deprecated'
+        ],
+        correct: 1,
+        explanation: 'Block elements (<div>, <p>, <h1>) start on new line. Inline elements (<span>, <a>, <img>) flow within text.'
+      },
+      {
+        id: 'i14',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create a table with header?',
+        options: [
+          '<table><tr><th>Name</th></tr></table>',
+          '<table><header>Name</header></table>',
+          '<table><thead>Name</thead></table>',
+          '<table><head>Name</head></table>'
+        ],
+        correct: 0,
+        explanation: '<th> (table header) creates bold, centered header cells. Use inside <tr>. <thead> groups header rows.'
+      },
+      {
+        id: 'i15',
+        type: 'boolean',
+        question: 'True or False: CSS can be included with <style> tags in <head>.',
+        correct: true,
+        explanation: '<style> in <head> contains internal CSS. External CSS uses <link rel="stylesheet">.'
+      },
+      {
+        id: 'i16',
+        type: 'practical',
+        question: 'PRACTICAL: Which creates an iframe?',
+        options: [
+          '<frame src="page.html">',
+          '<iframe src="page.html"></iframe>',
+          '<embed src="page.html">',
+          '<inline src="page.html">'
+        ],
+        correct: 1,
+        explanation: '<iframe> embeds another HTML page. Set width, height, and consider security (sandbox attribute).'
+      },
+      {
+        id: 'i17',
+        type: 'multiple',
+        question: 'What does the target="_blank" attribute do?',
+        options: [
+          'Opens link in new window/tab',
+          'Makes link blank',
+          'Removes link',
+          'Opens in same window'
+        ],
+        correct: 0,
+        explanation: 'target="_blank" opens link in new tab. Should use rel="noopener" for security.'
+      },
+      {
+        id: 'i18',
+        type: 'practical',
+        question: 'PRACTICAL: How do you add a favicon?',
+        options: [
+          '<favicon src="icon.ico">',
+          '<link rel="icon" href="icon.ico">',
+          '<img rel="favicon" src="icon.ico">',
+          '<icon href="icon.ico">'
+        ],
+        correct: 1,
+        explanation: '<link rel="icon" href="favicon.ico"> in <head> sets the favicon (tab icon).'
+      },
+      {
+        id: 'i19',
+        type: 'boolean',
+        question: 'True or False: <span> is a block-level element.',
+        correct: false,
+        explanation: '<span> is inline. Use for styling small portions of text without breaking flow. <div> is block-level.'
+      },
+      {
+        id: 'i20',
+        type: 'practical',
+        question: 'PRACTICAL: Which creates a password input?',
+        options: [
+          '<input type="text" password>',
+          '<input type="password">',
+          '<password>',
+          '<input secure>'
+        ],
+        correct: 1,
+        explanation: 'type="password" masks input characters. Always use HTTPS when submitting passwords.'
+      },
+      {
+        id: 'i21',
+        type: 'multiple',
+        question: 'What does colspan="2" do in table cells?',
+        options: [
+          'Makes cell 2 columns tall',
+          'Makes cell span across 2 columns',
+          'Creates 2 columns',
+          'Divides cell in 2'
+        ],
+        correct: 1,
+        explanation: 'colspan spans cell across multiple columns. rowspan spans across rows.'
+      },
+      {
+        id: 'i22',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create a clickable email link?',
+        options: [
+          '<a href="email@example.com">',
+          '<a href="mailto:email@example.com">',
+          '<email>email@example.com</email>',
+          '<link type="email">email@example.com</link>'
+        ],
+        correct: 1,
+        explanation: 'mailto: protocol in href creates email link that opens default email client.'
+      },
+      {
+        id: 'i23',
+        type: 'boolean',
+        question: 'True or False: HTML5 has <video> and <audio> elements.',
+        correct: true,
+        explanation: 'HTML5 introduced native <video> and <audio> elements, eliminating need for Flash.'
+      },
+      {
+        id: 'i24',
+        type: 'practical',
+        question: 'PRACTICAL: Which creates a date picker input?',
+        options: [
+          '<input type="date">',
+          '<input type="calendar">',
+          '<datepicker>',
+          '<input type="datetime">'
+        ],
+        correct: 0,
+        explanation: 'type="date" creates native date picker. Also: datetime-local, time, week, month.'
+      },
+      {
+        id: 'i25',
+        type: 'multiple',
+        question: 'What is the purpose of the <main> element?',
+        options: [
+          'Main navigation',
+          'Main/dominant content of <body>',
+          'Main header',
+          'Main script'
+        ],
+        correct: 1,
+        explanation: '<main> represents dominant content of <body>. Only one visible <main> per page.'
+      },
+      {
+        id: 'i26',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create a range slider?',
+        options: [
+          '<input type="slider">',
+          '<input type="range">',
+          '<slider>',
+          '<range>'
+        ],
+        correct: 1,
+        explanation: 'type="range" creates slider. Use min, max, step, value attributes to configure.'
+      },
+      {
+        id: 'i27',
+        type: 'boolean',
+        question: 'True or False: File paths can be absolute or relative.',
+        correct: true,
+        explanation: 'Absolute paths start from root (/images/pic.jpg). Relative paths are relative to current page (images/pic.jpg or ../images/pic.jpg).'
+      },
+      {
+        id: 'i28',
+        type: 'practical',
+        question: 'PRACTICAL: Which creates a color picker?',
+        options: [
+          '<input type="color">',
+          '<colorpicker>',
+          '<input type="picker">',
+          '<color>'
+        ],
+        correct: 0,
+        explanation: 'type="color" creates native color picker. Returns hex color value (#ff0000).'
+      },
+      {
+        id: 'i29',
+        type: 'multiple',
+        question: 'What does the placeholder attribute do?',
+        options: [
+          'Sets default value',
+          'Shows hint text that disappears when typing',
+          'Validates input',
+          'Creates placeholder'
+        ],
+        correct: 1,
+        explanation: 'placeholder shows hint text inside input that disappears on focus. Don\'t use as label replacement.'
+      },
+      {
+        id: 'i30',
+        type: 'practical',
+        question: 'PRACTICAL: How do you group form elements visually?',
+        options: [
+          '<group><legend>Title</legend></group>',
+          '<fieldset><legend>Title</legend></fieldset>',
+          '<formgroup><title>Title</title></formgroup>',
+          '<div class="group"><h3>Title</h3></div>'
+        ],
+        correct: 1,
+        explanation: '<fieldset> groups related form elements with <legend> as title. Creates visual border.'
       }
     ],
     advanced: [
@@ -725,6 +961,183 @@ const HTMLCertificationQuiz = ({ onClose }) => {
         ],
         correct: 1,
         explanation: 'dns-prefetch resolves DNS for external domains early, improving load times.'
+      },
+      {
+        id: 'a11',
+        type: 'practical',
+        question: 'PRACTICAL: How do you embed a video with controls?',
+        options: [
+          '<video src="movie.mp4" controls></video>',
+          '<video src="movie.mp4"></video>',
+          '<media type="video" src="movie.mp4">',
+          '<play src="movie.mp4">'
+        ],
+        correct: 0,
+        explanation: '<video> with controls attribute shows play/pause buttons. Add multiple <source> for browser compatibility.'
+      },
+      {
+        id: 'a12',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create a clickable image map area?',
+        options: [
+          '<img usemap="#map"><map name="map"><area shape="rect" coords="0,0,100,100" href="page.html"></map>',
+          '<img map="map"><clickarea coords="0,0,100,100">',
+          '<imagemap><area>',
+          '<img><map><region>'
+        ],
+        correct: 0,
+        explanation: '<map> with <area> elements creates clickable regions on image. usemap links img to map.'
+      },
+      {
+        id: 'a13',
+        type: 'multiple',
+        question: 'What is localStorage?',
+        options: [
+          'Server storage',
+          'Client-side storage that persists across sessions',
+          'Temporary storage',
+          'Cookie storage'
+        ],
+        correct: 1,
+        explanation: 'localStorage stores data with no expiration. sessionStorage clears on tab close. Both are key-value pairs, same-origin.'
+      },
+      {
+        id: 'a14',
+        type: 'practical',
+        question: 'PRACTICAL: How do you get user geolocation?',
+        options: [
+          'navigator.geolocation.getCurrentPosition()',
+          'location.get()',
+          'html.geolocation()',
+          'window.location.coords()'
+        ],
+        correct: 0,
+        explanation: 'Geolocation API: navigator.geolocation.getCurrentPosition(success, error) requires HTTPS and user permission.'
+      },
+      {
+        id: 'a15',
+        type: 'boolean',
+        question: 'True or False: Canvas drawings are vector-based.',
+        correct: false,
+        explanation: 'Canvas is bitmap/raster-based (pixels). SVG is vector-based (scalable without quality loss).'
+      },
+      {
+        id: 'a16',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create an SVG circle?',
+        options: [
+          '<svg><circle cx="50" cy="50" r="40"></circle></svg>',
+          '<circle x="50" y="50" radius="40">',
+          '<svg-circle cx="50" cy="50" r="40">',
+          '<graphic type="circle" size="40">'
+        ],
+        correct: 0,
+        explanation: 'SVG uses <circle> with cx (center x), cy (center y), r (radius) attributes inside <svg> container.'
+      },
+      {
+        id: 'a17',
+        type: 'multiple',
+        question: 'What is drag and drop API used for?',
+        options: [
+          'Animations',
+          'Making elements draggable (draggable="true", ondrag events)',
+          'Scrolling',
+          'Deleting elements'
+        ],
+        correct: 1,
+        explanation: 'Drag & Drop API uses draggable attribute and ondragstart, ondragover, ondrop events for interactive UIs.'
+      },
+      {
+        id: 'a18',
+        type: 'practical',
+        question: 'PRACTICAL: How do you make a video autoplay on page load?',
+        options: [
+          '<video src="movie.mp4" autoplay muted></video>',
+          '<video src="movie.mp4" auto>',
+          '<video src="movie.mp4" play>',
+          '<video src="movie.mp4" start>'
+        ],
+        correct: 0,
+        explanation: 'autoplay with muted is required by most browsers (autoplay without sound for UX). Also add playsinline for mobile.'
+      },
+      {
+        id: 'a19',
+        type: 'boolean',
+        question: 'True or False: Web Workers run JavaScript in background thread.',
+        correct: true,
+        explanation: 'Web Workers run scripts in background threads without blocking UI, perfect for heavy computations.'
+      },
+      {
+        id: 'a20',
+        type: 'multiple',
+        question: 'What is Server-Sent Events (SSE)?',
+        options: [
+          'Client sends events to server',
+          'Server pushes updates to client automatically',
+          'Email notifications',
+          'Error logging'
+        ],
+        correct: 1,
+        explanation: 'SSE (EventSource) enables server to push updates to browser automatically, simpler than WebSockets for one-way communication.'
+      },
+      {
+        id: 'a21',
+        type: 'practical',
+        question: 'PRACTICAL: How do you embed a YouTube video?',
+        options: [
+          '<video src="youtube.com/watch?v=ID">',
+          '<iframe src="https://www.youtube.com/embed/VIDEO_ID"></iframe>',
+          '<youtube id="VIDEO_ID">',
+          '<embed youtube="VIDEO_ID">'
+        ],
+        correct: 1,
+        explanation: 'YouTube provides embed code with <iframe> using /embed/ URL. Set width, height, and frameborder="0".'
+      },
+      {
+        id: 'a22',
+        type: 'multiple',
+        question: 'What is the <details> element used for?',
+        options: [
+          'Product details',
+          'Collapsible disclosure widget (accordion)',
+          'Detailed description',
+          'Metadata'
+        ],
+        correct: 1,
+        explanation: '<details> with <summary> creates native accordion/collapsible content without JavaScript.'
+      },
+      {
+        id: 'a23',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create a progress bar?',
+        options: [
+          '<progress value="50" max="100"></progress>',
+          '<progressbar value="50">',
+          '<bar progress="50">',
+          '<input type="progress" value="50">'
+        ],
+        correct: 0,
+        explanation: '<progress> shows completion progress. value is current, max is total. Use <meter> for gauges/measurements.'
+      },
+      {
+        id: 'a24',
+        type: 'boolean',
+        question: 'True or False: SVG can be styled with CSS.',
+        correct: true,
+        explanation: 'SVG elements can be styled with CSS (fill, stroke, opacity). Can also use inline style or presentation attributes.'
+      },
+      {
+        id: 'a25',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create a search input with autocomplete?',
+        options: [
+          '<input type="search" list="suggestions"><datalist id="suggestions"><option value="HTML"></datalist>',
+          '<search><autocomplete><option>HTML</option></autocomplete></search>',
+          '<input type="text" autocomplete>',
+          '<searchbox suggestions="HTML">'
+        ],
+        correct: 0,
+        explanation: 'type="search" with <datalist> creates autocomplete search. datalist id matches input list attribute.'
       }
     ],
     professional: [
@@ -829,6 +1242,114 @@ const HTMLCertificationQuiz = ({ onClose }) => {
         options: ['role="menu"', 'role="dropdown"', 'role="listbox"', 'role="select"'],
         correct: 2,
         explanation: 'role="listbox" is for custom dropdowns. role="menu" is for application menus.'
+      },
+      {
+        id: 'p11',
+        type: 'practical',
+        question: 'PRACTICAL: How do you encode a space in URL?',
+        options: ['%20 or +', '_', '-', 'space'],
+        correct: 0,
+        explanation: 'URL encoding: space = %20 or +. Special chars need encoding: & = %26, ? = %3F, # = %23.'
+      },
+      {
+        id: 'p12',
+        type: 'multiple',
+        question: 'What does &nbsp; represent?',
+        options: [
+          'New line',
+          'Non-breaking space',
+          'No break symbol',
+          'Next paragraph'
+        ],
+        correct: 1,
+        explanation: '&nbsp; (non-breaking space) prevents line break between words. HTML entities encode special characters.'
+      },
+      {
+        id: 'p13',
+        type: 'practical',
+        question: 'PRACTICAL: How do you display < symbol in HTML?',
+        options: ['<', '&lt;', '\\<', '&#60; or &lt;'],
+        correct: 3,
+        explanation: '< = &lt; or &#60;, > = &gt; or &#62;. HTML entities prevent browser interpreting as tags.'
+      },
+      {
+        id: 'p14',
+        type: 'boolean',
+        question: 'True or False: Responsive design uses meta viewport tag.',
+        correct: true,
+        explanation: '<meta name="viewport" content="width=device-width, initial-scale=1.0"> is essential for responsive mobile design.'
+      },
+      {
+        id: 'p15',
+        type: 'multiple',
+        question: 'What is the purpose of lang attribute in <html>?',
+        options: [
+          'Sets programming language',
+          'Declares page language for SEO and accessibility',
+          'Translates content',
+          'Sets keyboard layout'
+        ],
+        correct: 1,
+        explanation: '<html lang="en"> declares page language. Helps search engines, screen readers, and translation tools.'
+      },
+      {
+        id: 'p16',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create a file upload input?',
+        options: [
+          '<input type="file">',
+          '<upload>',
+          '<input type="upload">',
+          '<file-input>'
+        ],
+        correct: 0,
+        explanation: 'type="file" creates file upload. Use accept attribute to limit file types (e.g., accept="image/*").'
+      },
+      {
+        id: 'p17',
+        type: 'boolean',
+        question: 'True or False: HTML Symbols include ©, ®, €, ™.',
+        correct: true,
+        explanation: 'HTML symbols: &copy; (©), &reg; (®), &euro; (€), &trade; (™). Full UTF-8 emoji support in HTML5.'
+      },
+      {
+        id: 'p18',
+        type: 'multiple',
+        question: 'What is the purpose of <figure> and <figcaption>?',
+        options: [
+          'Calculations',
+          'Image with caption (semantic grouping)',
+          'Statistical figures',
+          'Math equations'
+        ],
+        correct: 1,
+        explanation: '<figure> groups image/diagram with <figcaption> caption. Keeps content and caption together semantically.'
+      },
+      {
+        id: 'p19',
+        type: 'practical',
+        question: 'PRACTICAL: How do you specify multiple video formats?',
+        options: [
+          '<video><source src="movie.mp4"><source src="movie.webm"></video>',
+          '<video src="movie.mp4,movie.webm">',
+          '<video formats="mp4,webm" src="movie">',
+          '<video><file>movie.mp4</file><file>movie.webm</file></video>'
+        ],
+        correct: 0,
+        explanation: 'Multiple <source> elements provide fallbacks. Browser uses first supported format (WebM, MP4, Ogg).'
+      },
+      {
+        id: 'p20',
+        type: 'multiple',
+        question: 'What is WCAG 2.1?',
+        options: [
+          'Web CSS Guidelines',
+          'Web Content Accessibility Guidelines',
+          'Web Coding Standards',
+          'World Compatibility Guide'
+        ],
+        correct: 1,
+        explanation: 'WCAG 2.1 provides accessibility standards. Level AA compliance required for government sites, ADA compliance.'
       }
     ],
     expert: [
@@ -938,6 +1459,65 @@ const HTMLCertificationQuiz = ({ onClose }) => {
         ],
         correct: 1,
         explanation: 'View Transitions API creates smooth, animated transitions between pages/states in SPAs.'
+      },
+      {
+        id: 'e11',
+        type: 'multiple',
+        question: 'What is Time to Interactive (TTI)?',
+        options: [
+          'Time until page loads',
+          'Time until page is fully interactive and responds to input',
+          'Time to first byte',
+          'Time to complete'
+        ],
+        correct: 1,
+        explanation: 'TTI measures when page becomes fully interactive. Part of Core Web Vitals for user experience.'
+      },
+      {
+        id: 'e12',
+        type: 'practical',
+        question: 'PRACTICAL: How do you implement dark mode with CSS?',
+        options: [
+          '@media (prefers-color-scheme: dark) { }',
+          '<meta theme="dark">',
+          '@dark-mode { }',
+          '<style dark>'
+        ],
+        correct: 0,
+        explanation: 'prefers-color-scheme media query detects system dark mode preference. Provide both light and dark themes.'
+      },
+      {
+        id: 'e13',
+        type: 'boolean',
+        question: 'True or False: First Input Delay (FID) measures initial load speed.',
+        correct: false,
+        explanation: 'FID measures responsiveness - time from first user interaction to browser response. Part of Core Web Vitals.'
+      },
+      {
+        id: 'e14',
+        type: 'multiple',
+        question: 'What is the Navigation Timing API?',
+        options: [
+          'Navigation menu timing',
+          'Measures page load performance metrics',
+          'Sets navigation speed',
+          'Times animations'
+        ],
+        correct: 1,
+        explanation: 'Navigation Timing API provides detailed timing metrics: DNS lookup, TCP connection, DOM load, etc. For performance analysis.'
+      },
+      {
+        id: 'e15',
+        type: 'practical',
+        question: 'PRACTICAL: How do you implement infinite scroll?',
+        options: [
+          'Intersection Observer API watching sentinel element',
+          'scroll event listener',
+          '<infinite-scroll>',
+          'window.onscroll = loadMore'
+        ],
+        correct: 0,
+        explanation: 'Intersection Observer efficiently detects when sentinel element enters viewport. Better than scroll events for performance.'
       }
     ]
   };
