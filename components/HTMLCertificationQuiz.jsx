@@ -284,16 +284,16 @@ const HTMLCertificationQuiz = ({ onClose }) => {
       },
       {
         id: 'f17',
-        type: 'multiple',
-        question: 'What does WWW stand for?',
+        type: 'practical',
+        question: 'PRACTICAL: Which creates a multi-line text input?',
         options: [
-          'World Wide Web',
-          'World Web Wide',
-          'Web World Wide',
-          'Worldwide Web'
+          '<input type="text" multiline>',
+          '<textarea></textarea>',
+          '<input type="textarea">',
+          '<text multiline></text>'
         ],
-        correct: 0,
-        explanation: 'WWW stands for World Wide Web, invented by Tim Berners-Lee in 1989.'
+        correct: 1,
+        explanation: '<textarea> creates a multi-line text input. <input type="text"> is single-line only. Use rows and cols to set size.'
       },
       {
         id: 'f18',
