@@ -4,7 +4,7 @@ import Header from './components/Header';
 import Toolbar from './components/Toolbar';
 import Slider from './components/Slider';
 import StatusBar from './components/StatusBar';
-import HTMLQuiz from './components/HTMLQuiz';
+import HTMLQuiz from './components/HTMLQuiz.jsx';
 import Divider from './components/Divider';
 import CheckboxGroup from './components/CheckboxGroup';
 import Timeline from './components/Timeline';
