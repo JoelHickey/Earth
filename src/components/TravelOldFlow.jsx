@@ -39,6 +39,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
   const [undoCountdown, setUndoCountdown] = useState(null); // Countdown for undo action
   const [lastAmendment, setLastAmendment] = useState(null); // Store last amendment for undo
   const [processingStep, setProcessingStep] = useState(''); // Show processing steps
+  const [showUndoConfirmation, setShowUndoConfirmation] = useState(false); // Show undo success
   const [detectedChangeType, setDetectedChangeType] = useState('room'); // AI-detected change type
   const [liveInventory, setLiveInventory] = useState({ room1: 2, room2: 5, room3: 3 }); // Live countdown
   const [secondsAgo, setSecondsAgo] = useState(2); // Timestamp counter
@@ -108,10 +109,10 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
 
   const tripData = {
     tripName: "Hawaii Family Vacation",
-    tripNo: "FC-2024-001",
+    tripNo: "FC-2025-001",
     destination: "Honolulu, Hawaii",
-    startDate: "May 15, 2024",
-    endDate: "May 20, 2024",
+    startDate: "June 15, 2025",
+    endDate: "June 20, 2025",
     travelers: 4
   };
 
@@ -764,6 +765,12 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                       setUndoCountdown(null);
                                       setLastAmendment(null);
                                       setProcessingStep('');
+                                      
+                                      // Show undo confirmation
+                                      setShowUndoConfirmation(true);
+                                      setTimeout(() => {
+                                        setShowUndoConfirmation(false);
+                                      }, 2000);
                                     }}
                                     style={{
                                       fontSize: "8px",
@@ -1040,13 +1047,13 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                     // Override with pill presets if no manual selection
                                     if (!calendarStartDate && !calendarEndDate) {
                                       if (selectedPill === 'Extend +1') {
-                                        startDate = 22; endDate = 28; // Mar 22-28
+                                        startDate = 15; endDate = 21; // Jun 15-21
                                       } else if (selectedPill === 'Shorten -1') {
-                                        startDate = 22; endDate = 26; // Mar 22-26
+                                        startDate = 15; endDate = 19; // Jun 15-19
                                       } else if (selectedPill === 'Shift +3') {
-                                        startDate = 25; endDate = 30; // Mar 25-30
+                                        startDate = 18; endDate = 23; // Jun 18-23
                                       } else {
-                                        startDate = 22; endDate = 27; // Default
+                                        startDate = 15; endDate = 20; // Default (current booking)
                                       }
                                     }
                                     
