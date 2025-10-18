@@ -72,10 +72,11 @@ const HTMLCertificationQuiz = ({ onClose }) => {
     {
       id: 'foundations',
       title: 'Foundations & History',
-      subtitle: 'HTML origins, basic structure, syntax',
+      subtitle: 'HTML origins, basic structure, syntax + practical coding',
       icon: '📚',
       passRate: 70,
-      color: '#34c759'
+      color: '#34c759',
+      questionCount: 20
     },
     {
       id: 'intermediate',
@@ -83,7 +84,8 @@ const HTMLCertificationQuiz = ({ onClose }) => {
       subtitle: 'Forms, semantics, accessibility basics',
       icon: '🔨',
       passRate: 75,
-      color: '#0071e3'
+      color: '#0071e3',
+      questionCount: 10
     },
     {
       id: 'advanced',
@@ -91,7 +93,8 @@ const HTMLCertificationQuiz = ({ onClose }) => {
       subtitle: 'Performance, SEO, modern HTML5',
       icon: '🚀',
       passRate: 80,
-      color: '#667eea'
+      color: '#667eea',
+      questionCount: 10
     },
     {
       id: 'professional',
@@ -99,7 +102,8 @@ const HTMLCertificationQuiz = ({ onClose }) => {
       subtitle: 'Security, optimization, PWA',
       icon: '💼',
       passRate: 85,
-      color: '#ff9500'
+      color: '#ff9500',
+      questionCount: 10
     },
     {
       id: 'expert',
@@ -107,7 +111,8 @@ const HTMLCertificationQuiz = ({ onClose }) => {
       subtitle: 'Architecture, scaling, cutting-edge',
       icon: '🏆',
       passRate: 90,
-      color: '#ff3b30'
+      color: '#ff3b30',
+      questionCount: 10
     }
   ];
 
@@ -209,6 +214,114 @@ const HTMLCertificationQuiz = ({ onClose }) => {
         options: ['HTML4', 'HTML5', 'XHTML', 'HTML3'],
         correct: 1,
         explanation: 'HTML5 introduced semantic elements to better describe content meaning and structure.'
+      },
+      {
+        id: 'f11',
+        type: 'practical',
+        question: 'PRACTICAL: Which code creates a clickable link to google.com?',
+        options: [
+          '<a>Google</a>',
+          '<a href="google.com">Google</a>',
+          '<a href="https://google.com">Google</a>',
+          '<link>Google</link>'
+        ],
+        correct: 2,
+        explanation: 'Links need href with full URL (https://). Without protocol, browser treats it as relative path.'
+      },
+      {
+        id: 'f12',
+        type: 'practical',
+        question: 'PRACTICAL: What\'s wrong with: <p>Hello <b>World</p></b>?',
+        options: [
+          'Nothing wrong',
+          'Tags closed in wrong order (should be </b></p>)',
+          '<b> doesn\'t work inside <p>',
+          'Missing quotes'
+        ],
+        correct: 1,
+        explanation: 'Tags must close in reverse order of opening. Correct: <p>Hello <b>World</b></p>'
+      },
+      {
+        id: 'f13',
+        type: 'multiple',
+        question: 'Where was the first website hosted?',
+        options: ['MIT', 'CERN in Switzerland', 'Stanford', 'Google'],
+        correct: 1,
+        explanation: 'The first website went live at CERN on August 6, 1991, explaining the World Wide Web project.'
+      },
+      {
+        id: 'f14',
+        type: 'practical',
+        question: 'PRACTICAL: Which creates an image with fallback text?',
+        options: [
+          '<img src="photo.jpg">',
+          '<img src="photo.jpg" alt="My photo">',
+          '<image>photo.jpg</image>',
+          '<img>photo.jpg</img>'
+        ],
+        correct: 1,
+        explanation: 'alt attribute provides fallback text for accessibility and when images fail to load.'
+      },
+      {
+        id: 'f15',
+        type: 'boolean',
+        question: 'True or False: HTML comments are <!-- like this -->.',
+        correct: true,
+        explanation: 'HTML comments use <!-- comment --> syntax and are not rendered in the browser.'
+      },
+      {
+        id: 'f16',
+        type: 'practical',
+        question: 'PRACTICAL: Which creates a numbered list?',
+        options: [
+          '<ul><li>Item 1</li></ul>',
+          '<ol><li>Item 1</li></ol>',
+          '<list><item>Item 1</item></list>',
+          '<nl><li>Item 1</li></nl>'
+        ],
+        correct: 1,
+        explanation: '<ol> (ordered list) creates numbered lists. <ul> creates bullet points (unordered).'
+      },
+      {
+        id: 'f17',
+        type: 'multiple',
+        question: 'What does WWW stand for?',
+        options: [
+          'World Wide Web',
+          'World Web Wide',
+          'Web World Wide',
+          'Worldwide Web'
+        ],
+        correct: 0,
+        explanation: 'WWW stands for World Wide Web, invented by Tim Berners-Lee in 1989.'
+      },
+      {
+        id: 'f18',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create a line break in HTML?',
+        options: ['<br>', '<break>', 'Press Enter', '<lb>'],
+        correct: 0,
+        explanation: '<br> or <br/> creates a line break. Pressing Enter in code doesn\'t create visual breaks.'
+      },
+      {
+        id: 'f19',
+        type: 'boolean',
+        question: 'True or False: <div> adds meaning to content.',
+        correct: false,
+        explanation: '<div> is a generic container with no semantic meaning. Use semantic tags like <article>, <section> instead.'
+      },
+      {
+        id: 'f20',
+        type: 'practical',
+        question: 'PRACTICAL: Which makes "Hello World" a large heading?',
+        options: [
+          '<heading>Hello World</heading>',
+          '<h1>Hello World</h1>',
+          '<title>Hello World</title>',
+          '<big>Hello World</big>'
+        ],
+        correct: 1,
+        explanation: '<h1> through <h6> create headings, with <h1> being the largest and most important.'
       }
     ],
     intermediate: [
@@ -753,7 +866,7 @@ const HTMLCertificationQuiz = ({ onClose }) => {
                 Web Development Certification Path
               </div>
               <div style={{ fontSize: '9px', marginTop: '2px', opacity: 0.9 }}>
-                Choose your level • 10 questions per exam
+                Choose your level • Progressive difficulty • Practical coding
               </div>
             </div>
             <button
@@ -840,10 +953,11 @@ const HTMLCertificationQuiz = ({ onClose }) => {
                   {(() => {
                     const stats = getLevelStats(level.id);
                     const reviewDate = getNextReviewDate(level.id);
+                    const qCount = level.questionCount || 10;
                     if (stats) {
-                      return `Attempts: ${stats.attempts} • Best: ${stats.bestScore}/10 ${reviewDate ? `• ${reviewDate}` : ''}`;
+                      return `Attempts: ${stats.attempts} • Best: ${stats.bestScore}/${qCount} ${reviewDate ? `• ${reviewDate}` : ''}`;
                     }
-                    return `Pass rate: ${level.passRate}% • 10 questions • Never attempted`;
+                    return `Pass rate: ${level.passRate}% • ${qCount} questions • Never attempted`;
                   })()}
                 </div>
                 </div>
@@ -935,11 +1049,23 @@ const HTMLCertificationQuiz = ({ onClose }) => {
                   border: '1px solid #e0e0e0',
                   borderRadius: '4px'
                 }}>
-                  <div style={{ fontSize: '10px', fontWeight: '600', color: '#1d1d1f', marginBottom: '4px' }}>
-                    {idx + 1}. {q.question}
+                  <div style={{ fontSize: '10px', fontWeight: '600', color: '#1d1d1f', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span>{idx + 1}. {q.question}</span>
+                    {q.type === 'practical' && (
+                      <span style={{ 
+                        fontSize: '7px', 
+                        background: '#667eea', 
+                        color: '#ffffff', 
+                        padding: '1px 4px', 
+                        borderRadius: '2px',
+                        fontWeight: '700'
+                      }}>
+                        CODE
+                      </span>
+                    )}
                   </div>
 
-                  {q.type === 'multiple' && (
+                  {(q.type === 'multiple' || q.type === 'practical') && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                       {q.options.map((option, optIdx) => (
                         <label
