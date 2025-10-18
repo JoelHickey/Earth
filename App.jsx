@@ -15,6 +15,7 @@ import TravelPlannerMUI from './src/components/TravelPlannerMUI';
 import AmendmentsCaseStudy from './src/components/AmendmentsCaseStudy';
 import InsuranceCaseStudy from './src/components/InsuranceCaseStudy';
 import TravelOldFlow from './src/components/TravelOldFlow';
+import InsuranceOldFlow from './src/components/InsuranceOldFlow';
 
 function App() {
   console.log("App is rendering!");
@@ -131,6 +132,7 @@ function App() {
   
   // Fourth app window state (Insurance)
   const [isInsuranceAppOpen, setIsInsuranceAppOpen] = useState(false);
+  const [isInsuranceDemoOpen, setIsInsuranceDemoOpen] = useState(false);
   
   // Window position state - center windows on initial load
   const [windowPosition, setWindowPosition] = useState(() => ({
@@ -319,7 +321,16 @@ function App() {
 
   const closeInsuranceApp = () => {
     setIsInsuranceAppOpen(false);
+    setIsInsuranceDemoOpen(false);
     console.log('Insurance app closed');
+  };
+
+  const openInsuranceDemo = () => {
+    setIsInsuranceDemoOpen(true);
+  };
+
+  const backToInsuranceCaseStudy = () => {
+    setIsInsuranceDemoOpen(false);
   };
 
   const handleEditComponent = (componentName) => {
@@ -3734,7 +3745,7 @@ function App() {
       <div
         style={{
           position: "absolute",
-          top: "50px",
+          top: "20px",
           left: "50px",
           width: "64px",
           height: "64px",
@@ -3776,11 +3787,11 @@ function App() {
         </span>
       </div>
 
-      {/* Second Desktop Icon - Earth */}
+      {/* Second Desktop Icon - FCTG Amendments */}
       <div
         style={{
           position: "absolute",
-          top: "130px",
+          top: "100px",
           left: "50px",
           width: "64px",
           height: "64px",
@@ -3791,10 +3802,25 @@ function App() {
           justifyContent: "center",
           background: "transparent"
         }}
-        onClick={openWindow}
-        onDoubleClick={openWindow}
+        onClick={openTravelApp}
+        onDoubleClick={openTravelApp}
       >
-        <img src="/Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
+        <div style={{
+          width: "32px",
+          height: "32px",
+          background: "transparent",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "4px"
+        }}>
+          <span style={{
+            fontSize: "32px",
+            fontFamily: "'MS Sans Serif', sans-serif",
+            color: "#ffffff",
+            textShadow: "1px 1px 0px #000000"
+          }}>✈️</span>
+        </div>
         <span style={{
           fontSize: "12px",
           fontFamily: "'MS Sans Serif', sans-serif",
@@ -3803,61 +3829,15 @@ function App() {
           textShadow: "1px 1px 0px #000000",
           whiteSpace: "nowrap"
         }}>
-          Earth
+          FCTG Amendments
         </span>
       </div>
 
-    {/* Third Desktop Icon - FCTG Amendments */}
+    {/* Third Desktop Icon - FCTG Insurance */}
     <div
       style={{
         position: "absolute",
-        top: "210px",
-        left: "50px",
-        width: "64px",
-        height: "64px",
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "transparent"
-      }}
-      onClick={openTravelApp}
-      onDoubleClick={openTravelApp}
-    >
-      <div style={{
-        width: "32px",
-        height: "32px",
-        background: "transparent",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: "4px"
-      }}>
-        <span style={{
-          fontSize: "32px",
-          fontFamily: "'MS Sans Serif', sans-serif",
-          color: "#ffffff",
-          textShadow: "1px 1px 0px #000000"
-        }}>✈️</span>
-      </div>
-      <span style={{
-        fontSize: "12px",
-        fontFamily: "'MS Sans Serif', sans-serif",
-        color: "#ffffff",
-        textAlign: "center",
-        textShadow: "1px 1px 0px #000000",
-        whiteSpace: "nowrap"
-      }}>
-        FCTG Amendments
-      </span>
-    </div>
-
-    {/* Fourth Desktop Icon - Insurance */}
-    <div
-      style={{
-        position: "absolute",
-        top: "290px",
+        top: "180px",
         left: "50px",
         width: "64px",
         height: "64px",
@@ -3899,11 +3879,42 @@ function App() {
       </span>
     </div>
 
+    {/* Fourth Desktop Icon - Earth (Mental Health) */}
+    <div
+      style={{
+        position: "absolute",
+        top: "260px",
+        left: "50px",
+        width: "64px",
+        height: "64px",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "transparent"
+      }}
+      onClick={openWindow}
+      onDoubleClick={openWindow}
+    >
+      <img src="/Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
+      <span style={{
+        fontSize: "12px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        color: "#ffffff",
+        textAlign: "center",
+        textShadow: "1px 1px 0px #000000",
+        whiteSpace: "nowrap"
+      }}>
+        Earth
+      </span>
+    </div>
+
     {/* Fifth Desktop Icon - AI Learnings */}
     <div
       style={{
         position: "absolute",
-        top: "370px",
+        top: "340px",
         left: "50px",
         width: "64px",
         height: "64px",
@@ -3949,7 +3960,7 @@ function App() {
     <div
       style={{
         position: "absolute",
-        top: "450px",
+        top: "420px",
         left: "50px",
         width: "64px",
         height: "64px",
@@ -3993,7 +4004,7 @@ function App() {
     <div
       style={{
         position: "absolute",
-        top: "530px",
+        top: "500px",
         left: "50px",
         width: "64px",
         height: "64px",
@@ -4663,8 +4674,16 @@ function App() {
       )}
 
       {/* Fourth Application Window - Insurance */}
-      {isInsuranceAppOpen && (
+      {isInsuranceAppOpen && !isInsuranceDemoOpen && (
         <InsuranceCaseStudy
+          onClose={closeInsuranceApp}
+          onViewDemo={openInsuranceDemo}
+        />
+      )}
+
+      {isInsuranceAppOpen && isInsuranceDemoOpen && (
+        <InsuranceOldFlow
+          onBackToCaseStudy={backToInsuranceCaseStudy}
           onClose={closeInsuranceApp}
         />
       )}

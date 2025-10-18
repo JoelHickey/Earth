@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const InsuranceCaseStudy = ({ onClose }) => {
+const InsuranceCaseStudy = ({ onClose, onViewDemo }) => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   return (
     <div style={{
@@ -14,37 +14,38 @@ const InsuranceCaseStudy = ({ onClose }) => {
       maxWidth: "90vw",
       height: "700px",
       maxHeight: "90vh",
-      boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+      boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
       borderRadius: "10px",
       display: "flex",
       flexDirection: "column",
-      overflow: "hidden"
+      overflow: "hidden",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif"
     }}>
       {/* Close Button */}
       <button
         onClick={onClose}
         style={{
           position: "absolute",
-          top: "16px",
-          right: "16px",
-          width: "32px",
-          height: "32px",
+          top: "12px",
+          right: "12px",
+          width: "28px",
+          height: "28px",
           borderRadius: "50%",
           border: "none",
-          background: "#e0e0e0",
-          color: "#666",
-          fontSize: "18px",
+          background: "#f5f5f7",
+          color: "#86868b",
+          fontSize: "16px",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          transition: "background 0.2s",
+          transition: "all 0.15s",
           fontWeight: "300",
           lineHeight: "1",
           zIndex: 100
         }}
-        onMouseOver={(e) => e.currentTarget.style.background = "#d0d0d0"}
-        onMouseOut={(e) => e.currentTarget.style.background = "#e0e0e0"}
+        onMouseOver={(e) => e.currentTarget.style.background = "#e8e8ed"}
+        onMouseOut={(e) => e.currentTarget.style.background = "#f5f5f7"}
       >
         ✕
       </button>
@@ -53,61 +54,82 @@ const InsuranceCaseStudy = ({ onClose }) => {
       <div style={{
         flex: 1,
         overflow: "auto",
-        padding: "48px 64px",
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif",
+        padding: "24px 32px",
         WebkitFontSmoothing: "antialiased"
       }}>
         {/* Header */}
-        <div style={{ marginBottom: "48px" }}>
+        <div style={{ marginBottom: "28px" }}>
           <div style={{
-            fontSize: "14px",
+            fontSize: "11px",
             fontWeight: "600",
             color: "#0071e3",
             textTransform: "uppercase",
-            letterSpacing: "0.8px",
-            marginBottom: "12px"
+            letterSpacing: "0.6px",
+            marginBottom: "8px"
           }}>
             Case Study · Flight Centre
           </div>
           <h1 style={{
-            fontSize: "48px",
+            fontSize: "28px",
             fontWeight: "600",
-            letterSpacing: "-0.5px",
-            marginBottom: "16px",
+            letterSpacing: "-0.3px",
+            marginBottom: "10px",
             color: "#1d1d1f",
             lineHeight: "1.1"
           }}>
             Travel Insurance Integration
           </h1>
           <p style={{
-            fontSize: "17px",
+            fontSize: "14px",
             lineHeight: "1.4",
-            color: "#6e6e73",
-            fontStyle: "italic",
-            marginBottom: "0"
+            color: "#86868b",
+            marginBottom: "14px"
           }}>
             Pilot project for new booking platform · Developed entirely in-house by Flight Centre
           </p>
+          
+          <button
+            onClick={onViewDemo}
+            style={{
+              padding: "6px 14px",
+              fontSize: "13px",
+              fontWeight: "500",
+              color: "#ffffff",
+              background: "#0071e3",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              transition: "all 0.15s"
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = "#0077ed";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = "#0071e3";
+            }}
+          >
+            View Interactive Demo →
+          </button>
         </div>
 
         {/* OKR - Simple Display */}
         <div style={{
-          marginBottom: "32px",
-          paddingBottom: "24px",
+          marginBottom: "22px",
+          paddingBottom: "14px",
           borderBottom: "1px solid #e0e0e0"
         }}>
           <div style={{
-            fontSize: "13px",
+            fontSize: "10px",
             fontWeight: "600",
-            color: "#6e6e73",
+            color: "#86868b",
             textTransform: "uppercase",
-            letterSpacing: "0.8px",
-            marginBottom: "8px"
+            letterSpacing: "0.6px",
+            marginBottom: "6px"
           }}>
             Objective & Key Result
           </div>
           <p style={{
-            fontSize: "19px",
+            fontSize: "14px",
             fontWeight: "500",
             color: "#1d1d1f",
             lineHeight: "1.4",
@@ -118,30 +140,32 @@ const InsuranceCaseStudy = ({ onClose }) => {
         </div>
 
         {/* Impact Metrics */}
-        <div style={{ marginBottom: "48px" }}>
+        <div style={{ marginBottom: "28px" }}>
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-            gap: "16px",
-            marginBottom: "24px"
+            gap: "10px",
+            marginBottom: "14px"
           }}>
             <div style={{
-              padding: "20px",
+              padding: "14px",
               background: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-              borderRadius: "8px",
-              color: "#ffffff",
-              textAlign: "center"
+              borderRadius: "10px",
+              textAlign: "center",
+              boxShadow: "0 2px 8px rgba(67, 233, 123, 0.25)"
             }}>
               <div style={{
-                fontSize: "36px",
+                fontSize: "22px",
                 fontWeight: "700",
-                marginBottom: "6px"
+                marginBottom: "3px",
+                color: "#ffffff"
               }}>
                 +45%
               </div>
               <div style={{
-                fontSize: "14px",
+                fontSize: "11px",
                 fontWeight: "500",
+                color: "#ffffff",
                 opacity: 0.95
               }}>
                 Attachment Rate
@@ -149,22 +173,24 @@ const InsuranceCaseStudy = ({ onClose }) => {
             </div>
             
             <div style={{
-              padding: "20px",
+              padding: "14px",
               background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-              borderRadius: "8px",
-              color: "#ffffff",
-              textAlign: "center"
+              borderRadius: "10px",
+              textAlign: "center",
+              boxShadow: "0 2px 8px rgba(250, 112, 154, 0.25)"
             }}>
               <div style={{
-                fontSize: "36px",
+                fontSize: "22px",
                 fontWeight: "700",
-                marginBottom: "6px"
+                marginBottom: "3px",
+                color: "#ffffff"
               }}>
                 90%
               </div>
               <div style={{
-                fontSize: "14px",
+                fontSize: "11px",
                 fontWeight: "500",
+                color: "#ffffff",
                 opacity: 0.95
               }}>
                 Time Saved
@@ -172,22 +198,24 @@ const InsuranceCaseStudy = ({ onClose }) => {
             </div>
             
             <div style={{
-              padding: "20px",
+              padding: "14px",
               background: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
-              borderRadius: "8px",
-              color: "#ffffff",
-              textAlign: "center"
+              borderRadius: "10px",
+              textAlign: "center",
+              boxShadow: "0 2px 8px rgba(48, 207, 208, 0.25)"
             }}>
               <div style={{
-                fontSize: "36px",
+                fontSize: "22px",
                 fontWeight: "700",
-                marginBottom: "6px"
+                marginBottom: "3px",
+                color: "#ffffff"
               }}>
                 $2.4M
               </div>
               <div style={{
-                fontSize: "14px",
+                fontSize: "11px",
                 fontWeight: "500",
+                color: "#ffffff",
                 opacity: 0.95
               }}>
                 Annual Revenue
@@ -197,17 +225,18 @@ const InsuranceCaseStudy = ({ onClose }) => {
         </div>
 
         {/* The Problem */}
-        <div style={{ marginBottom: "48px" }}>
+        <div style={{ marginBottom: "28px" }}>
           <h2 style={{
-            fontSize: "28px",
+            fontSize: "17px",
             fontWeight: "600",
-            marginBottom: "16px",
-            color: "#1d1d1f"
+            marginBottom: "10px",
+            color: "#1d1d1f",
+            letterSpacing: "-0.2px"
           }}>
             The Problem
           </h2>
           <div style={{
-            fontSize: "17px",
+            fontSize: "14px",
             lineHeight: "1.6",
             color: "#1d1d1f",
             marginBottom: "24px"
@@ -229,15 +258,16 @@ const InsuranceCaseStudy = ({ onClose }) => {
         {/* Discovery & Research */}
         <div style={{ marginBottom: "48px" }}>
           <h2 style={{
-            fontSize: "28px",
+            fontSize: "17px",
             fontWeight: "600",
-            marginBottom: "16px",
-            color: "#1d1d1f"
+            marginBottom: "10px",
+            color: "#1d1d1f",
+            letterSpacing: "-0.2px"
           }}>
             Discovery & Research
           </h2>
           <div style={{
-            fontSize: "17px",
+            fontSize: "14px",
             lineHeight: "1.6",
             color: "#1d1d1f",
             marginBottom: "24px"
@@ -276,14 +306,14 @@ const InsuranceCaseStudy = ({ onClose }) => {
                 borderRadius: "8px"
               }}>
                 <div style={{
-                  fontSize: "36px",
+                  fontSize: "28px",
                   fontWeight: "700",
                   color: "#2e7d32",
                   marginBottom: "8px"
                 }}>
                   58%
                 </div>
-                <div style={{ fontSize: "15px", color: "#2e7d32" }}>
+                <div style={{ fontSize: "14px", color: "#2e7d32" }}>
                   <strong>Improved Usability Score</strong>
                 </div>
                 <div style={{ fontSize: "13px", color: "#2e7d32", marginTop: "4px" }}>
@@ -298,14 +328,14 @@ const InsuranceCaseStudy = ({ onClose }) => {
                 borderRadius: "8px"
               }}>
                 <div style={{
-                  fontSize: "36px",
+                  fontSize: "28px",
                   fontWeight: "700",
                   color: "#1565c0",
                   marginBottom: "8px"
                 }}>
                   233%
                 </div>
-                <div style={{ fontSize: "15px", color: "#1565c0" }}>
+                <div style={{ fontSize: "14px", color: "#1565c0" }}>
                   <strong>Reduction in Clicks</strong>
                 </div>
                 <div style={{ fontSize: "13px", color: "#1565c0", marginTop: "4px" }}>
@@ -321,13 +351,13 @@ const InsuranceCaseStudy = ({ onClose }) => {
               borderRadius: "8px",
               marginBottom: "16px"
             }}>
-              <p style={{ margin: "0 0 12px 0", fontSize: "15px", fontStyle: "italic", color: "#f57f17" }}>
+              <p style={{ margin: "0 0 12px 0", fontSize: "14px", fontStyle: "italic", color: "#f57f17" }}>
                 💬 <strong>Consultant Feedback:</strong>
               </p>
-              <p style={{ margin: "0 0 8px 0", fontSize: "15px", color: "#f57f17" }}>
+              <p style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#f57f17" }}>
                 "The fact that I don't have to do 27 clicks to load this into the quote is a win. This would make a lot of people in retail very happy!"
               </p>
-              <p style={{ margin: "0", fontSize: "15px", color: "#f57f17" }}>
+              <p style={{ margin: "0", fontSize: "14px", color: "#f57f17" }}>
                 "100% I would use the insurance flow. I think it's a very good addition and it will increase our productivity and sales."
               </p>
             </div>
@@ -336,7 +366,7 @@ const InsuranceCaseStudy = ({ onClose }) => {
               <span
                 onClick={() => setIsGalleryOpen(!isGalleryOpen)}
                 style={{
-                  fontSize: "15px",
+                  fontSize: "14px",
                   color: "#0071e3",
                   cursor: "pointer",
                   textDecoration: "none",
@@ -472,15 +502,16 @@ const InsuranceCaseStudy = ({ onClose }) => {
         {/* The Solution */}
         <div style={{ marginBottom: "48px" }}>
           <h2 style={{
-            fontSize: "28px",
+            fontSize: "17px",
             fontWeight: "600",
-            marginBottom: "16px",
-            color: "#1d1d1f"
+            marginBottom: "10px",
+            color: "#1d1d1f",
+            letterSpacing: "-0.2px"
           }}>
             The Solution
           </h2>
           <div style={{
-            fontSize: "17px",
+            fontSize: "14px",
             lineHeight: "1.6",
             color: "#1d1d1f",
             marginBottom: "24px"
@@ -514,15 +545,16 @@ const InsuranceCaseStudy = ({ onClose }) => {
         {/* Delivery */}
         <div style={{ marginBottom: "48px" }}>
           <h2 style={{
-            fontSize: "28px",
+            fontSize: "17px",
             fontWeight: "600",
-            marginBottom: "16px",
-            color: "#1d1d1f"
+            marginBottom: "10px",
+            color: "#1d1d1f",
+            letterSpacing: "-0.2px"
           }}>
             Delivery
           </h2>
           <div style={{
-            fontSize: "17px",
+            fontSize: "14px",
             lineHeight: "1.6",
             color: "#1d1d1f",
             marginBottom: "24px"
@@ -534,14 +566,14 @@ const InsuranceCaseStudy = ({ onClose }) => {
             <div style={{
               padding: "24px",
               background: "#f5f5f7",
-              borderRadius: "12px",
+              borderRadius: "10px",
               marginBottom: "24px"
             }}>
               <h3 style={{
-                fontSize: "19px",
+                fontSize: "17px",
                 fontWeight: "600",
                 marginBottom: "16px",
-                color: "#1d1d1f"
+                color: "#201f1e"
               }}>
                 Delivery Approach
               </h3>
@@ -562,7 +594,7 @@ const InsuranceCaseStudy = ({ onClose }) => {
               border: "1px solid #4caf50",
               borderRadius: "8px"
             }}>
-              <p style={{ margin: "0", color: "#2e7d32", fontSize: "15px" }}>
+              <p style={{ margin: "0", color: "#2e7d32", fontSize: "14px" }}>
                 ✓ <strong>Launched successfully in July 2024</strong> - Seamless integration achieved with positive consultant feedback and immediate revenue impact
               </p>
             </div>
@@ -571,23 +603,24 @@ const InsuranceCaseStudy = ({ onClose }) => {
 
         {/* Business Impact */}
         <div style={{
-          marginTop: "48px",
-          padding: "32px",
+          marginTop: "32px",
+          padding: "24px",
           background: "#f5f5f7",
-          borderRadius: "16px"
+          borderRadius: "10px"
         }}>
           <h2 style={{
-            fontSize: "28px",
+            fontSize: "17px",
             fontWeight: "600",
-            marginBottom: "16px",
-            color: "#1d1d1f"
+            marginBottom: "10px",
+            color: "#1d1d1f",
+            letterSpacing: "-0.2px"
           }}>
             Business Impact
           </h2>
           <div style={{
-            fontSize: "17px",
+            fontSize: "14px",
             lineHeight: "1.6",
-            color: "#1d1d1f"
+            color: "#201f1e"
           }}>
             <p style={{ marginBottom: "12px" }}>
               Beyond consultant efficiency, the integrated insurance workflow drove significant business outcomes:
