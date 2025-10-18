@@ -1,10 +1,72 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const HTMLCertificationQuiz = ({ onClose }) => {
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [progress, setProgress] = useState({});
+
+  // Load progress from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('htmlQuizProgress');
+    if (saved) {
+      setProgress(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save progress to localStorage
+  const saveProgress = (levelId, newScore, passed) => {
+    const now = Date.now();
+    const levelProgress = progress[levelId] || { attempts: [], bestScore: 0, passed: false };
+    
+    const updatedProgress = {
+      ...progress,
+      [levelId]: {
+        attempts: [...levelProgress.attempts, { score: newScore, date: now, passed }],
+        bestScore: Math.max(levelProgress.bestScore, newScore),
+        passed: passed || levelProgress.passed,
+        lastAttempt: now
+      }
+    };
+    
+    setProgress(updatedProgress);
+    localStorage.setItem('htmlQuizProgress', JSON.stringify(updatedProgress));
+  };
+
+  // Calculate next review date
+  const getNextReviewDate = (levelId) => {
+    const levelProgress = progress[levelId];
+    if (!levelProgress || levelProgress.attempts.length === 0) return null;
+    
+    const lastAttempt = levelProgress.lastAttempt;
+    const attemptCount = levelProgress.attempts.length;
+    
+    // Spaced repetition intervals (in days)
+    const intervals = [1, 2, 7, 14, 30, 90];
+    const daysSinceLastAttempt = (Date.now() - lastAttempt) / (1000 * 60 * 60 * 24);
+    const nextInterval = intervals[Math.min(attemptCount - 1, intervals.length - 1)];
+    
+    if (daysSinceLastAttempt >= nextInterval) {
+      return 'Ready to review!';
+    }
+    
+    const daysUntilReview = Math.ceil(nextInterval - daysSinceLastAttempt);
+    return `Review in ${daysUntilReview}d`;
+  };
+
+  // Get stats for a level
+  const getLevelStats = (levelId) => {
+    const levelProgress = progress[levelId];
+    if (!levelProgress) return null;
+    
+    return {
+      attempts: levelProgress.attempts.length,
+      bestScore: levelProgress.bestScore,
+      passed: levelProgress.passed,
+      lastAttempt: levelProgress.lastAttempt
+    };
+  };
 
   const levels = [
     {
@@ -602,8 +664,14 @@ const HTMLCertificationQuiz = ({ onClose }) => {
       }
     });
     
+    const percentage = (correctCount / questions.length) * 100;
+    const passed = percentage >= currentLevel.passRate;
+    
     setScore(correctCount);
     setSubmitted(true);
+    
+    // Save progress
+    saveProgress(selectedLevel, correctCount, passed);
   };
 
   const resetQuiz = () => {
@@ -708,41 +776,75 @@ const HTMLCertificationQuiz = ({ onClose }) => {
           </div>
 
           <div style={{ padding: '12px', overflowY: 'auto' }}>
-            {levels.map((level, idx) => (
+            {levels.map((level, idx) => {
+              const reviewDate = getNextReviewDate(level.id);
+              const readyToReview = reviewDate === 'Ready to review!';
+              
+              return (
               <div
                 key={level.id}
                 onClick={() => setSelectedLevel(level.id)}
                 style={{
                   marginBottom: '8px',
                   padding: '10px 12px',
-                  background: '#fafafa',
-                  border: '2px solid #e0e0e0',
+                  background: readyToReview ? '#fffbea' : '#fafafa',
+                  border: '2px solid',
+                  borderColor: readyToReview ? '#ff9500' : '#e0e0e0',
                   borderRadius: '6px',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px'
+                  gap: '10px',
+                  position: 'relative'
                 }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.borderColor = level.color;
                   e.currentTarget.style.background = '#ffffff';
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.borderColor = '#e0e0e0';
-                  e.currentTarget.style.background = '#fafafa';
+                  e.currentTarget.style.borderColor = readyToReview ? '#ff9500' : '#e0e0e0';
+                  e.currentTarget.style.background = readyToReview ? '#fffbea' : '#fafafa';
                 }}
               >
+                {readyToReview && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-8px',
+                    right: '10px',
+                    background: '#ff9500',
+                    color: '#ffffff',
+                    fontSize: '7px',
+                    padding: '2px 6px',
+                    borderRadius: '3px',
+                    fontWeight: '700',
+                    animation: 'pulse 2s infinite'
+                  }}>
+                    REVIEW NOW
+                  </div>
+                )}
                 <div style={{ fontSize: '24px' }}>{level.icon}</div>
                 <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '12px', fontWeight: '600', color: '#1d1d1f', marginBottom: '2px' }}>
+                <div style={{ fontSize: '12px', fontWeight: '600', color: '#1d1d1f', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   Level {idx + 1}: {level.title}
+                  {(() => {
+                    const stats = getLevelStats(level.id);
+                    if (stats?.passed) return <span style={{ fontSize: '12px' }}>✅</span>;
+                    return null;
+                  })()}
                 </div>
                 <div style={{ fontSize: '9px', color: '#6e6e73' }}>
                   {level.subtitle}
                 </div>
                 <div style={{ fontSize: '8px', color: '#86868b', marginTop: '2px' }}>
-                  Pass rate: {level.passRate}% • 10 questions
+                  {(() => {
+                    const stats = getLevelStats(level.id);
+                    const reviewDate = getNextReviewDate(level.id);
+                    if (stats) {
+                      return `Attempts: ${stats.attempts} • Best: ${stats.bestScore}/10 ${reviewDate ? `• ${reviewDate}` : ''}`;
+                    }
+                    return `Pass rate: ${level.passRate}% • 10 questions • Never attempted`;
+                  })()}
                 </div>
                 </div>
                 <div style={{ 
@@ -753,7 +855,8 @@ const HTMLCertificationQuiz = ({ onClose }) => {
                   →
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
