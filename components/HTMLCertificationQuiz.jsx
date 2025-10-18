@@ -681,10 +681,10 @@ const HTMLCertificationQuiz = ({ onClose }) => {
             alignItems: 'center'
           }}>
             <div>
-              <div style={{ fontSize: '12px', fontWeight: '600' }}>
+              <div style={{ fontSize: '14px', fontWeight: '600' }}>
                 Web Development Certification Path
               </div>
-              <div style={{ fontSize: '7px', marginTop: '2px', opacity: 0.9 }}>
+              <div style={{ fontSize: '9px', marginTop: '2px', opacity: 0.9 }}>
                 Choose your level • 10 questions per exam
               </div>
             </div>
@@ -735,15 +735,15 @@ const HTMLCertificationQuiz = ({ onClose }) => {
               >
                 <div style={{ fontSize: '24px' }}>{level.icon}</div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '10px', fontWeight: '600', color: '#1d1d1f', marginBottom: '2px' }}>
-                    Level {idx + 1}: {level.title}
-                  </div>
-                  <div style={{ fontSize: '7px', color: '#6e6e73' }}>
-                    {level.subtitle}
-                  </div>
-                  <div style={{ fontSize: '6px', color: '#86868b', marginTop: '2px' }}>
-                    Pass rate: {level.passRate}% • 10 questions
-                  </div>
+                <div style={{ fontSize: '12px', fontWeight: '600', color: '#1d1d1f', marginBottom: '2px' }}>
+                  Level {idx + 1}: {level.title}
+                </div>
+                <div style={{ fontSize: '9px', color: '#6e6e73' }}>
+                  {level.subtitle}
+                </div>
+                <div style={{ fontSize: '8px', color: '#86868b', marginTop: '2px' }}>
+                  Pass rate: {level.passRate}% • 10 questions
+                </div>
                 </div>
                 <div style={{ 
                   fontSize: '14px', 
@@ -795,10 +795,10 @@ const HTMLCertificationQuiz = ({ onClose }) => {
           alignItems: 'center'
         }}>
           <div>
-            <div style={{ fontSize: '11px', fontWeight: '600' }}>
+            <div style={{ fontSize: '13px', fontWeight: '600' }}>
               {currentLevel.icon} {currentLevel.title}
             </div>
-            <div style={{ fontSize: '7px', marginTop: '1px', opacity: 0.9 }}>
+            <div style={{ fontSize: '9px', marginTop: '1px', opacity: 0.9 }}>
               {answeredCount}/{questions.length} answered • {currentLevel.passRate}% to pass
             </div>
           </div>
@@ -832,7 +832,7 @@ const HTMLCertificationQuiz = ({ onClose }) => {
                   border: '1px solid #e0e0e0',
                   borderRadius: '4px'
                 }}>
-                  <div style={{ fontSize: '8px', fontWeight: '600', color: '#1d1d1f', marginBottom: '4px' }}>
+                  <div style={{ fontSize: '10px', fontWeight: '600', color: '#1d1d1f', marginBottom: '4px' }}>
                     {idx + 1}. {q.question}
                   </div>
 
@@ -852,7 +852,7 @@ const HTMLCertificationQuiz = ({ onClose }) => {
                             borderColor: answers[q.id] === optIdx ? currentLevel.color : '#d1d1d6',
                             borderRadius: '3px',
                             cursor: 'pointer',
-                            fontSize: '7px',
+                            fontSize: '9px',
                             transition: 'all 0.15s'
                           }}
                           onMouseOver={(e) => {
@@ -888,7 +888,7 @@ const HTMLCertificationQuiz = ({ onClose }) => {
                           style={{
                             flex: 1,
                             padding: '3px 6px',
-                            fontSize: '7px',
+                            fontSize: '9px',
                             fontWeight: '600',
                             background: answers[q.id] === value ? currentLevel.color : '#ffffff',
                             color: answers[q.id] === value ? '#ffffff' : '#1d1d1f',
@@ -927,13 +927,13 @@ const HTMLCertificationQuiz = ({ onClose }) => {
                 marginBottom: '8px',
                 textAlign: 'center'
               }}>
-                <div style={{ fontSize: '12px', fontWeight: '700', color: '#1d1d1f', marginBottom: '2px' }}>
+                <div style={{ fontSize: '14px', fontWeight: '700', color: '#1d1d1f', marginBottom: '2px' }}>
                   {getCertificationStatus()}
                 </div>
-                <div style={{ fontSize: '10px', fontWeight: '600', color: '#1d1d1f', marginBottom: '2px' }}>
+                <div style={{ fontSize: '12px', fontWeight: '600', color: '#1d1d1f', marginBottom: '2px' }}>
                   Score: {score}/{questions.length} ({Math.round((score/questions.length)*100)}%)
                 </div>
-                <div style={{ fontSize: '8px', color: '#6e6e73' }}>
+                <div style={{ fontSize: '10px', color: '#6e6e73' }}>
                   {getScoreMessage()}
                 </div>
               </div>
@@ -951,13 +951,13 @@ const HTMLCertificationQuiz = ({ onClose }) => {
                     borderColor: isCorrect ? '#34c759' : '#ff3b30',
                     borderRadius: '3px'
                   }}>
-                    <div style={{ fontSize: '7px', fontWeight: '600', color: '#1d1d1f', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                    <div style={{ fontSize: '9px', fontWeight: '600', color: '#1d1d1f', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '3px' }}>
                       <span style={{ color: isCorrect ? '#34c759' : '#ff3b30' }}>
                         {isCorrect ? '✓' : '✗'}
                       </span>
                       {idx + 1}. {q.question}
                     </div>
-                    <div style={{ fontSize: '6px', color: '#6e6e73', marginTop: '2px', paddingLeft: '12px', fontStyle: 'italic' }}>
+                    <div style={{ fontSize: '8px', color: '#6e6e73', marginTop: '2px', paddingLeft: '12px', fontStyle: 'italic' }}>
                       {q.explanation}
                     </div>
                   </div>
@@ -980,8 +980,8 @@ const HTMLCertificationQuiz = ({ onClose }) => {
               <button
                 onClick={resetQuiz}
                 style={{
-                  fontSize: '8px',
-                  padding: '3px 8px',
+                  fontSize: '10px',
+                  padding: '4px 10px',
                   background: '#ffffff',
                   color: currentLevel.color,
                   border: `1px solid ${currentLevel.color}`,
@@ -997,8 +997,8 @@ const HTMLCertificationQuiz = ({ onClose }) => {
               <button
                 onClick={backToLevels}
                 style={{
-                  fontSize: '8px',
-                  padding: '3px 8px',
+                  fontSize: '10px',
+                  padding: '4px 10px',
                   background: currentLevel.color,
                   color: '#ffffff',
                   border: 'none',
@@ -1015,8 +1015,8 @@ const HTMLCertificationQuiz = ({ onClose }) => {
               onClick={handleSubmit}
               disabled={!allAnswered}
               style={{
-                fontSize: '8px',
-                padding: '3px 10px',
+                fontSize: '10px',
+                padding: '4px 12px',
                 background: allAnswered ? currentLevel.color : '#d1d1d6',
                 color: '#ffffff',
                 border: 'none',
