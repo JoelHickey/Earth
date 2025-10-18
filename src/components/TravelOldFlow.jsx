@@ -542,7 +542,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                         {dreamFlowExpanded && (
                           <div style={{ animation: "fadeIn 0.3s ease-out" }}>
                             {/* Success Message - Inline */}
-                            {confirmingHotelIdx !== null && (
+                            {confirmingHotelIdx !== null && !showPayment && (
                               <div style={{
                                 padding: "8px 10px",
                                 background: "#d4edda",
@@ -1601,7 +1601,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                 })()}
                                 
                                 {/* Universal Inline Payment Flow - Works for rooms, hotels, date changes */}
-                                {showPayment && confirmingHotelIdx !== null && confirmingHotelIdx >= 0 && selectedHotel && (
+                                {showPayment && confirmingHotelIdx >= 0 && (
                                   <div style={{
                                     marginTop: "8px",
                                     padding: "8px",
@@ -1664,40 +1664,42 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                     </div>
                                     
                                     {/* Payment Summary for Room/Hotel Change */}
-                                    <div style={{
-                                      padding: "6px 8px",
-                                      background: "#f9f9fb",
-                                      borderRadius: "4px",
-                                      marginBottom: "6px",
-                                      fontSize: "7px",
-                                      color: "#6e6e73"
-                                    }}>
-                                      <div style={{ fontSize: "8px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
-                                        {selectedHotel.name}
-                                      </div>
-                                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
-                                        <span>Current room total:</span>
-                                        <span>${selectedHotel.currentPrice ? selectedHotel.currentPrice * selectedHotel.nights : 2250}</span>
-                                      </div>
-                                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
-                                        <span>New room total:</span>
-                                        <span>${selectedHotel.priceNum ? selectedHotel.priceNum * selectedHotel.nights : selectedHotel.price}</span>
-                                      </div>
-                                      <div style={{ 
-                                        display: "flex", 
-                                        justifyContent: "space-between", 
-                                        paddingTop: "4px",
-                                        borderTop: "1px solid #e0e0e0",
-                                        fontWeight: "600",
-                                        color: "#1d1d1f",
-                                        fontSize: "8px"
+                                    {selectedHotel && (
+                                      <div style={{
+                                        padding: "6px 8px",
+                                        background: "#f9f9fb",
+                                        borderRadius: "4px",
+                                        marginBottom: "6px",
+                                        fontSize: "7px",
+                                        color: "#6e6e73"
                                       }}>
-                                        <span>Amendment charge:</span>
-                                        <span style={{ color: selectedHotel.priceNum > selectedHotel.currentPrice ? "#ff9500" : "#34c759" }}>
-                                          {selectedHotel.priceNum > selectedHotel.currentPrice ? '+' : ''}{selectedHotel.priceNum - selectedHotel.currentPrice > 0 ? '+$' : '-$'}{Math.abs((selectedHotel.priceNum - selectedHotel.currentPrice) * selectedHotel.nights)}
-                                        </span>
+                                        <div style={{ fontSize: "8px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
+                                          {selectedHotel.name}
+                                        </div>
+                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
+                                          <span>Current room total:</span>
+                                          <span>${selectedHotel.currentPrice ? selectedHotel.currentPrice * selectedHotel.nights : 2250}</span>
+                                        </div>
+                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
+                                          <span>New room total:</span>
+                                          <span>${selectedHotel.priceNum ? selectedHotel.priceNum * selectedHotel.nights : selectedHotel.price}</span>
+                                        </div>
+                                        <div style={{ 
+                                          display: "flex", 
+                                          justifyContent: "space-between", 
+                                          paddingTop: "4px",
+                                          borderTop: "1px solid #e0e0e0",
+                                          fontWeight: "600",
+                                          color: "#1d1d1f",
+                                          fontSize: "8px"
+                                        }}>
+                                          <span>Amendment charge:</span>
+                                          <span style={{ color: selectedHotel.priceNum > selectedHotel.currentPrice ? "#ff9500" : "#34c759" }}>
+                                            {selectedHotel.priceNum > selectedHotel.currentPrice ? '+' : ''}{selectedHotel.priceNum - selectedHotel.currentPrice > 0 ? '+$' : '-$'}{Math.abs((selectedHotel.priceNum - selectedHotel.currentPrice) * selectedHotel.nights)}
+                                          </span>
+                                        </div>
                                       </div>
-                                    </div>
+                                    )}
                                     
                                     {/* Action Buttons */}
                                     <div style={{ display: "flex", gap: "4px" }}>
