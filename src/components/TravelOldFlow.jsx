@@ -36,6 +36,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
   const [confirmingHotelIdx, setConfirmingHotelIdx] = useState(null); // Track which hotel button is confirming
   const [showPayment, setShowPayment] = useState(false); // Show payment options
   const [selectedPayment, setSelectedPayment] = useState(null); // Selected payment method
+  const [undoCountdown, setUndoCountdown] = useState(null); // Countdown for undo action
+  const [lastAmendment, setLastAmendment] = useState(null); // Store last amendment for undo
   const [detectedChangeType, setDetectedChangeType] = useState('room'); // AI-detected change type
   const [liveInventory, setLiveInventory] = useState({ room1: 2, room2: 5, room3: 3 }); // Live countdown
   const [secondsAgo, setSecondsAgo] = useState(2); // Timestamp counter
@@ -695,7 +697,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                               </div>
                             )}
                             
-                            {/* Success Message - Inline */}
+                            {/* Success Message - Inline with Undo */}
                             {isConfirming && !showPayment && (
                               <div style={{
                                 padding: "8px 10px",
@@ -708,14 +710,45 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                 animation: "slideDown 0.3s ease-out"
                               }}>
                                 <div style={{ fontSize: "14px" }}>✓</div>
-                                <div>
+                                <div style={{ flex: 1 }}>
                                   <div style={{ fontSize: "10px", fontWeight: "600", color: "#155724" }}>
                                     Booking Updated Successfully
                                   </div>
                                   <div style={{ fontSize: "8px", color: "#155724", marginTop: "2px" }}>
-                                    Changes saved · Client itinerary updated
+                                    Changes saved · Client itinerary updated · Undo available
                                   </div>
                                 </div>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    // Undo the amendment
+                                    setIsConfirming(false);
+                                    setConfirmingHotelIdx(null);
+                                    setSelectedHotel(null);
+                                    setHotelAmended(false);
+                                    setUndoCountdown(null);
+                                    setLastAmendment(null);
+                                  }}
+                                  style={{
+                                    fontSize: "8px",
+                                    padding: "3px 8px",
+                                    background: "#ffffff",
+                                    color: "#ff9500",
+                                    border: "1px solid #ff9500",
+                                    borderRadius: "3px",
+                                    cursor: "pointer",
+                                    fontWeight: "700",
+                                    transition: "all 0.15s"
+                                  }}
+                                  onMouseOver={(e) => {
+                                    e.currentTarget.style.background = "#fff8f0";
+                                  }}
+                                  onMouseOut={(e) => {
+                                    e.currentTarget.style.background = "#ffffff";
+                                  }}
+                                >
+                                  ↶ UNDO
+                                </button>
                               </div>
                             )}
                             
