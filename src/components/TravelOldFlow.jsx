@@ -109,10 +109,10 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
 
   const tripData = {
     tripName: "Hawaii Family Vacation",
-    tripNo: "FC-2025-001",
+    tripNo: "FC-2026-001",
     destination: "Honolulu, Hawaii",
-    startDate: "June 15, 2025",
-    endDate: "June 20, 2025",
+    startDate: "June 15, 2026",
+    endDate: "June 20, 2026",
     travelers: 4
   };
 
