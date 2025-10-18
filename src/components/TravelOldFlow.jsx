@@ -1174,7 +1174,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                       </div>
                                       
                                       {/* Confirmation Bar - Show when dates are selected or pill is clicked */}
-                                      {(calendarStartDate || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3') && (
+                                      {!showPayment && (calendarStartDate || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3') && (
                                         <div style={{
                                           marginTop: "6px",
                                           padding: "6px 8px",
