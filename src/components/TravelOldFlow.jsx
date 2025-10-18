@@ -695,8 +695,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                               </div>
                             )}
                             
-                            {/* Success Message - Inline - DISABLED TO TEST PAYMENT */}
-                            {false && confirmingHotelIdx !== null && !showPayment && (
+                            {/* Success Message - Inline */}
+                            {isConfirming && !showPayment && (
                               <div style={{
                                 padding: "8px 10px",
                                 background: "#d4edda",
