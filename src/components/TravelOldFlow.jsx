@@ -34,6 +34,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
   const [calendarEndDate, setCalendarEndDate] = useState(null);
   const [isConfirming, setIsConfirming] = useState(false); // Track confirmation state
   const [confirmingHotelIdx, setConfirmingHotelIdx] = useState(null); // Track which hotel button is confirming
+  const [showPayment, setShowPayment] = useState(false); // Show payment options
+  const [selectedPayment, setSelectedPayment] = useState(null); // Selected payment method
   const [detectedChangeType, setDetectedChangeType] = useState('room'); // AI-detected change type
   const [liveInventory, setLiveInventory] = useState({ room1: 2, room2: 5, room3: 3 }); // Live countdown
   const [secondsAgo, setSecondsAgo] = useState(2); // Timestamp counter
@@ -1242,16 +1244,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                           <button
                                             onClick={(e) => {
                                               e.stopPropagation();
-                                              setIsConfirming(true);
+                                              setShowPayment(true);
                                               setConfirmingHotelIdx(-1); // Use -1 for date changes
-                                              setTimeout(() => {
-                                                setIsConfirming(false);
-                                                // Show success message inline
-                                                setTimeout(() => {
-                                                  setShowDreamFlow(false);
-                                                  setConfirmingHotelIdx(null);
-                                                }, 2000);
-                                              }, 2500);
                                             }}
                                             disabled={isConfirming}
                                             style={{
@@ -1284,9 +1278,164 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                                 <span>Processing...</span>
                                               </>
                                             ) : (
-                                              'Confirm Change'
+                                              'Review & Pay'
                                             )}
                                           </button>
+                                        </div>
+                                      )}
+                                      
+                                      {/* Inline Payment Flow */}
+                                      {showPayment && confirmingHotelIdx === -1 && (
+                                        <div style={{
+                                          marginTop: "8px",
+                                          padding: "8px",
+                                          background: "#ffffff",
+                                          border: "2px solid #667eea",
+                                          borderRadius: "6px",
+                                          animation: "fadeIn 0.3s ease-out"
+                                        }}>
+                                          <div style={{ fontSize: "8px", color: "#86868b", fontWeight: "600", marginBottom: "6px" }}>
+                                            PAYMENT METHOD
+                                          </div>
+                                          
+                                          {/* Payment Options */}
+                                          <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginBottom: "8px" }}>
+                                            {[
+                                              { id: 'card', name: 'Credit Card', icon: '💳', subtitle: 'Visa ****4242 • Instant', color: '#667eea' },
+                                              { id: 'apple', name: 'Apple Pay', icon: '', subtitle: 'Touch ID • Instant', color: '#000000' },
+                                              { id: 'booking', name: 'On File', icon: '📋', subtitle: 'Corporate card on booking • No action', color: '#34c759' }
+                                            ].map(method => (
+                                              <div
+                                                key={method.id}
+                                                onClick={() => setSelectedPayment(method.id)}
+                                                style={{
+                                                  padding: "6px 8px",
+                                                  background: selectedPayment === method.id ? '#f0f4ff' : '#fafafa',
+                                                  border: '1px solid',
+                                                  borderColor: selectedPayment === method.id ? method.color : '#e0e0e0',
+                                                  borderRadius: "4px",
+                                                  cursor: "pointer",
+                                                  transition: "all 0.15s",
+                                                  display: "flex",
+                                                  alignItems: "center",
+                                                  gap: "8px"
+                                                }}
+                                                onMouseOver={(e) => {
+                                                  if (selectedPayment !== method.id) {
+                                                    e.currentTarget.style.borderColor = method.color;
+                                                  }
+                                                }}
+                                                onMouseOut={(e) => {
+                                                  if (selectedPayment !== method.id) {
+                                                    e.currentTarget.style.borderColor = '#e0e0e0';
+                                                  }
+                                                }}
+                                              >
+                                                <div style={{ fontSize: "16px" }}>{method.icon}</div>
+                                                <div style={{ flex: 1 }}>
+                                                  <div style={{ fontSize: "9px", fontWeight: "600", color: "#1d1d1f" }}>
+                                                    {method.name}
+                                                  </div>
+                                                  <div style={{ fontSize: "7px", color: "#6e6e73" }}>
+                                                    {method.subtitle}
+                                                  </div>
+                                                </div>
+                                                {selectedPayment === method.id && (
+                                                  <div style={{ fontSize: "12px", color: method.color }}>✓</div>
+                                                )}
+                                              </div>
+                                            ))}
+                                          </div>
+                                          
+                                          {/* Payment Summary */}
+                                          <div style={{
+                                            padding: "6px 8px",
+                                            background: "#f9f9fb",
+                                            borderRadius: "4px",
+                                            marginBottom: "6px",
+                                            fontSize: "7px",
+                                            color: "#6e6e73"
+                                          }}>
+                                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
+                                              <span>Original booking:</span>
+                                              <span>$4,250</span>
+                                            </div>
+                                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
+                                              <span>Amendment charge:</span>
+                                              <span style={{ color: (endDate - startDate + 1) > 6 ? "#ff9500" : "#34c759" }}>
+                                                {(endDate - startDate + 1) > 6 ? `+$${(endDate - startDate + 1 - 6) * 450}` : `-$${(6 - (endDate - startDate + 1)) * 450}`}
+                                              </span>
+                                            </div>
+                                            <div style={{ 
+                                              display: "flex", 
+                                              justifyContent: "space-between", 
+                                              paddingTop: "4px",
+                                              borderTop: "1px solid #e0e0e0",
+                                              fontWeight: "600",
+                                              color: "#1d1d1f",
+                                              fontSize: "8px"
+                                            }}>
+                                              <span>Total due now:</span>
+                                              <span>${Math.abs((endDate - startDate + 1 - 6) * 450)}</span>
+                                            </div>
+                                          </div>
+                                          
+                                          {/* Action Buttons */}
+                                          <div style={{ display: "flex", gap: "4px" }}>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setShowPayment(false);
+                                                setSelectedPayment(null);
+                                              }}
+                                              style={{
+                                                flex: 1,
+                                                fontSize: "8px",
+                                                padding: "4px",
+                                                background: "#ffffff",
+                                                color: "#6e6e73",
+                                                border: "1px solid #e0e0e0",
+                                                borderRadius: "3px",
+                                                cursor: "pointer",
+                                                fontWeight: "600"
+                                              }}
+                                              onMouseOver={(e) => e.currentTarget.style.background = "#f5f5f7"}
+                                              onMouseOut={(e) => e.currentTarget.style.background = "#ffffff"}
+                                            >
+                                              Cancel
+                                            </button>
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setShowPayment(false);
+                                                setIsConfirming(true);
+                                                setTimeout(() => {
+                                                  setIsConfirming(false);
+                                                  setTimeout(() => {
+                                                    setShowDreamFlow(false);
+                                                    setConfirmingHotelIdx(null);
+                                                    setSelectedPayment(null);
+                                                  }, 2000);
+                                                }, 2500);
+                                              }}
+                                              disabled={!selectedPayment}
+                                              style={{
+                                                flex: 2,
+                                                fontSize: "9px",
+                                                padding: "4px 10px",
+                                                background: selectedPayment ? "#667eea" : "#d1d1d6",
+                                                color: "#ffffff",
+                                                border: "none",
+                                                borderRadius: "4px",
+                                                cursor: selectedPayment ? "pointer" : "not-allowed",
+                                                fontWeight: "600"
+                                              }}
+                                              onMouseOver={(e) => selectedPayment && (e.currentTarget.style.background = "#5566d9")}
+                                              onMouseOut={(e) => selectedPayment && (e.currentTarget.style.background = "#667eea")}
+                                            >
+                                              {selectedPayment === 'apple' ? 'Pay with ' : ''}Confirm & Pay
+                                            </button>
+                                          </div>
                                         </div>
                                       )}
                                     </div>
