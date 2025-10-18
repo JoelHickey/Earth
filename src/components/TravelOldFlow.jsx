@@ -38,6 +38,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
   const [selectedPayment, setSelectedPayment] = useState(null); // Selected payment method
   const [undoCountdown, setUndoCountdown] = useState(null); // Countdown for undo action
   const [lastAmendment, setLastAmendment] = useState(null); // Store last amendment for undo
+  const [processingStep, setProcessingStep] = useState(''); // Show processing steps
   const [detectedChangeType, setDetectedChangeType] = useState('room'); // AI-detected change type
   const [liveInventory, setLiveInventory] = useState({ room1: 2, room2: 5, room3: 3 }); // Live countdown
   const [secondsAgo, setSecondsAgo] = useState(2); // Timestamp counter
@@ -667,14 +668,24 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                       e.stopPropagation();
                                       setShowPayment(false);
                                       setIsConfirming(true);
+                                      
+                                      // Realistic multi-step processing
+                                      setProcessingStep('Authorizing payment...');
                                       setTimeout(() => {
-                                        setIsConfirming(false);
+                                        setProcessingStep('Updating booking...');
                                         setTimeout(() => {
-                                          setShowDreamFlow(false);
-                                          setConfirmingHotelIdx(null);
-                                          setSelectedPayment(null);
-                                        }, 2000);
-                                      }, 2500);
+                                          setProcessingStep('Syncing itinerary...');
+                                          setTimeout(() => {
+                                            setProcessingStep('');
+                                            setIsConfirming(false);
+                                            setTimeout(() => {
+                                              setShowDreamFlow(false);
+                                              setConfirmingHotelIdx(null);
+                                              setSelectedPayment(null);
+                                            }, 3000); // 3s undo window
+                                          }, 800);
+                                        }, 900);
+                                      }, 1000);
                                     }}
                                     disabled={!selectedPayment}
                                     style={{
@@ -697,58 +708,84 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                               </div>
                             )}
                             
-                            {/* Success Message - Inline with Undo */}
+                            {/* Processing or Success Message */}
                             {isConfirming && !showPayment && (
                               <div style={{
                                 padding: "8px 10px",
-                                background: "#d4edda",
-                                border: "1px solid #34c759",
+                                background: processingStep ? "#fff8e1" : "#d4edda",
+                                border: "1px solid " + (processingStep ? "#ff9500" : "#34c759"),
                                 borderRadius: "4px",
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "6px",
                                 animation: "slideDown 0.3s ease-out"
                               }}>
-                                <div style={{ fontSize: "14px" }}>✓</div>
-                                <div style={{ flex: 1 }}>
-                                  <div style={{ fontSize: "10px", fontWeight: "600", color: "#155724" }}>
-                                    Booking Updated Successfully
-                                  </div>
-                                  <div style={{ fontSize: "8px", color: "#155724", marginTop: "2px" }}>
-                                    Changes saved · Client itinerary updated · Undo available
-                                  </div>
-                                </div>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    // Undo the amendment
-                                    setIsConfirming(false);
-                                    setConfirmingHotelIdx(null);
-                                    setSelectedHotel(null);
-                                    setHotelAmended(false);
-                                    setUndoCountdown(null);
-                                    setLastAmendment(null);
-                                  }}
-                                  style={{
-                                    fontSize: "8px",
-                                    padding: "3px 8px",
-                                    background: "#ffffff",
-                                    color: "#ff9500",
-                                    border: "1px solid #ff9500",
-                                    borderRadius: "3px",
-                                    cursor: "pointer",
-                                    fontWeight: "700",
-                                    transition: "all 0.15s"
-                                  }}
-                                  onMouseOver={(e) => {
-                                    e.currentTarget.style.background = "#fff8f0";
-                                  }}
-                                  onMouseOut={(e) => {
-                                    e.currentTarget.style.background = "#ffffff";
-                                  }}
-                                >
-                                  ↶ UNDO
-                                </button>
+                                {processingStep ? (
+                                  <>
+                                    <div style={{
+                                      width: "12px",
+                                      height: "12px",
+                                      border: "2px solid #ff9500",
+                                      borderTopColor: "transparent",
+                                      borderRadius: "50%",
+                                      animation: "spin 0.6s linear infinite"
+                                    }} />
+                                    <div style={{ flex: 1 }}>
+                                      <div style={{ fontSize: "10px", fontWeight: "600", color: "#e65100" }}>
+                                        {processingStep}
+                                      </div>
+                                      <div style={{ fontSize: "7px", color: "#f57c00", marginTop: "2px" }}>
+                                        Secure connection · Encrypted
+                                      </div>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div style={{ fontSize: "14px" }}>✓</div>
+                                    <div style={{ flex: 1 }}>
+                                      <div style={{ fontSize: "10px", fontWeight: "600", color: "#155724" }}>
+                                        Booking Updated Successfully
+                                      </div>
+                                      <div style={{ fontSize: "8px", color: "#155724", marginTop: "2px" }}>
+                                        Changes saved · Client itinerary updated · Undo available
+                                      </div>
+                                    </div>
+                                  </>
+                                )}
+                                {!processingStep && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      // Undo the amendment
+                                      setIsConfirming(false);
+                                      setConfirmingHotelIdx(null);
+                                      setSelectedHotel(null);
+                                      setHotelAmended(false);
+                                      setUndoCountdown(null);
+                                      setLastAmendment(null);
+                                      setProcessingStep('');
+                                    }}
+                                    style={{
+                                      fontSize: "8px",
+                                      padding: "3px 8px",
+                                      background: "#ffffff",
+                                      color: "#ff9500",
+                                      border: "1px solid #ff9500",
+                                      borderRadius: "3px",
+                                      cursor: "pointer",
+                                      fontWeight: "700",
+                                      transition: "all 0.15s"
+                                    }}
+                                    onMouseOver={(e) => {
+                                      e.currentTarget.style.background = "#fff8f0";
+                                    }}
+                                    onMouseOut={(e) => {
+                                      e.currentTarget.style.background = "#ffffff";
+                                    }}
+                                  >
+                                    ↶ UNDO
+                                  </button>
+                                )}
                               </div>
                             )}
                             
