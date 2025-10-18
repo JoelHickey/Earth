@@ -72,11 +72,11 @@ const HTMLCertificationQuiz = ({ onClose }) => {
     {
       id: 'foundations',
       title: 'Foundations & History',
-      subtitle: 'HTML origins, basic structure, syntax + practical coding',
+      subtitle: 'Complete HTML fundamentals from Wikipedia • History to modern',
       icon: '📚',
       passRate: 70,
       color: '#34c759',
-      questionCount: 20
+      questionCount: 40
     },
     {
       id: 'intermediate',
@@ -322,6 +322,191 @@ const HTMLCertificationQuiz = ({ onClose }) => {
         ],
         correct: 1,
         explanation: '<h1> through <h6> create headings, with <h1> being the largest and most important.'
+      },
+      {
+        id: 'f21',
+        type: 'multiple',
+        question: 'What does SGML stand for (HTML\'s ancestor)?',
+        options: [
+          'Simple General Markup Language',
+          'Standard Generalized Markup Language',
+          'Structured Graphics Markup Language',
+          'Systematic General Meta Language'
+        ],
+        correct: 1,
+        explanation: 'HTML was originally based on SGML (Standard Generalized Markup Language), though HTML5 is no longer SGML-based.'
+      },
+      {
+        id: 'f22',
+        type: 'boolean',
+        question: 'True or False: XHTML required all tags to be lowercase.',
+        correct: true,
+        explanation: 'XHTML was stricter than HTML, requiring lowercase tags, proper nesting, and closing all tags including self-closing ones.'
+      },
+      {
+        id: 'f23',
+        type: 'practical',
+        question: 'PRACTICAL: How do you make text italic semantically?',
+        options: ['<i>text</i>', '<em>text</em>', '<italic>text</italic>', '<it>text</it>'],
+        correct: 1,
+        explanation: '<em> (emphasis) is semantic. <i> is presentational. Use <em> for importance, <i> for voice/mood changes.'
+      },
+      {
+        id: 'f24',
+        type: 'multiple',
+        question: 'Which organization maintains the HTML standard?',
+        options: ['W3C only', 'WHATWG only', 'Both W3C and WHATWG', 'Microsoft'],
+        correct: 2,
+        explanation: 'WHATWG (Web Hypertext Application Technology Working Group) maintains the living standard, with W3C collaboration.'
+      },
+      {
+        id: 'f25',
+        type: 'practical',
+        question: 'PRACTICAL: Which creates a table row?',
+        options: ['<row>', '<tr>', '<table-row>', '<trow>'],
+        correct: 1,
+        explanation: '<tr> (table row) contains <td> (table data) or <th> (table header) cells.'
+      },
+      {
+        id: 'f26',
+        type: 'boolean',
+        question: 'True or False: HTML5 introduced <canvas> for graphics.',
+        correct: true,
+        explanation: 'HTML5 introduced <canvas> for dynamic, scriptable rendering of 2D shapes and bitmap images.'
+      },
+      {
+        id: 'f27',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create a horizontal line?',
+        options: ['<line>', '<hr>', '<horizontal>', '<br>'],
+        correct: 1,
+        explanation: '<hr> (horizontal rule) creates a thematic break/divider line between content sections.'
+      },
+      {
+        id: 'f28',
+        type: 'multiple',
+        question: 'What year was HTML5 officially recommended?',
+        options: ['2008', '2012', '2014', '2016'],
+        correct: 2,
+        explanation: 'HTML5 was officially recommended by W3C in October 2014, though development started in 2004.'
+      },
+      {
+        id: 'f29',
+        type: 'practical',
+        question: 'PRACTICAL: Which attribute sets a unique ID?',
+        options: ['name="myid"', 'id="myid"', 'key="myid"', 'identifier="myid"'],
+        correct: 1,
+        explanation: 'The id attribute provides a unique identifier for an element, used for CSS, JavaScript, and linking.'
+      },
+      {
+        id: 'f30',
+        type: 'boolean',
+        question: 'True or False: HTML elements can have multiple classes.',
+        correct: true,
+        explanation: 'class attribute accepts space-separated values: class="btn primary large"'
+      },
+      {
+        id: 'f31',
+        type: 'multiple',
+        question: 'What is the mime type for HTML documents?',
+        options: ['text/plain', 'text/html', 'application/html', 'document/html'],
+        correct: 1,
+        explanation: 'HTML documents use text/html MIME type. XHTML uses application/xhtml+xml.'
+      },
+      {
+        id: 'f32',
+        type: 'practical',
+        question: 'PRACTICAL: Which creates a dropdown/select menu?',
+        options: [
+          '<dropdown><option>A</option></dropdown>',
+          '<select><option>A</option></select>',
+          '<menu><option>A</option></menu>',
+          '<list type="dropdown"><option>A</option></list>'
+        ],
+        correct: 1,
+        explanation: '<select> with <option> children creates a dropdown menu. Used in forms for single or multiple choice.'
+      },
+      {
+        id: 'f33',
+        type: 'multiple',
+        question: 'Which HTML version allowed proprietary elements?',
+        options: ['HTML 1.0', 'HTML 2.0', 'HTML 3.2', 'HTML5'],
+        correct: 2,
+        explanation: 'HTML 3.2 (1997) was controversial for standardizing proprietary browser-specific elements like <marquee>.'
+      },
+      {
+        id: 'f34',
+        type: 'boolean',
+        question: 'True or False: <script> tags must be in <head>.',
+        correct: false,
+        explanation: '<script> can be in <head> or <body>. Modern practice often puts them at end of <body> for performance.'
+      },
+      {
+        id: 'f35',
+        type: 'practical',
+        question: 'PRACTICAL: How do you create a text input field?',
+        options: [
+          '<input>',
+          '<input type="text">',
+          '<textbox>',
+          '<field type="text">'
+        ],
+        correct: 1,
+        explanation: '<input type="text"> creates a single-line text field. type="text" is default but explicit is better.'
+      },
+      {
+        id: 'f36',
+        type: 'multiple',
+        question: 'What does "void element" mean in HTML?',
+        options: [
+          'Empty element with no content',
+          'Element that cannot have closing tag (like <br>, <img>)',
+          'Deprecated element',
+          'Invisible element'
+        ],
+        correct: 1,
+        explanation: 'Void elements (self-closing) cannot have content: <br>, <img>, <input>, <meta>, <link>, <hr>.'
+      },
+      {
+        id: 'f37',
+        type: 'practical',
+        question: 'PRACTICAL: Which creates a clickable button?',
+        options: [
+          '<button>Click</button>',
+          '<btn>Click</btn>',
+          '<input type="button" value="Click">',
+          'Both A and C'
+        ],
+        correct: 3,
+        explanation: 'Both <button> and <input type="button"> create buttons. <button> is more flexible with HTML content.'
+      },
+      {
+        id: 'f38',
+        type: 'boolean',
+        question: 'True or False: HTML attribute values must be quoted.',
+        correct: false,
+        explanation: 'Quotes are optional for simple values (no spaces), but strongly recommended for consistency and safety.'
+      },
+      {
+        id: 'f39',
+        type: 'multiple',
+        question: 'Which character encoding should modern HTML use?',
+        options: ['ASCII', 'ISO-8859-1', 'UTF-8', 'UTF-16'],
+        correct: 2,
+        explanation: 'UTF-8 is the recommended character encoding. Supports all languages and is backward-compatible with ASCII.'
+      },
+      {
+        id: 'f40',
+        type: 'practical',
+        question: 'PRACTICAL: How do you specify character encoding in HTML5?',
+        options: [
+          '<meta encoding="utf-8">',
+          '<meta charset="utf-8">',
+          '<charset utf-8>',
+          '<encoding>utf-8</encoding>'
+        ],
+        correct: 1,
+        explanation: '<meta charset="utf-8"> in <head> specifies character encoding. Should be in first 1024 bytes of document.'
       }
     ],
     intermediate: [
