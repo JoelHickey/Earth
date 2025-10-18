@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Toolbar from './components/Toolbar';
 import Slider from './components/Slider';
 import StatusBar from './components/StatusBar';
+import HTMLQuiz from './components/HTMLQuiz';
 import Divider from './components/Divider';
 import CheckboxGroup from './components/CheckboxGroup';
 import Timeline from './components/Timeline';
@@ -170,6 +171,7 @@ function App() {
   const [isQuickAmendSearch, setIsQuickAmendSearch] = useState(false);
   const [showAllHotels, setShowAllHotels] = useState(false);
   const [isRoomSelectionLoading, setIsRoomSelectionLoading] = useState(false);
+  const [showHTMLQuiz, setShowHTMLQuiz] = useState(false);
 
   // Travel search functionality
   const { isLoading: isSearchLoading, error: searchError, results: apiResults, searchHotels, clearResults } = useTravelSearch();
@@ -4044,6 +4046,52 @@ function App() {
       </span>
     </div>
 
+    {/* Eighth Desktop Icon - HTML Quiz */}
+    <div
+      style={{
+        position: "absolute",
+        top: "580px",
+        left: "50px",
+        width: "64px",
+        height: "64px",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "transparent"
+      }}
+      onClick={() => setShowHTMLQuiz(true)}
+      onDoubleClick={() => setShowHTMLQuiz(true)}
+    >
+      <div style={{
+        width: "32px",
+        height: "32px",
+        background: "transparent",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "4px"
+      }}>
+        <span style={{
+          fontSize: "32px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textShadow: "1px 1px 0px #000000"
+        }}>📝</span>
+      </div>
+      <span style={{
+        fontSize: "12px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        color: "#ffffff",
+        textAlign: "center",
+        textShadow: "1px 1px 0px #000000",
+        whiteSpace: "nowrap"
+      }}>
+        HTML Quiz
+      </span>
+    </div>
+
 
       {/* Application Window */}
       {isWindowOpen && !isWindowMinimized && (
@@ -5690,6 +5738,11 @@ function App() {
             </button>
           </div>
         </div>
+      )}
+
+      {/* HTML Quiz */}
+      {showHTMLQuiz && (
+        <HTMLQuiz onClose={() => setShowHTMLQuiz(false)} />
       )}
 
       <Analytics />
