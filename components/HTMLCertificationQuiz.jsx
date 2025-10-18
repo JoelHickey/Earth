@@ -943,7 +943,49 @@ const HTMLCertificationQuiz = ({ onClose }) => {
   };
 
   const currentLevel = levels.find(l => l.id === selectedLevel);
-  const questions = questionsByLevel[selectedLevel] || [];
+  
+  // Shuffle questions for each attempt
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+  
+  // Get and shuffle questions once per level selection
+  const [shuffledQuestions, setShuffledQuestions] = useState([]);
+  
+  useEffect(() => {
+    if (selectedLevel && questionsByLevel[selectedLevel]) {
+      const questionsToShuffle = questionsByLevel[selectedLevel];
+      
+      // Shuffle questions AND shuffle answer options for multiple choice
+      const shuffledQs = shuffleArray(questionsToShuffle).map(q => {
+        if (q.type === 'multiple' || q.type === 'practical') {
+          // Create array of option indices
+          const optionIndices = q.options.map((_, idx) => idx);
+          const shuffledIndices = shuffleArray(optionIndices);
+          
+          // Rearrange options and update correct answer index
+          const shuffledOptions = shuffledIndices.map(idx => q.options[idx]);
+          const newCorrectIndex = shuffledIndices.indexOf(q.correct);
+          
+          return {
+            ...q,
+            options: shuffledOptions,
+            correct: newCorrectIndex
+          };
+        }
+        return q;
+      });
+      
+      setShuffledQuestions(shuffledQs);
+    }
+  }, [selectedLevel]);
+  
+  const questions = shuffledQuestions;
 
   const handleAnswer = (questionId, answer) => {
     setAnswers({ ...answers, [questionId]: answer });
@@ -976,6 +1018,29 @@ const HTMLCertificationQuiz = ({ onClose }) => {
     setAnswers({});
     setSubmitted(false);
     setScore(0);
+    
+    // Reshuffle questions for new attempt
+    if (selectedLevel && questionsByLevel[selectedLevel]) {
+      const questionsToShuffle = questionsByLevel[selectedLevel];
+      
+      const shuffledQs = shuffleArray(questionsToShuffle).map(q => {
+        if (q.type === 'multiple' || q.type === 'practical') {
+          const optionIndices = q.options.map((_, idx) => idx);
+          const shuffledIndices = shuffleArray(optionIndices);
+          const shuffledOptions = shuffledIndices.map(idx => q.options[idx]);
+          const newCorrectIndex = shuffledIndices.indexOf(q.correct);
+          
+          return {
+            ...q,
+            options: shuffledOptions,
+            correct: newCorrectIndex
+          };
+        }
+        return q;
+      });
+      
+      setShuffledQuestions(shuffledQs);
+    }
   };
 
   const backToLevels = () => {
@@ -1201,7 +1266,7 @@ const HTMLCertificationQuiz = ({ onClose }) => {
               {currentLevel.icon} {currentLevel.title}
             </div>
             <div style={{ fontSize: '9px', marginTop: '1px', opacity: 0.9 }}>
-              {answeredCount}/{questions.length} answered • {currentLevel.passRate}% to pass
+              {answeredCount}/{questions.length} answered • {currentLevel.passRate}% to pass • 🔀 Randomized
             </div>
           </div>
           <button
