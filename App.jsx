@@ -3725,7 +3725,7 @@ function App() {
 
   return (
     <div style={{ 
-      background: "url('/wp2625478-windows-95-desktop-background.jpg')",
+      background: "url('./wp2625478-windows-95-desktop-background.jpg')",
       backgroundSize: "cover",
       backgroundPosition: "center",
       minHeight: "100vh",
