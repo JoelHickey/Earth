@@ -259,7 +259,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
         {/* Executive Summary (Always Visible) */}
         <div style={{ marginBottom: "28px" }}>
           <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "20px" }}>
-            Consultants spent <strong>8-12 minutes</strong> across <strong>5-7 screens</strong> per amendment, causing low productivity, errors and poor usability.
+            Consultants spent <strong>8-12 minutes</strong> navigating <strong>5-7 screens</strong> per amendment — a cumbersome process causing low productivity, errors, and frustration.
           </p>
           
           <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "20px" }}>
