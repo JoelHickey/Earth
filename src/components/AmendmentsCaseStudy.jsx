@@ -279,7 +279,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
           }}>
             <p style={{ fontSize: "13px", lineHeight: "1.6", color: "#1d1d1f", margin: "0 0 10px 0", fontStyle: "italic" }}>
-              "I used to spend my entire shift just processing amendments. Now I can actually focus on building relationships with customers. This change gave me back my love for the job."
+              "I used to spend my entire shift just processing amendments. Now I can actually focus on building relationships with customers."
             </p>
             <div style={{ fontSize: "11px", color: "#6e6e73" }}>
               — Sarah Mitchell, Senior Travel Consultant, Melbourne
