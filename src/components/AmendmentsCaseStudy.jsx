@@ -256,63 +256,67 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           </div>
         </div>
 
-        {/* Executive Summary (Condensed Version) */}
-        {!showFullCaseStudy && (
-          <div style={{ marginBottom: "28px" }}>
-            <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "20px" }}>
-              Consultants spent <strong>8-12 minutes</strong> navigating <strong>5-7 screens</strong> to complete simple booking amendments, leading to low productivity, high error rates, and customer frustration.
-            </p>
-            
-            <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "20px" }}>
-              I led design and delivery of a streamlined <strong>3-page workflow</strong> that reduced consultant steps by <strong>67%</strong> and improved handling time by <strong>75%</strong>.
-            </p>
-            
-            <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "24px" }}>
-              Through <strong>60+ global workshops</strong> and partnership with an offshore development team in Sri Lanka, we achieved <strong>94% adoption</strong> and <strong>97% task completion</strong> rate, validated with FullStory analytics.
-            </p>
+        {/* Executive Summary (Always Visible) */}
+        <div style={{ marginBottom: "28px" }}>
+          <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "20px" }}>
+            Consultants spent <strong>8-12 minutes</strong> navigating <strong>5-7 screens</strong> to complete simple booking amendments, leading to low productivity, high error rates, and customer frustration.
+          </p>
+          
+          <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "20px" }}>
+            I led design and delivery of a streamlined <strong>3-page workflow</strong> that reduced consultant steps by <strong>67%</strong> and improved handling time by <strong>75%</strong>.
+          </p>
+          
+          <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "24px" }}>
+            Through <strong>60+ global workshops</strong> and partnership with an offshore development team in Sri Lanka, we achieved <strong>94% adoption</strong> and <strong>97% task completion</strong> rate, validated with FullStory analytics.
+          </p>
 
-            <div style={{
-              padding: "16px 20px",
-              background: "#f8f9fa",
-              borderLeft: "4px solid #0071e3",
-              borderRadius: "4px",
-              marginBottom: "28px"
-            }}>
-              <p style={{ fontSize: "12px", lineHeight: "1.6", color: "#1d1d1f", margin: "0", fontStyle: "italic" }}>
-                <strong>Key Insight:</strong> While the ideal solution was an AI-powered "Dream Flow" interface, technical constraints (legacy systems, data silos, 2019-era AI limitations) meant delivering a pragmatic 3-page workflow that still achieved 75% time savings.
-              </p>
-            </div>
+          <div style={{
+            padding: "16px 20px",
+            background: "#f8f9fa",
+            borderLeft: "4px solid #0071e3",
+            borderRadius: "4px",
+            marginBottom: "28px"
+          }}>
+            <p style={{ fontSize: "12px", lineHeight: "1.6", color: "#1d1d1f", margin: "0", fontStyle: "italic" }}>
+              <strong>Key Insight:</strong> While the ideal solution was an AI-powered "Dream Flow" interface, technical constraints (legacy systems, data silos, 2019-era AI limitations) meant delivering a pragmatic 3-page workflow that still achieved 75% time savings.
+            </p>
+          </div>
 
-            <div style={{ textAlign: "center" }}>
-              <button
-                onClick={() => setShowFullCaseStudy(true)}
-                style={{
-                  padding: "10px 24px",
-                  fontSize: "13px",
-                  fontWeight: "600",
-                  color: "#0071e3",
-                  background: "#ffffff",
-                  border: "2px solid #0071e3",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  transition: "all 0.15s",
-                  marginBottom: "8px"
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = "#f5f5f7";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = "#ffffff";
-                }}
-              >
-                📖 Read Full Case Study
-              </button>
-              <div style={{ fontSize: "10px", color: "#86868b" }}>
-                Deep dive into research, delivery, challenges, and learnings
-              </div>
+          <div style={{ 
+            textAlign: "center",
+            padding: "20px",
+            background: "#fafafa",
+            borderRadius: "8px",
+            border: "1px solid #e0e0e0"
+          }}>
+            <button
+              onClick={() => setShowFullCaseStudy(!showFullCaseStudy)}
+              style={{
+                padding: "10px 24px",
+                fontSize: "13px",
+                fontWeight: "600",
+                color: "#0071e3",
+                background: "#ffffff",
+                border: "2px solid #0071e3",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "all 0.15s",
+                marginBottom: "8px"
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = "#f5f5f7";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "#ffffff";
+              }}
+            >
+              {showFullCaseStudy ? "↑ Collapse" : "↓ Read Full Case Study"}
+            </button>
+            <div style={{ fontSize: "10px", color: "#86868b" }}>
+              {showFullCaseStudy ? "Show summary only" : "Deep dive into research, delivery, challenges, and learnings"}
             </div>
           </div>
-        )}
+        </div>
 
         {/* Full Case Study (Expandable) */}
         {showFullCaseStudy && (
