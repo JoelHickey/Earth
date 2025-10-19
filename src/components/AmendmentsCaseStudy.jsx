@@ -179,27 +179,30 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
 
         {/* CTA - Try Demo */}
         <div style={{
-          marginBottom: "28px",
+          marginTop: "32px",
+          marginBottom: "32px",
           textAlign: "center"
         }}>
           <button
             onClick={onViewOldFlow}
             style={{
-              padding: "8px 20px",
+              padding: "10px 24px",
               fontSize: "13px",
               fontWeight: "600",
-              color: "#ffffff",
-              background: "#0071e3",
-              border: "none",
-              borderRadius: "6px",
+              color: "#0071e3",
+              background: "#ffffff",
+              border: "2px solid #0071e3",
+              borderRadius: "8px",
               cursor: "pointer",
               transition: "all 0.15s"
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.background = "#0077ed";
+              e.currentTarget.style.background = "#0071e3";
+              e.currentTarget.style.color = "#ffffff";
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.background = "#0071e3";
+              e.currentTarget.style.background = "#ffffff";
+              e.currentTarget.style.color = "#0071e3";
             }}
           >
             ✨ View Interactive Demo →
