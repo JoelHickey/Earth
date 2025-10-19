@@ -396,6 +396,57 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           </div>
         </div>
 
+        {/* The Dream vs Reality */}
+        <div style={{ marginBottom: "28px" }}>
+          <h2 style={{
+            fontSize: "14px",
+            fontWeight: "600",
+            marginBottom: "16px",
+            color: "#1d1d1f"
+          }}>
+            The Dream vs Reality
+          </h2>
+          <div style={{
+            fontSize: "11px",
+            lineHeight: "1.6",
+            color: "#1d1d1f",
+            marginBottom: "24px"
+          }}>
+            <p style={{ marginBottom: "16px" }}>
+              The ideal solution would have been a fully AI-powered "Dream Flow" interface where consultants could simply describe what the customer wanted in natural language, and the system would:
+            </p>
+            
+            <ul style={{ paddingLeft: "24px", marginBottom: "16px" }}>
+              <li style={{ marginBottom: "8px" }}>Understand the intent and automatically suggest the best options</li>
+              <li style={{ marginBottom: "8px" }}>Check dependencies across all booking components (flights, hotels, transfers, activities)</li>
+              <li style={{ marginBottom: "8px" }}>Show live pricing and availability without manual searching</li>
+              <li style={{ marginBottom: "8px" }}>Auto-validate business rules and policy compliance</li>
+              <li style={{ marginBottom: "0" }}>Complete the amendment in a single conversational flow</li>
+            </ul>
+
+            <div style={{
+              marginTop: "16px",
+              padding: "16px",
+              background: "#fff3cd",
+              borderRadius: "10px",
+              border: "1px solid #ffc107"
+            }}>
+              <strong style={{ color: "#856404" }}>Why we couldn't build this (2019-2020):</strong>
+              <ul style={{ paddingLeft: "24px", marginTop: "8px", marginBottom: "0" }}>
+                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Technical constraints:</strong> Legacy systems couldn't support real-time inventory aggregation across multiple GDS providers</li>
+                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Data silos:</strong> Hotel, car, and activity inventory lived in separate systems with no unified API</li>
+                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>AI limitations:</strong> NLP and intent recognition weren't mature enough for production use in complex booking scenarios</li>
+                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Business risk:</strong> Commission structures and SLA agreements required human validation</li>
+                <li style={{ marginBottom: "0", color: "#856404" }}><strong>Timeline pressure:</strong> Consultants needed immediate relief, not a multi-year AI project</li>
+              </ul>
+            </div>
+
+            <p style={{ marginTop: "16px", marginBottom: "0", fontStyle: "italic", color: "#6e6e73" }}>
+              So we delivered what was achievable: a simplified three-page workflow that still delivered 75% time savings. The "Dream Flow" concept later evolved into the AI-powered amendment tool you can try in the interactive demo (built in 2024 as a portfolio piece to show what's now possible).
+            </p>
+          </div>
+        </div>
+
         {/* Workflow Efficiency Measurements */}
         <div style={{ marginBottom: "28px" }}>
           <h2 style={{
