@@ -275,7 +275,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             background: "#f8f9fa",
             borderLeft: "4px solid #0071e3",
             borderRadius: "4px",
-            marginBottom: "28px"
+            marginBottom: "32px"
           }}>
             <p style={{ fontSize: "12px", lineHeight: "1.6", color: "#1d1d1f", margin: "0", fontStyle: "italic" }}>
               <strong>Key Insight:</strong> While the ideal solution was an AI-powered "Dream Flow" interface, technical constraints (legacy systems, data silos, 2019-era AI limitations) meant delivering a pragmatic 3-page workflow that still achieved 75% time savings.
@@ -284,36 +284,33 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
 
           <div style={{ 
             textAlign: "center",
-            padding: "20px",
-            background: "#fafafa",
-            borderRadius: "8px",
-            border: "1px solid #e0e0e0"
+            paddingTop: "24px",
+            borderTop: "1px solid #e0e0e0"
           }}>
             <button
               onClick={() => setShowFullCaseStudy(!showFullCaseStudy)}
               style={{
-                padding: "10px 24px",
-                fontSize: "13px",
+                padding: "0",
+                fontSize: "12px",
                 fontWeight: "600",
                 color: "#0071e3",
-                background: "#ffffff",
-                border: "2px solid #0071e3",
-                borderRadius: "8px",
+                background: "transparent",
+                border: "none",
                 cursor: "pointer",
                 transition: "all 0.15s",
-                marginBottom: "8px"
+                marginBottom: "6px"
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.background = "#f5f5f7";
+                e.currentTarget.style.color = "#0077ed";
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.background = "#ffffff";
+                e.currentTarget.style.color = "#0071e3";
               }}
             >
-              {showFullCaseStudy ? "↑ Collapse" : "↓ Read Full Case Study"}
+              {showFullCaseStudy ? "↑ Show Less" : "↓ Read Full Case Study"}
             </button>
             <div style={{ fontSize: "10px", color: "#86868b" }}>
-              {showFullCaseStudy ? "Show summary only" : "Deep dive into research, delivery, challenges, and learnings"}
+              {showFullCaseStudy ? "Summary only" : "Research, delivery, challenges & learnings"}
             </div>
           </div>
         </div>
