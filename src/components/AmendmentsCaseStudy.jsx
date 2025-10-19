@@ -294,7 +294,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             marginBottom: "32px"
           }}>
             <p style={{ fontSize: "12px", lineHeight: "1.6", color: "#1d1d1f", margin: "0", fontStyle: "italic" }}>
-              <strong>Key Insight:</strong> While the ideal solution was an AI-powered "Dream Flow" interface, technical constraints (legacy systems, data silos, 2019-era AI limitations) meant delivering a pragmatic 3-page workflow that still achieved 75% time savings.
+              <strong>Key Insight:</strong> The ideal solution was an AI-powered conversational interface, but legacy system constraints and 2019-era technology meant we delivered a pragmatic 3-page workflow instead — still achieving 75% time savings.
             </p>
           </div>
 
