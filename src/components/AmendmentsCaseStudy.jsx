@@ -267,7 +267,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           </p>
           
           <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "24px" }}>
-            <strong>60+ global workshops</strong>, offshore team partnership (Sri Lanka), <strong>94% adoption</strong>, <strong>97% completion</strong> rate.
+            Delivered through <strong>60+ global workshops</strong> and partnership with offshore development team, achieving <strong>94% adoption</strong> within 30 days.
           </p>
 
           <div style={{
