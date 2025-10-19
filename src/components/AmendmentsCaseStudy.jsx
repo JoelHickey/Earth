@@ -171,17 +171,23 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             fontWeight: "500",
             color: "#1d1d1f",
             lineHeight: "1.4",
-            margin: "0 0 12px 0"
+            margin: "0"
           }}>
             Increase consultant productivity by reducing the steps required to manage bookings
           </p>
-          
+        </div>
+
+        {/* CTA - Try Demo */}
+        <div style={{
+          marginBottom: "28px",
+          textAlign: "center"
+        }}>
           <button
             onClick={onViewOldFlow}
             style={{
-              padding: "6px 14px",
+              padding: "8px 20px",
               fontSize: "13px",
-              fontWeight: "500",
+              fontWeight: "600",
               color: "#ffffff",
               background: "#0071e3",
               border: "none",
@@ -196,7 +202,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
               e.currentTarget.style.background = "#0071e3";
             }}
           >
-            View Interactive Demo →
+            ✨ View Interactive Demo →
           </button>
         </div>
 
