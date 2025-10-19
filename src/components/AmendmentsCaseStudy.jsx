@@ -148,56 +148,35 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* OKR */}
-        <div style={{
-          marginBottom: "28px",
-          paddingBottom: "24px",
-          borderBottom: "1px solid #e0e0e0"
-        }}>
-          <div style={{
-            fontSize: "13px",
-            fontWeight: "600",
-            color: "#6e6e73",
-            textTransform: "uppercase",
-            letterSpacing: "0.8px",
-            marginBottom: "8px"
-          }}>
-            Objective & Key Result
-          </div>
-          <p style={{
-            fontSize: "14px",
-            fontWeight: "500",
-            color: "#1d1d1f",
-            lineHeight: "1.4",
-            margin: "0 0 16px 0"
-          }}>
-            Increase consultant productivity by reducing the steps required to manage bookings
-          </p>
           
-          <button
-            onClick={onViewOldFlow}
-            style={{
-              padding: "6px 14px",
-              fontSize: "13px",
-              fontWeight: "500",
-              color: "#ffffff",
-              background: "#0071e3",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              transition: "all 0.15s"
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = "#0077ed";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = "#0071e3";
-            }}
-          >
-            View Interactive Demo →
-          </button>
+          {/* CTA - Try Demo */}
+          <div style={{
+            marginTop: "20px",
+            textAlign: "center"
+          }}>
+            <button
+              onClick={onViewOldFlow}
+              style={{
+                padding: "8px 20px",
+                fontSize: "13px",
+                fontWeight: "600",
+                color: "#ffffff",
+                background: "#0071e3",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                transition: "all 0.15s"
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = "#0077ed";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "#0071e3";
+              }}
+            >
+              View Interactive Demo →
+            </button>
+          </div>
         </div>
 
         {/* The Problem */}
