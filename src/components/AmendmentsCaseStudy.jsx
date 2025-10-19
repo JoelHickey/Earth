@@ -152,7 +152,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
 
         {/* OKR */}
         <div style={{
-          marginBottom: "22px",
+          marginBottom: "28px",
           paddingBottom: "24px",
           borderBottom: "1px solid #e0e0e0"
         }}>
@@ -171,41 +171,32 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             fontWeight: "500",
             color: "#1d1d1f",
             lineHeight: "1.4",
-            margin: "0"
+            margin: "0 0 16px 0"
           }}>
             Increase consultant productivity by reducing the steps required to manage bookings
           </p>
-        </div>
-
-        {/* CTA - Try Demo */}
-        <div style={{
-          marginTop: "32px",
-          marginBottom: "32px",
-          textAlign: "center"
-        }}>
+          
           <button
             onClick={onViewOldFlow}
             style={{
-              padding: "10px 24px",
+              padding: "6px 14px",
               fontSize: "13px",
-              fontWeight: "600",
-              color: "#0071e3",
-              background: "#ffffff",
-              border: "2px solid #0071e3",
-              borderRadius: "8px",
+              fontWeight: "500",
+              color: "#ffffff",
+              background: "#0071e3",
+              border: "none",
+              borderRadius: "6px",
               cursor: "pointer",
               transition: "all 0.15s"
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.background = "#0071e3";
-              e.currentTarget.style.color = "#ffffff";
+              e.currentTarget.style.background = "#0077ed";
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.background = "#ffffff";
-              e.currentTarget.style.color = "#0071e3";
+              e.currentTarget.style.background = "#0071e3";
             }}
           >
-            ✨ View Interactive Demo →
+            View Interactive Demo →
           </button>
         </div>
 
