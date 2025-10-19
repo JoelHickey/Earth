@@ -217,7 +217,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             marginBottom: "24px"
           }}>
             <p style={{ marginBottom: "16px" }}>
-              When customers wanted to modify their travel bookings (hotels, rental cars, activities, transfers), they called Flight Centre consultants. The existing booking system required consultants to navigate through multiple screens and manual steps to complete even simple amendments. This created:
+              When customers wanted to modify their travel bookings (hotels, rental cars, activities, transfers), they contacted Flight Centre consultants. The existing booking system required consultants to navigate through multiple screens and manual steps to complete even simple amendments. This created:
             </p>
             <ul style={{ paddingLeft: "24px", marginBottom: "16px" }}>
               <li style={{ marginBottom: "8px" }}><strong>Low consultant productivity & stress</strong> - 8-12 minutes per amendment call</li>
