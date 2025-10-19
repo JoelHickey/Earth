@@ -267,7 +267,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           </p>
           
           <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "24px" }}>
-            Delivered in partnership with offshore development team, achieving <strong>94% adoption</strong> within 30 days.
+            Delivered globally in partnership with offshore development team, with <strong>97% task success</strong> rate and <strong>89% CSAT</strong> score.
           </p>
 
           <div style={{
