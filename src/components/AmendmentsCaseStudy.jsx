@@ -259,51 +259,27 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
         {/* Executive Summary (Condensed Version) */}
         {!showFullCaseStudy && (
           <div style={{ marginBottom: "28px" }}>
-            <div style={{
-              padding: "20px",
-              background: "#f8f9fa",
-              borderRadius: "10px",
-              border: "1px solid #e0e0e0",
-              marginBottom: "20px"
-            }}>
-              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "12px" }}>
-                The Challenge
-              </h3>
-              <p style={{ fontSize: "11px", lineHeight: "1.6", color: "#1d1d1f", marginBottom: "0" }}>
-                Consultants spent 8-12 minutes navigating 5-7 screens to complete simple booking amendments, leading to low productivity, high error rates, and customer frustration.
-              </p>
-            </div>
+            <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "20px" }}>
+              Consultants spent <strong>8-12 minutes</strong> navigating <strong>5-7 screens</strong> to complete simple booking amendments, leading to low productivity, high error rates, and customer frustration.
+            </p>
+            
+            <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "20px" }}>
+              I led design and delivery of a streamlined <strong>3-page workflow</strong> that reduced consultant steps by <strong>67%</strong> and improved handling time by <strong>75%</strong>.
+            </p>
+            
+            <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "24px" }}>
+              Through <strong>60+ global workshops</strong> and partnership with an offshore development team in Sri Lanka, we achieved <strong>94% adoption</strong> and <strong>97% task completion</strong> rate, validated with FullStory analytics.
+            </p>
 
             <div style={{
-              padding: "20px",
+              padding: "16px 20px",
               background: "#f8f9fa",
-              borderRadius: "10px",
-              border: "1px solid #e0e0e0",
-              marginBottom: "20px"
+              borderLeft: "4px solid #0071e3",
+              borderRadius: "4px",
+              marginBottom: "28px"
             }}>
-              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "12px" }}>
-                The Solution
-              </h3>
-              <p style={{ fontSize: "11px", lineHeight: "1.6", color: "#1d1d1f", marginBottom: "12px" }}>
-                Led design and delivery of a streamlined 3-page workflow that reduced consultant steps by 67% and improved handling time by 75%.
-              </p>
-              <p style={{ fontSize: "11px", lineHeight: "1.6", color: "#6e6e73", marginBottom: "0" }}>
-                Conducted 60+ global workshops, partnered with offshore development team in Sri Lanka, and validated impact with FullStory analytics showing 94% adoption and 97% task completion rate.
-              </p>
-            </div>
-
-            <div style={{
-              padding: "20px",
-              background: "#e3f2fd",
-              borderRadius: "10px",
-              border: "1px solid #90caf9",
-              marginBottom: "24px"
-            }}>
-              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "#0d47a1", marginBottom: "8px" }}>
-                💡 Key Insight
-              </h3>
-              <p style={{ fontSize: "11px", lineHeight: "1.6", color: "#0d47a1", marginBottom: "0" }}>
-                While the ideal solution was an AI-powered "Dream Flow" interface, technical constraints (legacy systems, data silos, 2019-era AI limitations) meant delivering a pragmatic 3-page workflow that still achieved 75% time savings.
+              <p style={{ fontSize: "12px", lineHeight: "1.6", color: "#1d1d1f", margin: "0", fontStyle: "italic" }}>
+                <strong>Key Insight:</strong> While the ideal solution was an AI-powered "Dream Flow" interface, technical constraints (legacy systems, data silos, 2019-era AI limitations) meant delivering a pragmatic 3-page workflow that still achieved 75% time savings.
               </p>
             </div>
 
