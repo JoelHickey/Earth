@@ -613,6 +613,64 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           </div>
         </div>
 
+        {/* Challenges & Learnings */}
+        <div style={{ marginBottom: "28px" }}>
+          <h2 style={{
+            fontSize: "14px",
+            fontWeight: "600",
+            marginBottom: "16px",
+            color: "#1d1d1f"
+          }}>
+            Challenges & Learnings
+          </h2>
+          <div style={{
+            fontSize: "11px",
+            lineHeight: "1.6",
+            color: "#1d1d1f",
+            marginBottom: "24px"
+          }}>
+            <p style={{ marginBottom: "16px" }}>
+              Working with Codegen (Sri Lankan offshore development team) across 7+ hour time zones presented unique coordination challenges:
+            </p>
+
+            <div style={{
+              padding: "16px",
+              background: "#fff3cd",
+              borderRadius: "10px",
+              border: "1px solid #ffc107",
+              marginBottom: "20px"
+            }}>
+              <div style={{ fontSize: "12px", fontWeight: "600", color: "#856404", marginBottom: "8px" }}>
+                Key Challenges
+              </div>
+              <ul style={{ paddingLeft: "24px", marginTop: "8px", marginBottom: "0" }}>
+                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Async communication gaps:</strong> Design decisions made during my day required waiting 12+ hours for engineering feedback</li>
+                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Context loss:</strong> Detailed user requirements and edge cases were difficult to convey through written specs alone</li>
+                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Quality trade-offs:</strong> Tight timelines meant prioritizing core functionality over ideal UX refinements</li>
+                <li style={{ marginBottom: "0", color: "#856404" }}><strong>Testing limitations:</strong> Limited access to production-like test environments delayed validation cycles</li>
+              </ul>
+            </div>
+
+            <div style={{
+              padding: "16px",
+              background: "#d4edda",
+              borderRadius: "10px",
+              border: "1px solid #c3e6cb"
+            }}>
+              <div style={{ fontSize: "12px", fontWeight: "600", color: "#155724", marginBottom: "8px" }}>
+                What I Learned
+              </div>
+              <ul style={{ paddingLeft: "24px", marginTop: "8px", marginBottom: "0" }}>
+                <li style={{ marginBottom: "8px", color: "#155724" }}><strong>Over-document edge cases:</strong> Created visual flowcharts and annotated screenshots instead of written specs - reduced back-and-forth by 60%</li>
+                <li style={{ marginBottom: "8px", color: "#155724" }}><strong>Record video walkthroughs:</strong> 3-minute Loom videos explaining user flows were more effective than 10-page documents</li>
+                <li style={{ marginBottom: "8px", color: "#155724" }}><strong>Overlap working hours:</strong> Shifted my hours 2-3 hours earlier to create real-time collaboration windows</li>
+                <li style={{ marginBottom: "8px", color: "#155724" }}><strong>Build trust through reliability:</strong> Consistent daily standups and clear decision-making frameworks reduced uncertainty</li>
+                <li style={{ marginBottom: "0", color: "#155724" }}><strong>Embrace constraints:</strong> Working within limitations led to simpler, more maintainable solutions than the "perfect" design would have</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         {/* Post-Release Metrics */}
         <div style={{ marginBottom: "28px" }}>
           <h2 style={{
