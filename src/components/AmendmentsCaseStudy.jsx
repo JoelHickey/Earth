@@ -58,7 +58,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
         WebkitFontSmoothing: "antialiased"
       }}>
         {/* Header */}
-        <div style={{ marginBottom: "28px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ marginBottom: "28px", display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: "40px" }}>
           <h1 style={{
             fontSize: "32px",
             fontWeight: "700",
