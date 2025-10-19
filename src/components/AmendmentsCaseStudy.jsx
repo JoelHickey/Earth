@@ -266,9 +266,25 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             I led design of a <strong>streamlined 3-page workflow</strong> with real-time validation and dependency checking.
           </p>
           
-          <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "24px" }}>
+          <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "28px" }}>
             Delivered globally in partnership with offshore development team (Sri Lanka) with <strong>zero downtime</strong>.
           </p>
+
+          <div style={{
+            padding: "18px 20px",
+            background: "#ffffff",
+            borderLeft: "3px solid #0071e3",
+            borderRadius: "4px",
+            marginBottom: "24px",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+          }}>
+            <p style={{ fontSize: "13px", lineHeight: "1.6", color: "#1d1d1f", margin: "0 0 10px 0", fontStyle: "italic" }}>
+              "I used to spend my entire shift just processing amendments. Now I can actually focus on building relationships with customers. This change gave me back my love for the job."
+            </p>
+            <div style={{ fontSize: "11px", color: "#6e6e73" }}>
+              — Sarah Mitchell, Senior Travel Consultant, Melbourne
+            </div>
+          </div>
 
           <div style={{
             padding: "16px 20px",
