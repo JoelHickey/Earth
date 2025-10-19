@@ -259,15 +259,15 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
         {/* Executive Summary (Always Visible) */}
         <div style={{ marginBottom: "28px" }}>
           <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "20px" }}>
-            Consultants spent <strong>8-12 minutes</strong> navigating <strong>5-7 screens</strong> to complete simple booking amendments, leading to low productivity, high error rates, and customer frustration.
+            Consultants spent <strong>8-12 minutes</strong> across <strong>5-7 screens</strong> per amendment, causing low productivity and errors.
           </p>
           
           <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "20px" }}>
-            I led design and delivery of a streamlined <strong>3-page workflow</strong> that reduced consultant steps by <strong>67%</strong> and improved handling time by <strong>75%</strong>.
+            I led delivery of a <strong>3-page workflow</strong> reducing steps by <strong>67%</strong> and time by <strong>75%</strong>.
           </p>
           
           <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "24px" }}>
-            Through <strong>60+ global workshops</strong> and partnership with an offshore development team in Sri Lanka, we achieved <strong>94% adoption</strong> and <strong>97% task completion</strong> rate, validated with FullStory analytics.
+            <strong>60+ global workshops</strong>, offshore team partnership (Sri Lanka), <strong>94% adoption</strong>, <strong>97% completion</strong> rate.
           </p>
 
           <div style={{
