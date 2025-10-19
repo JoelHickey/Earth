@@ -3945,7 +3945,7 @@ function App() {
       onClick={openWindow}
       onDoubleClick={openWindow}
     >
-      <img src="/Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
+      <img src="./Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
       <span style={{
         fontSize: "12px",
         fontFamily: "'MS Sans Serif', sans-serif",
@@ -4009,50 +4009,6 @@ function App() {
       style={{
         position: "absolute",
         top: "500px",
-        left: "50px",
-        width: "64px",
-        height: "64px",
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "transparent"
-      }}
-    >
-      <div style={{
-        width: "32px",
-        height: "32px",
-        background: "transparent",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: "4px"
-      }}>
-        <span style={{
-          fontSize: "32px",
-          fontFamily: "'MS Sans Serif', sans-serif",
-          color: "#ffffff",
-          textShadow: "1px 1px 0px #000000"
-        }}>⚡</span>
-      </div>
-      <span style={{
-        fontSize: "12px",
-        fontFamily: "'MS Sans Serif', sans-serif",
-        color: "#ffffff",
-        textAlign: "center",
-        textShadow: "1px 1px 0px #000000",
-        whiteSpace: "nowrap"
-      }}>
-        Powertramp
-      </span>
-    </div>
-
-    {/* Eighth Desktop Icon - HTML Quiz */}
-    <div
-      style={{
-        position: "absolute",
-        top: "580px",
         left: "50px",
         width: "64px",
         height: "64px",
