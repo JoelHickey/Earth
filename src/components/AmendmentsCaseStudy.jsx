@@ -253,7 +253,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
               <ul style={{ paddingLeft: "24px", marginBottom: "16px" }}>
                 <li style={{ marginBottom: "12px" }}><strong>Global workshops</strong> - Ran interactive workshops with 60+ consultants across regions</li>
                 <li style={{ marginBottom: "12px" }}><strong>Consultant shadowing</strong> - Observed consultants in real-time to identify pain points</li>
-                <li style={{ marginBottom: "12px" }}><strong>Workflow mapping</strong> - Documented sequencing of manual steps required</li>
+                <li style={{ marginBottom: "12px" }}><strong>Workflow mapping</strong> - Task sequencing of the manual steps required</li>
                 <li style={{ marginBottom: "12px" }}><strong>Pain point analysis</strong> - Identified where consultants lost time and made errors</li>
                 <li style={{ marginBottom: "12px" }}><strong>System audit</strong> - Analyzed technical constraints and integration points</li>
                 <li style={{ marginBottom: "0" }}><strong>Competitive analysis</strong> - Researched how other travel platforms handled amendments</li>
