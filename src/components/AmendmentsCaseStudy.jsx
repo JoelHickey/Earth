@@ -306,10 +306,10 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
                 e.currentTarget.style.color = "#0071e3";
               }}
             >
-              {showFullCaseStudy ? "↑ Show Less" : "↓ Read Full Case Study"}
+              {showFullCaseStudy ? "↑ Show Less" : "↓ Read the Full Story"}
             </button>
             <div style={{ fontSize: "10px", color: "#86868b" }}>
-              {showFullCaseStudy ? "Summary only" : "Research, delivery, challenges & learnings"}
+              {showFullCaseStudy ? "Back to summary" : "Research, delivery, challenges & learnings"}
             </div>
           </div>
         </div>
