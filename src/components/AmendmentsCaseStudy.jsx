@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 
 const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  
+  const handleScroll = (e) => {
+    setIsScrolled(e.target.scrollTop > 50);
+  };
+  
   return (
     <div style={{
       position: "fixed",
@@ -51,21 +57,38 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
       </button>
 
       {/* Content */}
-      <div style={{
-        flex: 1,
-        overflow: "auto",
-        padding: "24px 32px",
-        WebkitFontSmoothing: "antialiased"
-      }}>
-        {/* Header */}
-        <div style={{ marginBottom: "28px", display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: "40px" }}>
+      <div 
+        onScroll={handleScroll}
+        style={{
+          flex: 1,
+          overflow: "auto",
+          padding: "0",
+          WebkitFontSmoothing: "antialiased",
+          position: "relative"
+        }}
+      >
+        {/* Sticky Header */}
+        <div style={{
+          position: "sticky",
+          top: 0,
+          background: "#ffffff",
+          zIndex: 10,
+          padding: isScrolled ? "12px 32px" : "24px 32px",
+          paddingRight: isScrolled ? "72px" : "72px",
+          borderBottom: isScrolled ? "1px solid #e0e0e0" : "none",
+          transition: "all 0.2s ease",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between"
+        }}>
           <h1 style={{
-            fontSize: "32px",
+            fontSize: isScrolled ? "20px" : "32px",
             fontWeight: "700",
             letterSpacing: "-0.5px",
             margin: "0",
             color: "#1d1d1f",
-            lineHeight: "1.1"
+            lineHeight: "1.1",
+            transition: "all 0.2s ease"
           }}>
             Travel Amendments
           </h1>
@@ -74,21 +97,23 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           <div style={{
             display: "flex",
             alignItems: "center",
-            gap: "10px",
+            gap: isScrolled ? "6px" : "10px",
             background: "#f5f5f7",
             padding: "4px",
-            borderRadius: "8px"
+            borderRadius: "8px",
+            transition: "all 0.2s ease"
           }}>
             <div
               style={{
-                padding: "6px 12px",
-                fontSize: "11px",
+                padding: isScrolled ? "4px 10px" : "6px 12px",
+                fontSize: isScrolled ? "10px" : "11px",
                 fontWeight: "600",
                 color: "#1d1d1f",
                 background: "#ffffff",
                 borderRadius: "6px",
                 cursor: "default",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
+                boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                transition: "all 0.2s ease"
               }}
             >
               📄 Case Study
@@ -96,8 +121,8 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             <div
               onClick={onViewOldFlow}
               style={{
-                padding: "6px 12px",
-                fontSize: "11px",
+                padding: isScrolled ? "4px 10px" : "6px 12px",
+                fontSize: isScrolled ? "10px" : "11px",
                 fontWeight: "600",
                 color: "#86868b",
                 background: "transparent",
@@ -119,6 +144,9 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           </div>
         </div>
 
+        {/* Main Content Container */}
+        <div style={{ padding: "0 32px 32px 32px" }}>
+        
         {/* Impact Metrics */}
         <div style={{ marginBottom: "28px" }}>
           <div style={{
@@ -795,6 +823,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           </div>
         </div>
 
+        </div>
       </div>
     </div>
   );
