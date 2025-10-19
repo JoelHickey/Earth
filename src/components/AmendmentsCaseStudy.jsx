@@ -79,19 +79,47 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           transition: "all 0.2s ease",
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between"
+          justifyContent: "space-between",
+          gap: "20px"
         }}>
-          <h1 style={{
-            fontSize: isScrolled ? "20px" : "32px",
-            fontWeight: "700",
-            letterSpacing: "-0.5px",
-            margin: "0",
-            color: "#1d1d1f",
-            lineHeight: "1.1",
-            transition: "all 0.2s ease"
-          }}>
-            Travel Amendments
-          </h1>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", flex: 1 }}>
+            <h1 style={{
+              fontSize: isScrolled ? "20px" : "32px",
+              fontWeight: "700",
+              letterSpacing: "-0.5px",
+              margin: "0",
+              color: "#1d1d1f",
+              lineHeight: "1.1",
+              transition: "all 0.2s ease",
+              whiteSpace: "nowrap"
+            }}>
+              Travel Amendments
+            </h1>
+            
+            {/* Mini Metrics (only when scrolled) */}
+            {isScrolled && (
+              <div style={{
+                display: "flex",
+                gap: "12px",
+                alignItems: "center",
+                opacity: isScrolled ? 1 : 0,
+                transition: "opacity 0.3s ease"
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <span style={{ fontSize: "14px", fontWeight: "700", color: "#667eea" }}>+67%</span>
+                  <span style={{ fontSize: "9px", color: "#86868b" }}>Productivity</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <span style={{ fontSize: "14px", fontWeight: "700", color: "#f093fb" }}>-75%</span>
+                  <span style={{ fontSize: "9px", color: "#86868b" }}>Time</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <span style={{ fontSize: "14px", fontWeight: "700", color: "#4facfe" }}>89%</span>
+                  <span style={{ fontSize: "9px", color: "#86868b" }}>CSAT</span>
+                </div>
+              </div>
+            )}
+          </div>
           
           {/* Toggle Switch */}
           <div style={{
@@ -101,7 +129,8 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             background: "#f5f5f7",
             padding: "4px",
             borderRadius: "8px",
-            transition: "all 0.2s ease"
+            transition: "all 0.2s ease",
+            flexShrink: 0
           }}>
             <div
               style={{
