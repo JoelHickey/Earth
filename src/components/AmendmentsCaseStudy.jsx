@@ -59,76 +59,16 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
       }}>
         {/* Header */}
         <div style={{ marginBottom: "28px" }}>
-          <div style={{
-            fontSize: "11px",
-            fontWeight: "600",
-            color: "#0071e3",
-            textTransform: "uppercase",
-            letterSpacing: "0.6px",
-            marginBottom: "8px"
-          }}>
-            Case Study · Flight Centre
-          </div>
           <h1 style={{
-            fontSize: "28px",
-            fontWeight: "600",
-            letterSpacing: "-0.3px",
-            marginBottom: "10px",
+            fontSize: "32px",
+            fontWeight: "700",
+            letterSpacing: "-0.5px",
+            marginBottom: "20px",
             color: "#1d1d1f",
             lineHeight: "1.1"
           }}>
             Travel Amendments
           </h1>
-          
-          <button
-            onClick={onViewOldFlow}
-            style={{
-              padding: "6px 14px",
-              fontSize: "13px",
-              fontWeight: "500",
-              color: "#ffffff",
-              background: "#0071e3",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              transition: "all 0.15s"
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = "#0077ed";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = "#0071e3";
-            }}
-          >
-            View Interactive Demo →
-          </button>
-        </div>
-
-        {/* OKR - Simple Display */}
-        <div style={{
-          marginBottom: "22px",
-          paddingBottom: "24px",
-          borderBottom: "1px solid #e0e0e0"
-        }}>
-          <div style={{
-            fontSize: "13px",
-            fontWeight: "600",
-            color: "#6e6e73",
-            textTransform: "uppercase",
-            letterSpacing: "0.8px",
-            marginBottom: "8px"
-          }}>
-            Objective & Key Result
-          </div>
-          <p style={{
-            fontSize: "14px",
-            fontWeight: "500",
-            color: "#1d1d1f",
-            lineHeight: "1.4",
-            margin: "0"
-          }}>
-            Increase consultant productivity by reducing the steps required to manage bookings
-          </p>
         </div>
 
         {/* Impact Metrics */}
@@ -208,6 +148,56 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* OKR */}
+        <div style={{
+          marginBottom: "22px",
+          paddingBottom: "24px",
+          borderBottom: "1px solid #e0e0e0"
+        }}>
+          <div style={{
+            fontSize: "13px",
+            fontWeight: "600",
+            color: "#6e6e73",
+            textTransform: "uppercase",
+            letterSpacing: "0.8px",
+            marginBottom: "8px"
+          }}>
+            Objective & Key Result
+          </div>
+          <p style={{
+            fontSize: "14px",
+            fontWeight: "500",
+            color: "#1d1d1f",
+            lineHeight: "1.4",
+            margin: "0 0 12px 0"
+          }}>
+            Increase consultant productivity by reducing the steps required to manage bookings
+          </p>
+          
+          <button
+            onClick={onViewOldFlow}
+            style={{
+              padding: "6px 14px",
+              fontSize: "13px",
+              fontWeight: "500",
+              color: "#ffffff",
+              background: "#0071e3",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              transition: "all 0.15s"
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = "#0077ed";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = "#0071e3";
+            }}
+          >
+            View Interactive Demo →
+          </button>
         </div>
 
         {/* The Problem */}

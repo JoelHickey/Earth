@@ -3881,11 +3881,57 @@ function App() {
       </span>
     </div>
 
-    {/* Fourth Desktop Icon - Earth (Mental Health) */}
+    {/* Fourth Desktop Icon - Magento Shipping */}
     <div
       style={{
         position: "absolute",
         top: "260px",
+        left: "50px",
+        width: "64px",
+        height: "64px",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "transparent"
+      }}
+      onClick={() => {/* Will add case study later */}}
+      onDoubleClick={() => {/* Will add case study later */}}
+    >
+      <div style={{
+        width: "32px",
+        height: "32px",
+        background: "transparent",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "4px"
+      }}>
+        <span style={{
+          fontSize: "32px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textShadow: "1px 1px 0px #000000"
+        }}>📦</span>
+      </div>
+      <span style={{
+        fontSize: "12px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        color: "#ffffff",
+        textAlign: "center",
+        textShadow: "1px 1px 0px #000000",
+        whiteSpace: "nowrap"
+      }}>
+        Magento Shipping
+      </span>
+    </div>
+
+    {/* Fifth Desktop Icon - Earth (Mental Health) */}
+    <div
+      style={{
+        position: "absolute",
+        top: "340px",
         left: "50px",
         width: "64px",
         height: "64px",
@@ -3912,11 +3958,11 @@ function App() {
       </span>
     </div>
 
-    {/* Fifth Desktop Icon - AI Learnings */}
+    {/* Sixth Desktop Icon - AI Learnings */}
     <div
       style={{
         position: "absolute",
-        top: "340px",
+        top: "420px",
         left: "50px",
         width: "64px",
         height: "64px",
@@ -3958,51 +4004,7 @@ function App() {
       </span>
     </div>
 
-    {/* Sixth Desktop Icon - Lucky Stars */}
-    <div
-      style={{
-        position: "absolute",
-        top: "420px",
-        left: "50px",
-        width: "64px",
-        height: "64px",
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "transparent"
-      }}
-    >
-      <div style={{
-        width: "32px",
-        height: "32px",
-        background: "transparent",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: "4px"
-      }}>
-        <span style={{
-          fontSize: "32px",
-          fontFamily: "'MS Sans Serif', sans-serif",
-          color: "#ffffff",
-          textShadow: "1px 1px 0px #000000"
-        }}>💫</span>
-      </div>
-      <span style={{
-        fontSize: "12px",
-        fontFamily: "'MS Sans Serif', sans-serif",
-        color: "#ffffff",
-        textAlign: "center",
-        textShadow: "1px 1px 0px #000000",
-        whiteSpace: "nowrap"
-      }}>
-        Lucky Stars
-      </span>
-    </div>
-
-    {/* Seventh Desktop Icon - Powertramp */}
+    {/* Seventh Desktop Icon - HTML Quiz */}
     <div
       style={{
         position: "absolute",
