@@ -28,34 +28,65 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
       overflow: "hidden",
       fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif"
     }}>
-      {/* Close Button */}
-      <button
-        onClick={onClose}
-        style={{
-          position: "absolute",
-          top: "12px",
-          right: "12px",
-          width: "28px",
-          height: "28px",
-          borderRadius: "50%",
-          border: "none",
-          background: "#f5f5f7",
-          color: "#86868b",
-          fontSize: "16px",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          transition: "all 0.15s",
-          fontWeight: "300",
-          lineHeight: "1",
-          zIndex: 100
-        }}
-        onMouseOver={(e) => e.currentTarget.style.background = "#e8e8ed"}
-        onMouseOut={(e) => e.currentTarget.style.background = "#f5f5f7"}
-      >
-        ✕
-      </button>
+      {/* Top Right Actions */}
+      <div style={{
+        position: "absolute",
+        top: "12px",
+        right: "12px",
+        display: "flex",
+        gap: "8px",
+        alignItems: "center",
+        zIndex: 100
+      }}>
+        <button
+          onClick={onViewOldFlow}
+          style={{
+            padding: "6px 12px",
+            fontSize: "12px",
+            fontWeight: "600",
+            color: "#0071e3",
+            background: "#ffffff",
+            border: "1px solid #d2d2d7",
+            borderRadius: "6px",
+            cursor: "pointer",
+            transition: "all 0.15s"
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = "#f5f5f7";
+            e.currentTarget.style.borderColor = "#0071e3";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = "#ffffff";
+            e.currentTarget.style.borderColor = "#d2d2d7";
+          }}
+        >
+          Try Demo →
+        </button>
+        
+        <button
+          onClick={onClose}
+          style={{
+            width: "28px",
+            height: "28px",
+            borderRadius: "50%",
+            border: "none",
+            background: "#f5f5f7",
+            color: "#86868b",
+            fontSize: "16px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "all 0.15s",
+            fontWeight: "300",
+            lineHeight: "1"
+          }}
+          onMouseOver={(e) => e.currentTarget.style.background = "#e8e8ed"}
+          onMouseOut={(e) => e.currentTarget.style.background = "#f5f5f7"}
+        >
+          ✕
+        </button>
+      </div>
 
       {/* Content */}
       <div 
@@ -75,15 +106,10 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           background: "#ffffff",
           zIndex: 10,
           padding: isScrolled ? "12px 32px" : "24px 32px",
-          paddingRight: isScrolled ? "72px" : "72px",
           borderBottom: isScrolled ? "1px solid #e0e0e0" : "none",
-          transition: "all 0.2s ease",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "20px"
+          transition: "all 0.2s ease"
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px", flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <h1 style={{
               fontSize: isScrolled ? "20px" : "32px",
               fontWeight: "700",
@@ -91,8 +117,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
               margin: "0",
               color: "#1d1d1f",
               lineHeight: "1.1",
-              transition: "all 0.2s ease",
-              whiteSpace: "nowrap"
+              transition: "all 0.2s ease"
             }}>
               Travel Amendments
             </h1>
@@ -120,57 +145,6 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
                 </div>
               </div>
             )}
-          </div>
-          
-          {/* Toggle Switch */}
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: isScrolled ? "6px" : "10px",
-            background: "#f5f5f7",
-            padding: "4px",
-            borderRadius: "8px",
-            transition: "all 0.2s ease",
-            flexShrink: 0
-          }}>
-            <div
-              style={{
-                padding: isScrolled ? "4px 10px" : "6px 12px",
-                fontSize: isScrolled ? "10px" : "11px",
-                fontWeight: "600",
-                color: "#1d1d1f",
-                background: "#ffffff",
-                borderRadius: "6px",
-                cursor: "default",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                transition: "all 0.2s ease"
-              }}
-            >
-              📄 Case Study
-            </div>
-            <div
-              onClick={onViewOldFlow}
-              style={{
-                padding: isScrolled ? "4px 10px" : "6px 12px",
-                fontSize: isScrolled ? "10px" : "11px",
-                fontWeight: "600",
-                color: "#86868b",
-                background: "transparent",
-                borderRadius: "6px",
-                cursor: "pointer",
-                transition: "all 0.15s"
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = "#e8e8ed";
-                e.currentTarget.style.color = "#1d1d1f";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "#86868b";
-              }}
-            >
-              ✨ Interactive
-            </div>
           </div>
         </div>
 
