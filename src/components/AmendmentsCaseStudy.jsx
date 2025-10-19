@@ -263,7 +263,7 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           </p>
           
           <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "20px" }}>
-            I led delivery of a <strong>3-page workflow</strong> reducing steps by <strong>67%</strong> and time by <strong>75%</strong>.
+            I led design of a <strong>streamlined 3-page workflow</strong> with real-time validation and dependency checking.
           </p>
           
           <p style={{ fontSize: "13px", lineHeight: "1.7", color: "#1d1d1f", marginBottom: "24px" }}>
