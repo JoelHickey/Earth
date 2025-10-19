@@ -9,8 +9,11 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
+  "homepage": "https://joelhickey.github.io/Earth",
   "keywords": [
     "react",
     "windows95",
@@ -25,6 +28,7 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^5.0.1",
+    "gh-pages": "^6.3.0",
     "http-server": "^14.1.1",
     "jsdom": "^27.0.0",
     "vite": "^7.1.3",
