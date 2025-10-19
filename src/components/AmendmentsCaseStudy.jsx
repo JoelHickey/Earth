@@ -283,7 +283,6 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
           </div>
 
           <div style={{ 
-            textAlign: "center",
             paddingTop: "24px",
             borderTop: "1px solid #e0e0e0"
           }}>
