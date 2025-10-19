@@ -58,17 +58,65 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
         WebkitFontSmoothing: "antialiased"
       }}>
         {/* Header */}
-        <div style={{ marginBottom: "28px" }}>
+        <div style={{ marginBottom: "28px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <h1 style={{
             fontSize: "32px",
             fontWeight: "700",
             letterSpacing: "-0.5px",
-            marginBottom: "20px",
+            margin: "0",
             color: "#1d1d1f",
             lineHeight: "1.1"
           }}>
             Travel Amendments
           </h1>
+          
+          {/* Toggle Switch */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            background: "#f5f5f7",
+            padding: "4px",
+            borderRadius: "8px"
+          }}>
+            <div
+              style={{
+                padding: "6px 12px",
+                fontSize: "11px",
+                fontWeight: "600",
+                color: "#1d1d1f",
+                background: "#ffffff",
+                borderRadius: "6px",
+                cursor: "default",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
+              }}
+            >
+              📄 Case Study
+            </div>
+            <div
+              onClick={onViewOldFlow}
+              style={{
+                padding: "6px 12px",
+                fontSize: "11px",
+                fontWeight: "600",
+                color: "#86868b",
+                background: "transparent",
+                borderRadius: "6px",
+                cursor: "pointer",
+                transition: "all 0.15s"
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = "#e8e8ed";
+                e.currentTarget.style.color = "#1d1d1f";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "#86868b";
+              }}
+            >
+              ✨ Interactive
+            </div>
+          </div>
         </div>
 
         {/* Impact Metrics */}
@@ -147,35 +195,6 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
                 CSAT Score
               </div>
             </div>
-          </div>
-          
-          {/* CTA - Try Demo */}
-          <div style={{
-            marginTop: "20px",
-            textAlign: "center"
-          }}>
-            <button
-              onClick={onViewOldFlow}
-              style={{
-                padding: "8px 20px",
-                fontSize: "13px",
-                fontWeight: "600",
-                color: "#ffffff",
-                background: "#0071e3",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-                transition: "all 0.15s"
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = "#0077ed";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = "#0071e3";
-              }}
-            >
-              View Interactive Demo →
-            </button>
           </div>
         </div>
 
