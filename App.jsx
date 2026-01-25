@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Header from './components/Header';
 import Toolbar from './components/Toolbar';
 import Slider from './components/Slider';
 import StatusBar from './components/StatusBar';
-import HTMLQuiz from './components/HTMLCertificationQuiz.jsx';
 import Divider from './components/Divider';
 import CheckboxGroup from './components/CheckboxGroup';
 import Timeline from './components/Timeline';
@@ -94,8 +93,6 @@ function App() {
   // Second app window state
   const [isSecondAppOpen, setIsSecondAppOpen] = useState(false);
   const [isSecondAppMinimized, setIsSecondAppMinimized] = useState(false);
-  const [isAILearningsOpen, setIsAILearningsOpen] = useState(false);
-  const [isAILearningsMinimized, setIsAILearningsMinimized] = useState(false);
   const [isPortfolioOpen, setIsPortfolioOpen] = useState(() => {
     // Open portfolio for first-time visitors
     if (typeof window !== 'undefined') {
@@ -110,22 +107,6 @@ function App() {
     }
     return false;
   });
-  const [aiLearningsContent, setAILearningsContent] = useState(() => {
-    // Load from localStorage on initial render
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('aiLearningsContent');
-      return saved || '';
-    }
-    return '';
-  });
-
-  // Save AI Learnings content to localStorage whenever it changes
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('aiLearningsContent', aiLearningsContent);
-    }
-  }, [aiLearningsContent]);
-  
   // Third app window state (Travel Amendments)
   const [isTravelAppOpen, setIsTravelAppOpen] = useState(false);
   const [isTravelAppMinimized, setIsTravelAppMinimized] = useState(false);
@@ -148,10 +129,6 @@ function App() {
     x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 700) / 2) : 300,
     y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 600) / 2) : 150
   }));
-  const [aiLearningsPosition, setAILearningsPosition] = useState(() => ({
-    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 926) / 2) : 100,
-    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 1310 - 28) / 2) : 50
-  }));
   const [isDragging, setIsDragging] = useState(false);
   const [isSecondDragging, setIsSecondDragging] = useState(false);
   const [isTravelDragging, setIsTravelDragging] = useState(false);
@@ -171,7 +148,6 @@ function App() {
   const [isQuickAmendSearch, setIsQuickAmendSearch] = useState(false);
   const [showAllHotels, setShowAllHotels] = useState(false);
   const [isRoomSelectionLoading, setIsRoomSelectionLoading] = useState(false);
-  const [showHTMLQuiz, setShowHTMLQuiz] = useState(false);
 
   // Travel search functionality
   const { isLoading: isSearchLoading, error: searchError, results: apiResults, searchHotels, clearResults } = useTravelSearch();
@@ -274,24 +250,6 @@ function App() {
     setIsTravelAppOpen(false);
     setIsTravelAppMinimized(false);
     console.log('Travel app closed');
-  };
-
-  // AI Learnings app functions
-  const openAILearnings = () => {
-    setIsAILearningsOpen(true);
-    setIsAILearningsMinimized(false);
-    console.log('AI Learnings opened');
-  };
-
-  const closeAILearnings = () => {
-    setIsAILearningsOpen(false);
-    setIsAILearningsMinimized(false);
-    console.log('AI Learnings closed');
-  };
-
-  const minimizeAILearnings = () => {
-    setIsAILearningsMinimized(true);
-    console.log('AI Learnings minimized');
   };
 
   const minimizeTravelApp = () => {
@@ -3725,7 +3683,7 @@ function App() {
 
   return (
     <div style={{ 
-      background: "url('./wp2625478-windows-95-desktop-background.jpg')",
+      background: "url('/wp2625478-windows-95-desktop-background.jpg')",
       backgroundSize: "cover",
       backgroundPosition: "center",
       minHeight: "100vh",
@@ -3945,7 +3903,7 @@ function App() {
       onClick={openWindow}
       onDoubleClick={openWindow}
     >
-      <img src="./Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
+      <img src="/Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
       <span style={{
         fontSize: "12px",
         fontFamily: "'MS Sans Serif', sans-serif",
@@ -3957,99 +3915,6 @@ function App() {
         Earth
       </span>
     </div>
-
-    {/* Sixth Desktop Icon - AI Learnings */}
-    <div
-      style={{
-        position: "absolute",
-        top: "420px",
-        left: "50px",
-        width: "64px",
-        height: "64px",
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "transparent"
-      }}
-      onClick={openAILearnings}
-      onDoubleClick={openAILearnings}
-    >
-      <div style={{
-        width: "32px",
-        height: "32px",
-        background: "transparent",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: "4px"
-      }}>
-        <span style={{
-          fontSize: "32px",
-          fontFamily: "'MS Sans Serif', sans-serif",
-          color: "#ffffff",
-          textShadow: "1px 1px 0px #000000"
-        }}>🧠</span>
-      </div>
-      <span style={{
-        fontSize: "12px",
-        fontFamily: "'MS Sans Serif', sans-serif",
-        color: "#ffffff",
-        textAlign: "center",
-        textShadow: "1px 1px 0px #000000",
-        whiteSpace: "nowrap"
-      }}>
-        AI Learnings
-      </span>
-    </div>
-
-    {/* Seventh Desktop Icon - HTML Quiz */}
-    <div
-      style={{
-        position: "absolute",
-        top: "500px",
-        left: "50px",
-        width: "64px",
-        height: "64px",
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "transparent"
-      }}
-      onClick={() => setShowHTMLQuiz(true)}
-      onDoubleClick={() => setShowHTMLQuiz(true)}
-    >
-      <div style={{
-        width: "32px",
-        height: "32px",
-        background: "transparent",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: "4px"
-      }}>
-        <span style={{
-          fontSize: "32px",
-          fontFamily: "'MS Sans Serif', sans-serif",
-          color: "#ffffff",
-          textShadow: "1px 1px 0px #000000"
-        }}>📝</span>
-      </div>
-      <span style={{
-        fontSize: "12px",
-        fontFamily: "'MS Sans Serif', sans-serif",
-        color: "#ffffff",
-        textAlign: "center",
-        textShadow: "1px 1px 0px #000000",
-        whiteSpace: "nowrap"
-      }}>
-        HTML Quiz
-      </span>
-    </div>
-
 
       {/* Application Window */}
       {isWindowOpen && !isWindowMinimized && (
@@ -4300,87 +4165,6 @@ function App() {
                   <div style={{ fontSize: "15px", color: "#86868b" }}>Available upon request</div>
                 </div>
               </div>
-          </div>
-        </div>
-      )}
-
-      {/* AI Learnings Window - Editable Document */}
-      {isAILearningsOpen && !isAILearningsMinimized && (
-        <div 
-          style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 99,
-            background: "#ffffff",
-            width: "926px",
-            maxWidth: "90vw",
-            height: "1310px",
-            maxHeight: "90vh",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
-            borderRadius: "10px",
-            display: "flex",
-            flexDirection: "column"
-          }}
-        >
-          {/* Close Button */}
-          <button
-            onClick={closeAILearnings}
-            style={{
-              position: "absolute",
-              top: "16px",
-              right: "16px",
-              width: "32px",
-              height: "32px",
-              borderRadius: "50%",
-              border: "none",
-              background: "#e0e0e0",
-              color: "#666",
-              fontSize: "18px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "background 0.2s",
-              fontWeight: "300",
-              lineHeight: "1",
-              zIndex: 100
-            }}
-            onMouseOver={(e) => e.currentTarget.style.background = "#d0d0d0"}
-            onMouseOut={(e) => e.currentTarget.style.background = "#e0e0e0"}
-          >
-            ✕
-          </button>
-          
-          {/* Editable Text Area */}
-          <div style={{
-            flex: 1,
-            overflow: "auto",
-            padding: "48px 64px",
-            fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif",
-            fontSize: "15px",
-            lineHeight: "1.6",
-            color: "#1d1d1f",
-            WebkitFontSmoothing: "antialiased"
-          }}>
-            <textarea
-              value={aiLearningsContent}
-              onChange={(e) => setAILearningsContent(e.target.value)}
-              placeholder="Start typing your AI learnings..."
-              style={{
-                width: "100%",
-                height: "100%",
-                border: "none",
-                outline: "none",
-                fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif",
-                fontSize: "15px",
-                lineHeight: "1.6",
-                color: "#1d1d1f",
-                resize: "none",
-                background: "transparent"
-              }}
-            />
           </div>
         </div>
       )}
@@ -5696,11 +5480,6 @@ function App() {
             </button>
           </div>
         </div>
-      )}
-
-      {/* HTML Quiz */}
-      {showHTMLQuiz && (
-        <HTMLQuiz onClose={() => setShowHTMLQuiz(false)} />
       )}
 
       <Analytics />
