@@ -137,13 +137,6 @@ function App() {
   const [editingComponent, setEditingComponent] = useState(null);
   const [isSearchDetailsModalOpen, setIsSearchDetailsModalOpen] = useState(false);
   const [isIntermediateModalOpen, setIsIntermediateModalOpen] = useState(false);
-  const [isSearchResultsOpen, setIsSearchResultsOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
-  const [isTravelersPageOpen, setIsTravelersPageOpen] = useState(false);
-  const [isPaymentPageOpen, setIsPaymentPageOpen] = useState(false);
-  const [isLightningPageOpen, setIsLightningPageOpen] = useState(false);
-  const [isLightningCheckoutOpen, setIsLightningCheckoutOpen] = useState(false);
   const [isSearchingModalOpen, setIsSearchingModalOpen] = useState(false);
   const [isQuickAmendSearch, setIsQuickAmendSearch] = useState(false);
   const [showAllHotels, setShowAllHotels] = useState(false);
@@ -193,11 +186,6 @@ function App() {
     console.log('Window minimized');
   };
 
-  const restoreWindow = () => {
-    setIsWindowMinimized(false);
-    console.log('Window restored');
-  };
-
   const openWindow = () => {
     setIsWindowOpen(true);
     setIsWindowMinimized(false);
@@ -219,11 +207,6 @@ function App() {
   const minimizeSecondApp = () => {
     setIsSecondAppMinimized(true);
     console.log('Second app minimized');
-  };
-
-  const restoreSecondApp = () => {
-    setIsSecondAppMinimized(false);
-    console.log('Second app restored');
   };
 
   const openSecondApp = () => {
@@ -255,11 +238,6 @@ function App() {
   const minimizeTravelApp = () => {
     setIsTravelAppMinimized(true);
     console.log('Travel app minimized');
-  };
-
-  const restoreTravelApp = () => {
-    setIsTravelAppMinimized(false);
-    console.log('Travel app restored');
   };
 
   const openTravelApp = () => {
@@ -357,72 +335,10 @@ function App() {
       console.error('Hotel search failed:', error);
       // Fallback to mock results if API fails
     } finally {
-      // Close searching modal and show results
+      // Close searching modal
       closeSearchingModal();
-      setIsSearchResultsOpen(true);
       // Don't reset quick amend flag here - it should only be reset when closing results
     }
-  };
-
-  const closeSearchResults = () => {
-    setIsSearchResultsOpen(false);
-    setIsQuickAmendSearch(false); // Reset quick amend flag when closing results
-  };
-
-  const addToCart = (hotel) => {
-    setCartItems(prev => [...prev, hotel]);
-    setIsSearchResultsOpen(false);
-    setIsCartOpen(true);
-  };
-
-  const openCart = () => {
-    setIsCartOpen(true);
-    setIsSearchResultsOpen(false);
-  };
-
-  const closeCart = () => {
-    setIsCartOpen(false);
-  };
-
-  const removeFromCart = (index) => {
-    setCartItems(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const openTravelersPage = () => {
-    setIsCartOpen(false);
-    setIsTravelersPageOpen(true);
-  };
-
-  const closeTravelersPage = () => {
-    setIsTravelersPageOpen(false);
-  };
-
-  const openPaymentPage = () => {
-    setIsTravelersPageOpen(false);
-    setIsPaymentPageOpen(true);
-  };
-
-  const closePaymentPage = () => {
-    setIsPaymentPageOpen(false);
-  };
-
-  const openLightningPage = () => {
-    setIsLightningPageOpen(true);
-  };
-
-  const closeLightningPage = () => {
-    setIsLightningPageOpen(false);
-  };
-
-  const openLightningCheckout = (hotel) => {
-    setIsSearchResultsOpen(false);
-    setIsLightningCheckoutOpen(true);
-    // Store the selected hotel for the lightning checkout
-    setCartItems([hotel]);
-  };
-
-  const closeLightningCheckout = () => {
-    setIsLightningCheckoutOpen(false);
   };
 
   const openSearchingModal = (isQuickAmend = false) => {
@@ -445,7 +361,6 @@ function App() {
     try {
       await new Promise(resolve => setTimeout(resolve, loadingDelay));
       setIsRoomSelectionLoading(false);
-      openLightningCheckout(roomData);
     } catch (error) {
       console.error('Room selection failed:', error);
       setIsRoomSelectionLoading(false);
