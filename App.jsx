@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Header from './components/Header';
 import Toolbar from './components/Toolbar';
@@ -93,6 +93,8 @@ function App() {
   // Second app window state
   const [isSecondAppOpen, setIsSecondAppOpen] = useState(false);
   const [isSecondAppMinimized, setIsSecondAppMinimized] = useState(false);
+  const cvWindowRef = useRef(null);
+  const cvCloseButtonRef = useRef(null);
   // Third app window state (Travel Amendments)
   const [isTravelAppOpen, setIsTravelAppOpen] = useState(false);
   const [isTravelAppMinimized, setIsTravelAppMinimized] = useState(false);
@@ -189,6 +191,37 @@ function App() {
     setIsSecondAppMinimized(false);
     console.log('Second app closed');
   };
+
+  const handleCvKeyDown = (event) => {
+    if (event.key !== 'Tab' || !cvWindowRef.current) {
+      return;
+    }
+
+    const focusable = cvWindowRef.current.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+
+    if (!focusable.length) {
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
+  useEffect(() => {
+    if (isSecondAppOpen) {
+      cvCloseButtonRef.current?.focus();
+    }
+  }, [isSecondAppOpen]);
 
   const minimizeSecondApp = () => {
     setIsSecondAppMinimized(true);
@@ -3860,7 +3893,10 @@ function App() {
 
       {/* Second Application Window - Clean Document */}
       {isSecondAppOpen && !isSecondAppMinimized && (
-        <div 
+        <div
+          aria-label="CV window"
+          ref={cvWindowRef}
+          onKeyDown={handleCvKeyDown}
           style={{
             position: "fixed",
             top: "50%",
@@ -3881,6 +3917,7 @@ function App() {
           {/* Close Button - Absolute position in top-right */}
           <button
             onClick={closeSecondApp}
+            ref={cvCloseButtonRef}
             style={{
               position: "absolute",
               top: "16px",
@@ -3955,7 +3992,22 @@ function App() {
                     </p>
                     
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "15px" }}>Amendments</strong> <span style={{ color: "#004b99", fontSize: "13px", cursor: "pointer" }}>View the story</span>
+                      <strong style={{ fontSize: "15px" }}>Amendments</strong>{' '}
+                      <button
+                        type="button"
+                        onClick={openTravelApp}
+                        aria-label="View Amendments story"
+                        style={{
+                          background: "none",
+                          border: "none",
+                          padding: 0,
+                          color: "#004b99",
+                          fontSize: "13px",
+                          cursor: "pointer"
+                        }}
+                      >
+                        View the story
+                      </button>
                       <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#4a4a4a" }}>
                         <span>Efficiency +67%</span>
                         <span>ROI +67%</span>
@@ -3964,7 +4016,22 @@ function App() {
                     </div>
                     
                     <div style={{ marginBottom: "16px" }}>
-                      <strong style={{ fontSize: "15px" }}>Travel insurance</strong> <span style={{ color: "#004b99", fontSize: "13px", cursor: "pointer" }}>View the story</span>
+                      <strong style={{ fontSize: "15px" }}>Travel insurance</strong>{' '}
+                      <button
+                        type="button"
+                        onClick={openInsuranceApp}
+                        aria-label="View Travel insurance story"
+                        style={{
+                          background: "none",
+                          border: "none",
+                          padding: 0,
+                          color: "#004b99",
+                          fontSize: "13px",
+                          cursor: "pointer"
+                        }}
+                      >
+                        View the story
+                      </button>
                       <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#4a4a4a" }}>
                         <span>Efficiency +67%</span>
                         <span>ROI +67%</span>
@@ -4010,7 +4077,22 @@ function App() {
                     </p>
                     
                     <div style={{ marginBottom: "16px" }}>
-                      <strong style={{ fontSize: "15px" }}>Bulk shipments</strong> <span style={{ color: "#004b99", fontSize: "13px", cursor: "pointer" }}>View the story</span>
+                      <strong style={{ fontSize: "15px" }}>Bulk shipments</strong>{' '}
+                      <button
+                        type="button"
+                        onClick={() => console.log('Bulk shipments story coming soon')}
+                        aria-label="View Bulk shipments story"
+                        style={{
+                          background: "none",
+                          border: "none",
+                          padding: 0,
+                          color: "#004b99",
+                          fontSize: "13px",
+                          cursor: "pointer"
+                        }}
+                      >
+                        View the story
+                      </button>
                       <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#4a4a4a" }}>
                         <span>Efficiency +67%</span>
                         <span>ROI +67%</span>
@@ -4062,7 +4144,15 @@ function App() {
                     <div style={{ marginBottom: "6px" }}>0421 366 486</div>
                     <div style={{ marginBottom: "6px" }}>joelhickeydesigns@gmail.com</div>
                     <div style={{ marginBottom: "6px" }}>Brisbane or remote</div>
-                    <div style={{ marginBottom: "6px", color: "#004b99", cursor: "pointer" }}>dribbble.com/joelhickey</div>
+                    <a
+                      href="https://dribbble.com/joelhickey"
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="Dribbble profile"
+                      style={{ marginBottom: "6px", color: "#004b99", cursor: "pointer", display: "inline-block" }}
+                    >
+                      dribbble.com/joelhickey
+                    </a>
                   </div>
                 </div>
 

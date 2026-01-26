@@ -52,3 +52,85 @@ test('CV close button keeps distance from scrollbar', async ({ page }) => {
   const gap = contentBox.x + contentBox.width - (closeBox.x + closeBox.width);
   expect(gap).toBeGreaterThanOrEqual(8);
 });
+
+test('CV keyboard navigation reaches close button', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+  const closeButton = page.getByRole('button', { name: '✕' });
+  await expect(closeButton).toBeVisible();
+  await page.getByLabel('CV content').focus();
+
+  let focused = false;
+  for (let i = 0; i < 10; i += 1) {
+    await page.keyboard.press('Shift+Tab');
+    if (await closeButton.evaluate((el) => el === document.activeElement)) {
+      focused = true;
+      break;
+    }
+  }
+
+  expect(focused).toBe(true);
+});
+
+test('CV scroll reaches lower sections', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+  await page.getByRole('heading', { name: 'Education' }).scrollIntoViewIfNeeded();
+  await expect(page.getByRole('heading', { name: 'Education' })).toBeVisible();
+  await page.getByRole('heading', { name: 'Tools' }).scrollIntoViewIfNeeded();
+  await expect(page.getByRole('heading', { name: 'Tools' })).toBeVisible();
+  await page.getByRole('heading', { name: 'Say Hello' }).scrollIntoViewIfNeeded();
+  await expect(page.getByRole('heading', { name: 'Say Hello' })).toBeVisible();
+  await page.getByRole('heading', { name: 'References' }).scrollIntoViewIfNeeded();
+  await expect(page.getByRole('heading', { name: 'References' })).toBeVisible();
+});
+
+test('CV link opens amendments story', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+  await page.getByRole('button', { name: 'View Amendments story' }).click();
+  await expect(page.getByRole('heading', { name: 'Flight Centre Amendments' })).toBeVisible();
+});
+
+test('CV link opens travel insurance story', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+  await page.getByRole('button', { name: 'View Travel insurance story' }).click();
+  await expect(page.getByRole('heading', { name: 'Travel Insurance Integration' })).toBeVisible();
+});
+
+test('CV external profile link is present', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+  const dribbbleLink = page.getByRole('link', { name: 'Dribbble profile' });
+  await expect(dribbbleLink).toHaveAttribute('href', 'https://dribbble.com/joelhickey');
+  await expect(dribbbleLink).toHaveAttribute('target', '_blank');
+});
+
+test('CV window stays within small viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+  const cvWindow = page.getByLabel('CV window');
+  const box = await cvWindow.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box.width).toBeLessThanOrEqual(900);
+  expect(box.height).toBeLessThanOrEqual(700);
+});
+
+test('CV focus remains inside window when tabbing', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+  const cvWindow = page.getByLabel('CV window');
+  await page.getByLabel('CV content').focus();
+  await expect(cvWindow).toBeVisible();
+
+  for (let i = 0; i < 12; i += 1) {
+    await page.keyboard.press('Tab');
+    const isInside = await page.evaluate(() => {
+      const active = document.activeElement;
+      return Boolean(active && active.closest('[aria-label="CV window"]'));
+    });
+    expect(isInside).toBe(true);
+  }
+});
