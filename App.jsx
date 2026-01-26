@@ -192,6 +192,23 @@ function App() {
     console.log('Second app closed');
   };
 
+  const handleDesktopIconKeyDown = (event, action) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      action();
+    }
+  };
+
+  const addDesktopIconOutline = (event) => {
+    event.currentTarget.style.outline = "1px dotted #ffffff";
+    event.currentTarget.style.outlineOffset = "2px";
+  };
+
+  const removeDesktopIconOutline = (event) => {
+    event.currentTarget.style.outline = "none";
+    event.currentTarget.style.outlineOffset = "0";
+  };
+
   const handleCvKeyDown = (event) => {
     if (event.key !== 'Tab' || !cvWindowRef.current) {
       return;
@@ -3653,8 +3670,16 @@ function App() {
       justifyContent: "center",
           background: "transparent"
         }}
+        role="button"
+        tabIndex={0}
+        aria-label="CV"
         onClick={openSecondApp}
         onDoubleClick={openSecondApp}
+        onKeyDown={(event) => handleDesktopIconKeyDown(event, openSecondApp)}
+        onMouseEnter={addDesktopIconOutline}
+        onMouseLeave={removeDesktopIconOutline}
+        onFocus={addDesktopIconOutline}
+        onBlur={removeDesktopIconOutline}
       >
         <div style={{
           width: "32px",
@@ -3699,8 +3724,16 @@ function App() {
           justifyContent: "center",
           background: "transparent"
         }}
+        role="button"
+        tabIndex={0}
+        aria-label="FCTG Amendments"
         onClick={openTravelApp}
         onDoubleClick={openTravelApp}
+        onKeyDown={(event) => handleDesktopIconKeyDown(event, openTravelApp)}
+        onMouseEnter={addDesktopIconOutline}
+        onMouseLeave={removeDesktopIconOutline}
+        onFocus={addDesktopIconOutline}
+        onBlur={removeDesktopIconOutline}
       >
         <div style={{
           width: "32px",
@@ -3745,8 +3778,16 @@ function App() {
         justifyContent: "center",
         background: "transparent"
       }}
+      role="button"
+      tabIndex={0}
+      aria-label="FCTG Insurance"
       onClick={openInsuranceApp}
       onDoubleClick={openInsuranceApp}
+      onKeyDown={(event) => handleDesktopIconKeyDown(event, openInsuranceApp)}
+      onMouseEnter={addDesktopIconOutline}
+      onMouseLeave={removeDesktopIconOutline}
+      onFocus={addDesktopIconOutline}
+      onBlur={removeDesktopIconOutline}
     >
       <div style={{
         width: "32px",
@@ -3837,8 +3878,16 @@ function App() {
         justifyContent: "center",
         background: "transparent"
       }}
+      role="button"
+      tabIndex={0}
+      aria-label="Earth"
       onClick={openWindow}
       onDoubleClick={openWindow}
+      onKeyDown={(event) => handleDesktopIconKeyDown(event, openWindow)}
+      onMouseEnter={addDesktopIconOutline}
+      onMouseLeave={removeDesktopIconOutline}
+      onFocus={addDesktopIconOutline}
+      onBlur={removeDesktopIconOutline}
     >
       <img src="/Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
       <span style={{
@@ -3940,6 +3989,14 @@ function App() {
             }}
             onMouseOver={(e) => e.currentTarget.style.background = "#d0d0d0"}
             onMouseOut={(e) => e.currentTarget.style.background = "#e0e0e0"}
+            onFocus={(e) => {
+              e.currentTarget.style.outline = "1px dotted #000000";
+              e.currentTarget.style.outlineOffset = "2px";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.outline = "none";
+              e.currentTarget.style.outlineOffset = "0";
+            }}
           >
             ✕
           </button>
@@ -4205,6 +4262,14 @@ function App() {
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.textDecoration = "none";
+                      }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.outline = "1px dotted #000000";
+                        e.currentTarget.style.outlineOffset = "2px";
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.outline = "none";
+                        e.currentTarget.style.outlineOffset = "0";
                       }}
                     >
                       dribbble.com/joelhickey

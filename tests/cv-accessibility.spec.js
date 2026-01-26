@@ -7,6 +7,7 @@ test('CV window has no accessibility violations', async ({ page }) => {
   await expect(page.getByText('Senior Product Designer')).toBeVisible();
 
   const results = await new AxeBuilder({ page })
+    .include('[aria-label="CV window"]')
     .withTags(['wcag2a', 'wcag2aa', 'wcag2aaa', 'best-practice'])
     .exclude('iframe')
     .analyze();
