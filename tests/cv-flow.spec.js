@@ -100,6 +100,18 @@ test('CV story buttons meet minimum text size', async ({ page }) => {
   }
 });
 
+test('CV headings follow a basic hierarchy', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+
+  const h1 = page.getByRole('heading', { level: 1 });
+  const h2 = page.getByRole('heading', { level: 2 });
+
+  await expect(h1).toHaveCount(1);
+  const h2Count = await h2.count();
+  expect(h2Count).toBeGreaterThan(0);
+});
+
 test('CV close button keeps distance from scrollbar', async ({ page }) => {
   await page.goto('/');
   await page.getByText('CV', { exact: true }).click();
@@ -117,6 +129,26 @@ test('CV close button keeps distance from scrollbar', async ({ page }) => {
 
   const gap = contentBox.x + contentBox.width - (closeBox.x + closeBox.width);
   expect(gap).toBeGreaterThanOrEqual(8);
+});
+
+test('CV focus indicators are visible', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+
+  const closeButton = page.getByRole('button', { name: '✕' });
+  const dribbbleLink = page.getByRole('link', { name: 'Dribbble profile' });
+
+  await closeButton.focus();
+  const closeOutlineStyle = await closeButton.evaluate((el) => getComputedStyle(el).outlineStyle);
+  const closeOutlineWidth = await closeButton.evaluate((el) => parseFloat(getComputedStyle(el).outlineWidth));
+  expect(closeOutlineStyle).not.toBe('none');
+  expect(closeOutlineWidth).toBeGreaterThan(0);
+
+  await dribbbleLink.focus();
+  const linkOutlineStyle = await dribbbleLink.evaluate((el) => getComputedStyle(el).outlineStyle);
+  const linkOutlineWidth = await dribbbleLink.evaluate((el) => parseFloat(getComputedStyle(el).outlineWidth));
+  expect(linkOutlineStyle).not.toBe('none');
+  expect(linkOutlineWidth).toBeGreaterThan(0);
 });
 
 test('CV keyboard navigation reaches close button', async ({ page }) => {
@@ -211,4 +243,36 @@ test('CV window stays usable on mobile viewport', async ({ page }) => {
   expect(box.width).toBeLessThanOrEqual(390);
   expect(box.height).toBeLessThanOrEqual(844);
   await expect(page.getByRole('heading', { name: 'Introduction' })).toBeVisible();
+});
+
+test('CV reflows at 200% zoom without horizontal scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+
+  await page.evaluate(() => {
+    document.body.style.zoom = '2';
+  });
+
+  const cvContent = page.getByLabel('CV content');
+  const scrollWidth = await cvContent.evaluate((el) => el.scrollWidth);
+  const clientWidth = await cvContent.evaluate((el) => el.clientWidth);
+
+  expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
+});
+
+test('CV reflows at 400% zoom without horizontal scroll', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 700 });
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+
+  await page.evaluate(() => {
+    document.body.style.zoom = '4';
+  });
+
+  const cvContent = page.getByLabel('CV content');
+  const scrollWidth = await cvContent.evaluate((el) => el.scrollWidth);
+  const clientWidth = await cvContent.evaluate((el) => el.clientWidth);
+
+  expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
 });

@@ -66,6 +66,10 @@ input:focus {
   outline: 1px dotted #000000;
 }
 
+a:focus {
+  outline: 1px dotted #000000;
+}
+
 /* Windows 95 Selection Styles */
 ::selection {
   background: #000080;
