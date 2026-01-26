@@ -170,16 +170,16 @@ test('CV hover styles are visible on links', async ({ page }) => {
   const dribbbleLink = page.getByRole('link', { name: 'Dribbble profile' });
 
   await amendmentsButton.hover();
-  const buttonDecoration = await amendmentsButton.evaluate(
-    (el) => getComputedStyle(el).textDecorationLine
+  const buttonBackground = await amendmentsButton.evaluate(
+    (el) => getComputedStyle(el).backgroundColor
   );
-  expect(buttonDecoration).toContain('underline');
+  expect(buttonBackground).toBe('rgb(208, 208, 208)');
 
   await dribbbleLink.hover();
-  const linkDecoration = await dribbbleLink.evaluate(
-    (el) => getComputedStyle(el).textDecorationLine
+  const linkBackground = await dribbbleLink.evaluate(
+    (el) => getComputedStyle(el).backgroundColor
   );
-  expect(linkDecoration).toContain('underline');
+  expect(linkBackground).toBe('rgb(208, 208, 208)');
 });
 
 test('CV keyboard navigation reaches close button', async ({ page }) => {
