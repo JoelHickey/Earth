@@ -3997,6 +3997,7 @@ function App() {
                         type="button"
                         onClick={openTravelApp}
                         aria-label="View Amendments story"
+                        className="cv-link-button"
                         style={{
                           background: "none",
                           border: "none",
@@ -4009,7 +4010,14 @@ function App() {
                           display: "inline-flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          lineHeight: "1.2"
+                          lineHeight: "1.2",
+                          textDecoration: "none"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.textDecoration = "underline";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.textDecoration = "none";
                         }}
                       >
                         View the story
@@ -4027,6 +4035,7 @@ function App() {
                         type="button"
                         onClick={openInsuranceApp}
                         aria-label="View Travel insurance story"
+                        className="cv-link-button"
                         style={{
                           background: "none",
                           border: "none",
@@ -4039,7 +4048,14 @@ function App() {
                           display: "inline-flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          lineHeight: "1.2"
+                          lineHeight: "1.2",
+                          textDecoration: "none"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.textDecoration = "underline";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.textDecoration = "none";
                         }}
                       >
                         View the story
@@ -4094,6 +4110,7 @@ function App() {
                         type="button"
                         onClick={() => console.log('Bulk shipments story coming soon')}
                         aria-label="View Bulk shipments story"
+                        className="cv-link-button"
                         style={{
                           background: "none",
                           border: "none",
@@ -4106,7 +4123,14 @@ function App() {
                           display: "inline-flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          lineHeight: "1.2"
+                          lineHeight: "1.2",
+                          textDecoration: "none"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.textDecoration = "underline";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.textDecoration = "none";
                         }}
                       >
                         View the story
@@ -4173,7 +4197,14 @@ function App() {
                         cursor: "pointer",
                         display: "inline-flex",
                         alignItems: "center",
-                        minHeight: "44px"
+                        minHeight: "44px",
+                        textDecoration: "none"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.textDecoration = "underline";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.textDecoration = "none";
                       }}
                     >
                       dribbble.com/joelhickey

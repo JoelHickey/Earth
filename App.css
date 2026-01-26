@@ -21,6 +21,11 @@ button:hover {
   background: #e0e0e0;
 }
 
+.cv-link-button:hover {
+  text-decoration: underline;
+  background: none;
+}
+
 button:active {
   border: 1px inset #c0c0c0;
   background: #c0c0c0;
