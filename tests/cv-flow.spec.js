@@ -34,6 +34,35 @@ test('CV close button meets 44px target size', async ({ page }) => {
   expect(box.height).toBeGreaterThanOrEqual(44);
 });
 
+test('CV story buttons meet 44px target size', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+
+  const buttons = [
+    page.getByRole('button', { name: 'View Amendments story' }),
+    page.getByRole('button', { name: 'View Travel insurance story' }),
+    page.getByRole('button', { name: 'View Bulk shipments story' })
+  ];
+
+  for (const button of buttons) {
+    await expect(button).toBeVisible();
+    const box = await button.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box.width).toBeGreaterThanOrEqual(44);
+    expect(box.height).toBeGreaterThanOrEqual(44);
+  }
+});
+
+test('CV dribbble link meets 44px target height', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+  const dribbbleLink = page.getByRole('link', { name: 'Dribbble profile' });
+  await expect(dribbbleLink).toBeVisible();
+  const box = await dribbbleLink.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box.height).toBeGreaterThanOrEqual(44);
+});
+
 test('CV close button keeps distance from scrollbar', async ({ page }) => {
   await page.goto('/');
   await page.getByText('CV', { exact: true }).click();

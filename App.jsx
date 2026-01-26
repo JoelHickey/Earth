@@ -4000,10 +4000,16 @@ function App() {
                         style={{
                           background: "none",
                           border: "none",
-                          padding: 0,
+                          padding: "6px 8px",
                           color: "#004b99",
                           fontSize: "13px",
-                          cursor: "pointer"
+                          cursor: "pointer",
+                          minHeight: "44px",
+                          minWidth: "44px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          lineHeight: "1.2"
                         }}
                       >
                         View the story
@@ -4024,10 +4030,16 @@ function App() {
                         style={{
                           background: "none",
                           border: "none",
-                          padding: 0,
+                          padding: "6px 8px",
                           color: "#004b99",
                           fontSize: "13px",
-                          cursor: "pointer"
+                          cursor: "pointer",
+                          minHeight: "44px",
+                          minWidth: "44px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          lineHeight: "1.2"
                         }}
                       >
                         View the story
@@ -4085,10 +4097,16 @@ function App() {
                         style={{
                           background: "none",
                           border: "none",
-                          padding: 0,
+                          padding: "6px 8px",
                           color: "#004b99",
                           fontSize: "13px",
-                          cursor: "pointer"
+                          cursor: "pointer",
+                          minHeight: "44px",
+                          minWidth: "44px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          lineHeight: "1.2"
                         }}
                       >
                         View the story
@@ -4149,7 +4167,14 @@ function App() {
                       target="_blank"
                       rel="noreferrer"
                       aria-label="Dribbble profile"
-                      style={{ marginBottom: "6px", color: "#004b99", cursor: "pointer", display: "inline-block" }}
+                      style={{
+                        marginBottom: "6px",
+                        color: "#004b99",
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        minHeight: "44px"
+                      }}
                     >
                       dribbble.com/joelhickey
                     </a>
