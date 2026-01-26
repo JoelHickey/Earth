@@ -63,6 +63,43 @@ test('CV dribbble link meets 44px target height', async ({ page }) => {
   expect(box.height).toBeGreaterThanOrEqual(44);
 });
 
+test('CV font sizes meet minimum readability thresholds', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+
+  const title = page.getByRole('heading', { name: 'Joel Hickey' });
+  const sectionHeading = page.getByRole('heading', { name: 'Introduction' });
+  const bodyParagraph = page.getByText(
+    'At an early age I was blessed with a passion for design',
+    { exact: false }
+  );
+
+  const titleSize = await title.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  const headingSize = await sectionHeading.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  const bodySize = await bodyParagraph.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+
+  expect(titleSize).toBeGreaterThanOrEqual(32);
+  expect(headingSize).toBeGreaterThanOrEqual(20);
+  expect(bodySize).toBeGreaterThanOrEqual(14);
+});
+
+test('CV story buttons meet minimum text size', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+
+  const buttons = [
+    page.getByRole('button', { name: 'View Amendments story' }),
+    page.getByRole('button', { name: 'View Travel insurance story' }),
+    page.getByRole('button', { name: 'View Bulk shipments story' })
+  ];
+
+  for (const button of buttons) {
+    await expect(button).toBeVisible();
+    const fontSize = await button.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    expect(fontSize).toBeGreaterThanOrEqual(12);
+  }
+});
+
 test('CV close button keeps distance from scrollbar', async ({ page }) => {
   await page.goto('/');
   await page.getByText('CV', { exact: true }).click();
