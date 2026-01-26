@@ -134,3 +134,15 @@ test('CV focus remains inside window when tabbing', async ({ page }) => {
     expect(isInside).toBe(true);
   }
 });
+
+test('CV window stays usable on mobile viewport', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+  const cvWindow = page.getByLabel('CV window');
+  const box = await cvWindow.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box.width).toBeLessThanOrEqual(390);
+  expect(box.height).toBeLessThanOrEqual(844);
+  await expect(page.getByRole('heading', { name: 'Introduction' })).toBeVisible();
+});
