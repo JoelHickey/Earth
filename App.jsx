@@ -4064,7 +4064,7 @@ function App() {
                           WebkitAppearance: "none",
                           MozAppearance: "none",
                           padding: "6px 8px",
-                          color: "#000000",
+                          color: "#004b99",
                           fontSize: "13px",
                           cursor: "pointer",
                           minHeight: "44px",
@@ -4076,13 +4076,16 @@ function App() {
                           textDecoration: "none"
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "#d0d0d0";
-                          e.currentTarget.style.borderRadius = "4px";
-                          e.currentTarget.style.boxShadow = "none";
+                          e.currentTarget.style.textDecoration = "underline";
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.background = "transparent";
-                          e.currentTarget.style.borderRadius = "0";
+                          e.currentTarget.style.textDecoration = "none";
+                        }}
+                        onFocus={(e) => {
+                          e.currentTarget.style.textDecoration = "underline";
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.textDecoration = "none";
                         }}
                       >
                         View the story
@@ -4108,7 +4111,7 @@ function App() {
                           WebkitAppearance: "none",
                           MozAppearance: "none",
                           padding: "6px 8px",
-                          color: "#000000",
+                          color: "#004b99",
                           fontSize: "13px",
                           cursor: "pointer",
                           minHeight: "44px",
@@ -4120,13 +4123,16 @@ function App() {
                           textDecoration: "none"
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "#d0d0d0";
-                          e.currentTarget.style.borderRadius = "4px";
-                          e.currentTarget.style.boxShadow = "none";
+                          e.currentTarget.style.textDecoration = "underline";
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.background = "transparent";
-                          e.currentTarget.style.borderRadius = "0";
+                          e.currentTarget.style.textDecoration = "none";
+                        }}
+                        onFocus={(e) => {
+                          e.currentTarget.style.textDecoration = "underline";
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.textDecoration = "none";
                         }}
                       >
                         View the story
@@ -4189,7 +4195,7 @@ function App() {
                           WebkitAppearance: "none",
                           MozAppearance: "none",
                           padding: "6px 8px",
-                          color: "#000000",
+                          color: "#004b99",
                           fontSize: "13px",
                           cursor: "pointer",
                           minHeight: "44px",
@@ -4201,13 +4207,16 @@ function App() {
                           textDecoration: "none"
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "#d0d0d0";
-                          e.currentTarget.style.borderRadius = "4px";
-                          e.currentTarget.style.boxShadow = "none";
+                          e.currentTarget.style.textDecoration = "underline";
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.background = "transparent";
-                          e.currentTarget.style.borderRadius = "0";
+                          e.currentTarget.style.textDecoration = "none";
+                        }}
+                        onFocus={(e) => {
+                          e.currentTarget.style.textDecoration = "underline";
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.textDecoration = "none";
                         }}
                       >
                         View the story
@@ -4278,20 +4287,20 @@ function App() {
                         textDecoration: "none"
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = "#d0d0d0";
-                        e.currentTarget.style.borderRadius = "4px";
+                        e.currentTarget.style.textDecoration = "underline";
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "transparent";
-                        e.currentTarget.style.borderRadius = "0";
+                        e.currentTarget.style.textDecoration = "none";
                       }}
                       onFocus={(e) => {
                         e.currentTarget.style.outline = "1px dotted #000000";
                         e.currentTarget.style.outlineOffset = "2px";
+                        e.currentTarget.style.textDecoration = "underline";
                       }}
                       onBlur={(e) => {
                         e.currentTarget.style.outline = "none";
                         e.currentTarget.style.outlineOffset = "0";
+                        e.currentTarget.style.textDecoration = "none";
                       }}
                     >
                       dribbble.com/joelhickey
