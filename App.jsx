@@ -93,20 +93,6 @@ function App() {
   // Second app window state
   const [isSecondAppOpen, setIsSecondAppOpen] = useState(false);
   const [isSecondAppMinimized, setIsSecondAppMinimized] = useState(false);
-  const [isPortfolioOpen, setIsPortfolioOpen] = useState(() => {
-    // Open portfolio for first-time visitors
-    if (typeof window !== 'undefined') {
-      const hasVisited = localStorage.getItem('hasVisitedPortfolio');
-      console.log('Portfolio check - hasVisited:', hasVisited);
-      if (!hasVisited) {
-        localStorage.setItem('hasVisitedPortfolio', 'true');
-        console.log('First-time visitor! Opening portfolio...');
-        return true; // Open portfolio for first-time visitors
-      }
-      console.log('Returning visitor, portfolio stays closed');
-    }
-    return false;
-  });
   // Third app window state (Travel Amendments)
   const [isTravelAppOpen, setIsTravelAppOpen] = useState(false);
   const [isTravelAppMinimized, setIsTravelAppMinimized] = useState(false);
@@ -3597,7 +3583,10 @@ function App() {
   };
 
   return (
-    <div style={{ 
+    <div
+      role="main"
+      aria-label="Desktop"
+      style={{ 
       background: "url('/wp2625478-windows-95-desktop-background.jpg')",
       backgroundSize: "cover",
       backgroundPosition: "center",
@@ -3919,7 +3908,10 @@ function App() {
           </button>
           
           {/* Scrollable content area */}
-          <div style={{
+          <div
+            tabIndex={0}
+            aria-label="CV content"
+            style={{
             flex: 1,
             overflow: "auto",
             padding: "48px 64px",
@@ -3933,7 +3925,7 @@ function App() {
                 {/* Header */}
                 <div style={{ marginBottom: "48px" }}>
                   <h1 style={{ fontSize: "48px", fontWeight: "600", margin: "0 0 8px 0", color: "#1d1d1f", letterSpacing: "-0.5px" }}>Joel Hickey</h1>
-                  <div style={{ fontSize: "21px", fontWeight: "300", color: "#86868b", letterSpacing: "-0.2px" }}>Human Experience Designer</div>
+                <div style={{ fontSize: "21px", fontWeight: "300", color: "#4a4a4a", letterSpacing: "-0.2px" }}>Senior Product Designer</div>
                 </div>
 
                 {/* Introduction */}
@@ -3955,16 +3947,16 @@ function App() {
                   <div style={{ marginBottom: "32px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
                       <strong style={{ fontSize: "17px", fontWeight: "600" }}>Senior UI/UX Designer</strong>
-                      <span style={{ color: "#86868b", fontSize: "15px" }}>2021-2025</span>
+                      <span style={{ color: "#4a4a4a", fontSize: "15px" }}>2021-2025</span>
                     </div>
-                    <div style={{ marginBottom: "12px", color: "#86868b", fontSize: "15px" }}>Flight Centre Travel Group</div>
+                    <div style={{ marginBottom: "12px", color: "#4a4a4a", fontSize: "15px" }}>Flight Centre Travel Group</div>
                     <p style={{ margin: "0 0 16px 0", fontSize: "15px", lineHeight: "1.6" }}>
                       Improved productivity of the consultant booking platform by reducing the steps required to manage bookings. Involved in all parts of the design process from discovery to post release enhancements with both internal and external teams.
                     </p>
                     
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "15px" }}>Amendments</strong> <span style={{ color: "#007AFF", fontSize: "13px", cursor: "pointer" }}>View the story</span>
-                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#86868b" }}>
+                      <strong style={{ fontSize: "15px" }}>Amendments</strong> <span style={{ color: "#004b99", fontSize: "13px", cursor: "pointer" }}>View the story</span>
+                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#4a4a4a" }}>
                         <span>Efficiency +67%</span>
                         <span>ROI +67%</span>
                         <span>CSAT +67%</span>
@@ -3972,8 +3964,8 @@ function App() {
                     </div>
                     
                     <div style={{ marginBottom: "16px" }}>
-                      <strong style={{ fontSize: "15px" }}>Travel insurance</strong> <span style={{ color: "#007AFF", fontSize: "13px", cursor: "pointer" }}>View the story</span>
-                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#86868b" }}>
+                      <strong style={{ fontSize: "15px" }}>Travel insurance</strong> <span style={{ color: "#004b99", fontSize: "13px", cursor: "pointer" }}>View the story</span>
+                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#4a4a4a" }}>
                         <span>Efficiency +67%</span>
                         <span>ROI +67%</span>
                         <span>CSAT +67%</span>
@@ -3993,9 +3985,9 @@ function App() {
                   <div style={{ marginBottom: "32px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
                       <strong style={{ fontSize: "17px", fontWeight: "600" }}>Lead UI/UX Designer</strong>
-                      <span style={{ color: "#86868b", fontSize: "15px" }}>2019-2020</span>
+                      <span style={{ color: "#4a4a4a", fontSize: "15px" }}>2019-2020</span>
                     </div>
-                    <div style={{ marginBottom: "12px", color: "#86868b", fontSize: "15px" }}>Canstar</div>
+                    <div style={{ marginBottom: "12px", color: "#4a4a4a", fontSize: "15px" }}>Canstar</div>
                     <div style={{ fontSize: "14px", lineHeight: "1.8" }}>
                       • Focused on customer product verticals and internal software<br/>
                       • Transitioned Canstar to a scalable design tool (Figma)<br/>
@@ -4010,16 +4002,16 @@ function App() {
                   <div style={{ marginBottom: "32px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
                       <strong style={{ fontSize: "17px", fontWeight: "600" }}>UI/UX Designer</strong>
-                      <span style={{ color: "#86868b", fontSize: "15px" }}>2015-2019</span>
+                      <span style={{ color: "#4a4a4a", fontSize: "15px" }}>2015-2019</span>
                     </div>
-                    <div style={{ marginBottom: "12px", color: "#86868b", fontSize: "15px" }}>Temando</div>
+                    <div style={{ marginBottom: "12px", color: "#4a4a4a", fontSize: "15px" }}>Temando</div>
                     <p style={{ margin: "0 0 16px 0", fontSize: "15px", lineHeight: "1.6" }}>
                       Improved the productivity of merchants using Magento Shipping by enabling multiple shipments to be dispatched quickly in a single flow.
                     </p>
                     
                     <div style={{ marginBottom: "16px" }}>
-                      <strong style={{ fontSize: "15px" }}>Bulk shipments</strong> <span style={{ color: "#007AFF", fontSize: "13px", cursor: "pointer" }}>View the story</span>
-                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#86868b" }}>
+                      <strong style={{ fontSize: "15px" }}>Bulk shipments</strong> <span style={{ color: "#004b99", fontSize: "13px", cursor: "pointer" }}>View the story</span>
+                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#4a4a4a" }}>
                         <span>Efficiency +67%</span>
                         <span>ROI +67%</span>
                         <span>CSAT +67%</span>
@@ -4041,14 +4033,14 @@ function App() {
                   
                   <div style={{ marginBottom: "20px" }}>
                     <strong style={{ fontSize: "17px", fontWeight: "600" }}>Masters of Interactive Media</strong>
-                    <div style={{ color: "#86868b", fontSize: "14px", marginTop: "4px" }}>Queensland College of Art</div>
-                    <div style={{ color: "#86868b", fontSize: "14px" }}>2015-2016</div>
+                    <div style={{ color: "#4a4a4a", fontSize: "14px", marginTop: "4px" }}>Queensland College of Art</div>
+                    <div style={{ color: "#4a4a4a", fontSize: "14px" }}>2015-2016</div>
                   </div>
 
                   <div style={{ marginBottom: "20px" }}>
                     <strong style={{ fontSize: "17px", fontWeight: "600" }}>Bachelor of Audio Engineering and Sound Production</strong>
-                    <div style={{ color: "#86868b", fontSize: "14px", marginTop: "4px" }}>JMC Academy</div>
-                    <div style={{ color: "#86868b", fontSize: "14px" }}>2011-2013</div>
+                    <div style={{ color: "#4a4a4a", fontSize: "14px", marginTop: "4px" }}>JMC Academy</div>
+                    <div style={{ color: "#4a4a4a", fontSize: "14px" }}>2011-2013</div>
                   </div>
                 </div>
 
@@ -4070,277 +4062,16 @@ function App() {
                     <div style={{ marginBottom: "6px" }}>0421 366 486</div>
                     <div style={{ marginBottom: "6px" }}>joelhickeydesigns@gmail.com</div>
                     <div style={{ marginBottom: "6px" }}>Brisbane or remote</div>
-                    <div style={{ marginBottom: "6px", color: "#007AFF", cursor: "pointer" }}>dribbble.com/joelhickey</div>
+                    <div style={{ marginBottom: "6px", color: "#004b99", cursor: "pointer" }}>dribbble.com/joelhickey</div>
                   </div>
                 </div>
 
                 {/* References */}
                 <div>
                   <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>References</h2>
-                  <div style={{ fontSize: "15px", color: "#86868b" }}>Available upon request</div>
+                  <div style={{ fontSize: "15px", color: "#4a4a4a" }}>Available upon request</div>
                 </div>
               </div>
-          </div>
-        </div>
-      )}
-
-      {/* Portfolio Window */}
-      {isPortfolioOpen && (
-        <div 
-          style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 99,
-            background: "#ffffff",
-            width: "800px",
-            maxWidth: "90vw",
-            height: "600px",
-            maxHeight: "90vh",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
-            borderRadius: "10px",
-            display: "flex",
-            flexDirection: "column"
-          }}
-        >
-          {/* Close Button */}
-          <button
-            onClick={() => setIsPortfolioOpen(false)}
-            style={{
-              position: "absolute",
-              top: "16px",
-              right: "16px",
-              width: "32px",
-              height: "32px",
-              borderRadius: "50%",
-              border: "none",
-              background: "#e0e0e0",
-              color: "#666",
-              fontSize: "18px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "background 0.2s",
-              fontWeight: "300",
-              lineHeight: "1",
-              zIndex: 100
-            }}
-            onMouseOver={(e) => e.currentTarget.style.background = "#d0d0d0"}
-            onMouseOut={(e) => e.currentTarget.style.background = "#e0e0e0"}
-          >
-            ✕
-          </button>
-          
-          {/* Portfolio Content */}
-          <div style={{
-            flex: 1,
-            overflow: "auto",
-            padding: "48px 64px",
-            fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif",
-            fontSize: "15px",
-            lineHeight: "1.6",
-            color: "#1d1d1f",
-            WebkitFontSmoothing: "antialiased"
-          }}>
-            <h1 style={{
-              fontSize: "48px",
-              fontWeight: "600",
-              letterSpacing: "-0.5px",
-              marginBottom: "16px",
-              color: "#1d1d1f"
-            }}>
-              Joel Hickey
-            </h1>
-            
-            <p style={{
-              fontSize: "21px",
-              lineHeight: "1.4",
-              color: "#6e6e73",
-              marginBottom: "48px"
-            }}>
-              Product & Program Leader — Building tools that help people thrive
-            </p>
-
-            <div style={{
-              marginBottom: "32px",
-              padding: "24px",
-              background: "#f5f5f7",
-              borderRadius: "12px"
-            }}>
-              <h2 style={{
-                fontSize: "28px",
-                fontWeight: "600",
-                marginBottom: "16px",
-                color: "#1d1d1f"
-              }}>
-                Welcome to My Portfolio
-              </h2>
-              <p style={{
-                fontSize: "17px",
-                lineHeight: "1.5",
-                color: "#1d1d1f",
-                marginBottom: "16px"
-              }}>
-                This desktop is my portfolio. Each icon represents a project, case study, or tool I've built.
-              </p>
-              <p style={{
-                fontSize: "17px",
-                lineHeight: "1.5",
-                color: "#1d1d1f"
-              }}>
-                Click around and explore—every window tells a story.
-              </p>
-            </div>
-
-            <div style={{
-              marginBottom: "32px"
-            }}>
-              <h2 style={{
-                fontSize: "24px",
-                fontWeight: "600",
-                marginBottom: "16px",
-                color: "#1d1d1f"
-              }}>
-                What You'll Find Here
-              </h2>
-              
-              <div style={{
-                display: "grid",
-                gap: "16px"
-              }}>
-                <div style={{
-                  padding: "20px",
-                  background: "#ffffff",
-                  border: "1px solid #d2d2d7",
-                  borderRadius: "12px"
-                }}>
-                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>🌍</div>
-                  <h3 style={{
-                    fontSize: "19px",
-                    fontWeight: "600",
-                    marginBottom: "8px",
-                    color: "#1d1d1f"
-                  }}>
-                    Mental Health Monitor
-                  </h3>
-                  <p style={{
-                    fontSize: "15px",
-                    lineHeight: "1.5",
-                    color: "#6e6e73"
-                  }}>
-                    A comprehensive framework for understanding how daily inputs affect mental wellbeing. Features planning, execution, and delivery frameworks across multiple organizational levels.
-                  </p>
-                </div>
-
-                <div style={{
-                  padding: "20px",
-                  background: "#ffffff",
-                  border: "1px solid #d2d2d7",
-                  borderRadius: "12px"
-                }}>
-                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>✈️</div>
-                  <h3 style={{
-                    fontSize: "19px",
-                    fontWeight: "600",
-                    marginBottom: "8px",
-                    color: "#1d1d1f"
-                  }}>
-                    Flight Centre - Amendments
-                  </h3>
-                  <p style={{
-                    fontSize: "15px",
-                    lineHeight: "1.5",
-                    color: "#6e6e73"
-                  }}>
-                    Streamlined travel amendments (hotels, cars, activities, transfers) to increase consultant productivity by 67%. Reduced handling time from 8-12 minutes to 2-3 minutes.
-                  </p>
-                </div>
-
-                <div style={{
-                  padding: "20px",
-                  background: "#ffffff",
-                  border: "1px solid #d2d2d7",
-                  borderRadius: "12px"
-                }}>
-                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>🛡️</div>
-                  <h3 style={{
-                    fontSize: "19px",
-                    fontWeight: "600",
-                    marginBottom: "8px",
-                    color: "#1d1d1f"
-                  }}>
-                    Flight Centre - Insurance
-                  </h3>
-                  <p style={{
-                    fontSize: "15px",
-                    lineHeight: "1.5",
-                    color: "#6e6e73"
-                  }}>
-                    Integrated travel insurance into booking workflow, increasing attachment rates by 45% and generating $2.4M additional annual revenue. Reduced insurance addition time by 90%.
-                  </p>
-                </div>
-
-                <div style={{
-                  padding: "20px",
-                  background: "#ffffff",
-                  border: "1px solid #d2d2d7",
-                  borderRadius: "12px"
-                }}>
-                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>📄</div>
-                  <h3 style={{
-                    fontSize: "19px",
-                    fontWeight: "600",
-                    marginBottom: "8px",
-                    color: "#1d1d1f"
-                  }}>
-                    Joel Hickey CV
-                  </h3>
-                  <p style={{
-                    fontSize: "15px",
-                    lineHeight: "1.5",
-                    color: "#6e6e73"
-                  }}>
-                    Traditional CV format showcasing experience as VP of Product & Program Management at Headspace, with expertise in mental health technology and cross-functional leadership.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div style={{
-              marginTop: "48px",
-              paddingTop: "32px",
-              borderTop: "1px solid #d2d2d7"
-            }}>
-              <h2 style={{
-                fontSize: "24px",
-                fontWeight: "600",
-                marginBottom: "16px",
-                color: "#1d1d1f"
-              }}>
-                My Approach
-              </h2>
-              <p style={{
-                fontSize: "17px",
-                lineHeight: "1.5",
-                color: "#1d1d1f",
-                marginBottom: "16px"
-              }}>
-                I believe great products come from understanding the full stack—from company mission to user experience. My work spans:
-              </p>
-              <ul style={{
-                fontSize: "17px",
-                lineHeight: "1.8",
-                color: "#1d1d1f",
-                paddingLeft: "24px"
-              }}>
-                <li><strong>Strategic Planning:</strong> Aligning product vision with business goals</li>
-                <li><strong>Cross-Functional Leadership:</strong> Coordinating engineering, design, and business teams</li>
-                <li><strong>User-Centered Design:</strong> Building tools that solve real problems</li>
-                <li><strong>Execution Excellence:</strong> Shipping products that matter</li>
-              </ul>
-            </div>
           </div>
         </div>
       )}
@@ -4682,8 +4413,7 @@ function App() {
                   padding: "2px 8px",
                   cursor: "pointer",
                   fontSize: "10px",
-                  fontFamily: "'MS Sans Serif', sans-serif",
-                  cursor: "pointer"
+                  fontFamily: "'MS Sans Serif', sans-serif"
                 }}>
                   + Add Traveler
                 </button>
@@ -4718,8 +4448,7 @@ function App() {
                     padding: "2px 8px",
                     cursor: "pointer",
                     fontSize: "10px",
-                    fontFamily: "'MS Sans Serif', sans-serif",
-                    cursor: "pointer"
+                    fontFamily: "'MS Sans Serif', sans-serif"
                   }}>
                     - Remove
                   </button>
@@ -4759,7 +4488,6 @@ function App() {
                   cursor: "pointer",
                   fontSize: "11px",
                   fontFamily: "'MS Sans Serif', sans-serif",
-                  cursor: "pointer",
                   fontWeight: "bold"
                 }}
                 onClick={closeIntermediateModal}
@@ -4777,7 +4505,6 @@ function App() {
                   cursor: "pointer",
                   fontSize: "11px",
                   fontFamily: "'MS Sans Serif', sans-serif",
-                  cursor: "pointer",
                   fontWeight: "bold"
                 }}
                 onClick={openSearchDetailsModal}
@@ -5016,7 +4743,6 @@ function App() {
                   cursor: "pointer",
                   fontSize: "11px",
                   fontFamily: "'MS Sans Serif', sans-serif",
-                  cursor: "pointer",
                   fontWeight: "bold"
                 }}
                 onClick={closeSearchDetailsModal}
@@ -5034,7 +4760,6 @@ function App() {
                   cursor: "pointer",
                   fontSize: "11px",
                   fontFamily: "'MS Sans Serif', sans-serif",
-                  cursor: "pointer",
                   fontWeight: "bold"
                 }}
                 onClick={openSearchResults}
