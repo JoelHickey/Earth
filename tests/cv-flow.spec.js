@@ -112,6 +112,17 @@ test('CV headings follow a basic hierarchy', async ({ page }) => {
   expect(h2Count).toBeGreaterThan(0);
 });
 
+test('CV section landmarks are labeled', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+
+  await expect(page.getByRole('region', { name: 'Experience' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Education' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Tools' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Say Hello' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'References' })).toBeVisible();
+});
+
 test('CV close button keeps distance from scrollbar', async ({ page }) => {
   await page.goto('/');
   await page.getByText('CV', { exact: true }).click();
@@ -149,6 +160,26 @@ test('CV focus indicators are visible', async ({ page }) => {
   const linkOutlineWidth = await dribbbleLink.evaluate((el) => parseFloat(getComputedStyle(el).outlineWidth));
   expect(linkOutlineStyle).not.toBe('none');
   expect(linkOutlineWidth).toBeGreaterThan(0);
+});
+
+test('CV hover styles are visible on links', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+
+  const amendmentsButton = page.getByRole('button', { name: 'View Amendments story' });
+  const dribbbleLink = page.getByRole('link', { name: 'Dribbble profile' });
+
+  await amendmentsButton.hover();
+  const buttonDecoration = await amendmentsButton.evaluate(
+    (el) => getComputedStyle(el).textDecorationLine
+  );
+  expect(buttonDecoration).toContain('underline');
+
+  await dribbbleLink.hover();
+  const linkDecoration = await dribbbleLink.evaluate(
+    (el) => getComputedStyle(el).textDecorationLine
+  );
+  expect(linkDecoration).toContain('underline');
 });
 
 test('CV keyboard navigation reaches close button', async ({ page }) => {
@@ -197,12 +228,43 @@ test('CV link opens travel insurance story', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Travel Insurance Integration' })).toBeVisible();
 });
 
+test('CV story links have descriptive aria labels', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+
+  await expect(page.getByRole('button', { name: 'View Amendments story' })).toHaveAttribute(
+    'aria-label',
+    'View Amendments story'
+  );
+  await expect(page.getByRole('button', { name: 'View Travel insurance story' })).toHaveAttribute(
+    'aria-label',
+    'View Travel insurance story'
+  );
+  await expect(page.getByRole('button', { name: 'View Bulk shipments story' })).toHaveAttribute(
+    'aria-label',
+    'View Bulk shipments story'
+  );
+});
+
 test('CV external profile link is present', async ({ page }) => {
   await page.goto('/');
   await page.getByText('CV', { exact: true }).click();
   const dribbbleLink = page.getByRole('link', { name: 'Dribbble profile' });
   await expect(dribbbleLink).toHaveAttribute('href', 'https://dribbble.com/joelhickey');
   await expect(dribbbleLink).toHaveAttribute('target', '_blank');
+});
+
+test('CV scroll position resets after reopen', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('CV', { exact: true }).click();
+  const cvContent = page.getByLabel('CV content');
+  await cvContent.evaluate((el) => {
+    el.scrollTop = el.scrollHeight;
+  });
+  await page.getByRole('button', { name: '✕' }).click();
+  await page.getByText('CV', { exact: true }).click();
+  const scrollTop = await page.getByLabel('CV content').evaluate((el) => el.scrollTop);
+  expect(scrollTop).toBe(0);
 });
 
 test('CV window stays within small viewport', async ({ page }) => {

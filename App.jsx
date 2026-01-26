@@ -3977,7 +3977,7 @@ function App() {
                 </div>
 
                 {/* Experience */}
-                <div style={{ marginBottom: "48px" }}>
+                <section aria-label="Experience" style={{ marginBottom: "48px" }}>
                   <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Experience</h2>
                   
                   {/* FCTG */}
@@ -4149,10 +4149,10 @@ function App() {
                       • UI/UX representative for all agile ceremonies (internal & offshore)
                     </div>
                   </div>
-                </div>
+                </section>
 
                 {/* Education */}
-                <div style={{ marginBottom: "48px" }}>
+                <section aria-label="Education" style={{ marginBottom: "48px" }}>
                   <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Education</h2>
                   
                   <div style={{ marginBottom: "20px" }}>
@@ -4166,10 +4166,10 @@ function App() {
                     <div style={{ color: "#4a4a4a", fontSize: "14px", marginTop: "4px" }}>JMC Academy</div>
                     <div style={{ color: "#4a4a4a", fontSize: "14px" }}>2011-2013</div>
                   </div>
-                </div>
+                </section>
 
                 {/* Tools */}
-                <div style={{ marginBottom: "48px" }}>
+                <section aria-label="Tools" style={{ marginBottom: "48px" }}>
                   <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Tools</h2>
                   <div style={{ display: "flex", gap: "24px", fontSize: "15px", flexWrap: "wrap" }}>
                     <span>Figma</span>
@@ -4177,10 +4177,10 @@ function App() {
                     <span>Fullstory</span>
                     <span>Confluence</span>
                   </div>
-                </div>
+                </section>
 
                 {/* Say Hello */}
-                <div style={{ marginBottom: "48px" }}>
+                <section aria-label="Say Hello" style={{ marginBottom: "48px" }}>
                   <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Say Hello</h2>
                   <div style={{ fontSize: "15px", lineHeight: "1.8" }}>
                     <div style={{ marginBottom: "6px" }}>0421 366 486</div>
@@ -4210,13 +4210,13 @@ function App() {
                       dribbble.com/joelhickey
                     </a>
                   </div>
-                </div>
+                </section>
 
                 {/* References */}
-                <div>
+                <section aria-label="References">
                   <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>References</h2>
                   <div style={{ fontSize: "15px", color: "#4a4a4a" }}>Available upon request</div>
-                </div>
+                </section>
               </div>
           </div>
         </div>
