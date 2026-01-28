@@ -94,6 +94,22 @@ npm install
 npm run dev
 ```
 
+### Build & Deploy
+```bash
+# Build static assets (output: dist/)
+npm run build
+
+# Preview the production build locally
+npm run preview
+```
+
+#### Vercel (recommended)
+1. Import the repo into Vercel
+2. Build command: `npm run build`
+3. Output directory: `dist`
+4. Set environment variables (if using Supabase)
+5. Add your custom domain in Vercel → Settings → Domains
+
 ### Usage
 1. **Navigate Views**: Use the toolbar buttons to switch between different monitoring sections
 2. **Adjust Sliders**: Click and drag slider thumbs to set values (0-10)

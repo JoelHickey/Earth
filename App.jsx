@@ -1,4 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
+import {
+  Box,
+  Button as MuiButton,
+  IconButton,
+  Link as MuiLink,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import SportsBasketballIcon from '@mui/icons-material/SportsBasketball';
 import { Analytics } from '@vercel/analytics/react';
 import Header from './components/Header';
 import Toolbar from './components/Toolbar';
@@ -91,14 +105,24 @@ function App() {
   const [isWindowMinimized, setIsWindowMinimized] = useState(false);
   
   // Second app window state
-  const [isSecondAppOpen, setIsSecondAppOpen] = useState(false);
-  const [isSecondAppMinimized, setIsSecondAppMinimized] = useState(false);
+  const [cvWindows, setCvWindows] = useState([]);
   const cvWindowRef = useRef(null);
   const cvCloseButtonRef = useRef(null);
+  const [isCvScrolled, setIsCvScrolled] = useState(false);
+  const [showCvHeatmap, setShowCvHeatmap] = useState(false);
+  const [showCvHeatmapBaseline, setShowCvHeatmapBaseline] = useState(false);
+  const [cvHeatmapHeight, setCvHeatmapHeight] = useState(0);
+  const cvContentRef = useRef(null);
+  const cascadeOffset = 32;
+  const nextWindowZIndexRef = useRef(200);
+  const [mainWindowZIndex, setMainWindowZIndex] = useState(100);
+  const [insuranceWindowZIndex, setInsuranceWindowZIndex] = useState(130);
+  const [insuranceWindowPosition, setInsuranceWindowPosition] = useState(() => ({
+    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 1000) / 2) : 50,
+    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 700) / 2) : 100
+  }));
   // Third app window state (Travel Amendments)
-  const [isTravelAppOpen, setIsTravelAppOpen] = useState(false);
-  const [isTravelAppMinimized, setIsTravelAppMinimized] = useState(false);
-  const [travelPlannerView, setTravelPlannerView] = useState('caseStudy'); // 'caseStudy', 'oldFlow', 'newFlow'
+  const [travelWindows, setTravelWindows] = useState([]);
   
   // Fourth app window state (Insurance)
   const [isInsuranceAppOpen, setIsInsuranceAppOpen] = useState(false);
@@ -109,17 +133,7 @@ function App() {
     x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 1000) / 2) : 50,
     y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 600) / 2) : 100
   }));
-  const [secondWindowPosition, setSecondWindowPosition] = useState(() => ({
-    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 800) / 2) : 200,
-    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 600 - 28) / 2) : 120
-  }));
-  const [travelWindowPosition, setTravelWindowPosition] = useState(() => ({
-    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 700) / 2) : 300,
-    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 600) / 2) : 150
-  }));
-  const [isDragging, setIsDragging] = useState(false);
-  const [isSecondDragging, setIsSecondDragging] = useState(false);
-  const [isTravelDragging, setIsTravelDragging] = useState(false);
+  const [draggingWindow, setDraggingWindow] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingComponent, setEditingComponent] = useState(null);
@@ -138,6 +152,12 @@ function App() {
     setPreviousSliderValues(sliderValues);
     setSliderValues(prev => ({ ...prev, [name]: value }));
   };
+
+  const handleCvScroll = (event) => {
+    setIsCvScrolled(event.currentTarget.scrollTop > 16);
+  };
+
+
 
   const handleSliderMouseDown = useSliderDrag();
 
@@ -169,6 +189,40 @@ function App() {
     console.log('Window closed');
   };
 
+  const createWindowId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+  const getCascadeIndex = () => {
+    let count = 0;
+    if (isWindowOpen && !isWindowMinimized) count += 1;
+    count += cvWindows.filter((window) => !window.minimized).length;
+    count += travelWindows.filter((window) => !window.minimized).length;
+    if (isInsuranceAppOpen) count += 1;
+    return count;
+  };
+
+  const bringWindowToFront = (type, id) => {
+    const nextZIndex = nextWindowZIndexRef.current++;
+    if (type === 'main') {
+      setMainWindowZIndex(nextZIndex);
+      return;
+    }
+    if (type === 'insurance') {
+      setInsuranceWindowZIndex(nextZIndex);
+      return;
+    }
+    if (type === 'cv') {
+      setCvWindows(prev => prev.map(window => (
+        window.id === id ? { ...window, zIndex: nextZIndex } : window
+      )));
+      return;
+    }
+    if (type === 'travel') {
+      setTravelWindows(prev => prev.map(window => (
+        window.id === id ? { ...window, zIndex: nextZIndex } : window
+      )));
+    }
+  };
+
   const minimizeWindow = () => {
     setIsWindowMinimized(true);
     console.log('Window minimized');
@@ -177,6 +231,7 @@ function App() {
   const openWindow = () => {
     setIsWindowOpen(true);
     setIsWindowMinimized(false);
+    bringWindowToFront('main');
     // Center the window on desktop
     setWindowPosition({
       x: Math.max(0, (window.innerWidth - 1000) / 2), // Main window is 1000px wide
@@ -186,9 +241,8 @@ function App() {
   };
 
   // Second app functions
-  const closeSecondApp = () => {
-    setIsSecondAppOpen(false);
-    setIsSecondAppMinimized(false);
+  const closeSecondApp = (id) => {
+    setCvWindows(prev => prev.filter(window => window.id !== id));
     console.log('Second app closed');
   };
 
@@ -237,61 +291,115 @@ function App() {
   };
 
   useEffect(() => {
-    if (isSecondAppOpen) {
+    if (cvWindows.length > 0) {
       cvCloseButtonRef.current?.focus();
     }
-  }, [isSecondAppOpen]);
+  }, [cvWindows.length]);
 
-  const minimizeSecondApp = () => {
-    setIsSecondAppMinimized(true);
+  const cvHeatmapSuffix = showCvHeatmapBaseline ? '-baseline' : '';
+  const cvHeatmapHeaderSrc = `/heatmaps/cv-heatmap-header-overlay${cvHeatmapSuffix}.png`;
+  const cvHeatmapContentSrc = `/heatmaps/cv-heatmap-overlay${cvHeatmapSuffix}.png`;
+
+  useEffect(() => {
+    if (!showCvHeatmap || !cvContentRef.current) {
+      return undefined;
+    }
+
+    const updateHeatmapHeight = () => {
+      if (cvContentRef.current) {
+        setCvHeatmapHeight(cvContentRef.current.scrollHeight);
+      }
+    };
+
+    updateHeatmapHeight();
+
+    if (typeof ResizeObserver === 'undefined') {
+      return undefined;
+    }
+
+    const observer = new ResizeObserver(updateHeatmapHeight);
+    observer.observe(cvContentRef.current);
+
+    return () => observer.disconnect();
+  }, [showCvHeatmap, cvWindows.length]);
+
+  const minimizeSecondApp = (id) => {
+    setCvWindows(prev => prev.map(window => (
+      window.id === id ? { ...window, minimized: true } : window
+    )));
     console.log('Second app minimized');
   };
 
   const openSecondApp = () => {
-    setIsSecondAppOpen(true);
-    setIsSecondAppMinimized(false);
+    const id = createWindowId();
     // Center the CV window on desktop (accounting for 28px taskbar at bottom)
-    const centerX = Math.max(0, (window.innerWidth - 800) / 2);
-    const centerY = Math.max(0, (window.innerHeight - 600 - 28) / 2);
+    const centerX = Math.max(0, (window.innerWidth - 1000) / 2);
+    const centerY = Math.max(0, (window.innerHeight - 700 - 28) / 2);
+    const offset = getCascadeIndex() * cascadeOffset;
     console.log('Centering CV:', { 
       windowWidth: window.innerWidth, 
       windowHeight: window.innerHeight, 
       centerX, 
       centerY 
     });
-    setSecondWindowPosition({
-      x: centerX,
-      y: centerY
-    });
+    const position = {
+      x: Math.max(0, centerX + offset),
+      y: Math.max(0, centerY + offset)
+    };
+    const zIndex = nextWindowZIndexRef.current++;
+    setCvWindows(prev => ([
+      ...prev,
+      { id, position, minimized: false, zIndex }
+    ]));
     console.log('Second app opened');
   };
 
   // Travel app functions
-  const closeTravelApp = () => {
-    setIsTravelAppOpen(false);
-    setIsTravelAppMinimized(false);
+  const closeTravelApp = (id) => {
+    setTravelWindows(prev => prev.filter(window => window.id !== id));
     console.log('Travel app closed');
   };
 
-  const minimizeTravelApp = () => {
-    setIsTravelAppMinimized(true);
+  const minimizeTravelApp = (id) => {
+    setTravelWindows(prev => prev.map(window => (
+      window.id === id ? { ...window, minimized: true } : window
+    )));
     console.log('Travel app minimized');
   };
 
   const openTravelApp = () => {
-    setIsTravelAppOpen(true);
-    setIsTravelAppMinimized(false);
-    setTravelPlannerView('caseStudy'); // Start with case study
-    // Center the Travel window on desktop
-    setTravelWindowPosition({
-      x: Math.max(0, (window.innerWidth - 700) / 2), // Travel app width is 700px
-      y: Math.max(0, (window.innerHeight - 600) / 2) // Travel app height is 600px
-    });
+    const id = createWindowId();
+    // Center first open, offset subsequent opens
+    const width = 1000;
+    const height = 700;
+    const baseX = Math.max(0, (window.innerWidth - width) / 2);
+    const baseY = Math.max(0, (window.innerHeight - height) / 2);
+    const offset = getCascadeIndex() * cascadeOffset;
+    const position = {
+      x: Math.max(0, baseX + offset),
+      y: Math.max(0, baseY + offset)
+    };
+    const zIndex = nextWindowZIndexRef.current++;
+    setTravelWindows(prev => ([
+      ...prev,
+      { id, position, minimized: false, zIndex, view: 'caseStudy' }
+    ]));
     console.log('Travel app opened');
+  };
+
+  const updateTravelWindowView = (id, view) => {
+    setTravelWindows(prev => prev.map(window => (
+      window.id === id ? { ...window, view } : window
+    )));
   };
 
   const openInsuranceApp = () => {
     setIsInsuranceAppOpen(true);
+    setInsuranceWindowPosition({
+      x: Math.max(0, (window.innerWidth - 1000) / 2),
+      y: Math.max(0, (window.innerHeight - 700) / 2)
+    });
+    bringWindowToFront('insurance');
     console.log('Insurance app opened');
   };
 
@@ -303,6 +411,7 @@ function App() {
 
   const openInsuranceDemo = () => {
     setIsInsuranceDemoOpen(true);
+    bringWindowToFront('insurance');
   };
 
   const backToInsuranceCaseStudy = () => {
@@ -405,76 +514,16 @@ function App() {
     }
   };
 
-  // Drag handlers for main window
-  const handleWindowMouseDown = (e) => {
+  const startWindowDrag = (type, id, e) => {
     if (e.target.closest('button')) return; // Don't drag if clicking a button
-    setIsDragging(true);
+    setDraggingWindow({ type, id });
+    bringWindowToFront(type, id);
     const rect = e.currentTarget.getBoundingClientRect();
     setDragOffset({
       x: e.clientX - rect.left,
       y: e.clientY - rect.top
     });
     e.preventDefault();
-  };
-
-  const handleWindowMouseMove = (e) => {
-    if (!isDragging) return;
-    setWindowPosition({
-      x: e.clientX - dragOffset.x,
-      y: e.clientY - dragOffset.y
-    });
-  };
-
-  const handleWindowMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  // Drag handlers for second window
-  const handleSecondWindowMouseDown = (e) => {
-    if (e.target.closest('button')) return; // Don't drag if clicking a button
-    setIsSecondDragging(true);
-    const rect = e.currentTarget.getBoundingClientRect();
-    setDragOffset({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    });
-    e.preventDefault();
-  };
-
-  const handleSecondWindowMouseMove = (e) => {
-    if (!isSecondDragging) return;
-    setSecondWindowPosition({
-      x: e.clientX - dragOffset.x,
-      y: e.clientY - dragOffset.y
-    });
-  };
-
-  const handleSecondWindowMouseUp = () => {
-    setIsSecondDragging(false);
-  };
-
-  // Drag handlers for travel window
-  const handleTravelWindowMouseDown = (e) => {
-    if (e.target.closest('button')) return; // Don't drag if clicking a button
-    setIsTravelDragging(true);
-    const rect = e.currentTarget.getBoundingClientRect();
-    setDragOffset({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    });
-    e.preventDefault();
-  };
-
-  const handleTravelWindowMouseMove = (e) => {
-    if (!isTravelDragging) return;
-    setTravelWindowPosition({
-      x: e.clientX - dragOffset.x,
-      y: e.clientY - dragOffset.y
-    });
-  };
-
-  const handleTravelWindowMouseUp = () => {
-    setIsTravelDragging(false);
   };
 
   const hasSavedPositions = () => {
@@ -483,28 +532,40 @@ function App() {
 
   // Add global mouse event listeners for dragging
   React.useEffect(() => {
+    if (!draggingWindow) return undefined;
+
     const handleGlobalMouseMove = (e) => {
-      handleWindowMouseMove(e);
-      handleSecondWindowMouseMove(e);
-      handleTravelWindowMouseMove(e);
+      const nextPosition = {
+        x: e.clientX - dragOffset.x,
+        y: e.clientY - dragOffset.y
+      };
+      if (draggingWindow.type === 'main') {
+        setWindowPosition(nextPosition);
+      } else if (draggingWindow.type === 'cv') {
+        setCvWindows(prev => prev.map(window => (
+          window.id === draggingWindow.id ? { ...window, position: nextPosition } : window
+        )));
+      } else if (draggingWindow.type === 'travel') {
+        setTravelWindows(prev => prev.map(window => (
+          window.id === draggingWindow.id ? { ...window, position: nextPosition } : window
+        )));
+    } else if (draggingWindow.type === 'insurance') {
+      setInsuranceWindowPosition(nextPosition);
+      }
     };
 
     const handleGlobalMouseUp = () => {
-      handleWindowMouseUp();
-      handleSecondWindowMouseUp();
-      handleTravelWindowMouseUp();
+      setDraggingWindow(null);
     };
 
-    if (isDragging || isSecondDragging || isTravelDragging) {
       document.addEventListener('mousemove', handleGlobalMouseMove);
       document.addEventListener('mouseup', handleGlobalMouseUp);
-    }
 
     return () => {
       document.removeEventListener('mousemove', handleGlobalMouseMove);
       document.removeEventListener('mouseup', handleGlobalMouseUp);
     };
-  }, [isDragging, isSecondDragging, isTravelDragging, dragOffset]);
+  }, [draggingWindow, dragOffset]);
 
   // Add functions for environment checkboxes
   const updateEnvironmentCheckbox = (name, checked) => {
@@ -3657,7 +3718,7 @@ function App() {
         pointerEvents: "none"
       }} />
       {/* Desktop Icons */}
-      {/* First Desktop Icon - CV */}
+      {/* First Desktop Icon - Curriculum Vitae */}
       <div
         style={{
           position: "absolute",
@@ -3674,7 +3735,7 @@ function App() {
         }}
         role="button"
         tabIndex={0}
-        aria-label="CV"
+        aria-label="Curriculum Vitae"
         onClick={openSecondApp}
         onDoubleClick={openSecondApp}
         onKeyDown={(event) => handleDesktopIconKeyDown(event, openSecondApp)}
@@ -3705,13 +3766,15 @@ function App() {
           color: "#ffffff",
           textAlign: "center",
           textShadow: "1px 1px 0px #000000",
-          whiteSpace: "nowrap"
+          whiteSpace: "normal",
+          width: "90px",
+          lineHeight: "14px"
         }}>
-          CV
+          Curriculum Vitae
         </span>
       </div>
 
-      {/* Second Desktop Icon - FCTG Amendments */}
+      {/* Second Desktop Icon - Flight Centre Amendments */}
       <div
         style={{
           position: "absolute",
@@ -3728,7 +3791,7 @@ function App() {
         }}
         role="button"
         tabIndex={0}
-        aria-label="FCTG Amendments"
+        aria-label="Flight Centre Amendments"
         onClick={openTravelApp}
         onDoubleClick={openTravelApp}
         onKeyDown={(event) => handleDesktopIconKeyDown(event, openTravelApp)}
@@ -3759,13 +3822,15 @@ function App() {
           color: "#ffffff",
           textAlign: "center",
           textShadow: "1px 1px 0px #000000",
-          whiteSpace: "nowrap"
+          whiteSpace: "normal",
+          width: "90px",
+          lineHeight: "14px"
         }}>
-          FCTG Amendments
+          Flight Centre Amendments
         </span>
       </div>
 
-    {/* Third Desktop Icon - FCTG Insurance */}
+    {/* Third Desktop Icon - Flight Centre Insurance */}
     <div
       style={{
         position: "absolute",
@@ -3782,7 +3847,7 @@ function App() {
       }}
       role="button"
       tabIndex={0}
-      aria-label="FCTG Insurance"
+      aria-label="Flight Centre Insurance"
       onClick={openInsuranceApp}
       onDoubleClick={openInsuranceApp}
       onKeyDown={(event) => handleDesktopIconKeyDown(event, openInsuranceApp)}
@@ -3813,55 +3878,11 @@ function App() {
         color: "#ffffff",
         textAlign: "center",
         textShadow: "1px 1px 0px #000000",
-        whiteSpace: "nowrap"
+        whiteSpace: "normal",
+        width: "90px",
+        lineHeight: "14px"
       }}>
-        FCTG Insurance
-      </span>
-    </div>
-
-    {/* Fourth Desktop Icon - Magento Shipping */}
-    <div
-      style={{
-        position: "absolute",
-        top: "260px",
-        left: "50px",
-        width: "64px",
-        height: "64px",
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "transparent"
-      }}
-      onClick={() => {/* Will add case study later */}}
-      onDoubleClick={() => {/* Will add case study later */}}
-    >
-      <div style={{
-        width: "32px",
-        height: "32px",
-        background: "transparent",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: "4px"
-      }}>
-        <span style={{
-          fontSize: "32px",
-          fontFamily: "'MS Sans Serif', sans-serif",
-          color: "#ffffff",
-          textShadow: "1px 1px 0px #000000"
-        }}>📦</span>
-      </div>
-      <span style={{
-        fontSize: "12px",
-        fontFamily: "'MS Sans Serif', sans-serif",
-        color: "#ffffff",
-        textAlign: "center",
-        textShadow: "1px 1px 0px #000000",
-        whiteSpace: "nowrap"
-      }}>
-        Magento Shipping
+        Flight Centre Insurance
       </span>
     </div>
 
@@ -3898,7 +3919,9 @@ function App() {
         color: "#ffffff",
         textAlign: "center",
         textShadow: "1px 1px 0px #000000",
-        whiteSpace: "nowrap"
+        whiteSpace: "normal",
+        width: "90px",
+        lineHeight: "14px"
       }}>
         Earth
       </span>
@@ -3911,11 +3934,11 @@ function App() {
             position: "absolute",
             left: `${windowPosition.x}px`,
             top: `${windowPosition.y}px`,
-            zIndex: 100
+            zIndex: mainWindowZIndex
           }}
         >
       <div style={styles.mainWindow}>
-            <Header onClose={closeWindow} onMinimize={minimizeWindow} onDragStart={handleWindowMouseDown} />
+            <Header onClose={closeWindow} onMinimize={minimizeWindow} onDragStart={(e) => startWindowDrag('main', null, e)} />
         <Toolbar 
           activeView={activeView}
           setActiveView={setActiveView}
@@ -3943,419 +3966,613 @@ function App() {
       )}
 
       {/* Second Application Window - Clean Document */}
-      {isSecondAppOpen && !isSecondAppMinimized && (
-        <div
-          aria-label="CV window"
+      {cvWindows.filter((window) => !window.minimized).map((cvWindow) => (
+        <Box
+          key={cvWindow.id}
+          aria-label="Curriculum Vitae window"
           ref={cvWindowRef}
           onKeyDown={handleCvKeyDown}
-          style={{
+          sx={(theme) => ({
             position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 99,
-            background: "#ffffff",
-            width: "926px",
-            maxWidth: "90vw",
-            height: "1310px",
+            top: cvWindow.position.y,
+            left: cvWindow.position.x,
+            zIndex: cvWindow.zIndex,
+            bgcolor: "background.paper",
+            width: { xs: "95vw", md: theme.spacing(125) },
+            maxWidth: "95vw",
+            height: { xs: "90vh", md: theme.spacing(87.5) },
             maxHeight: "90vh",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
-            borderRadius: "10px",
+            boxShadow: 1,
+            borderRadius: theme.shape.borderRadius,
+            border: "1px solid",
+            borderColor: "divider",
+            overflow: "hidden",
             display: "flex",
             flexDirection: "column"
-          }}
+          })}
+          onMouseDown={() => bringWindowToFront('cv', cvWindow.id)}
         >
-          {/* Close Button - Absolute position in top-right */}
-          <button
-            onClick={closeSecondApp}
-            ref={cvCloseButtonRef}
-            style={{
-              position: "absolute",
-              top: "16px",
-              right: "16px",
-              width: "44px",
-              height: "44px",
-              borderRadius: "50%",
-              border: "none",
-              background: "#e0e0e0",
-              color: "#666",
-              fontSize: "18px",
-              cursor: "pointer",
+        <Box
+            aria-label="Curriculum Vitae header"
+            onMouseDown={(e) => startWindowDrag('cv', cvWindow.id, e)}
+            sx={{
+              minHeight: 0,
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "background 0.2s",
-              fontWeight: "300",
-              lineHeight: "1",
-              zIndex: 100
-            }}
-            onMouseOver={(e) => e.currentTarget.style.background = "#d0d0d0"}
-            onMouseOut={(e) => e.currentTarget.style.background = "#e0e0e0"}
-            onFocus={(e) => {
-              e.currentTarget.style.outline = "1px dotted #000000";
-              e.currentTarget.style.outlineOffset = "2px";
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.outline = "none";
-              e.currentTarget.style.outlineOffset = "0";
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              px: 3,
+              py: 2,
+              borderBottom: isCvScrolled ? "1px solid" : "none",
+              borderColor: isCvScrolled ? "divider" : "transparent",
+              bgcolor: "transparent",
+              cursor: "move",
+              position: "relative"
             }}
           >
-            ✕
-          </button>
+            {showCvHeatmap && (
+              <Box
+                component="img"
+                src={cvHeatmapHeaderSrc}
+                alt="CV header attention heatmap overlay"
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  pointerEvents: "none",
+                  opacity: 0.6,
+                  zIndex: 0
+                }}
+              />
+            )}
+            <Box
+              sx={{
+                position: "relative",
+                zIndex: 1,
+            display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                width: "100%"
+              }}
+            >
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
+                <Box sx={{ display: "flex", alignItems: "baseline", gap: 1.5 }}>
+                <Typography
+                  variant="h4"
+                  component="h1"
+                  sx={{
+                    m: 0,
+                    fontWeight: 700,
+                    letterSpacing: "0.02em",
+                    color: "text.primary",
+                    fontSize: { xs: "2rem", md: "2.5rem" }
+                  }}
+                >
+                    Joel Hickey
+                  </Typography>
+                <Typography
+                  variant="h6"
+                  component="p"
+                  sx={{ fontWeight: 400, m: 0, color: "text.primary", letterSpacing: "0.01em" }}
+                >
+                    Senior Product Designer
+                  </Typography>
+                </Box>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <IconButton
+                onClick={() => closeSecondApp(cvWindow.id)}
+                ref={cvCloseButtonRef}
+                aria-label="Close Curriculum Vitae"
+                size="large"
+                sx={{
+                  color: "text.primary",
+                  "&:focus": {
+                    outline: "1px dotted",
+                    outlineColor: "text.primary",
+                    outlineOffset: "2px"
+                  },
+                  "&:focus-visible": {
+                    outline: "1px dotted",
+                    outlineColor: "text.primary",
+                    outlineOffset: "2px"
+                  }
+                }}
+              >
+                <CloseIcon fontSize="medium" />
+              </IconButton>
+              </Box>
+            </Box>
+          </Box>
           
           {/* Scrollable content area */}
-          <div
+          <Box
             tabIndex={0}
-            aria-label="CV content"
-            style={{
+            aria-label="Curriculum Vitae content"
+            onScroll={handleCvScroll}
+            ref={cvContentRef}
+            sx={(theme) => ({
+              ...theme.typography.body1,
             flex: 1,
             overflow: "auto",
-            padding: "48px 64px",
-            fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif",
-            fontSize: "15px",
-            lineHeight: "1.6",
-            color: "#1d1d1f",
+              position: "relative",
+              px: 4,
+              pt: 0,
+              pb: 4,
+              color: theme.palette.text.primary,
+              fontFamily: theme.typography.fontFamily,
             WebkitFontSmoothing: "antialiased"
-          }}>
-              <div style={{ maxWidth: "700px", margin: "0 auto" }}>
-                {/* Header */}
-                <div style={{ marginBottom: "48px" }}>
-                  <h1 style={{ fontSize: "48px", fontWeight: "600", margin: "0 0 8px 0", color: "#1d1d1f", letterSpacing: "-0.5px" }}>Joel Hickey</h1>
-                <div style={{ fontSize: "21px", fontWeight: "300", color: "#4a4a4a", letterSpacing: "-0.2px" }}>Senior Product Designer</div>
-                </div>
-
-                {/* Introduction */}
-                <div style={{ marginBottom: "48px" }}>
-                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "16px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Introduction</h2>
-                  <p style={{ margin: "0 0 12px 0", fontSize: "15px", lineHeight: "1.6", color: "#1d1d1f" }}>
-                    At an early age I was blessed with a passion for design, growing up with a unique lens that combined both design and artistry. I bring with me a special set of skills from a background in interface and sound design, finding joy in the many aspects of digital and physical design.
-                  </p>
-                  <p style={{ margin: "0", fontSize: "15px", lineHeight: "1.6", color: "#1d1d1f" }}>
-                    I strive to shape and deliver valuable, delightful solutions that solve the right problems for the user and the business efficiently and effectively.
-                  </p>
-                </div>
-
-                {/* Experience */}
-                <section aria-label="Experience" style={{ marginBottom: "48px" }}>
-                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Experience</h2>
-                  
-                  {/* FCTG */}
-                  <div style={{ marginBottom: "32px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                      <strong style={{ fontSize: "17px", fontWeight: "600" }}>Senior UI/UX Designer</strong>
-                      <span style={{ color: "#4a4a4a", fontSize: "15px" }}>2021-2025</span>
-                    </div>
-                    <div style={{ marginBottom: "12px", color: "#4a4a4a", fontSize: "15px" }}>Flight Centre Travel Group</div>
-                    <p style={{ margin: "0 0 16px 0", fontSize: "15px", lineHeight: "1.6" }}>
-                      Improved productivity of the consultant booking platform by reducing the steps required to manage bookings. Involved in all parts of the design process from discovery to post release enhancements with both internal and external teams.
-                    </p>
-                    
-                    <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "15px" }}>Amendments</strong>{' '}
-                      <button
-                        type="button"
-                        onClick={openTravelApp}
-                        aria-label="View Amendments story"
-                        className="cv-link-button"
-                        style={{
-                          background: "none",
-                          border: "none",
-                          appearance: "none",
-                          WebkitAppearance: "none",
-                          MozAppearance: "none",
-                          padding: "6px 8px",
-                          color: "#004b99",
-                          fontSize: "13px",
-                          cursor: "pointer",
-                          minHeight: "44px",
-                          minWidth: "44px",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          lineHeight: "1.2",
-                          textDecoration: "none"
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.textDecoration = "underline";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.textDecoration = "none";
-                        }}
-                        onFocus={(e) => {
-                          e.currentTarget.style.textDecoration = "underline";
-                        }}
-                        onBlur={(e) => {
-                          e.currentTarget.style.textDecoration = "none";
-                        }}
-                      >
-                        View the story
-                      </button>
-                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#4a4a4a" }}>
-                        <span>Efficiency +67%</span>
-                        <span>ROI +67%</span>
-                        <span>CSAT +67%</span>
-                      </div>
-                    </div>
-                    
-                    <div style={{ marginBottom: "16px" }}>
-                      <strong style={{ fontSize: "15px" }}>Travel insurance</strong>{' '}
-                      <button
-                        type="button"
-                        onClick={openInsuranceApp}
-                        aria-label="View Travel insurance story"
-                        className="cv-link-button"
-                        style={{
-                          background: "none",
-                          border: "none",
-                          appearance: "none",
-                          WebkitAppearance: "none",
-                          MozAppearance: "none",
-                          padding: "6px 8px",
-                          color: "#004b99",
-                          fontSize: "13px",
-                          cursor: "pointer",
-                          minHeight: "44px",
-                          minWidth: "44px",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          lineHeight: "1.2",
-                          textDecoration: "none"
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.textDecoration = "underline";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.textDecoration = "none";
-                        }}
-                        onFocus={(e) => {
-                          e.currentTarget.style.textDecoration = "underline";
-                        }}
-                        onBlur={(e) => {
-                          e.currentTarget.style.textDecoration = "none";
-                        }}
-                      >
-                        View the story
-                      </button>
-                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#4a4a4a" }}>
-                        <span>Efficiency +67%</span>
-                        <span>ROI +67%</span>
-                        <span>CSAT +67%</span>
-                      </div>
-                    </div>
-
-                    <div style={{ padding: "16px", background: "#f5f5f7", borderRadius: "8px" }}>
-                      <strong style={{ fontSize: "15px", fontWeight: "600" }}>Awards</strong>
-                      <div style={{ marginTop: "8px", fontSize: "14px", lineHeight: "1.8" }}>
-                        • Selected to attend FCTG Global Lisbon, Portugal 2024<br/>
-                        • Buzz night award winner 2022, 2023
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Canstar */}
-                  <div style={{ marginBottom: "32px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                      <strong style={{ fontSize: "17px", fontWeight: "600" }}>Lead UI/UX Designer</strong>
-                      <span style={{ color: "#4a4a4a", fontSize: "15px" }}>2019-2020</span>
-                    </div>
-                    <div style={{ marginBottom: "12px", color: "#4a4a4a", fontSize: "15px" }}>Canstar</div>
-                    <div style={{ fontSize: "14px", lineHeight: "1.8" }}>
-                      • Focused on customer product verticals and internal software<br/>
-                      • Transitioned Canstar to a scalable design tool (Figma)<br/>
-                      • UI/UX representative for all agile ceremonies (internal & external)<br/>
-                      • Established a UI/UX repository and documentation guidelines<br/>
-                      • Wrote a usability testing framework and carried out multiple stakeholder sessions with recommended design updates<br/>
-                      • Worked on a design system for efficient design/developer process
-                    </div>
-                  </div>
-
-                  {/* Temando */}
-                  <div style={{ marginBottom: "32px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                      <strong style={{ fontSize: "17px", fontWeight: "600" }}>UI/UX Designer</strong>
-                      <span style={{ color: "#4a4a4a", fontSize: "15px" }}>2015-2019</span>
-                    </div>
-                    <div style={{ marginBottom: "12px", color: "#4a4a4a", fontSize: "15px" }}>Temando</div>
-                    <p style={{ margin: "0 0 16px 0", fontSize: "15px", lineHeight: "1.6" }}>
-                      Improved the productivity of merchants using Magento Shipping by enabling multiple shipments to be dispatched quickly in a single flow.
-                    </p>
-                    
-                    <div style={{ marginBottom: "16px" }}>
-                      <strong style={{ fontSize: "15px" }}>Bulk shipments</strong>{' '}
-                      <button
-                        type="button"
-                        onClick={() => console.log('Bulk shipments story coming soon')}
-                        aria-label="View Bulk shipments story"
-                        className="cv-link-button"
-                        style={{
-                          background: "none",
-                          border: "none",
-                          appearance: "none",
-                          WebkitAppearance: "none",
-                          MozAppearance: "none",
-                          padding: "6px 8px",
-                          color: "#004b99",
-                          fontSize: "13px",
-                          cursor: "pointer",
-                          minHeight: "44px",
-                          minWidth: "44px",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          lineHeight: "1.2",
-                          textDecoration: "none"
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.textDecoration = "underline";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.textDecoration = "none";
-                        }}
-                        onFocus={(e) => {
-                          e.currentTarget.style.textDecoration = "underline";
-                        }}
-                        onBlur={(e) => {
-                          e.currentTarget.style.textDecoration = "none";
-                        }}
-                      >
-                        View the story
-                      </button>
-                      <div style={{ display: "flex", gap: "24px", marginTop: "6px", fontSize: "13px", color: "#4a4a4a" }}>
-                        <span>Efficiency +67%</span>
-                        <span>ROI +67%</span>
-                        <span>CSAT +67%</span>
-                      </div>
-                    </div>
-
-                    <div style={{ fontSize: "14px", lineHeight: "1.8" }}>
-                      • Designed multiple software proposals for Nike, Myer and Asos<br/>
-                      • Designed entire workflows from wire frames to high fidelity<br/>
-                      • Established design frameworks and a UX guild<br/>
-                      • UI/UX representative for all agile ceremonies (internal & offshore)
-                    </div>
-                  </div>
-                </section>
-
-                {/* Education */}
-                <section aria-label="Education" style={{ marginBottom: "48px" }}>
-                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Education</h2>
-                  
-                  <div style={{ marginBottom: "20px" }}>
-                    <strong style={{ fontSize: "17px", fontWeight: "600" }}>Masters of Interactive Media</strong>
-                    <div style={{ color: "#4a4a4a", fontSize: "14px", marginTop: "4px" }}>Queensland College of Art</div>
-                    <div style={{ color: "#4a4a4a", fontSize: "14px" }}>2015-2016</div>
-                  </div>
-
-                  <div style={{ marginBottom: "20px" }}>
-                    <strong style={{ fontSize: "17px", fontWeight: "600" }}>Bachelor of Audio Engineering and Sound Production</strong>
-                    <div style={{ color: "#4a4a4a", fontSize: "14px", marginTop: "4px" }}>JMC Academy</div>
-                    <div style={{ color: "#4a4a4a", fontSize: "14px" }}>2011-2013</div>
-                  </div>
-                </section>
-
-                {/* Tools */}
-                <section aria-label="Tools" style={{ marginBottom: "48px" }}>
-                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Tools</h2>
-                  <div style={{ display: "flex", gap: "24px", fontSize: "15px", flexWrap: "wrap" }}>
-                    <span>Figma</span>
-                    <span>Miro</span>
-                    <span>Fullstory</span>
-                    <span>Confluence</span>
-                  </div>
-                </section>
-
-                {/* Say Hello */}
-                <section aria-label="Say Hello" style={{ marginBottom: "48px" }}>
-                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>Say Hello</h2>
-                  <div style={{ fontSize: "15px", lineHeight: "1.8" }}>
-                    <div style={{ marginBottom: "6px" }}>0421 366 486</div>
-                    <div style={{ marginBottom: "6px" }}>joelhickeydesigns@gmail.com</div>
-                    <div style={{ marginBottom: "6px" }}>Brisbane or remote</div>
-                    <a
-                      href="https://dribbble.com/joelhickey"
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label="Dribbble profile"
-                      style={{
-                        marginBottom: "6px",
-                        color: "#004b99",
-                        cursor: "pointer",
+            })}
+          >
+            {showCvHeatmap && (
+              <Box
+                component="img"
+                src={cvHeatmapContentSrc}
+                alt="CV attention heatmap overlay"
+                sx={{
+                  position: "absolute",
+                  inset: 0,
+                width: "100%",
+                  height: cvHeatmapHeight ? `${cvHeatmapHeight}px` : "100%",
+                  objectFit: "cover",
+                  pointerEvents: "none",
+                  opacity: 0.6,
+                  zIndex: 1
+                }}
+              />
+            )}
+                {/* Portfolio & Contact */}
+                <Box component="section" aria-label="Portfolio & Contact" sx={{ mb: 3 }}>
+                  <Box
+                    component="ul"
+                    sx={{
+                      m: 0,
+                      p: 0,
+            display: "flex",
+                      flexWrap: "wrap",
+                      listStyle: "none",
+                      gap: 1.5
+                    }}
+                  >
+                    <Box
+                      component="li"
+                      sx={(theme) => ({
                         display: "inline-flex",
                         alignItems: "center",
-                        minHeight: "44px",
-                        textDecoration: "none"
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.textDecoration = "underline";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.textDecoration = "none";
-                      }}
-                      onFocus={(e) => {
-                        e.currentTarget.style.outline = "1px dotted #000000";
-                        e.currentTarget.style.outlineOffset = "2px";
-                        e.currentTarget.style.textDecoration = "underline";
-                      }}
-                      onBlur={(e) => {
-                        e.currentTarget.style.outline = "none";
-                        e.currentTarget.style.outlineOffset = "0";
-                        e.currentTarget.style.textDecoration = "none";
+                        minHeight: theme.spacing(5.5)
+                      })}
+                    >
+                      <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+                        <PhoneOutlinedIcon fontSize="small" sx={{ color: "text.primary" }} />
+                        <Typography component="span" variant="body2">
+                          0421 366 486
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box
+                      component="li"
+                      sx={(theme) => ({
+                        display: "inline-flex",
+                        alignItems: "center",
+                        minHeight: theme.spacing(5.5)
+                      })}
+                    >
+                      <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+                        <EmailOutlinedIcon fontSize="small" sx={{ color: "text.primary" }} />
+                        <MuiLink
+                          href="mailto:joelhickeydesigns@gmail.com"
+                          aria-label="Email Joel Hickey"
+                          underline="none"
+                          sx={(theme) => ({
+                            ...theme.typography.body2,
+              cursor: "pointer",
+                            display: "inline-flex",
+              alignItems: "center",
+                            minHeight: theme.spacing(5.5),
+                            color: "text.primary",
+                            textDecoration: "underline",
+                            "&:hover": { textDecoration: "underline" },
+                            "&:focus": {
+                              outline: "1px dotted",
+                              outlineColor: "text.primary",
+                              outlineOffset: "2px",
+                              textDecoration: "underline"
+                            },
+                            "&:focus-visible": {
+                              outline: "1px dotted",
+                              outlineColor: "text.primary",
+                              outlineOffset: "2px",
+                              textDecoration: "underline"
+                            }
+                          })}
+                        >
+                          joelhickeydesigns@gmail.com
+                        </MuiLink>
+                      </Box>
+                    </Box>
+                    <Box
+                      component="li"
+                      sx={(theme) => ({
+                        display: "inline-flex",
+                        alignItems: "center",
+                        minHeight: theme.spacing(5.5)
+                      })}
+                    >
+                      <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+                        <LinkedInIcon fontSize="small" sx={{ color: "text.primary" }} />
+                        <MuiLink
+                          href="https://linkedin.com/in/joelhickey"
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="Joel Hickey LinkedIn"
+                          underline="none"
+                          sx={(theme) => ({
+                            ...theme.typography.body2,
+              cursor: "pointer",
+                            display: "inline-flex",
+              alignItems: "center",
+                            minHeight: theme.spacing(5.5),
+                            color: "text.primary",
+                            textDecoration: "underline",
+                            "&:hover": { textDecoration: "underline" },
+                            "&:focus": {
+                              outline: "1px dotted",
+                              outlineColor: "text.primary",
+                              outlineOffset: "2px",
+                              textDecoration: "underline"
+                            },
+                            "&:focus-visible": {
+                              outline: "1px dotted",
+                              outlineColor: "text.primary",
+                              outlineOffset: "2px",
+                              textDecoration: "underline"
+                            }
+                          })}
+                        >
+                          linkedin.com/in/joelhickey
+                        </MuiLink>
+                      </Box>
+                    </Box>
+                    <Box
+                      component="li"
+                      sx={(theme) => ({
+                        display: "inline-flex",
+                        alignItems: "center",
+                        minHeight: theme.spacing(5.5)
+                      })}
+                    >
+                      <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+                        <SportsBasketballIcon fontSize="small" sx={{ color: "text.primary" }} />
+                        <MuiLink
+                          href="https://dribbble.com/joelhickey"
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="Joel Hickey Dribbble"
+                          underline="none"
+                          sx={(theme) => ({
+                            ...theme.typography.body2,
+                            cursor: "pointer",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            minHeight: theme.spacing(5.5),
+                            color: "text.primary",
+                            textDecoration: "underline",
+                            "&:hover": { textDecoration: "underline" },
+                            "&:focus": {
+                              outline: "1px dotted",
+                              outlineColor: "text.primary",
+                              outlineOffset: "2px",
+                              textDecoration: "underline"
+                            },
+                            "&:focus-visible": {
+                              outline: "1px dotted",
+                              outlineColor: "text.primary",
+                              outlineOffset: "2px",
+                              textDecoration: "underline"
+                            }
+                          })}
+                        >
+                          dribbble.com/joelhickey
+                        </MuiLink>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
+
+                {/* About */}
+                <Box component="section" aria-label="About" sx={{ mb: 6, mt: 2 }}>
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    sx={{
+                      mb: 2.5,
+                      fontWeight: 700,
+                      color: "#4b2f73",
+                      letterSpacing: "0.04em"
+                    }}
+                  >
+                    About
+                  </Typography>
+                  <Typography component="p" variant="body2" sx={{ mb: 1.5 }}>
+                    From an early age I developed a unique lens that blends art and design. With experience in interaction design, service design, and human-centred thinking, I move fast to deliver valuable, delightful, measurable solutions that feel effortless to use.
+                  </Typography>
+                </Box>
+
+                {/* Experience */}
+                <Box component="section" aria-label="Experience" sx={{ mb: 6, mt: 4 }}>
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    sx={{
+                      mb: 2.5,
+                      fontWeight: 700,
+                      color: "#4b2f73",
+                      letterSpacing: "0.04em"
+                    }}
+                  >
+                    Experience
+                  </Typography>
+                  
+                  {/* FCTG */}
+                  <Box sx={{ mb: 4 }}>
+                    <Typography component="div" variant="subtitle1">
+                      <Box component="span" sx={{ fontWeight: 600 }}>
+                        Flight Centre Travel Group
+                      </Box>
+                      {" — "}
+                      <Box component="span" sx={{ fontWeight: 300 }}>
+                        Senior UI/UX Designer
+                      </Box>
+                    </Typography>
+                    <Typography
+                      component="div"
+                      variant="body2"
+                      sx={{ mt: 0.5, mb: 1.5, color: "text.primary" }}
+                    >
+                      2021-2025
+                    </Typography>
+                    <Box
+                      component="ul"
+                      sx={{
+                        m: 0,
+                        pl: 2.5,
+                        listStyle: "disc",
+                        "& > li": { mb: 1 },
+                        "& > li:last-of-type": { mb: 0 }
                       }}
                     >
-                      dribbble.com/joelhickey
-                    </a>
-                  </div>
-                </section>
+                      <Typography component="li" variant="body2">
+                        Redesigned consultant booking platform flows, cutting steps and lifting productivity by 67%
+                      </Typography>
+                      <Typography component="li" variant="body2">
+                        Improved CSAT scores for booking tasks and conversion metrics for travel add-ons.
+                      </Typography>
+                      <Typography component="li" variant="body2">
+                        Coordinated and delivered design within external and internal teams through discovery, prototyping, launch, and post-release optimization
+                      </Typography>
+                      <Typography component="li" variant="body2">
+                        Recognized: FCTG Global Lisbon selectee (2024); Buzz Night award winner (2022, 2023)
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {/* Canstar */}
+                  <Box sx={{ mb: 4 }}>
+                    <Typography component="div" variant="subtitle1" sx={{ fontWeight: 600 }}>
+                      Canstar — Lead UI/UX Designer
+                    </Typography>
+                    <Typography
+                      component="div"
+                      variant="body2"
+                      sx={{ mt: 0.5, mb: 1.5, color: "text.primary" }}
+                    >
+                      2019-2020
+                    </Typography>
+                    <Box
+                      component="ul"
+                      sx={{
+                        m: 0,
+                        pl: 2.5,
+                        listStyle: "disc",
+                        "& > li": { mb: 1 },
+                        "& > li:last-of-type": { mb: 0 }
+                      }}
+                    >
+                      <Typography component="li" variant="body2">
+                        Migrated design workflow to Figma and established a living UI repository and handoff standards, reducing design-to-dev friction.
+                      </Typography>
+                      <Typography component="li" variant="body2">
+                        Built a usability testing framework, ran stakeholder workshops, and delivered prioritized UX improvements across customer product verticals.
+                      </Typography>
+                      <Typography component="li" variant="body2">
+                        Represented UX in agile ceremonies and drove adoption of design system practices across product teams.
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {/* Temando */}
+                  <Box sx={{ mb: 4 }}>
+                    <Typography component="div" variant="subtitle1" sx={{ fontWeight: 600 }}>
+                      Temando — UI/UX Designer
+                    </Typography>
+                    <Typography
+                      component="div"
+                      variant="body2"
+                      sx={{ mt: 0.5, mb: 1.5, color: "text.primary" }}
+                    >
+                      2015-2019
+                    </Typography>
+                    <Box
+                      component="ul"
+                      sx={{
+                        m: 0,
+                        pl: 2.5,
+                        listStyle: "disc",
+                        "& > li": { mb: 1 },
+                        "& > li:last-of-type": { mb: 0 }
+                      }}
+                    >
+                      <Typography component="li" variant="body2">
+                        Designed merchant workflows for Magento Shipping (bulk shipments), enabling faster dispatch flows and measurably higher merchant throughput and satisfaction.
+                      </Typography>
+                      <Typography component="li" variant="body2">
+                        Developed end-to-end proposals and workflows for clients including Nike, Myer and ASOS.
+                      </Typography>
+                      <Typography component="li" variant="body2">
+                        Founded a UX guild and documented design frameworks to scale cross-team collaboration.
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+
+                {/* Education */}
+                <Box component="section" aria-label="Education" sx={{ mb: 6, mt: 4 }}>
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    sx={{
+                      mb: 2.5,
+                      fontWeight: 700,
+                      color: "#4b2f73",
+                      letterSpacing: "0.04em"
+                    }}
+                  >
+                    Education
+                  </Typography>
+                  <Typography component="div" variant="body2" sx={{ mb: 0.75 }}>
+                    Master of Interactive Media — Queensland College of Art (2015-2016)
+                  </Typography>
+                  <Typography component="div" variant="body2">
+                    Bachelor of Audio Engineering & Sound Production — JMC Academy (2011-2013)
+                  </Typography>
+                </Box>
+
+                {/* Tools & Methods */}
+                <Box component="section" aria-label="Tools & Methods" sx={{ mb: 6, mt: 4 }}>
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    sx={{
+                      mb: 2.5,
+                      fontWeight: 700,
+                      color: "#4b2f73",
+                      letterSpacing: "0.04em"
+                    }}
+                  >
+                    Tools & Methods
+                  </Typography>
+                  <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      Figma
+                    </Typography>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      Miro
+                    </Typography>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      FullStory
+                    </Typography>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      Confluence
+                    </Typography>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      Design Systems
+                    </Typography>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      Prototyping
+                    </Typography>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      Usability Testing
+                    </Typography>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      Research & Synthesis
+                    </Typography>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      UX Strategy
+                    </Typography>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      Accessibility
+                    </Typography>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      Sound design for UI
+                    </Typography>
+                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
+                      AI Tools: Cursor, GitHub
+                    </Typography>
+                  </Box>
+                </Box>
 
                 {/* References */}
-                <section aria-label="References">
-                  <h2 style={{ fontSize: "28px", fontWeight: "600", marginBottom: "20px", color: "#1d1d1f", letterSpacing: "-0.3px" }}>References</h2>
-                  <div style={{ fontSize: "15px", color: "#4a4a4a" }}>Available upon request</div>
-                </section>
-              </div>
-          </div>
-        </div>
-      )}
+                <Box component="section" aria-label="References" sx={{ mt: 4 }}>
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    sx={{
+                      mb: 2.5,
+                      fontWeight: 700,
+                      color: "#4b2f73",
+                      letterSpacing: "0.04em"
+                    }}
+                  >
+                    References
+                  </Typography>
+                  <Typography component="p" variant="body2" sx={{ m: 0 }}>
+                    References available on request
+                  </Typography>
+                </Box>
+
+              
+          </Box>
+        </Box>
+      ))}
 
       {/* Third Application Window - Travel Amendments */}
-      {isTravelAppOpen && !isTravelAppMinimized && (
-        <>
-          {travelPlannerView === 'caseStudy' && (
+      {travelWindows.filter((window) => !window.minimized).map((travelWindow) => (
+        <React.Fragment key={travelWindow.id}>
+          {travelWindow.view === 'caseStudy' && (
             <AmendmentsCaseStudy
-              onViewOldFlow={() => setTravelPlannerView('oldFlow')}
-              onViewNewFlow={() => setTravelPlannerView('newFlow')}
-              onClose={closeTravelApp}
+              onViewOldFlow={() => updateTravelWindowView(travelWindow.id, 'oldFlow')}
+              onViewNewFlow={() => updateTravelWindowView(travelWindow.id, 'newFlow')}
+              onClose={() => closeTravelApp(travelWindow.id)}
+              position={travelWindow.position}
+              onDragStart={(e) => startWindowDrag('travel', travelWindow.id, e)}
+              zIndex={travelWindow.zIndex}
             />
           )}
           
-          {travelPlannerView === 'oldFlow' && (
+          {travelWindow.view === 'oldFlow' && (
             <TravelOldFlow
-              onBackToCaseStudy={() => setTravelPlannerView('caseStudy')}
-              onClose={closeTravelApp}
+              onBackToCaseStudy={() => updateTravelWindowView(travelWindow.id, 'caseStudy')}
+              onClose={() => closeTravelApp(travelWindow.id)}
+              position={travelWindow.position}
+              zIndex={travelWindow.zIndex}
             />
           )}
           
-          {travelPlannerView === 'newFlow' && (
+          {travelWindow.view === 'newFlow' && (
             <TravelPlannerMUI
-              isOpen={isTravelAppOpen}
-              onClose={closeTravelApp}
-              onMinimize={minimizeTravelApp}
-              position={travelWindowPosition}
-              onDragStart={handleTravelWindowMouseDown}
-              isMinimized={isTravelAppMinimized}
+              isOpen={!travelWindow.minimized}
+              onClose={() => closeTravelApp(travelWindow.id)}
+              onMinimize={() => minimizeTravelApp(travelWindow.id)}
+              position={travelWindow.position}
+              onDragStart={(e) => startWindowDrag('travel', travelWindow.id, e)}
+              isMinimized={travelWindow.minimized}
               showBackButton={true}
-              onBackToCaseStudy={() => setTravelPlannerView('caseStudy')}
+              onBackToCaseStudy={() => updateTravelWindowView(travelWindow.id, 'caseStudy')}
+              zIndex={travelWindow.zIndex}
             />
           )}
-        </>
-      )}
+        </React.Fragment>
+      ))}
 
       {/* Fourth Application Window - Insurance */}
       {isInsuranceAppOpen && !isInsuranceDemoOpen && (
         <InsuranceCaseStudy
           onClose={closeInsuranceApp}
           onViewDemo={openInsuranceDemo}
+          zIndex={insuranceWindowZIndex}
+          position={insuranceWindowPosition}
+          onDragStart={(e) => startWindowDrag('insurance', null, e)}
         />
       )}
 
@@ -4363,6 +4580,8 @@ function App() {
         <InsuranceOldFlow
           onBackToCaseStudy={backToInsuranceCaseStudy}
           onClose={closeInsuranceApp}
+          zIndex={insuranceWindowZIndex}
+          position={insuranceWindowPosition}
         />
       )}
 

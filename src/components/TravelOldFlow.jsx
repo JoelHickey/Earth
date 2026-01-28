@@ -1,6 +1,184 @@
 import React, { useState } from 'react';
+import {
+  Box as MuiBox,
+  FormControlLabel as MuiFormControlLabel,
+  IconButton as MuiIconButton,
+  Chip as MuiChip,
+  Switch as MuiSwitch,
+  Tab as MuiTab,
+  Tabs as MuiTabs,
+  Typography as MuiTypography,
+  GlobalStyles
+} from '@mui/material';
+import { alpha, useTheme } from '@mui/material/styles';
+import CloseIcon from '@mui/icons-material/Close';
 
-const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
+const HEX_REGEX = /#(?:[0-9a-fA-F]{3}){1,2}\b/g;
+
+const hexToRgb = (hex) => {
+  const normalized = hex.replace('#', '');
+  const value = normalized.length === 3
+    ? normalized.split('').map((c) => c + c).join('')
+    : normalized;
+  const intValue = parseInt(value, 16);
+  return {
+    r: (intValue >> 16) & 255,
+    g: (intValue >> 8) & 255,
+    b: intValue & 255
+  };
+};
+
+const rgbToHsl = ({ r, g, b }) => {
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  const delta = max - min;
+  const lightness = (max + min) / 2;
+  if (delta === 0) {
+    return { h: 0, s: 0, l: lightness };
+  }
+  const saturation = lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+  let hue = 0;
+  switch (max) {
+    case rn:
+      hue = (gn - bn) / delta + (gn < bn ? 6 : 0);
+      break;
+    case gn:
+      hue = (bn - rn) / delta + 2;
+      break;
+    default:
+      hue = (rn - gn) / delta + 4;
+  }
+  hue *= 60;
+  return { h: hue, s: saturation, l: lightness };
+};
+
+const mapHexToToken = (hex, theme) => {
+  const lower = hex.toLowerCase();
+  const map = {
+    '#1d1d1f': theme.palette.text.primary,
+    '#000000': theme.palette.text.primary,
+    '#6e6e73': theme.palette.text.secondary,
+    '#86868b': theme.palette.text.secondary,
+    '#d1d1d6': theme.palette.divider,
+    '#e0e0e0': theme.palette.divider,
+    '#d0d0d0': theme.palette.divider,
+    '#c0c0c0': theme.palette.divider,
+    '#f5f5f7': theme.palette.background.default,
+    '#fafafa': theme.palette.background.default,
+    '#f7f7f7': theme.palette.background.default,
+    '#f2f2f2': theme.palette.background.default,
+    '#f0f0f0': theme.palette.background.default,
+    '#f9f9fb': theme.palette.background.default,
+    '#ffffff': theme.palette.background.paper,
+    '#667eea': theme.palette.primary.main,
+    '#5566d9': theme.palette.primary.dark,
+    '#34c759': theme.palette.success.main,
+    '#ff9500': theme.palette.warning.main,
+    '#ff3b30': theme.palette.error.main,
+    '#f0f4ff': alpha(theme.palette.primary.main, 0.12)
+  };
+  if (map[lower]) {
+    return map[lower];
+  }
+  const rgb = hexToRgb(lower);
+  const { h, s, l } = rgbToHsl(rgb);
+  if (s < 0.08) {
+    const greys = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+    const index = Math.min(greys.length - 1, Math.max(0, Math.round((1 - l) * 9)));
+    return theme.palette.grey[greys[index]];
+  }
+  if (h < 25 || h >= 330) {
+    return theme.palette.error.main;
+  }
+  if (h < 70) {
+    return theme.palette.warning.main;
+  }
+  if (h < 160) {
+    return theme.palette.success.main;
+  }
+  if (h < 260) {
+    return theme.palette.info.main;
+  }
+  return theme.palette.primary.main;
+};
+
+const replaceRgba = (value, theme) => {
+  return value.replace(/rgba?\(([^)]+)\)/gi, (match, contents) => {
+    const parts = contents.split(',').map((part) => part.trim());
+    if (parts.length < 3) {
+      return match;
+    }
+    const r = Number(parts[0]);
+    const g = Number(parts[1]);
+    const b = Number(parts[2]);
+    const a = parts.length === 4 ? Number(parts[3]) : 1;
+    if ([r, g, b].some((channel) => Number.isNaN(channel))) {
+      return match;
+    }
+    const isWhite = r === 255 && g === 255 && b === 255;
+    const isBlack = r === 0 && g === 0 && b === 0;
+    if (isWhite) {
+      return alpha(theme.palette.common.white, a);
+    }
+    if (isBlack) {
+      return alpha(theme.palette.common.black, a);
+    }
+    const mapped = mapHexToToken(
+      `#${[r, g, b]
+        .map((channel) => channel.toString(16).padStart(2, '0'))
+        .join('')}`,
+      theme
+    );
+    return alpha(mapped, a);
+  });
+};
+
+const replaceColors = (value, theme) => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+  const withHex = value.replace(HEX_REGEX, (match) => mapHexToToken(match, theme));
+  return replaceRgba(withHex, theme);
+};
+
+const mapSx = (sx, theme) => {
+  if (!sx) {
+    return sx;
+  }
+  if (typeof sx === 'function') {
+    return mapSx(sx(theme), theme);
+  }
+  if (Array.isArray(sx)) {
+    return sx.map((entry) => mapSx(entry, theme));
+  }
+  if (typeof sx !== 'object') {
+    return replaceColors(sx, theme);
+  }
+  return Object.fromEntries(
+    Object.entries(sx).map(([key, value]) => [key, mapSx(value, theme)])
+  );
+};
+
+const withTokenSx = (Component) =>
+  React.forwardRef(function TokenComponent({ sx, ...rest }, ref) {
+    const theme = useTheme();
+    const resolvedSx = React.useMemo(() => mapSx(sx, theme), [sx, theme]);
+    return <Component ref={ref} sx={resolvedSx} {...rest} />;
+  });
+
+const Box = withTokenSx(MuiBox);
+const Typography = withTokenSx(MuiTypography);
+const IconButton = withTokenSx(MuiIconButton);
+const Chip = withTokenSx(MuiChip);
+const Tabs = withTokenSx(MuiTabs);
+const Tab = withTokenSx(MuiTab);
+const FormControlLabel = withTokenSx(MuiFormControlLabel);
+const Switch = withTokenSx(MuiSwitch);
+
+const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) => {
   const [activeTab, setActiveTab] = useState('itinerary');
   const [openMenuId, setOpenMenuId] = useState(null);
   const [isAmendModalOpen, setIsAmendModalOpen] = useState(false);
@@ -151,149 +329,190 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
     }
   ];
 
+  const fallbackPosition = position || {
+    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 1000) / 2) : 50,
+    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 700) / 2) : 100
+  };
+
   return (
-    <div style={{
-      position: "fixed",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      zIndex: 99,
-      background: "#ffffff",
-      width: "1000px",
-      maxWidth: "95vw",
-      height: "700px",
-      maxHeight: "90vh",
-      boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
-      borderRadius: "10px",
-      display: "flex",
-      flexDirection: "column",
-      overflow: "hidden",
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif"
-    }}>
-      {/* Header Bar - Apple Compact */}
-      <div style={{
-        padding: "8px 16px",
-        borderBottom: "1px solid #e0e0e0",
+    <Box
+      sx={(theme) => ({
+        position: "fixed",
+        left: `${fallbackPosition.x}px`,
+        top: `${fallbackPosition.y}px`,
+        zIndex,
+        backgroundColor: "background.paper",
+        width: { xs: "95vw", md: theme.spacing(125) },
+        maxWidth: "95vw",
+        height: { xs: "90vh", md: theme.spacing(87.5) },
+        maxHeight: "90vh",
+        boxShadow: 1,
+        borderRadius: theme.shape.borderRadius,
+        border: "1px solid",
+        borderColor: "divider",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        background: "#f8f9fa"
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <button
-            onClick={onBackToCaseStudy}
-            style={{
-              padding: "4px 10px",
-              fontSize: "12px",
-              fontWeight: "500",
-              color: "#0071e3",
-              background: "transparent",
-              border: "1px solid #0071e3",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
-              height: "24px"
+        flexDirection: "column",
+        overflow: "hidden",
+        fontFamily: theme.typography.fontFamily,
+        WebkitFontSmoothing: "antialiased"
+      })}
+    >
+      {/* Header Bar */}
+      <Box
+        sx={{
+          px: 3,
+          py: 1.5,
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          background: "background.paper"
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flex: 1 }}>
+          <Typography
+            variant="h5"
+            component="h1"
+            sx={{
+              m: 0,
+            fontWeight: 600,
+              letterSpacing: "0.02em",
+              color: "text.primary"
             }}
           >
-            ← Back to Case Study
-          </button>
-        </div>
-        
-        <button
-          onClick={onClose}
-          style={{
-            width: "24px",
-            height: "24px",
-            borderRadius: "50%",
-            border: "none",
-            background: "#e0e0e0",
-            color: "#666",
-            fontSize: "14px",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          ✕
-        </button>
-      </div>
+            Streamlining amendments
+          </Typography>
+          <Box
+            component="img"
+            src="/Flight_Centre_company_logo_(Non-free).png"
+            alt="Flight Centre logo"
+            sx={{
+              height: 32,
+              width: "auto",
+              display: "block"
+            }}
+          />
+        </Box>
+
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <FormControlLabel
+            label="Interactive Demo"
+            labelPlacement="start"
+            sx={{
+              m: 0,
+              gap: 1,
+              "& .MuiFormControlLabel-label": {
+                fontSize: "0.8rem",
+                fontWeight: 500
+              }
+            }}
+            control={
+              <Switch
+                size="small"
+                checked
+                onChange={(event) => {
+                  if (!event.target.checked) {
+                    onBackToCaseStudy();
+                  }
+                }}
+                inputProps={{ "aria-label": "Interactive demo toggle" }}
+              />
+            }
+          />
+
+          <IconButton
+            onClick={onClose}
+            aria-label="Close Amendments"
+            size="large"
+            sx={{
+              color: "text.primary",
+              "&:focus": {
+                outline: "1px dotted",
+                outlineColor: "text.primary",
+                outlineOffset: "2px"
+              },
+              "&:focus-visible": {
+                outline: "1px dotted",
+                outlineColor: "text.primary",
+                outlineOffset: "2px"
+              }
+            }}
+          >
+            <CloseIcon fontSize="medium" />
+          </IconButton>
+        </Box>
+      </Box>
+
+
 
       {/* Content */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        {/* Trip Summary - Static Section - Apple Compact */}
-        <div style={{
-          padding: "12px 16px",
-          background: "#ffffff",
-          borderBottom: "1px solid #e0e0e0"
-        }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <h2 style={{
-                fontSize: "16px",
-                fontWeight: "600",
-                margin: "0 0 2px 0",
-                color: "#1d1d1f"
-              }}>
+      <Box sx={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        {/* Trip Summary - Static Section */}
+        <Box sx={{ px: 3, pt: 2, pb: 1.5, background: "background.paper", borderBottom: "1px solid", borderColor: "divider" }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1.5 }}>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 0.25, color: "text.primary" }}>
                 {tripData.tripName}
-              </h2>
-              <div style={{ fontSize: "12px", color: "#6e6e73" }}>
+              </Typography>
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
                 Trip #{tripData.tripNo} · {tripData.travelers} travelers
-              </div>
-            </div>
-            <div style={{ textAlign: "right", whiteSpace: "nowrap" }}>
-              <div style={{ fontSize: "12px", color: "#6e6e73", marginBottom: "2px" }}>
+              </Typography>
+            </Box>
+            <Box sx={{ textAlign: "right", whiteSpace: "nowrap" }}>
+              <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 0.25 }}>
                 📍 {tripData.destination}
-              </div>
-              <div style={{ fontSize: "12px", color: "#6e6e73" }}>
+              </Typography>
+              <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
                 📅 {tripData.startDate} - {tripData.endDate}
-              </div>
-            </div>
-          </div>
-        </div>
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
 
         {/* Tab Navigation - Apple Compact */}
         {!showSearchResults && !showCartPage && !showTravellersPage && !showPaymentPage && !showNewFlow && !showDreamFlow && (
-        <div style={{
-          display: "flex",
-          gap: "0",
-          borderBottom: "1px solid #d0d0d0",
-          background: "#f0f0f0",
-          padding: "0"
-        }}>
-          {['itinerary', 'payments', 'documents', 'notes'].map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{
+          <Tabs
+            value={activeTab}
+            onChange={(_, value) => setActiveTab(value)}
+            sx={{
+              borderBottom: "1px solid #d0d0d0",
+              background: "#f0f0f0",
+              minHeight: "auto",
+              "& .MuiTab-root": {
+                minHeight: "auto",
                 padding: "8px 16px",
                 fontSize: "12px",
-                fontWeight: activeTab === tab ? "600" : "400",
-                color: activeTab === tab ? "#1d1d1f" : "#6e6e73",
-                background: activeTab === tab ? "#ffffff" : "transparent",
-                border: "none",
-                borderBottom: activeTab === tab ? "2px solid #0071e3" : "2px solid transparent",
-                cursor: "pointer",
-                textTransform: "capitalize",
-                fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif"
-              }}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+                fontWeight: 400,
+                color: "#6e6e73",
+                textTransform: "capitalize"
+              },
+              "& .Mui-selected": {
+                color: "#1d1d1f",
+                fontWeight: 600,
+                background: "#ffffff"
+              }
+            }}
+            TabIndicatorProps={{
+              sx: { backgroundColor: "#0071e3", height: "2px" }
+            }}
+          >
+            {['itinerary', 'payments', 'documents', 'notes'].map(tab => (
+              <Tab key={tab} label={tab} value={tab} />
+            ))}
+          </Tabs>
         )}
 
         {/* Tab Content - Shells Below */}
         {activeTab === 'itinerary' && !showSearchResults && !showCartPage && !showTravellersPage && !showPaymentPage && !showNewFlow && (
-          <div style={{ flex: 1, overflow: showOnboarding ? "visible" : "auto", padding: "16px", background: "#fafafa" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px", position: "relative" }}>
+          <Box sx={{ flex: 1, overflow: showOnboarding ? "visible" : "auto", p: 2, background: "#fafafa" }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", position: "relative" }}>
               {shells.map(shell => (
-                <div
+                <Box
                   key={shell.id}
-                  style={{
-                    padding: "8px 10px",
-                    background: "#ffffff",
+                  sx={{
+                    p: "8px 10px",
+                    backgroundColor: "background.paper",
                     border: showDreamFlow && selectedShell && selectedShell.id === shell.id ? "2px solid #fa709a" : "1px solid #d0d0d0",
                     borderRadius: "8px",
                     position: "relative",
@@ -302,205 +521,227 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   }}
                 >
                   {/* Shell Header Row - Always Horizontal */}
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <div style={{ fontSize: "18px" }}>{shell.icon}</div>
-                      <div>
-                        <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "2px" }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <Box sx={{ fontSize: "18px" }}>{shell.icon}</Box>
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary", mb: 0.25 }}>
                           {shell.name}
-                        </div>
-                        <div style={{ fontSize: "12px", color: "#6e6e73" }}>
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "text.secondary" }}>
                           {shell.type === 'Hotel' ? (
                             <>
                               {shell.dates}
-                              <span style={{ color: "#86868b" }}> · Standard King · $450/night</span>
+                              <Box component="span" sx={{ color: "#86868b" }}> · Standard King · $450/night</Box>
                             </>
                           ) : (
                             <>{shell.type} · {shell.dates}</>
                           )}
-                        </div>
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{
-                        fontSize: "11px",
-                        padding: "2px 6px",
-                        background: shell.status === 'Confirmed' ? '#d4edda' : '#fff3cd',
-                        color: shell.status === 'Confirmed' ? '#155724' : '#856404',
-                        borderRadius: "4px",
-                        marginBottom: "2px",
-                        fontWeight: "500"
-                      }}>
-                        {shell.status}
-                      </div>
-                      <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f" }}>
-                        {shell.price}
-                      </div>
-                    </div>
-                    <div style={{ position: "relative" }}>
-                      {/* Onboarding Tooltip - Only on first shell */}
-                      {shell.id === 1 && showOnboarding && (
-                        <div style={{
-                          position: "absolute",
-                          bottom: "calc(100% + 8px)",
-                          right: "-8px",
-                          background: "rgba(0, 0, 0, 0.85)",
-                          color: "#ffffff",
-                          padding: "6px 8px",
-                          borderRadius: "6px",
-                          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-                          zIndex: 1000,
-                          fontSize: "11px",
-                          fontWeight: "500",
-                          lineHeight: "1.4",
-                          animation: "pulse 2s infinite",
-                          whiteSpace: "nowrap"
-                        }}>
-                          👋 Click here to try the old or new flow
-                          <div style={{
-                            position: "absolute",
-                            bottom: "-4px",
-                            right: "16px",
-                            width: "8px",
-                            height: "8px",
-                            background: "rgba(0, 0, 0, 0.85)",
-                            transform: "rotate(45deg)"
-                          }}></div>
-                        </div>
-                      )}
-                      
-                      <button
-                        onClick={() => {
-                          setOpenMenuId(openMenuId === shell.id ? null : shell.id);
-                        }}
-                        style={{
-                          background: "transparent",
-                          border: "none",
-                          fontSize: "18px",
-                          color: "#6e6e73",
-                          cursor: "pointer",
-                          padding: "4px 8px",
-                          lineHeight: "1",
-                          position: "relative"
-                        }}
-                        title="Actions"
-                      >
-                        ⋮
-                      </button>
-                      
-                      {openMenuId === shell.id && (
-                        <div style={{
-                          position: "absolute",
-                          top: "100%",
-                          right: "0",
-                          marginTop: "4px",
-                          background: "#ffffff",
-                          border: "1px solid #d0d0d0",
-                          borderRadius: "6px",
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-                          minWidth: "140px",
-                          zIndex: 100
-                        }}>
-                          <button
-                            onClick={() => {
-                              setSelectedShell(shell);
-                              setIsAmendModalOpen(true);
-                              setOpenMenuId(null);
-                              setShowOnboarding(false);
-                            }}
-                            style={{
-                              width: "100%",
-                              padding: "10px 16px",
-                              fontSize: "14px",
-                              fontWeight: "500",
-                              color: "#1d1d1f",
-                              background: "transparent",
-                              border: "none",
-                              textAlign: "left",
-                              cursor: "pointer",
-                              fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                      <Box sx={{ textAlign: "right" }}>
+                        <Chip
+                          label={shell.status}
+                          size="small"
+                          sx={(theme) => ({
+                            mb: "2px",
+                            height: theme.spacing(2.5),
+                            fontSize: "11px",
+                            fontWeight: 600,
+                            backgroundColor: shell.status === "Confirmed"
+                              ? alpha(theme.palette.success.main, 0.16)
+                              : alpha(theme.palette.warning.main, 0.16),
+                            color: shell.status === "Confirmed" ? theme.palette.success.dark : theme.palette.warning.dark,
+                            "& .MuiChip-label": {
+                              px: 0.75,
+                              color: "inherit",
+                              WebkitTextFillColor: "inherit"
+                            }
+                          })}
+                        />
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: "text.primary" }}>
+                          {shell.price}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ position: "relative" }}>
+                        {/* Onboarding Tooltip - Only on first shell */}
+                        {shell.id === 1 && showOnboarding && (
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              bottom: "calc(100% + 8px)",
+                              right: "-8px",
+                              background: "rgba(0, 0, 0, 0.85)",
+                              color: "#ffffff",
+                              p: "6px 8px",
+                              borderRadius: "6px",
+                              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+                              zIndex: 1000,
+                              fontSize: "11px",
+                              fontWeight: 500,
+                              lineHeight: 1.4,
+                              animation: "pulse 2s infinite",
                               whiteSpace: "nowrap"
                             }}
-                            onMouseOver={(e) => e.currentTarget.style.background = "#f5f5f7"}
-                            onMouseOut={(e) => e.currentTarget.style.background = "transparent"}
                           >
-                            🐢 Amend (Old Flow)
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSelectedShell(shell);
-                              setOpenMenuId(null);
-                              setShowOnboarding(false);
-                              showLoadingThen('Loading amendment form...', () => {
-                                setShowNewFlow(true);
-                                setNewFlowStep(1);
-                              }, 1200);
+                            👋 Click here to try the old or new flow
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                bottom: "-4px",
+                                right: "16px",
+                                width: "8px",
+                                height: "8px",
+                                background: "rgba(0, 0, 0, 0.85)",
+                                transform: "rotate(45deg)"
+                              }}
+                            />
+                          </Box>
+                        )}
+
+                        <Box
+                          component="button"
+                          type="button"
+                          onClick={() => {
+                            setOpenMenuId(openMenuId === shell.id ? null : shell.id);
+                          }}
+                          sx={{
+                            background: "transparent",
+                            border: "none",
+                            fontSize: "18px",
+                            color: "text.secondary",
+                            cursor: "pointer",
+                            p: "4px 8px",
+                            lineHeight: 1,
+                            position: "relative"
+                          }}
+                          title="Actions"
+                        >
+                          ⋮
+                        </Box>
+
+                        {openMenuId === shell.id && (
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              top: "100%",
+                              right: 0,
+                              mt: "4px",
+                              background: "background.paper",
+                              border: "1px solid",
+                              borderColor: "divider",
+                              borderRadius: "6px",
+                              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                              minWidth: "140px",
+                              zIndex: 100
                             }}
-                            style={{
-                              width: "100%",
-                              padding: "10px 16px",
-                              fontSize: "14px",
-                              fontWeight: "500",
-                              color: "#1d1d1f",
-                              background: "transparent",
-                              border: "none",
-                              borderTop: "1px solid #e0e0e0",
-                              textAlign: "left",
-                              cursor: "pointer",
-                              fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
-                              whiteSpace: "nowrap"
-                            }}
-                            onMouseOver={(e) => e.currentTarget.style.background = "#f5f5f7"}
-                            onMouseOut={(e) => e.currentTarget.style.background = "transparent"}
                           >
-                            ⚡ Amend (New Flow)
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSelectedShell(shell);
-                              setOpenMenuId(null);
-                              setShowOnboarding(false);
-                              setShowDreamFlow(true);
-                              setDreamFlowExpanded(true); // Skip straight to expanded
-                              setShowDreamResults(false); // Don't show results until user searches
-                              setNlInput(''); // Start with empty search
-                              setSelectedPill(''); // Clear any selected pill
-                            }}
-                            style={{
-                              width: "100%",
-                              padding: "10px 16px",
-                              fontSize: "14px",
-                              fontWeight: "500",
-                              color: "#1d1d1f",
-                              background: "transparent",
-                              border: "none",
-                              borderTop: "1px solid #e0e0e0",
-                              textAlign: "left",
-                              cursor: "pointer",
-                              fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
-                              whiteSpace: "nowrap"
-                            }}
-                            onMouseOver={(e) => e.currentTarget.style.background = "#f5f5f7"}
-                            onMouseOut={(e) => e.currentTarget.style.background = "transparent"}
-                          >
-                            🚀 Amend (Dream Flow)
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  </div>
+                            <Box
+                              component="button"
+                              type="button"
+                              onClick={() => {
+                                setSelectedShell(shell);
+                                setIsAmendModalOpen(true);
+                                setOpenMenuId(null);
+                                setShowOnboarding(false);
+                              }}
+                              sx={{
+                                width: "100%",
+                                p: "10px 16px",
+                                fontSize: "14px",
+                                fontWeight: 500,
+                                color: "text.primary",
+                                background: "transparent",
+                                border: "none",
+                                textAlign: "left",
+                                cursor: "pointer",
+                                fontFamily: "inherit",
+                                whiteSpace: "nowrap",
+                                "&:hover": { backgroundColor: "#f5f5f7" }
+                              }}
+                            >
+                              🐢 Amend (Old Flow)
+                            </Box>
+                            <Box
+                              component="button"
+                              type="button"
+                              onClick={() => {
+                                setSelectedShell(shell);
+                                setOpenMenuId(null);
+                                setShowOnboarding(false);
+                                showLoadingThen('Loading amendment form...', () => {
+                                  setShowNewFlow(true);
+                                  setNewFlowStep(1);
+                                }, 1200);
+                              }}
+                              sx={{
+                                width: "100%",
+                                p: "10px 16px",
+                                fontSize: "14px",
+                                fontWeight: 500,
+                                color: "text.primary",
+                                background: "transparent",
+                                border: "none",
+                                borderTop: "1px solid",
+                                borderColor: "divider",
+                                textAlign: "left",
+                                cursor: "pointer",
+                                fontFamily: "inherit",
+                                whiteSpace: "nowrap",
+                                "&:hover": { backgroundColor: "#f5f5f7" }
+                              }}
+                            >
+                              ⚡ Amend (New Flow)
+                            </Box>
+                            <Box
+                              component="button"
+                              type="button"
+                              onClick={() => {
+                                setSelectedShell(shell);
+                                setOpenMenuId(null);
+                                setShowOnboarding(false);
+                                setShowDreamFlow(true);
+                                setDreamFlowExpanded(true); // Skip straight to expanded
+                                setShowDreamResults(false); // Don't show results until user searches
+                                setNlInput(''); // Start with empty search
+                                setSelectedPill(''); // Clear any selected pill
+                              }}
+                              sx={{
+                                width: "100%",
+                                p: "10px 16px",
+                                fontSize: "14px",
+                                fontWeight: 500,
+                                color: "text.primary",
+                                background: "transparent",
+                                border: "none",
+                                borderTop: "1px solid",
+                                borderColor: "divider",
+                                textAlign: "left",
+                                cursor: "pointer",
+                                fontFamily: "inherit",
+                                whiteSpace: "nowrap",
+                                "&:hover": { backgroundColor: "#f5f5f7" }
+                              }}
+                            >
+                              🚀 Amend (Dream Flow)
+                            </Box>
+                          </Box>
+                        )}
+                      </Box>
+                    </Box>
+                  </Box>
 
                   {/* DREAM FLOW - Inline AI Bar (only for selected shell) */}
                   {showDreamFlow && selectedShell && selectedShell.id === shell.id && (
-                    <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #f0f0f0", animation: "fadeIn 0.5s ease-out" }}>
+                    <Box sx={{ mt: "12px", pt: "12px", borderTop: "1px solid #f0f0f0", animation: "fadeIn 0.5s ease-out" }}>
                       {/* AI Smart Search Bar */}
-                      <div
-                        style={{
+                      <Box
+                        sx={{
                           background: dreamFlowExpanded ? "rgba(255,255,255,0.95)" : "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
                           borderRadius: "8px",
-                          padding: dreamFlowExpanded ? "8px 10px" : "12px",
+                          p: dreamFlowExpanded ? "8px 10px" : "12px",
                           cursor: dreamFlowExpanded ? "default" : "pointer",
                           position: "relative",
                           overflow: "hidden",
@@ -517,154 +758,125 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                         {!dreamFlowExpanded && (
                           <>
                             {/* Shimmer */}
-                            <div style={{
-                              position: "absolute",
-                              top: 0,
-                              left: "-100%",
-                              width: "100%",
-                              height: "100%",
-                              background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
-                              animation: "shimmer 3s infinite"
-                            }}></div>
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                top: 0,
+                                left: "-100%",
+                                width: "100%",
+                                height: "100%",
+                                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+                                animation: "shimmer 3s infinite"
+                              }}
+                            />
 
-                            <div style={{ display: "flex", alignItems: "center", gap: "10px", position: "relative", zIndex: 1 }}>
-                              <div style={{ 
-                                fontSize: "18px",
-                                animation: "pulse 2s ease-in-out infinite",
-                                filter: "drop-shadow(0 0 8px rgba(255,255,255,0.5))"
-                              }}>🤖</div>
-                              <div style={{ flex: 1, fontSize: "13px", fontWeight: "600", color: "#ffffff" }}>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: "10px", position: "relative", zIndex: 1 }}>
+                              <Box sx={{ fontSize: "18px", animation: "pulse 2s ease-in-out infinite", filter: "drop-shadow(0 0 8px rgba(255,255,255,0.5))" }}>🤖</Box>
+                              <Box sx={{ flex: 1, fontSize: "13px", fontWeight: 600, color: "#ffffff" }}>
                                 AI-Powered Amendment
-                              </div>
-                              <div style={{ fontSize: "12px", color: "#ffffff", fontWeight: "500" }}>
+                              </Box>
+                              <Box sx={{ fontSize: "12px", color: "#ffffff", fontWeight: 500 }}>
                                 ▶
-                              </div>
-                            </div>
+                              </Box>
+                            </Box>
                           </>
                         )}
 
                         {dreamFlowExpanded && (
-                          <div style={{ animation: "fadeIn 0.3s ease-out" }}>
+                          <Box sx={{ animation: "fadeIn 0.3s ease-out" }}>
                             {/* Inline Payment Flow - Universal for all amendments */}
                             {showPayment && (
-                              <div style={{
-                                marginTop: "8px",
-                                padding: "8px",
-                                background: "#ffffff",
-                                border: "2px solid #667eea",
-                                borderRadius: "6px",
-                                marginBottom: "8px",
-                                animation: "fadeIn 0.3s ease-out"
-                              }}>
-                                <div style={{ fontSize: "8px", color: "#86868b", fontWeight: "600", marginBottom: "6px" }}>
+                              <Box sx={{ mt: "8px", p: "8px", background: "#ffffff", border: "2px solid #667eea", borderRadius: "6px", mb: "8px", animation: "fadeIn 0.3s ease-out" }}>
+                                <Box sx={{ fontSize: "8px", color: "#86868b", fontWeight: 600, mb: "6px" }}>
                                   PAYMENT METHOD
-                                </div>
+                                </Box>
                                 
                                 {/* Payment Options */}
-                                <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginBottom: "8px" }}>
+                                <Box sx={{ display: "flex", flexDirection: "column", gap: "4px", mb: "8px" }}>
                                   {[
                                     { id: 'card', name: 'Credit Card', icon: '💳', subtitle: 'Visa ****4242 • Instant', color: '#667eea' },
                                     { id: 'apple', name: 'Apple Pay', icon: '', subtitle: 'Touch ID • Instant', color: '#000000' },
                                     { id: 'booking', name: 'On File', icon: '📋', subtitle: 'Corporate card on booking • No action', color: '#34c759' }
                                   ].map(method => (
-                                    <div
+                                    <Box
                                       key={method.id}
                                       onClick={() => setSelectedPayment(method.id)}
-                                      style={{
-                                        padding: "6px 8px",
+                                      sx={{
+                                        p: "6px 8px",
                                         background: selectedPayment === method.id ? '#f0f4ff' : '#fafafa',
-                                        border: '1px solid',
+                                        border: "1px solid",
                                         borderColor: selectedPayment === method.id ? method.color : '#e0e0e0',
                                         borderRadius: "4px",
                                         cursor: "pointer",
                                         transition: "all 0.15s",
                                         display: "flex",
                                         alignItems: "center",
-                                        gap: "8px"
-                                      }}
-                                      onMouseOver={(e) => {
-                                        if (selectedPayment !== method.id) {
-                                          e.currentTarget.style.borderColor = method.color;
-                                        }
-                                      }}
-                                      onMouseOut={(e) => {
-                                        if (selectedPayment !== method.id) {
-                                          e.currentTarget.style.borderColor = '#e0e0e0';
+                                        gap: "8px",
+                                        "&:hover": {
+                                          borderColor: selectedPayment === method.id ? method.color : method.color
                                         }
                                       }}
                                     >
-                                      <div style={{ fontSize: "16px" }}>{method.icon}</div>
-                                      <div style={{ flex: 1 }}>
-                                        <div style={{ fontSize: "9px", fontWeight: "600", color: "#1d1d1f" }}>
+                                      <Box sx={{ fontSize: "16px" }}>{method.icon}</Box>
+                                      <Box sx={{ flex: 1 }}>
+                                        <Box sx={{ fontSize: "9px", fontWeight: 600, color: "#1d1d1f" }}>
                                           {method.name}
-                                        </div>
-                                        <div style={{ fontSize: "7px", color: "#6e6e73" }}>
+                                        </Box>
+                                        <Box sx={{ fontSize: "7px", color: "#6e6e73" }}>
                                           {method.subtitle}
-                                        </div>
-                                      </div>
+                                        </Box>
+                                      </Box>
                                       {selectedPayment === method.id && (
-                                        <div style={{ fontSize: "12px", color: method.color }}>✓</div>
+                                        <Box sx={{ fontSize: "12px", color: method.color }}>✓</Box>
                                       )}
-                                    </div>
+                                    </Box>
                                   ))}
-                                </div>
+                                </Box>
                                 
                                 {/* Payment Summary */}
-                                <div style={{
-                                  padding: "6px 8px",
-                                  background: "#f9f9fb",
-                                  borderRadius: "4px",
-                                  marginBottom: "6px",
-                                  fontSize: "7px",
-                                  color: "#6e6e73"
-                                }}>
-                                  <div style={{ fontSize: "8px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
+                                <Box sx={{ p: "6px 8px", background: "#f9f9fb", borderRadius: "4px", mb: "6px", fontSize: "7px", color: "#6e6e73" }}>
+                                  <Box sx={{ fontSize: "8px", fontWeight: 600, color: "#1d1d1f", mb: "4px" }}>
                                     {selectedHotel ? selectedHotel.name : 'Date Change'}
-                                  </div>
-                                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
-                                    <span>Amendment charge:</span>
-                                    <span style={{ color: "#ff9500", fontWeight: "600" }}>+$450</span>
-                                  </div>
-                                  <div style={{ 
-                                    display: "flex", 
-                                    justifyContent: "space-between", 
-                                    paddingTop: "4px",
-                                    borderTop: "1px solid #e0e0e0",
-                                    fontWeight: "600",
-                                    color: "#1d1d1f",
-                                    fontSize: "8px"
-                                  }}>
-                                    <span>Total due now:</span>
-                                    <span>$450</span>
-                                  </div>
-                                </div>
+                                  </Box>
+                                  <Box sx={{ display: "flex", justifyContent: "space-between", mb: "2px" }}>
+                                    <Box component="span">Amendment charge:</Box>
+                                    <Box component="span" sx={{ color: "#ff9500", fontWeight: 600 }}>+$450</Box>
+                                  </Box>
+                                  <Box sx={{ display: "flex", justifyContent: "space-between", pt: "4px", borderTop: "1px solid #e0e0e0", fontWeight: 600, color: "#1d1d1f", fontSize: "8px" }}>
+                                    <Box component="span">Total due now:</Box>
+                                    <Box component="span">$450</Box>
+                                  </Box>
+                                </Box>
                                 
                                 {/* Action Buttons */}
-                                <div style={{ display: "flex", gap: "4px" }}>
-                                  <button
+                                <Box sx={{ display: "flex", gap: "4px" }}>
+                                  <Box
+                                    component="button"
+                                    type="button"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setShowPayment(false);
                                       setSelectedPayment(null);
                                       setConfirmingHotelIdx(null);
                                     }}
-                                    style={{
+                                    sx={{
                                       flex: 1,
                                       fontSize: "8px",
-                                      padding: "4px",
+                                      p: "4px",
                                       background: "#ffffff",
                                       color: "#6e6e73",
                                       border: "1px solid #e0e0e0",
                                       borderRadius: "3px",
                                       cursor: "pointer",
-                                      fontWeight: "600"
+                                      fontWeight: 600,
+                                      "&:hover": { background: "#f5f5f7" }
                                     }}
-                                    onMouseOver={(e) => e.currentTarget.style.background = "#f5f5f7"}
-                                    onMouseOut={(e) => e.currentTarget.style.background = "#ffffff"}
                                   >
                                     Cancel
-                                  </button>
-                                  <button
+                                  </Box>
+                                  <Box
+                                    component="button"
+                                    type="button"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       setShowPayment(false);
@@ -690,32 +902,33 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                       }, 1000);
                                     }}
                                     disabled={!selectedPayment}
-                                    style={{
+                                    sx={{
                                       flex: 2,
                                       fontSize: "9px",
-                                      padding: "4px 10px",
+                                      p: "4px 10px",
                                       background: selectedPayment ? "#667eea" : "#d1d1d6",
                                       color: "#ffffff",
                                       border: "none",
                                       borderRadius: "4px",
                                       cursor: selectedPayment ? "pointer" : "not-allowed",
-                                      fontWeight: "600"
+                                      fontWeight: 600,
+                                      "&:hover": {
+                                        background: selectedPayment ? "#5566d9" : "#d1d1d6"
+                                      }
                                     }}
-                                    onMouseOver={(e) => selectedPayment && (e.currentTarget.style.background = "#5566d9")}
-                                    onMouseOut={(e) => selectedPayment && (e.currentTarget.style.background = "#667eea")}
                                   >
                                     Confirm & Pay ${selectedHotel ? Math.abs((selectedHotel.priceNum - selectedHotel.currentPrice) * selectedHotel.nights) : '450'}
-                                  </button>
-                                </div>
-                              </div>
+                                  </Box>
+                                </Box>
+                              </Box>
                             )}
                             
                             {/* Processing or Success Message */}
                             {isConfirming && !showPayment && (
-                              <div style={{
-                                padding: "8px 10px",
+                              <Box sx={{
+                                p: "8px 10px",
                                 background: processingStep ? "#fff8e1" : "#d4edda",
-                                border: "1px solid " + (processingStep ? "#ff9500" : "#34c759"),
+                                border: `1px solid ${processingStep ? "#ff9500" : "#34c759"}`,
                                 borderRadius: "4px",
                                 display: "flex",
                                 alignItems: "center",
@@ -724,7 +937,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                               }}>
                                 {processingStep ? (
                                   <>
-                                    <div style={{
+                                    <Box sx={{
                                       width: "12px",
                                       height: "12px",
                                       border: "2px solid #ff9500",
@@ -732,33 +945,35 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                       borderRadius: "50%",
                                       animation: "spin 0.6s linear infinite"
                                     }} />
-                                    <div style={{ flex: 1 }}>
-                                      <div style={{ fontSize: "10px", fontWeight: "600", color: "#e65100" }}>
+                                    <Box sx={{ flex: 1 }}>
+                                      <Box sx={{ fontSize: "10px", fontWeight: 600, color: "#e65100" }}>
                                         {processingStep}
-                                      </div>
-                                      <div style={{ fontSize: "7px", color: "#f57c00", marginTop: "2px" }}>
+                                      </Box>
+                                      <Box sx={{ fontSize: "7px", color: "#f57c00", mt: "2px" }}>
                                         Secure connection · Encrypted
-                                      </div>
-                                    </div>
+                                      </Box>
+                                    </Box>
                                   </>
                                 ) : (
                                   <>
-                                    <div style={{ fontSize: "14px" }}>✓</div>
-                                    <div style={{ flex: 1 }}>
-                                      <div style={{ fontSize: "10px", fontWeight: "600", color: "#155724" }}>
+                                    <Box sx={{ fontSize: "14px" }}>✓</Box>
+                                    <Box sx={{ flex: 1 }}>
+                                      <Box sx={{ fontSize: "10px", fontWeight: 600, color: "#155724" }}>
                                         ✓ Payment Confirmed · Booking Updated
-                                      </div>
-                                      <div style={{ fontSize: "8px", color: "#155724", marginTop: "2px" }}>
+                                      </Box>
+                                      <Box sx={{ fontSize: "8px", color: "#155724", mt: "2px" }}>
                                         {selectedPayment === 'card' && 'Visa ****4242 charged • '}
                                         {selectedPayment === 'apple' && 'Apple Pay completed • '}
                                         {selectedPayment === 'booking' && 'Card on file charged • '}
                                         Client itinerary synced
-                                      </div>
-                                    </div>
+                                      </Box>
+                                    </Box>
                                   </>
                                 )}
                                 {!processingStep && (
-                                  <button
+                                  <Box
+                                    component="button"
+                                    type="button"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       // Undo the amendment
@@ -776,222 +991,239 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                         setShowUndoConfirmation(false);
                                       }, 2000);
                                     }}
-                                    style={{
+                                    sx={{
                                       fontSize: "8px",
-                                      padding: "3px 8px",
+                                      p: "3px 8px",
                                       background: "#ffffff",
                                       color: "#ff9500",
                                       border: "1px solid #ff9500",
                                       borderRadius: "3px",
                                       cursor: "pointer",
-                                      fontWeight: "700",
-                                      transition: "all 0.15s"
-                                    }}
-                                    onMouseOver={(e) => {
-                                      e.currentTarget.style.background = "#fff8f0";
-                                    }}
-                                    onMouseOut={(e) => {
-                                      e.currentTarget.style.background = "#ffffff";
+                                      fontWeight: 700,
+                                      transition: "all 0.15s",
+                                      "&:hover": { background: "#fff8f0" }
                                     }}
                                   >
                                     ↶ UNDO
-                                  </button>
+                                  </Box>
                                 )}
-                              </div>
+                              </Box>
                             )}
                             
                             {/* Integrated Search */}
                             {confirmingHotelIdx === null && (
-                              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px" }}>
-                              <div style={{ fontSize: "14px" }}>✨</div>
-                              <input
-                                value={nlInput}
-                                onChange={(e) => setNlInput(e.target.value)}
-                                placeholder="Type what you want to change..."
-                                autoFocus
-                                onClick={(e) => e.stopPropagation()}
-                                style={{
-                                  flex: 1,
-                                  border: "none",
-                                  outline: "none",
-                                  fontSize: "12px",
-                                  fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
-                                  background: "transparent",
-                                  color: "#1d1d1f"
-                                }}
-                              />
-                              <button
-                                onClick={(e) => { 
-                                  e.stopPropagation(); 
-                                  setShowDreamResults(true);
-                                }}
-                                style={{
-                                  padding: "4px 10px",
-                                  fontSize: "11px",
-                                  fontWeight: "500",
-                                  color: "#ffffff",
-                                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                                  border: "none",
-                                  borderRadius: "4px",
-                                  cursor: "pointer"
-                                }}
-                              >
-                                Search
-                              </button>
-                            </div>
+                              <Box sx={{ display: "flex", alignItems: "center", gap: "6px", mb: "6px" }}>
+                                <Box sx={{ fontSize: "14px" }}>✨</Box>
+                                <Box
+                                  component="input"
+                                  value={nlInput}
+                                  onChange={(e) => setNlInput(e.target.value)}
+                                  placeholder="Type what you want to change..."
+                                  autoFocus
+                                  onClick={(e) => e.stopPropagation()}
+                                  sx={{
+                                    flex: 1,
+                                    border: "none",
+                                    outline: "none",
+                                    fontSize: "12px",
+                                    fontFamily: "inherit",
+                                    background: "transparent",
+                                    color: "text.primary"
+                                  }}
+                                />
+                                <Box
+                                  component="button"
+                                  type="button"
+                                  onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    setShowDreamResults(true);
+                                  }}
+                                  sx={{
+                                    p: "4px 10px",
+                                    fontSize: "11px",
+                                    fontWeight: 500,
+                                    color: "#ffffff",
+                                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                                    border: "none",
+                                    borderRadius: "4px",
+                                    cursor: "pointer"
+                                  }}
+                                >
+                                  Search
+                                </Box>
+                              </Box>
                             )}
                             
                             {/* Quick Pills + Close - AI Context Aware */}
                             {confirmingHotelIdx === null && (
-                            <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
-                              <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", alignItems: "center" }}>
-                                {/* Parent pills - always visible */}
-                                {["Room Upgrade", "Different Hotel", "Date Change"].map((ex, idx) => (
-                                  <button
-                                    key={idx}
-                                    onClick={(e) => { 
-                                      e.stopPropagation(); 
-                                      if (ex === "Date Change") {
-                                        setSelectedPill(ex);
-                                      } else {
-                                        setSelectedPill(ex);
-                                      }
-                                      setShowDreamResults(true);
-                                    }}
-                                    style={{
-                                      fontSize: "9px",
-                                      padding: "3px 7px",
-                                      background: (ex === "Date Change" && (selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3')) || selectedPill === ex ? "#667eea" : "#f5f5f7",
-                                      border: (ex === "Date Change" && (selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3')) || selectedPill === ex ? "1px solid #667eea" : "1px solid #e0e0e0",
-                                      borderRadius: "10px",
-                                      color: (ex === "Date Change" && (selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3')) || selectedPill === ex ? "#ffffff" : "#667eea",
-                                      cursor: "pointer",
-                                      fontWeight: (ex === "Date Change" && (selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3')) || selectedPill === ex ? "600" : "500",
-                                      transition: "all 0.2s ease"
-                                    }}
-                                  >
-                                    {ex}
-                                  </button>
-                                ))}
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); setShowDreamFlow(false); }}
-                                  style={{
-                                    fontSize: "8px",
-                                    padding: "2px 6px",
-                                    background: "transparent",
-                                    border: "none",
-                                    color: "#6e6e73",
-                                    cursor: "pointer",
-                                    fontWeight: "500",
-                                    marginLeft: "auto",
-                                    textDecoration: "underline"
-                                  }}
-                                >
-                                  Close
-                                </button>
-                              </div>
-                              
-                              {/* Show child pills when Date Change is active - on separate line */}
-                              {(selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3') && (
-                                <div style={{ 
-                                  paddingTop: "6px",
-                                  marginTop: "6px",
-                                  borderTop: "1px solid #e0e0e0"
-                                }}>
-                                  <div style={{ 
-                                    display: "flex", 
-                                    flexWrap: "wrap", 
-                                    gap: "3px", 
-                                    alignItems: "center",
-                                    marginBottom: "6px"
-                                  }}>
-                                    {["Extend +1", "Shorten -1", "Shift +3"].map((ex, idx) => (
-                                      <button
+                              <Box sx={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: "4px", alignItems: "center" }}>
+                                  {/* Parent pills - always visible */}
+                                  {["Room Upgrade", "Different Hotel", "Date Change"].map((ex, idx) => {
+                                    const isDateChangeActive = ex === "Date Change" && (selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3');
+                                    const isActive = isDateChangeActive || selectedPill === ex;
+                                    return (
+                                      <Chip
                                         key={idx}
-                                        onClick={(e) => { 
-                                          e.stopPropagation(); 
+                                        label={ex}
+                                        component="span"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
                                           setSelectedPill(ex);
                                           setShowDreamResults(true);
                                         }}
-                                        style={{
-                                          fontSize: "8px",
-                                          padding: "2px 6px",
-                                          background: selectedPill === ex ? "#667eea" : "#f5f5f7",
-                                          border: selectedPill === ex ? "1px solid #667eea" : "1px solid #e0e0e0",
-                                          borderRadius: "8px",
-                                          color: selectedPill === ex ? "#ffffff" : "#6e6e73",
-                                          cursor: "pointer",
-                                          fontWeight: selectedPill === ex ? "600" : "500",
-                                          transition: "all 0.2s ease"
+                                        onKeyDown={(e) => {
+                                          if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            setSelectedPill(ex);
+                                            setShowDreamResults(true);
+                                          }
                                         }}
-                                      >
-                                        {ex}
-                                      </button>
-                                    ))}
-                                  </div>
-                                  </div>
+                                        tabIndex={0}
+                                        role="button"
+                                        color="primary"
+                                        variant="filled"
+                                        sx={{
+                                          height: (theme) => theme.spacing(3),
+                                          fontSize: "11px",
+                                          fontWeight: isActive ? 600 : 500,
+                                          borderRadius: (theme) => theme.shape.borderRadius,
+                                          px: 1,
+                                          backgroundColor: isActive ? "primary.dark" : "primary.main",
+                                          color: "common.white",
+                                          opacity: 1,
+                                          "& .MuiChip-label": {
+                                            px: 1,
+                                            py: 0,
+                                            color: "common.white",
+                                            opacity: 1,
+                                            fontSize: "11px",
+                                            lineHeight: 1,
+                                            WebkitTextFillColor: "common.white",
+                                            textShadow: "0 1px 1px rgba(0,0,0,0.25)"
+                                          }
+                                        }}
+                                      />
+                                    );
+                                  })}
+                                  <Box
+                                    component="button"
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); setShowDreamFlow(false); }}
+                                    sx={{
+                                      fontSize: "8px",
+                                      p: "2px 6px",
+                                      background: "transparent",
+                                      border: "none",
+                                      color: "#6e6e73",
+                                      cursor: "pointer",
+                                      fontWeight: 500,
+                                      marginLeft: "auto",
+                                      textDecoration: "underline"
+                                    }}
+                                  >
+                                    Close
+                                  </Box>
+                                </Box>
+                                
+                                {/* Show child pills when Date Change is active - on separate line */}
+                                {(selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3') && (
+                                  <Box sx={{ pt: "6px", mt: "6px", borderTop: "1px solid #e0e0e0" }}>
+                                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: "3px", alignItems: "center", mb: "6px" }}>
+                                      {["Extend +1", "Shorten -1", "Shift +3"].map((ex, idx) => {
+                                        const isActive = selectedPill === ex;
+                                        return (
+                                          <Chip
+                                            key={idx}
+                                            label={ex}
+                                            component="span"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setSelectedPill(ex);
+                                              setShowDreamResults(true);
+                                            }}
+                                            onKeyDown={(e) => {
+                                              if (e.key === "Enter" || e.key === " ") {
+                                                e.preventDefault();
+                                                setSelectedPill(ex);
+                                                setShowDreamResults(true);
+                                              }
+                                            }}
+                                            tabIndex={0}
+                                            role="button"
+                                            color="primary"
+                                            variant="filled"
+                                            sx={{
+                                              height: (theme) => theme.spacing(2.75),
+                                              fontSize: "10px",
+                                              fontWeight: isActive ? 600 : 500,
+                                              borderRadius: (theme) => theme.shape.borderRadius,
+                                              px: 0.5,
+                                              backgroundColor: isActive ? "primary.dark" : "primary.main",
+                                              color: "common.white",
+                                              opacity: 1,
+                                              "& .MuiChip-label": {
+                                                px: 0.75,
+                                                py: 0,
+                                                color: "common.white",
+                                                opacity: 1,
+                                                fontSize: "10px",
+                                                lineHeight: 1,
+                                                WebkitTextFillColor: "common.white",
+                                                textShadow: "0 1px 1px rgba(0,0,0,0.25)"
+                                              }
+                                            }}
+                                          />
+                                        );
+                                      })}
+                                    </Box>
+                                  </Box>
                                 )}
-                            </div>
+                              </Box>
                             )}
 
                             {/* AI Results - Inline */}
                             {confirmingHotelIdx === null && showDreamResults && (
-                              <div style={{ 
-                                marginTop: (selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3') ? "0px" : "6px", 
-                                paddingTop: (selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3') ? "0px" : "6px", 
+                              <Box sx={{ 
+                                mt: (selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3') ? "0px" : "6px", 
+                                pt: (selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3') ? "0px" : "6px", 
                                 borderTop: (selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3') ? "none" : "1px solid #e0e0e0",
                                 animation: "slideDown 0.3s ease-out"
                               }}>
                                 {/* Current Booking Reference - conditional based on selected pill */}
                                 {!(selectedPill === 'Date Change' || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3') && (
-                                  <div style={{
-                                    padding: "4px 6px",
+                                  <Box sx={{
+                                    p: "4px 6px",
                                     background: "#f9f9fb",
                                     border: "1px solid #e0e0e0",
                                     borderRadius: "4px",
-                                    marginBottom: "4px"
+                                    mb: "4px"
                                   }}>
-                                    <div style={{ fontSize: "8px", color: "#86868b", marginBottom: "3px", fontWeight: "500" }}>
+                                    <Box sx={{ fontSize: "8px", color: "#86868b", mb: "3px", fontWeight: 500 }}>
                                       CURRENT ROOM
-                                    </div>
-                                    <div style={{ fontSize: "10px", fontWeight: "600", color: "#1d1d1f" }}>
+                                    </Box>
+                                    <Box sx={{ fontSize: "10px", fontWeight: 600, color: "#1d1d1f" }}>
                                       Standard King · $450/night
-                                    </div>
-                                    <div style={{ fontSize: "8px", color: "#6e6e73", marginTop: "2px" }}>
+                                    </Box>
+                                    <Box sx={{ fontSize: "8px", color: "#6e6e73", mt: "2px" }}>
                                       City View · Queen Bed
-                                    </div>
-                                  </div>
+                                    </Box>
+                                  </Box>
                                 )}
 
                                 {/* Trust Signals */}
-                                <div style={{ 
-                                  display: "flex", 
-                                  gap: "6px", 
-                                  marginBottom: "6px",
-                                  alignItems: "center",
-                                  flexWrap: "wrap"
-                                }}>
-                                  <div style={{
-                                    fontSize: "8px",
-                                    padding: "2px 5px",
-                                    background: "#34c759",
-                                    color: "#ffffff",
-                                    borderRadius: "3px",
-                                    fontWeight: "600",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "3px"
-                                  }}>
-                                    <span style={{ fontSize: "10px" }}>●</span> LIVE
-                                  </div>
-                                  <div style={{ fontSize: "9px", color: "#6e6e73" }}>
+                                <Box sx={{ display: "flex", gap: "6px", mb: "6px", alignItems: "center", flexWrap: "wrap" }}>
+                                  <Box sx={{ fontSize: "8px", p: "2px 5px", background: "#34c759", color: "#ffffff", borderRadius: "3px", fontWeight: 600, display: "flex", alignItems: "center", gap: "3px" }}>
+                                    <Box component="span" sx={{ fontSize: "10px" }}>●</Box> LIVE
+                                  </Box>
+                                  <Box sx={{ fontSize: "9px", color: "#6e6e73" }}>
                                     Updated {secondsAgo}s ago
-                                  </div>
-                                  <div style={{ fontSize: "9px", color: "#6e6e73" }}>·</div>
-                                  <div style={{ fontSize: "9px", color: "#ff9500", fontWeight: "500" }}>
+                                  </Box>
+                                  <Box sx={{ fontSize: "9px", color: "#6e6e73" }}>·</Box>
+                                  <Box sx={{ fontSize: "9px", color: "#ff9500", fontWeight: 500 }}>
                                     3 viewing
-                                  </div>
-                                </div>
+                                  </Box>
+                                </Box>
                                 {(() => {
                                   const input = (selectedPill || nlInput).toLowerCase();
                                   let hotels;
@@ -1201,93 +1433,65 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                     ];
                                   
                                   return (
-                                    <div style={{ marginTop: "4px" }}>
-                                      <div style={{ 
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        marginBottom: "3px"
-                                      }}>
-                                        <div style={{ 
-                                          fontSize: "7px", 
-                                          color: "#86868b", 
-                                          fontWeight: "600"
-                                        }}>
+                                    <Box sx={{ mt: "4px" }}>
+                                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: "3px" }}>
+                                        <Box sx={{ fontSize: "7px", color: "#86868b", fontWeight: 600 }}>
                                           SELECT NEW DATES · LIVE AVAILABILITY
-                                        </div>
-                                        <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-                                          <button
-                                            style={{
+                                        </Box>
+                                        <Box sx={{ display: "flex", gap: "4px", alignItems: "center" }}>
+                                          <Box
+                                            component="button"
+                                            type="button"
+                                            sx={{
                                               fontSize: "8px",
-                                              padding: "1px 4px",
+                                              p: "1px 4px",
                                               background: "#f5f5f7",
                                               border: "1px solid #e0e0e0",
                                               borderRadius: "2px",
                                               cursor: "pointer",
                                               color: "#1d1d1f",
-                                              fontWeight: "600"
+                                              fontWeight: 600,
+                                              "&:hover": { background: "#e0e0e0" }
                                             }}
-                                            onMouseOver={(e) => e.currentTarget.style.background = "#e0e0e0"}
-                                            onMouseOut={(e) => e.currentTarget.style.background = "#f5f5f7"}
                                           >
                                             ‹
-                                          </button>
-                                          <div style={{ fontSize: "6px", color: "#6e6e73", fontWeight: "600" }}>
+                                          </Box>
+                                          <Box sx={{ fontSize: "6px", color: "#6e6e73", fontWeight: 600 }}>
                                             MAR - JUN 2025
-                                          </div>
-                                          <button
-                                            style={{
+                                          </Box>
+                                          <Box
+                                            component="button"
+                                            type="button"
+                                            sx={{
                                               fontSize: "8px",
-                                              padding: "1px 4px",
+                                              p: "1px 4px",
                                               background: "#f5f5f7",
                                               border: "1px solid #e0e0e0",
                                               borderRadius: "2px",
                                               cursor: "pointer",
                                               color: "#1d1d1f",
-                                              fontWeight: "600"
+                                              fontWeight: 600,
+                                              "&:hover": { background: "#e0e0e0" }
                                             }}
-                                            onMouseOver={(e) => e.currentTarget.style.background = "#e0e0e0"}
-                                            onMouseOut={(e) => e.currentTarget.style.background = "#f5f5f7"}
                                           >
                                             ›
-                                          </button>
-                                        </div>
-                                      </div>
-                                      <div style={{ display: "flex", gap: "4px" }}>
+                                          </Box>
+                                        </Box>
+                                      </Box>
+                                      <Box sx={{ display: "flex", gap: "4px" }}>
                                         {months.map((month, monthIdx) => (
-                                          <div key={month.name} style={{ flex: 1 }}>
-                                            <div style={{ 
-                                              fontSize: "6px", 
-                                              fontWeight: "700", 
-                                              color: "#1d1d1f",
-                                              marginBottom: "2px",
-                                              textAlign: "center"
-                                            }}>
+                                          <Box key={month.name} sx={{ flex: 1 }}>
+                                            <Box sx={{ fontSize: "6px", fontWeight: 700, color: "#1d1d1f", mb: "2px", textAlign: "center" }}>
                                               {month.name}
-                                            </div>
-                                            <div style={{ 
-                                              display: "grid", 
-                                              gridTemplateColumns: "repeat(7, 1fr)", 
-                                              gap: "1px",
-                                              marginBottom: "2px"
-                                            }}>
+                                            </Box>
+                                            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "1px", mb: "2px" }}>
                                               {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
-                                                <div key={d} style={{ 
-                                                  fontSize: "5px", 
-                                                  color: "#86868b", 
-                                                  textAlign: "center",
-                                                  fontWeight: "600",
-                                                  padding: "1px 0"
-                                                }}>{d}</div>
+                                                <Box key={d} sx={{ fontSize: "5px", color: "#86868b", textAlign: "center", fontWeight: 600, py: "1px" }}>{d}</Box>
                                               ))}
-                                            </div>
-                                            <div style={{ 
-                                              display: "grid", 
-                                              gridTemplateColumns: "repeat(7, 1fr)", 
-                                              gap: "1px"
-                                            }}>
+                                            </Box>
+                                            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "1px" }}>
                                               {/* Empty cells for alignment */}
-                                              {[...Array(month.emptyStart)].map((_, i) => <div key={`empty-${i}`} />)}
+                                              {[...Array(month.emptyStart)].map((_, i) => <Box key={`empty-${i}`} />)}
                                               
                                               {month.days.map(day => {
                                           const bgColor = day.avail === 'sold' ? '#f5f5f7' : 
@@ -1300,7 +1504,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                           const cursor = day.avail === 'sold' ? 'not-allowed' : 'pointer';
                                           
                                           return (
-                                            <div
+                                            <Box
                                               key={`${month.name}-${day.date}`}
                                               onClick={(e) => {
                                                 e.stopPropagation();
@@ -1323,323 +1527,240 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                                   }
                                                 }
                                               }}
-                                              style={{
+                                              sx={{
                                                 background: bgColor,
                                                 border: day.current ? '1.5px solid #667eea' : '0.5px solid #e0e0e0',
                                                 borderRadius: "2px",
-                                                padding: "1px 0px",
+                                                py: "1px",
                                                 textAlign: "center",
                                                 cursor: cursor,
                                                 position: "relative",
                                                 transition: "all 0.15s",
                                                 opacity: day.avail === 'sold' ? 0.5 : 1,
                                                 minHeight: "18px",
-                                                fontSize: "7px"
-                                              }}
-                                              onMouseOver={(e) => {
-                                                if (day.avail !== 'sold') {
-                                                  e.currentTarget.style.transform = 'scale(1.05)';
-                                                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-                                                }
-                                              }}
-                                              onMouseOut={(e) => {
-                                                e.currentTarget.style.transform = 'scale(1)';
-                                                e.currentTarget.style.boxShadow = 'none';
+                                                fontSize: "7px",
+                                                "&:hover": day.avail !== 'sold'
+                                                  ? { transform: "scale(1.05)", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }
+                                                  : undefined
                                               }}
                                             >
-                                              <div style={{ 
-                                                fontSize: "7px", 
-                                                fontWeight: day.current ? "700" : "600", 
-                                                color: textColor,
-                                                lineHeight: "1"
-                                              }}>
+                                              <Box sx={{ fontSize: "7px", fontWeight: day.current ? 700 : 600, color: textColor, lineHeight: 1 }}>
                                                 {day.date}
-                                              </div>
+                                              </Box>
                                               {!day.current && day.avail !== 'sold' && (
-                                                <div style={{ 
-                                                  fontSize: "4px", 
-                                                  color: textColor === '#ffffff' ? textColor : '#6e6e73',
-                                                  marginTop: "1px",
-                                                  lineHeight: "1"
-                                                }}>
+                                                <Box sx={{ fontSize: "4px", color: textColor === '#ffffff' ? textColor : '#6e6e73', mt: "1px", lineHeight: 1 }}>
                                                   ${day.price}
-                                                </div>
+                                                </Box>
                                               )}
                                               {day.avail === 'sold' && (
-                                                <div style={{ 
-                                                  fontSize: "4px", 
-                                                  color: "#86868b",
-                                                  marginTop: "1px",
-                                                  fontWeight: "600",
-                                                  lineHeight: "1"
-                                                }}>
+                                                <Box sx={{ fontSize: "4px", color: "#86868b", mt: "1px", fontWeight: 600, lineHeight: 1 }}>
                                                   FULL
-                                                </div>
+                                                </Box>
                                               )}
-                                            </div>
+                                            </Box>
                                           );
                                         })}
-                                            </div>
-                                          </div>
+                                            </Box>
+                                          </Box>
                                         ))}
-                                      </div>
-                                      <div style={{
-                                        marginTop: "4px",
-                                        display: "flex",
-                                        gap: "4px",
-                                        fontSize: "6px",
-                                        color: "#6e6e73"
-                                      }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-                                          <div style={{ width: "6px", height: "6px", background: "#667eea", borderRadius: "1px" }} />
-                                          <span>Current</span>
-                                        </div>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-                                          <div style={{ width: "6px", height: "6px", background: "#d4f5dd", borderRadius: "1px" }} />
-                                          <span>Available</span>
-                                        </div>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-                                          <div style={{ width: "6px", height: "6px", background: "#ffe5cc", borderRadius: "1px" }} />
-                                          <span>Limited</span>
-                                        </div>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-                                          <div style={{ width: "6px", height: "6px", background: "#f5f5f7", borderRadius: "1px" }} />
-                                          <span>Sold Out</span>
-                                        </div>
-                                      </div>
+                                      </Box>
+                                      <Box sx={{ mt: "4px", display: "flex", gap: "4px", fontSize: "6px", color: "#6e6e73" }}>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: "2px" }}>
+                                          <Box sx={{ width: "6px", height: "6px", background: "#667eea", borderRadius: "1px" }} />
+                                          <Box component="span">Current</Box>
+                                        </Box>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: "2px" }}>
+                                          <Box sx={{ width: "6px", height: "6px", background: "#d4f5dd", borderRadius: "1px" }} />
+                                          <Box component="span">Available</Box>
+                                        </Box>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: "2px" }}>
+                                          <Box sx={{ width: "6px", height: "6px", background: "#ffe5cc", borderRadius: "1px" }} />
+                                          <Box component="span">Limited</Box>
+                                        </Box>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: "2px" }}>
+                                          <Box sx={{ width: "6px", height: "6px", background: "#f5f5f7", borderRadius: "1px" }} />
+                                          <Box component="span">Sold Out</Box>
+                                        </Box>
+                                      </Box>
                                       
                                       {/* Confirmation Bar - Show when dates are selected or pill is clicked */}
                                       {!showPayment && (calendarStartDate || selectedPill === 'Extend +1' || selectedPill === 'Shorten -1' || selectedPill === 'Shift +3') && (
-                                        <div style={{
-                                          marginTop: "6px",
-                                          padding: "6px 8px",
-                                          background: "#f9f9fb",
-                                          border: "1px solid #667eea",
-                                          borderRadius: "4px",
-                                          display: "flex",
-                                          justifyContent: "space-between",
-                                          alignItems: "center"
-                                        }}>
-                                          <div>
-                                            <div style={{ fontSize: "8px", color: "#86868b", fontWeight: "600", marginBottom: "2px" }}>
+                                        <Box sx={{ mt: "6px", p: "6px 8px", background: "#f9f9fb", border: "1px solid #667eea", borderRadius: "4px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                          <Box>
+                                            <Box sx={{ fontSize: "8px", color: "#86868b", fontWeight: 600, mb: "2px" }}>
                                               NEW DATES
-                                            </div>
-                                            <div style={{ fontSize: "10px", fontWeight: "600", color: "#1d1d1f" }}>
+                                            </Box>
+                                            <Box sx={{ fontSize: "10px", fontWeight: 600, color: "#1d1d1f" }}>
                                               Mar {startDate} - {endDate > 31 ? `Apr ${endDate - 31}` : endDate}
-                                              <span style={{ 
-                                                fontSize: "8px", 
-                                                color: startDate === 22 && endDate === 27 ? "#6e6e73" : (endDate - startDate + 1) > 6 ? "#ff9500" : "#34c759",
-                                                fontWeight: "600",
-                                                marginLeft: "6px"
-                                              }}>
+                                              <Box component="span" sx={{ fontSize: "8px", color: startDate === 22 && endDate === 27 ? "#6e6e73" : (endDate - startDate + 1) > 6 ? "#ff9500" : "#34c759", fontWeight: 600, ml: "6px" }}>
                                                 {startDate === 22 && endDate === 27 ? '(No change)' : (endDate - startDate + 1) > 6 ? `+$${(endDate - startDate + 1 - 6) * 450}` : `-$${(6 - (endDate - startDate + 1)) * 450}`}
-                                              </span>
-                                            </div>
+                                              </Box>
+                                            </Box>
                                             
                                             {/* Impact Details */}
-                                            <div style={{ marginTop: "6px", paddingTop: "6px", borderTop: "1px solid #e0e0e0" }}>
+                                            <Box sx={{ mt: "6px", pt: "6px", borderTop: "1px solid #e0e0e0" }}>
                                               {/* Dependencies */}
-                                              <div style={{ fontSize: "7px", marginBottom: "3px" }}>
-                                                <span style={{ color: "#34c759", fontWeight: "600" }}>✓</span>
-                                                <span style={{ color: "#1d1d1f", marginLeft: "3px" }}>Flight departure compatible</span>
-                                              </div>
+                                              <Box sx={{ fontSize: "7px", mb: "3px" }}>
+                                                <Box component="span" sx={{ color: "#34c759", fontWeight: 600 }}>✓</Box>
+                                                <Box component="span" sx={{ color: "#1d1d1f", ml: "3px" }}>Flight departure compatible</Box>
+                                              </Box>
                                               {(endDate - startDate + 1) !== 6 && (
-                                                <div style={{ fontSize: "7px", marginBottom: "3px" }}>
-                                                  <span style={{ color: "#ff9500", fontWeight: "600" }}>⚠</span>
-                                                  <span style={{ color: "#1d1d1f", marginLeft: "3px" }}>Airport transfer needs adjustment (+15min)</span>
-                                                </div>
+                                                <Box sx={{ fontSize: "7px", mb: "3px" }}>
+                                                  <Box component="span" sx={{ color: "#ff9500", fontWeight: 600 }}>⚠</Box>
+                                                  <Box component="span" sx={{ color: "#1d1d1f", ml: "3px" }}>Airport transfer needs adjustment (+15min)</Box>
+                                                </Box>
                                               )}
-                                              <div style={{ fontSize: "7px", marginBottom: "3px" }}>
-                                                <span style={{ color: "#34c759", fontWeight: "600" }}>✓</span>
-                                                <span style={{ color: "#1d1d1f", marginLeft: "3px" }}>Free cancellation maintained (until Mar 15)</span>
-                                              </div>
+                                              <Box sx={{ fontSize: "7px", mb: "3px" }}>
+                                                <Box component="span" sx={{ color: "#34c759", fontWeight: 600 }}>✓</Box>
+                                                <Box component="span" sx={{ color: "#1d1d1f", ml: "3px" }}>Free cancellation maintained (until Mar 15)</Box>
+                                              </Box>
                                               
                                               {/* Total Impact */}
-                                              <div style={{ 
-                                                fontSize: "8px", 
-                                                marginTop: "4px", 
-                                                padding: "3px 5px", 
-                                                background: "#f5f5f7",
-                                                borderRadius: "3px",
-                                                display: "flex",
-                                                justifyContent: "space-between"
-                                              }}>
-                                                <span style={{ color: "#6e6e73" }}>Total trip:</span>
-                                                <span style={{ fontWeight: "600", color: "#1d1d1f" }}>
+                                              <Box sx={{ fontSize: "8px", mt: "4px", p: "3px 5px", background: "#f5f5f7", borderRadius: "3px", display: "flex", justifyContent: "space-between" }}>
+                                                <Box component="span" sx={{ color: "#6e6e73" }}>Total trip:</Box>
+                                                <Box component="span" sx={{ fontWeight: 600, color: "#1d1d1f" }}>
                                                   $4,250 → ${4250 + (endDate - startDate + 1 - 6) * 450}
-                                                </span>
-                                              </div>
+                                                </Box>
+                                              </Box>
                                               
                                               {/* Booking & Sync */}
-                                              <div style={{ fontSize: "7px", marginTop: "4px", color: "#6e6e73" }}>
-                                                <div>Booking #HTL-2847 · Auto-sync to client itinerary</div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <button
+                                              <Box sx={{ fontSize: "7px", mt: "4px", color: "#6e6e73" }}>
+                                                <Box>Booking #HTL-2847 · Auto-sync to client itinerary</Box>
+                                              </Box>
+                                            </Box>
+                                          </Box>
+                                          <Box
+                                            component="button"
+                                            type="button"
                                             onClick={(e) => {
                                               e.stopPropagation();
                                               setShowPayment(true);
                                               setConfirmingHotelIdx(-1); // Use -1 for date changes
                                             }}
                                             disabled={isConfirming}
-                                            style={{
+                                            sx={{
                                               fontSize: "9px",
-                                              padding: "4px 10px",
+                                              p: "4px 10px",
                                               background: isConfirming ? "#34c759" : "#667eea",
                                               color: "#ffffff",
                                               border: "none",
                                               borderRadius: "4px",
                                               cursor: isConfirming ? "default" : "pointer",
-                                              fontWeight: "600",
+                                              fontWeight: 600,
                                               display: "flex",
                                               alignItems: "center",
                                               gap: "4px",
-                                              transition: "all 0.3s ease"
+                                              transition: "all 0.3s ease",
+                                              "&:hover": { background: isConfirming ? "#34c759" : "#5566d9" }
                                             }}
-                                            onMouseOver={(e) => !isConfirming && (e.currentTarget.style.background = "#5566d9")}
-                                            onMouseOut={(e) => !isConfirming && (e.currentTarget.style.background = "#667eea")}
                                           >
                                             {isConfirming ? (
                                               <>
-                                                <div style={{
-                                                  width: "8px",
-                                                  height: "8px",
-                                                  border: "2px solid #ffffff",
-                                                  borderTopColor: "transparent",
-                                                  borderRadius: "50%",
-                                                  animation: "spin 0.6s linear infinite"
-                                                }} />
-                                                <span>Processing...</span>
+                                                <Box sx={{ width: "8px", height: "8px", border: "2px solid #ffffff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.6s linear infinite" }} />
+                                                <Box component="span">Processing...</Box>
                                               </>
                                             ) : (
                                               'Review & Pay'
                                             )}
-                                          </button>
-                                        </div>
+                                          </Box>
+                                        </Box>
                                       )}
                                       
                                       {/* Inline Payment Flow */}
                                       {showPayment && confirmingHotelIdx === -1 && (
-                                        <div style={{
-                                          marginTop: "8px",
-                                          padding: "8px",
-                                          background: "#ffffff",
-                                          border: "2px solid #667eea",
-                                          borderRadius: "6px",
-                                          animation: "fadeIn 0.3s ease-out"
-                                        }}>
-                                          <div style={{ fontSize: "8px", color: "#86868b", fontWeight: "600", marginBottom: "6px" }}>
+                                        <Box sx={{ mt: "8px", p: "8px", background: "#ffffff", border: "2px solid #667eea", borderRadius: "6px", animation: "fadeIn 0.3s ease-out" }}>
+                                          <Box sx={{ fontSize: "8px", color: "#86868b", fontWeight: 600, mb: "6px" }}>
                                             PAYMENT METHOD
-                                          </div>
+                                          </Box>
                                           
                                           {/* Payment Options */}
-                                          <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginBottom: "8px" }}>
+                                          <Box sx={{ display: "flex", flexDirection: "column", gap: "4px", mb: "8px" }}>
                                             {[
                                               { id: 'card', name: 'Credit Card', icon: '💳', subtitle: 'Visa ****4242 • Instant', color: '#667eea' },
                                               { id: 'apple', name: 'Apple Pay', icon: '', subtitle: 'Touch ID • Instant', color: '#000000' },
                                               { id: 'booking', name: 'On File', icon: '📋', subtitle: 'Corporate card on booking • No action', color: '#34c759' }
                                             ].map(method => (
-                                              <div
+                                              <Box
                                                 key={method.id}
                                                 onClick={() => setSelectedPayment(method.id)}
-                                                style={{
-                                                  padding: "6px 8px",
+                                                sx={{
+                                                  p: "6px 8px",
                                                   background: selectedPayment === method.id ? '#f0f4ff' : '#fafafa',
-                                                  border: '1px solid',
+                                                  border: "1px solid",
                                                   borderColor: selectedPayment === method.id ? method.color : '#e0e0e0',
                                                   borderRadius: "4px",
                                                   cursor: "pointer",
                                                   transition: "all 0.15s",
                                                   display: "flex",
                                                   alignItems: "center",
-                                                  gap: "8px"
-                                                }}
-                                                onMouseOver={(e) => {
-                                                  if (selectedPayment !== method.id) {
-                                                    e.currentTarget.style.borderColor = method.color;
-                                                  }
-                                                }}
-                                                onMouseOut={(e) => {
-                                                  if (selectedPayment !== method.id) {
-                                                    e.currentTarget.style.borderColor = '#e0e0e0';
+                                                  gap: "8px",
+                                                  "&:hover": {
+                                                    borderColor: selectedPayment === method.id ? method.color : method.color
                                                   }
                                                 }}
                                               >
-                                                <div style={{ fontSize: "16px" }}>{method.icon}</div>
-                                                <div style={{ flex: 1 }}>
-                                                  <div style={{ fontSize: "9px", fontWeight: "600", color: "#1d1d1f" }}>
+                                                <Box sx={{ fontSize: "16px" }}>{method.icon}</Box>
+                                                <Box sx={{ flex: 1 }}>
+                                                  <Box sx={{ fontSize: "9px", fontWeight: 600, color: "#1d1d1f" }}>
                                                     {method.name}
-                                                  </div>
-                                                  <div style={{ fontSize: "7px", color: "#6e6e73" }}>
+                                                  </Box>
+                                                  <Box sx={{ fontSize: "7px", color: "#6e6e73" }}>
                                                     {method.subtitle}
-                                                  </div>
-                                                </div>
+                                                  </Box>
+                                                </Box>
                                                 {selectedPayment === method.id && (
-                                                  <div style={{ fontSize: "12px", color: method.color }}>✓</div>
+                                                  <Box sx={{ fontSize: "12px", color: method.color }}>✓</Box>
                                                 )}
-                                              </div>
+                                              </Box>
                                             ))}
-                                          </div>
+                                          </Box>
                                           
                                           {/* Payment Summary */}
-                                          <div style={{
-                                            padding: "6px 8px",
-                                            background: "#f9f9fb",
-                                            borderRadius: "4px",
-                                            marginBottom: "6px",
-                                            fontSize: "7px",
-                                            color: "#6e6e73"
-                                          }}>
-                                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
-                                              <span>Original booking:</span>
-                                              <span>$4,250</span>
-                                            </div>
-                                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
-                                              <span>Amendment charge:</span>
-                                              <span style={{ color: (endDate - startDate + 1) > 6 ? "#ff9500" : "#34c759" }}>
+                                          <Box sx={{ p: "6px 8px", background: "#f9f9fb", borderRadius: "4px", mb: "6px", fontSize: "7px", color: "#6e6e73" }}>
+                                            <Box sx={{ display: "flex", justifyContent: "space-between", mb: "2px" }}>
+                                              <Box component="span">Original booking:</Box>
+                                              <Box component="span">$4,250</Box>
+                                            </Box>
+                                            <Box sx={{ display: "flex", justifyContent: "space-between", mb: "2px" }}>
+                                              <Box component="span">Amendment charge:</Box>
+                                              <Box component="span" sx={{ color: (endDate - startDate + 1) > 6 ? "#ff9500" : "#34c759" }}>
                                                 {(endDate - startDate + 1) > 6 ? `+$${(endDate - startDate + 1 - 6) * 450}` : `-$${(6 - (endDate - startDate + 1)) * 450}`}
-                                              </span>
-                                            </div>
-                                            <div style={{ 
-                                              display: "flex", 
-                                              justifyContent: "space-between", 
-                                              paddingTop: "4px",
-                                              borderTop: "1px solid #e0e0e0",
-                                              fontWeight: "600",
-                                              color: "#1d1d1f",
-                                              fontSize: "8px"
-                                            }}>
-                                              <span>Total due now:</span>
-                                              <span>${Math.abs((endDate - startDate + 1 - 6) * 450)}</span>
-                                            </div>
-                                          </div>
+                                              </Box>
+                                            </Box>
+                                            <Box sx={{ display: "flex", justifyContent: "space-between", pt: "4px", borderTop: "1px solid #e0e0e0", fontWeight: 600, color: "#1d1d1f", fontSize: "8px" }}>
+                                              <Box component="span">Total due now:</Box>
+                                              <Box component="span">${Math.abs((endDate - startDate + 1 - 6) * 450)}</Box>
+                                            </Box>
+                                          </Box>
                                           
                                           {/* Action Buttons */}
-                                          <div style={{ display: "flex", gap: "4px" }}>
-                                            <button
+                                          <Box sx={{ display: "flex", gap: "4px" }}>
+                                            <Box
+                                              component="button"
+                                              type="button"
                                               onClick={(e) => {
                                                 e.stopPropagation();
                                                 setShowPayment(false);
                                                 setSelectedPayment(null);
                                               }}
-                                              style={{
+                                              sx={{
                                                 flex: 1,
                                                 fontSize: "8px",
-                                                padding: "4px",
+                                                p: "4px",
                                                 background: "#ffffff",
                                                 color: "#6e6e73",
                                                 border: "1px solid #e0e0e0",
                                                 borderRadius: "3px",
                                                 cursor: "pointer",
-                                                fontWeight: "600"
+                                                fontWeight: 600,
+                                                "&:hover": { background: "#f5f5f7" }
                                               }}
-                                              onMouseOver={(e) => e.currentTarget.style.background = "#f5f5f7"}
-                                              onMouseOut={(e) => e.currentTarget.style.background = "#ffffff"}
                                             >
                                               Cancel
-                                            </button>
-                                            <button
+                                            </Box>
+                                            <Box
+                                              component="button"
+                                              type="button"
                                               onClick={(e) => {
                                                 e.stopPropagation();
                                                 setShowPayment(false);
@@ -1654,53 +1775,47 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                                 }, 2500);
                                               }}
                                               disabled={!selectedPayment}
-                                              style={{
+                                              sx={{
                                                 flex: 2,
                                                 fontSize: "9px",
-                                                padding: "4px 10px",
+                                                p: "4px 10px",
                                                 background: selectedPayment ? "#667eea" : "#d1d1d6",
                                                 color: "#ffffff",
                                                 border: "none",
                                                 borderRadius: "4px",
                                                 cursor: selectedPayment ? "pointer" : "not-allowed",
-                                                fontWeight: "600"
+                                                fontWeight: 600,
+                                                "&:hover": { background: selectedPayment ? "#5566d9" : "#d1d1d6" }
                                               }}
-                                              onMouseOver={(e) => selectedPayment && (e.currentTarget.style.background = "#5566d9")}
-                                              onMouseOut={(e) => selectedPayment && (e.currentTarget.style.background = "#667eea")}
                                             >
                                               {selectedPayment === 'apple' ? 'Pay with ' : ''}Confirm & Pay
-                                            </button>
-                                          </div>
-                                        </div>
+                                            </Box>
+                                          </Box>
+                                        </Box>
                                       )}
-                                    </div>
+                                    </Box>
                                   );
                                   }
                                   
                                   return hotels.map((hotel, idx) => (
-                                  <div
+                                  <Box
                                     key={hotel.roomKey || idx}
-                                    style={{
-                                      padding: "4px 5px",
+                                    sx={{
+                                      p: "4px 5px",
                                       background: "#fafafa",
                                       border: "1px solid #e0e0e0",
                                       borderRadius: "3px",
-                                      marginBottom: "2px",
+                                      mb: "2px",
                                       transition: "all 0.15s",
                                       animation: `fadeIn 0.4s ease-out ${idx * 0.1}s both`,
                                       position: "relative",
-                                      overflow: "hidden"
-                                    }}
-                                    onMouseOver={(e) => {
-                                      e.currentTarget.style.borderColor = "#667eea";
-                                    }}
-                                    onMouseOut={(e) => {
-                                      e.currentTarget.style.borderColor = "#e0e0e0";
+                                      overflow: "hidden",
+                                      "&:hover": { borderColor: "#667eea" }
                                     }}
                                   >
                                     {/* SOLD OUT Overlay Animation */}
                                     {hotel.roomKey && soldOutRooms[hotel.roomKey] && (
-                                      <div style={{
+                                      <Box sx={{
                                         position: "absolute",
                                         top: 0,
                                         left: 0,
@@ -1714,81 +1829,57 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                         animation: "slideInLeft 0.3s ease-out",
                                         borderRadius: "6px"
                                       }}>
-                                        <div style={{
-                                          fontSize: "16px",
-                                          fontWeight: "900",
-                                          color: "#ffffff",
-                                          letterSpacing: "2px",
-                                          animation: "pulse 0.5s infinite"
-                                        }}>
+                                        <Box sx={{ fontSize: "16px", fontWeight: 900, color: "#ffffff", letterSpacing: "2px", animation: "pulse 0.5s infinite" }}>
                                           SOLD OUT
-                                        </div>
-                                      </div>
+                                        </Box>
+                                      </Box>
                                     )}
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "6px" }}>
-                                      <div style={{ flex: 1, minWidth: 0 }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "1px" }}>
-                                          <div style={{ fontSize: "9px", fontWeight: "600", color: "#1d1d1f" }}>
+                                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "6px" }}>
+                                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: "4px", mb: "1px" }}>
+                                          <Box sx={{ fontSize: "9px", fontWeight: 600, color: "#1d1d1f" }}>
                                             {hotel.name}
-                                          </div>
+                                          </Box>
                                           {hotel.source && (
-                                            <span style={{
-                                              fontSize: "6px",
-                                              padding: "1px 3px",
-                                              background: "#f5f5f7",
-                                              color: "#86868b",
-                                              borderRadius: "2px",
-                                              fontWeight: "600",
-                                              whiteSpace: "nowrap"
-                                            }}>
+                                            <Box component="span" sx={{ fontSize: "6px", p: "1px 3px", background: "#f5f5f7", color: "#86868b", borderRadius: "2px", fontWeight: 600, whiteSpace: "nowrap" }}>
                                               {hotel.source}
-                                            </span>
+                                            </Box>
                                           )}
-                                        </div>
-                                        <div style={{ fontSize: "7px", color: "#86868b" }}>
+                                        </Box>
+                                        <Box sx={{ fontSize: "7px", color: "#86868b" }}>
                                           {hotel.features ? hotel.features.join(' · ') : (hotel.type || `${hotel.match}% match`)}
-                                        </div>
-                                        <div style={{ fontSize: "7px", color: "#86868b", marginTop: "2px", display: "flex", alignItems: "center", gap: "3px" }}>
+                                        </Box>
+                                        <Box sx={{ fontSize: "7px", color: "#86868b", mt: "2px", display: "flex", alignItems: "center", gap: "3px" }}>
                                           {inventoryChange[hotel.roomKey] && (
-                                            <span style={{
-                                              fontSize: "8px",
-                                              fontWeight: "900",
-                                              color: inventoryChange[hotel.roomKey] === 'up' ? "#34c759" : "#ff3b30"
-                                            }}>
+                                            <Box component="span" sx={{ fontSize: "8px", fontWeight: 900, color: inventoryChange[hotel.roomKey] === 'up' ? "#34c759" : "#ff3b30" }}>
                                               {inventoryChange[hotel.roomKey] === 'up' ? '▲' : '▼'}
-                                            </span>
+                                            </Box>
                                           )}
-                                          <span style={{
-                                            fontSize: "7px",
-                                            color: hotel.available && hotel.available.includes('1 ') ? "#ff3b30" : hotel.available && hotel.available.includes('2 ') ? "#ff9500" : "#34c759",
-                                            fontWeight: "600"
-                                          }}>
+                                          <Box component="span" sx={{ fontSize: "7px", color: hotel.available && hotel.available.includes('1 ') ? "#ff3b30" : hotel.available && hotel.available.includes('2 ') ? "#ff9500" : "#34c759", fontWeight: 600 }}>
                                             {hotel.available || ''}
-                                          </span>
+                                          </Box>
                                           {hotel.lastBooked && (
                                             <>
-                                              <span style={{ color: "#d1d1d6" }}>·</span>
-                                              <span>Last booked {hotel.lastBooked}</span>
+                                              <Box component="span" sx={{ color: "#d1d1d6" }}>·</Box>
+                                              <Box component="span">Last booked {hotel.lastBooked}</Box>
                                             </>
                                           )}
-                                        </div>
-                                      </div>
-                                      <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
-                                        <div style={{ textAlign: "right" }}>
-                                          <div style={{ fontSize: "10px", fontWeight: "600", color: "#1d1d1f" }}>
+                                        </Box>
+                                      </Box>
+                                      <Box sx={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
+                                        <Box sx={{ textAlign: "right" }}>
+                                          <Box sx={{ fontSize: "10px", fontWeight: 600, color: "#1d1d1f" }}>
                                             {hotel.price}
-                                          </div>
+                                          </Box>
                                           {hotel.priceNum && hotel.currentPrice && hotel.nights && (
-                                            <div style={{ 
-                                              fontSize: "7px", 
-                                              color: hotel.priceNum > hotel.currentPrice ? "#ff9500" : "#34c759",
-                                              fontWeight: "600"
-                                            }}>
+                                            <Box sx={{ fontSize: "7px", color: hotel.priceNum > hotel.currentPrice ? "#ff9500" : "#34c759", fontWeight: 600 }}>
                                               {hotel.priceNum > hotel.currentPrice ? '+' : ''}{hotel.priceNum - hotel.currentPrice > 0 ? '+$' : '-$'}{Math.abs((hotel.priceNum - hotel.currentPrice) * hotel.nights)}
-                                            </div>
+                                            </Box>
                                           )}
-                                        </div>
-                                        <button
+                                        </Box>
+                                        <Box
+                                          component="button"
+                                          type="button"
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             setSelectedHotel(hotel);
@@ -1796,105 +1887,83 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                             setShowPayment(true);
                                           }}
                                           disabled={confirmingHotelIdx === idx && !showPayment}
-                                          style={{
+                                          sx={{
                                             fontSize: "8px",
-                                            padding: "2px 6px",
+                                            p: "2px 6px",
                                             background: confirmingHotelIdx === idx && !showPayment ? "#34c759" : "#667eea",
                                             color: "#ffffff",
                                             border: "none",
                                             borderRadius: "3px",
                                             cursor: confirmingHotelIdx === idx && !showPayment ? "default" : "pointer",
-                                            fontWeight: "600",
+                                            fontWeight: 600,
                                             display: "flex",
                                             alignItems: "center",
                                             gap: "3px",
-                                            transition: "all 0.3s ease"
+                                            transition: "all 0.3s ease",
+                                            "&:hover": {
+                                              background: confirmingHotelIdx === idx && !showPayment ? "#34c759" : "#5566d9"
+                                            }
                                           }}
-                                          onMouseOver={(e) => !(confirmingHotelIdx === idx && !showPayment) && (e.currentTarget.style.background = "#5566d9")}
-                                          onMouseOut={(e) => !(confirmingHotelIdx === idx && !showPayment) && (e.currentTarget.style.background = "#667eea")}
                                         >
                                           {confirmingHotelIdx === idx && !showPayment ? (
                                             <>
-                                              <div style={{
-                                                width: "6px",
-                                                height: "6px",
-                                                border: "1.5px solid #ffffff",
-                                                borderTopColor: "transparent",
-                                                borderRadius: "50%",
-                                                animation: "spin 0.6s linear infinite"
-                                              }} />
-                                              <span>...</span>
+                                              <Box sx={{ width: "6px", height: "6px", border: "1.5px solid #ffffff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.6s linear infinite" }} />
+                                              <Box component="span">...</Box>
                                             </>
                                           ) : (
                                             'Select'
                                           )}
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
+                                        </Box>
+                                      </Box>
+                                    </Box>
+                                  </Box>
                                   ));
                                 })()}
-                              </div>
+                              </Box>
                             )}
-                          </div>
+                          </Box>
                         )}
-                      </div>
-                    </div>
+                      </Box>
+                    </Box>
                   )}
-                </div>
+                </Box>
               ))}
-            </div>
+            </Box>
 
-          </div>
+          </Box>
         )}
 
         {/* DREAM FLOW - Renders inline in shell card above, not as separate view */}
         {false && showDreamFlow && selectedShell && (
-          <div style={{ flex: 1, overflow: "auto", padding: "16px", background: "#fafafa" }}>
-            <div style={{ maxWidth: "700px", margin: "0 auto" }}>
+          <Box sx={{ flex: 1, overflow: "auto", p: "16px", background: "#fafafa" }}>
+            <Box sx={{ maxWidth: "700px", m: "0 auto" }}>
               
               {/* Current Shell Reference */}
-              <div style={{
-                padding: "10px 12px",
-                background: "#ffffff",
-                border: "1px solid #d0d0d0",
-                borderRadius: "8px",
-                marginBottom: "12px",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px"
-              }}>
-                <div style={{ fontSize: "16px" }}>{selectedShell.icon}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: "11px", fontWeight: "600", color: "#6e6e73", textTransform: "uppercase", marginBottom: "2px" }}>
+              <Box sx={{ p: "10px 12px", background: "#ffffff", border: "1px solid #d0d0d0", borderRadius: "8px", mb: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+                <Box sx={{ fontSize: "16px" }}>{selectedShell.icon}</Box>
+                <Box sx={{ flex: 1 }}>
+                  <Box sx={{ fontSize: "11px", fontWeight: 600, color: "#6e6e73", textTransform: "uppercase", mb: "2px" }}>
                     Amending
-                  </div>
-                  <div style={{ fontSize: "13px", fontWeight: "600", color: "#1d1d1f" }}>
+                  </Box>
+                  <Box sx={{ fontSize: "13px", fontWeight: 600, color: "#1d1d1f" }}>
                     {selectedShell.name}
-                  </div>
-                </div>
-                <div style={{
-                  fontSize: "10px",
-                  padding: "3px 8px",
-                  background: "#34c759",
-                  color: "#ffffff",
-                  borderRadius: "4px",
-                  fontWeight: "600"
-                }}>
+                  </Box>
+                </Box>
+                <Box sx={{ fontSize: "10px", p: "3px 8px", background: "#34c759", color: "#ffffff", borderRadius: "4px", fontWeight: 600 }}>
                   {selectedShell.status}
-                </div>
-              </div>
+                </Box>
+              </Box>
 
               {/* AI Assistant Bar */}
-              <div
+              <Box
                 onClick={() => setDreamFlowExpanded(!dreamFlowExpanded)}
-                style={{
+                sx={{
                   background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
                   borderRadius: "8px",
-                  padding: "12px",
+                  p: "12px",
                   cursor: "pointer",
                   position: "relative",
-                  marginBottom: dreamFlowExpanded ? "12px" : "12px",
+                  mb: "12px",
                   overflow: "hidden",
                   transition: "all 0.3s ease",
                   boxShadow: dreamFlowExpanded ? "0 4px 16px rgba(250, 112, 154, 0.3)" : "0 2px 8px rgba(250, 112, 154, 0.2)",
@@ -1902,74 +1971,77 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 {/* Animated shimmer effect */}
-                <div style={{
-                  position: "absolute",
-                  top: 0,
-                  left: "-100%",
-                  width: "100%",
-                  height: "100%",
-                  background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
-                  animation: "shimmer 3s infinite"
-                }}></div>
+                <Box sx={{ position: "absolute", top: 0, left: "-100%", width: "100%", height: "100%", background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)", animation: "shimmer 3s infinite" }} />
                 {/* Future Badge */}
-                <div style={{
-                  position: "absolute",
-                  top: "8px",
-                  right: "8px",
-                  background: "rgba(255,255,255,0.25)",
-                  backdropFilter: "blur(10px)",
-                  padding: "3px 8px",
-                  borderRadius: "12px",
-                  fontSize: "9px",
-                  fontWeight: "600",
-                  color: "#ffffff",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px"
-                }}>
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "8px",
+                    right: "8px",
+                    background: "rgba(255,255,255,0.25)",
+                    backdropFilter: "blur(10px)",
+                    padding: "3px 8px",
+                    borderRadius: "12px",
+                    fontSize: "9px",
+                    fontWeight: "600",
+                    color: "#ffffff",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px"
+                  }}
+                >
                   🔮 FUTURE
-                </div>
+                </Box>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", position: "relative", zIndex: 1 }}>
-                  <div style={{ 
-                    fontSize: "18px",
-                    animation: "pulse 2s ease-in-out infinite",
-                    filter: "drop-shadow(0 0 8px rgba(255,255,255,0.5))"
-                  }}>🤖</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "13px", fontWeight: "600", color: "#ffffff", marginBottom: "3px" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "10px", position: "relative", zIndex: 1 }}>
+                  <Box
+                    sx={{ 
+                      fontSize: "18px",
+                      animation: "pulse 2s ease-in-out infinite",
+                      filter: "drop-shadow(0 0 8px rgba(255,255,255,0.5))"
+                    }}
+                  >
+                    🤖
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Box sx={{ fontSize: "13px", fontWeight: "600", color: "#ffffff", marginBottom: "3px" }}>
                       Natural Language Amendment
-                    </div>
-                    <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.9)" }}>
+                    </Box>
+                    <Box sx={{ fontSize: "11px", color: "rgba(255,255,255,0.9)" }}>
                       {dreamFlowExpanded ? "Tell us what you want to change..." : "✨ AI-powered smart amendments"}
-                    </div>
-                  </div>
-                  <div style={{ 
-                    fontSize: "12px", 
-                    color: "#ffffff", 
-                    fontWeight: "500",
-                    transition: "transform 0.3s ease"
-                  }}>
+                    </Box>
+                  </Box>
+                  <Box
+                    sx={{ 
+                      fontSize: "12px", 
+                      color: "#ffffff", 
+                      fontWeight: "500",
+                      transition: "transform 0.3s ease"
+                    }}
+                  >
                     {dreamFlowExpanded ? "▼" : "▶"}
-                  </div>
-                </div>
-              </div>
+                  </Box>
+                </Box>
+              </Box>
 
               {/* Expanded Content */}
               {dreamFlowExpanded && (
-                <div style={{ animation: "slideDown 0.4s ease-out" }}>
+                <Box sx={{ animation: "slideDown 0.4s ease-out" }}>
                   {/* Natural Language Input */}
-                  <div style={{
-                    background: "#ffffff",
-                    border: "1px solid #d0d0d0",
-                    borderRadius: "8px",
-                    padding: "12px",
-                    marginBottom: "10px"
-                  }}>
-                    <textarea
+                  <Box
+                    sx={{
+                      background: "#ffffff",
+                      border: "1px solid #d0d0d0",
+                      borderRadius: "8px",
+                      padding: "12px",
+                      marginBottom: "10px"
+                    }}
+                  >
+                    <Box
+                      component="textarea"
                       value={nlInput}
                       onChange={(e) => setNlInput(e.target.value)}
                       placeholder="e.g., 'Change to 5-star beachfront hotel with pool'"
-                      style={{
+                      sx={{
                         width: "100%",
                         minHeight: "60px",
                         padding: "8px 10px",
@@ -1982,9 +2054,10 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                         marginBottom: "8px"
                       }}
                     />
-                    <button
+                    <Box
+                      component="button"
                       onClick={() => {}}
-                      style={{
+                      sx={{
                         padding: "6px 14px",
                         fontSize: "13px",
                         fontWeight: "500",
@@ -1996,25 +2069,28 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                       }}
                     >
                       ✨ Find Smart Options
-                    </button>
-                  </div>
+                    </Box>
+                  </Box>
 
                   {/* Quick Examples */}
-                  <div style={{
-                    background: "#f5f5f7",
-                    borderRadius: "8px",
-                    padding: "10px 12px",
-                    marginBottom: "10px"
-                  }}>
-                    <div style={{ fontSize: "11px", fontWeight: "600", color: "#1d1d1f", marginBottom: "6px" }}>
+                  <Box
+                    sx={{
+                      background: "#f5f5f7",
+                      borderRadius: "8px",
+                      padding: "10px 12px",
+                      marginBottom: "10px"
+                    }}
+                  >
+                    <Box sx={{ fontSize: "11px", fontWeight: "600", color: "#1d1d1f", marginBottom: "6px" }}>
                       💡 Try: 
-                    </div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                    </Box>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
                       {["Upgrade to luxury", "Cheaper alternative", "Beachfront property"].map((ex, idx) => (
-                        <button
+                        <Box
+                          component="button"
                           key={idx}
                           onClick={() => setNlInput(ex)}
-                          style={{
+                          sx={{
                             fontSize: "10px",
                             padding: "4px 8px",
                             background: "#ffffff",
@@ -2026,27 +2102,30 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                           }}
                         >
                           "{ex}"
-                        </button>
+                        </Box>
                       ))}
-                    </div>
-                  </div>
+                    </Box>
+                  </Box>
 
                   {/* Technical Constraints */}
-                  <div style={{
-                    background: "#fff3cd",
-                    border: "1px solid #ffc107",
-                    borderRadius: "6px",
-                    padding: "8px 10px"
-                  }}>
-                    <div style={{ fontSize: "10px", color: "#856404", lineHeight: "1.5" }}>
-                      <strong>⚠️ Why not built:</strong> No NLP/AI infrastructure, complex cross-system dependencies, real-time availability requirements
-                    </div>
-                  </div>
+                  <Box
+                    sx={{
+                      background: "#fff3cd",
+                      border: "1px solid #ffc107",
+                      borderRadius: "6px",
+                      padding: "8px 10px"
+                    }}
+                  >
+                  <Box sx={{ fontSize: "10px", color: "#856404", lineHeight: "1.5" }}>
+                    <Box component="span" sx={{ fontWeight: 600 }}>⚠️ Why not built:</Box> No NLP/AI infrastructure, complex cross-system dependencies, real-time availability requirements
+                  </Box>
+                  </Box>
 
                   {/* Close Dream Flow Button */}
-                  <button
+                  <Box
+                    component="button"
                     onClick={() => setShowDreamFlow(false)}
-                    style={{
+                    sx={{
                       marginTop: "10px",
                       width: "100%",
                       padding: "6px 14px",
@@ -2060,32 +2139,37 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                     }}
                   >
                     Close Dream Flow
-                  </button>
-                </div>
+                  </Box>
+                </Box>
               )}
 
-            </div>
-          </div>
+            </Box>
+          </Box>
         )}
 
         {/* Search Results View */}
         {showSearchResults && (
-          <div style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            background: "#f5f5f7",
-            overflow: "hidden"
-          }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              background: "#f5f5f7",
+              overflow: "hidden"
+            }}
+          >
             {/* Header */}
-            <div style={{
-              background: "#ffffff",
-              borderBottom: "1px solid #e0e0e0",
-              padding: "14px 20px",
-              flexShrink: 0
-            }}>
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderBottom: "1px solid #e0e0e0",
+                px: 2.5,
+                py: 1.75,
+                flexShrink: 0
+              }}
+            >
               {/* Breadcrumb Steps */}
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 {[
                   { label: "Search", active: true },
                   { label: "Review", active: false },
@@ -2093,50 +2177,52 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   { label: "Payment", active: false }
                 ].map((step, index, array) => (
                   <React.Fragment key={index}>
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      background: step.active ? "#e3f2fd" : "transparent",
-                      color: step.active ? "#0071e3" : "#6e6e73",
-                      fontSize: "13px",
-                      fontWeight: step.active ? "600" : "400"
-                    }}>
-                      <span style={{
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        background: step.active ? "#0071e3" : "#d0d0d0",
-                        color: "#ffffff",
+                    <Box
+                      sx={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "11px",
-                        fontWeight: "600"
-                      }}>
+                        gap: 0.75,
+                        px: 1.5,
+                        py: 0.75,
+                        borderRadius: "6px",
+                        background: step.active ? "#e3f2fd" : "transparent",
+                        color: step.active ? "#0071e3" : "#6e6e73",
+                        fontSize: "13px",
+                        fontWeight: step.active ? 600 : 400
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: "50%",
+                          background: step.active ? "#0071e3" : "#d0d0d0",
+                          color: "#ffffff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "11px",
+                          fontWeight: 600
+                        }}
+                      >
                         {index + 1}
-                      </span>
+                      </Box>
                       {step.label}
-                    </div>
+                    </Box>
                     {index < array.length - 1 && (
-                      <div style={{ color: "#d0d0d0", fontSize: "12px" }}>→</div>
+                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
-              </div>
-            </div>
+              </Box>
+            </Box>
 
             {/* Results Container */}
-            <div style={{
-              flex: 1,
-              overflow: "auto"
-            }}>
-              <div style={{ maxWidth: "900px", margin: "0 auto", padding: "16px" }}>
-                <p style={{ fontSize: "14px", color: "#6e6e73", marginBottom: "20px" }}>
+            <Box sx={{ flex: 1, overflow: "auto" }}>
+              <Box sx={{ maxWidth: "900px", mx: "auto", p: 2 }}>
+                <Typography variant="body2" sx={{ color: "#6e6e73", mb: 2.5 }}>
                   Found 8 available hotels
-                </p>
+                </Typography>
 
                 {/* Hotel Results */}
                 {[
@@ -2149,51 +2235,65 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   { name: "Alohilani Resort", price: "$340", rating: "4.6", reviews: "987", image: "🏨" },
                   { name: "The Laylow", price: "$265", rating: "4.4", reviews: "654", image: "🏨" }
                 ].map((hotel, index) => (
-                  <div key={index} style={{
-                    background: "#ffffff",
-                    borderRadius: "8px",
-                    padding: "16px",
-                    marginBottom: "12px",
-                    display: "flex",
-                    gap: "16px",
-                    border: "1px solid #e0e0e0"
-                  }}>
-                    {/* Hotel Image Placeholder */}
-                    <div style={{
-                      width: "120px",
-                      height: "90px",
-                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      borderRadius: "6px",
+                  <Box
+                    key={index}
+                    sx={{
+                      background: "#ffffff",
+                      borderRadius: "8px",
+                      p: 2,
+                      mb: 1.5,
                       display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "24px",
-                      flexShrink: 0
-                    }}>
+                      gap: 2,
+                      border: "1px solid #e0e0e0"
+                    }}
+                  >
+                    {/* Hotel Image Placeholder */}
+                    <Box
+                      sx={{
+                        width: "120px",
+                        height: "90px",
+                        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        borderRadius: "6px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "24px",
+                        flexShrink: 0
+                      }}
+                    >
                       {hotel.image}
-                    </div>
+                    </Box>
 
                     {/* Hotel Details */}
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                      <h3 style={{ fontSize: "14px", fontWeight: "600", margin: "0 0 4px 0", color: "#1d1d1f" }}>
+                    <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5, color: "#1d1d1f" }}>
                         {hotel.name}
-                      </h3>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-                        <span style={{ fontSize: "13px", color: "#f5a623" }}>★ {hotel.rating}</span>
-                        <span style={{ fontSize: "12px", color: "#6e6e73" }}>({hotel.reviews} reviews)</span>
-                      </div>
-                      <p style={{ fontSize: "12px", color: "#6e6e73", margin: "0 0 8px 0" }}>
+                      </Typography>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+                        <Typography variant="body2" sx={{ color: "#f5a623" }}>★ {hotel.rating}</Typography>
+                        <Typography variant="caption" sx={{ color: "#6e6e73" }}>
+                          ({hotel.reviews} reviews)
+                        </Typography>
+                      </Box>
+                      <Typography variant="caption" sx={{ color: "#6e6e73", mb: 1 }}>
                         Waikiki Beach · Free WiFi · Pool · Ocean View
-                      </p>
-                      <div style={{ marginTop: "auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                        <div>
-                          <span style={{ fontSize: "12px", color: "#6e6e73" }}>From </span>
-                          <span style={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>{hotel.price}</span>
-                          <span style={{ fontSize: "12px", color: "#6e6e73" }}> /night</span>
-                        </div>
-                        <button 
+                      </Typography>
+                      <Box sx={{ mt: "auto", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <Box>
+                          <Typography component="span" variant="caption" sx={{ color: "#6e6e73" }}>
+                            From{" "}
+                          </Typography>
+                          <Typography component="span" variant="subtitle1" sx={{ fontWeight: 600, color: "#1d1d1f" }}>
+                            {hotel.price}
+                          </Typography>
+                          <Typography component="span" variant="caption" sx={{ color: "#6e6e73" }}>
+                            {" "} /night
+                          </Typography>
+                        </Box>
+                        <Box 
+                          component="button"
                           onClick={() => setSelectedHotel(hotel)}
-                          style={{
+                          sx={{
                             padding: "8px 20px",
                             fontSize: "13px",
                             fontWeight: "500",
@@ -2205,48 +2305,54 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                           }}
                         >
                           Select Room
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Box>
                 ))}
-              </div>
-            </div>
+              </Box>
+            </Box>
 
             {/* Footer Bar - Shows when hotel selected */}
             {selectedHotel && (
-              <div style={{
-                background: "#ffffff",
-                borderTop: "2px solid #e0e0e0",
-                padding: "14px 20px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
-              }}>
-                <div>
-                  <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "2px" }}>
+              <Box
+                sx={{
+                  background: "#ffffff",
+                  borderTop: "2px solid #e0e0e0",
+                  px: 2.5,
+                  py: 1.75,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
+                }}
+              >
+                <Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "#1d1d1f", mb: 0.25 }}>
                     {selectedHotel.name}
-                  </div>
-                  <div style={{ fontSize: "12px", color: "#6e6e73" }}>
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "#6e6e73" }}>
                     5 nights · 2 rooms
-                  </div>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: "12px", color: "#6e6e73" }}>Total Price</div>
-                    <div style={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2.5 }}>
+                  <Box sx={{ textAlign: "right" }}>
+                    <Typography variant="caption" sx={{ color: "#6e6e73" }}>
+                      Total Price
+                    </Typography>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600, color: "#1d1d1f" }}>
                       ${parseInt(selectedHotel.price.replace('$', '')) * 5}
-                    </div>
-                  </div>
-                  <button 
+                    </Typography>
+                  </Box>
+                  <Box 
+                    component="button"
                     onClick={() => {
                       showLoadingThen('Preparing your booking details...', () => {
                         setShowSearchResults(false);
                         setShowCartPage(true);
                       }, 4000);
                     }}
-                    style={{
+                    sx={{
                       padding: "12px 32px",
                       fontSize: "14px",
                       fontWeight: "600",
@@ -2259,31 +2365,36 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                     }}
                   >
                     Add to Cart
-                  </button>
-                </div>
-              </div>
+                  </Box>
+                </Box>
+              </Box>
             )}
-          </div>
+          </Box>
         )}
 
         {/* Cart Page View */}
         {showCartPage && (
-          <div style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            background: "#f5f5f7",
-            overflow: "hidden"
-          }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              background: "#f5f5f7",
+              overflow: "hidden"
+            }}
+          >
             {/* Header */}
-            <div style={{
-              background: "#ffffff",
-              borderBottom: "1px solid #e0e0e0",
-              padding: "14px 20px",
-              flexShrink: 0
-            }}>
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderBottom: "1px solid #e0e0e0",
+                px: 2.5,
+                py: 1.75,
+                flexShrink: 0
+              }}
+            >
               {/* Breadcrumb Steps */}
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 {[
                   { label: "Search", active: false, completed: true },
                   { label: "Review", active: true, completed: false },
@@ -2291,177 +2402,201 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   { label: "Payment", active: false, completed: false }
                 ].map((step, index, array) => (
                   <React.Fragment key={index}>
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      background: step.active ? "#e3f2fd" : "transparent",
-                      color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
-                      fontSize: "13px",
-                      fontWeight: step.active ? "600" : "400"
-                    }}>
-                      <span style={{
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
-                        color: "#ffffff",
+                    <Box
+                      sx={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "11px",
-                        fontWeight: "600"
-                      }}>
+                        gap: 0.75,
+                        px: 1.5,
+                        py: 0.75,
+                        borderRadius: "6px",
+                        background: step.active ? "#e3f2fd" : "transparent",
+                        color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
+                        fontSize: "13px",
+                        fontWeight: step.active ? 600 : 400
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: "50%",
+                          background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
+                          color: "#ffffff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "11px",
+                          fontWeight: 600
+                        }}
+                      >
                         {step.completed ? "✓" : index + 1}
-                      </span>
+                      </Box>
                       {step.label}
-                    </div>
+                    </Box>
                     {index < array.length - 1 && (
-                      <div style={{ color: "#d0d0d0", fontSize: "12px" }}>→</div>
+                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
-              </div>
-            </div>
+              </Box>
+            </Box>
 
             {/* Cart Content */}
-            <div style={{
-              flex: 1,
-              overflow: "auto"
-            }}>
-              <div style={{ maxWidth: "800px", margin: "0 auto", padding: "16px" }}>
+            <Box
+              sx={{
+                flex: 1,
+                overflow: "auto"
+              }}
+            >
+              <Box sx={{ maxWidth: "800px", margin: "0 auto", padding: "16px" }}>
                 
                 {/* Selected Hotel Card */}
-                <div style={{
-                  background: "#ffffff",
-                  borderRadius: "10px",
-                  padding: "16px",
-                  marginBottom: "20px",
-                  border: "1px solid #e0e0e0"
-                }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
+                <Box
+                  sx={{
+                    background: "#ffffff",
+                    borderRadius: "10px",
+                    padding: "16px",
+                    marginBottom: "20px",
+                    border: "1px solid #e0e0e0"
+                  }}
+                >
+                  <Box component="h3" sx={{ fontSize: "16px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
                     New Hotel Selection
-                  </h3>
-                  <div style={{ display: "flex", gap: "16px", paddingBottom: "16px", borderBottom: "1px solid #f0f0f0" }}>
-                    <div style={{
-                      width: "100px",
-                      height: "75px",
-                      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      borderRadius: "6px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "20px",
-                      flexShrink: 0
-                    }}>
+                  </Box>
+                  <Box sx={{ display: "flex", gap: "16px", paddingBottom: "16px", borderBottom: "1px solid #f0f0f0" }}>
+                    <Box
+                      sx={{
+                        width: "100px",
+                        height: "75px",
+                        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        borderRadius: "6px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "20px",
+                        flexShrink: 0
+                      }}
+                    >
                       {selectedHotel.image}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <h4 style={{ fontSize: "14px", fontWeight: "600", margin: "0 0 4px 0", color: "#1d1d1f" }}>
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Box component="h4" sx={{ fontSize: "14px", fontWeight: "600", margin: "0 0 4px 0", color: "#1d1d1f" }}>
                         {selectedHotel.name}
-                      </h4>
-                      <div style={{ fontSize: "13px", color: "#6e6e73", marginBottom: "4px" }}>
+                      </Box>
+                      <Box sx={{ fontSize: "13px", color: "#6e6e73", marginBottom: "4px" }}>
                         ★ {selectedHotel.rating} ({selectedHotel.reviews} reviews)
-                      </div>
-                      <div style={{ fontSize: "13px", color: "#6e6e73" }}>
+                      </Box>
+                      <Box sx={{ fontSize: "13px", color: "#6e6e73" }}>
                         May 15-20, 2024 · 5 nights · 2 rooms
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>
+                      </Box>
+                    </Box>
+                    <Box sx={{ textAlign: "right" }}>
+                      <Box sx={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>
                         ${parseInt(selectedHotel.price.replace('$', '')) * 5}
-                      </div>
-                      <div style={{ fontSize: "12px", color: "#6e6e73" }}>
+                      </Box>
+                      <Box sx={{ fontSize: "12px", color: "#6e6e73" }}>
                         {selectedHotel.price}/night
-                      </div>
-                    </div>
-                  </div>
+                      </Box>
+                    </Box>
+                  </Box>
                   
                   {/* Price Breakdown */}
-                  <div style={{ marginTop: "16px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6e6e73", marginBottom: "8px" }}>
-                      <span>{selectedHotel.price} × 5 nights × 2 rooms</span>
-                      <span>${parseInt(selectedHotel.price.replace('$', '')) * 5 * 2}</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6e6e73", marginBottom: "8px" }}>
-                      <span>Taxes & fees</span>
-                      <span>${Math.round(parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 * 0.12)}</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#ff3b30", marginBottom: "12px" }}>
-                      <span>Amendment fee</span>
-                      <span>$45</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "16px", fontWeight: "600", color: "#1d1d1f", paddingTop: "12px", borderTop: "2px solid #e0e0e0" }}>
-                      <span>Total</span>
-                      <span>${parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 + Math.round(parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 * 0.12) + 45}</span>
-                    </div>
-                  </div>
-                </div>
+                  <Box sx={{ marginTop: "16px" }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6e6e73", marginBottom: "8px" }}>
+                    <Box component="span">{selectedHotel.price} × 5 nights × 2 rooms</Box>
+                    <Box component="span">${parseInt(selectedHotel.price.replace('$', '')) * 5 * 2}</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6e6e73", marginBottom: "8px" }}>
+                    <Box component="span">Taxes & fees</Box>
+                    <Box component="span">${Math.round(parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 * 0.12)}</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#ff3b30", marginBottom: "12px" }}>
+                    <Box component="span">Amendment fee</Box>
+                    <Box component="span">$45</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "16px", fontWeight: "600", color: "#1d1d1f", paddingTop: "12px", borderTop: "2px solid #e0e0e0" }}>
+                    <Box component="span">Total</Box>
+                    <Box component="span">${parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 + Math.round(parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 * 0.12) + 45}</Box>
+                  </Box>
+                  </Box>
+                </Box>
 
                 {/* Travellers Summary */}
-                <div style={{
-                  background: "#ffffff",
-                  borderRadius: "10px",
-                  padding: "16px",
-                  marginBottom: "20px",
-                  border: "1px solid #e0e0e0"
-                }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "0 0 12px 0", color: "#1d1d1f" }}>
+                <Box
+                  sx={{
+                    background: "#ffffff",
+                    borderRadius: "10px",
+                    padding: "16px",
+                    marginBottom: "20px",
+                    border: "1px solid #e0e0e0"
+                  }}
+                >
+                  <Box component="h3" sx={{ fontSize: "16px", fontWeight: "600", margin: "0 0 12px 0", color: "#1d1d1f" }}>
                     Travellers (2 selected)
-                  </h3>
-                  <div style={{ fontSize: "13px", color: "#6e6e73" }}>
-                    • John Smith<br/>
-                    • Sarah Smith
-                  </div>
-                </div>
+                  </Box>
+                  <Box sx={{ fontSize: "13px", color: "#6e6e73" }}>
+                    <Box component="span" sx={{ display: "block" }}>• John Smith</Box>
+                    <Box component="span" sx={{ display: "block" }}>• Sarah Smith</Box>
+                  </Box>
+                </Box>
 
                 {/* Amendment Summary */}
-                <div style={{
-                  background: "#ffffff",
-                  borderRadius: "10px",
-                  padding: "16px",
-                  border: "1px solid #e0e0e0"
-                }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "0 0 12px 0", color: "#1d1d1f" }}>
+                <Box
+                  sx={{
+                    background: "#ffffff",
+                    borderRadius: "10px",
+                    padding: "16px",
+                    border: "1px solid #e0e0e0"
+                  }}
+                >
+                  <Box component="h3" sx={{ fontSize: "16px", fontWeight: "600", margin: "0 0 12px 0", color: "#1d1d1f" }}>
                     Amendment Details
-                  </h3>
-                  <div style={{ fontSize: "13px", color: "#6e6e73", lineHeight: "1.6" }}>
-                    <strong>Reason:</strong> Found better accommodation<br/>
-                    <strong>Type:</strong> Client request<br/>
-                    <strong>Amendment fee:</strong> $45
-                  </div>
-                </div>
-              </div>
-            </div>
+                  </Box>
+                  <Box sx={{ fontSize: "13px", color: "#6e6e73", lineHeight: "1.6" }}>
+                    <Box component="span" sx={{ display: "block" }}>
+                      <Box component="span" sx={{ fontWeight: 600 }}>Reason:</Box> Found better accommodation
+                    </Box>
+                    <Box component="span" sx={{ display: "block" }}>
+                      <Box component="span" sx={{ fontWeight: 600 }}>Type:</Box> Client request
+                    </Box>
+                    <Box component="span" sx={{ display: "block" }}>
+                      <Box component="span" sx={{ fontWeight: 600 }}>Amendment fee:</Box> $45
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
 
             {/* Footer with Checkout Button */}
-            <div style={{
-              background: "#ffffff",
-              borderTop: "2px solid #e0e0e0",
-              padding: "20px 24px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
-            }}>
-              <div>
-                <div style={{ fontSize: "12px", color: "#6e6e73", marginBottom: "2px" }}>
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderTop: "2px solid #e0e0e0",
+                padding: "20px 24px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
+              }}
+            >
+              <Box>
+                <Box sx={{ fontSize: "12px", color: "#6e6e73", marginBottom: "2px" }}>
                   Total Amount
-                </div>
-                <div style={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>
+                </Box>
+                <Box sx={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>
                   ${selectedHotel && parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 + Math.round(parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 * 0.12) + 45}
-                </div>
-              </div>
-              <button 
+                </Box>
+              </Box>
+              <Box 
+                component="button"
                 onClick={() => {
                   showLoadingThen('Loading traveller information...', () => {
                     setShowCartPage(false);
                     setShowTravellersPage(true);
                   }, 3500);
                 }}
-                style={{
+                sx={{
                   padding: "14px 40px",
                   fontSize: "14px",
                   fontWeight: "600",
@@ -2474,28 +2609,33 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 Proceed to Travellers →
-              </button>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
         )}
 
         {/* Travellers Page */}
         {showTravellersPage && (
-          <div style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            background: "#f5f5f7",
-            overflow: "hidden"
-          }}>
-            <div style={{
-              background: "#ffffff",
-              borderBottom: "1px solid #e0e0e0",
-              padding: "14px 20px",
-              flexShrink: 0
-            }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              background: "#f5f5f7",
+              overflow: "hidden"
+            }}
+          >
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderBottom: "1px solid #e0e0e0",
+                px: 2.5,
+                py: 1.75,
+                flexShrink: 0
+              }}
+            >
               {/* Breadcrumb Steps */}
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 {[
                   { label: "Search", active: false, completed: true },
                   { label: "Review", active: false, completed: true },
@@ -2503,83 +2643,100 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   { label: "Payment", active: false, completed: false }
                 ].map((step, index, array) => (
                   <React.Fragment key={index}>
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      background: step.active ? "#e3f2fd" : "transparent",
-                      color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
-                      fontSize: "13px",
-                      fontWeight: step.active ? "600" : "400"
-                    }}>
-                      <span style={{
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
-                        color: "#ffffff",
+                    <Box
+                      sx={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "11px",
-                        fontWeight: "600"
-                      }}>
+                        gap: 0.75,
+                        px: 1.5,
+                        py: 0.75,
+                        borderRadius: "6px",
+                        background: step.active ? "#e3f2fd" : "transparent",
+                        color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
+                        fontSize: "13px",
+                        fontWeight: step.active ? 600 : 400
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: "50%",
+                          background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
+                          color: "#ffffff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "11px",
+                          fontWeight: 600
+                        }}
+                      >
                         {step.completed ? "✓" : index + 1}
-                      </span>
+                      </Box>
                       {step.label}
-                    </div>
+                    </Box>
                     {index < array.length - 1 && (
-                      <div style={{ color: "#d0d0d0", fontSize: "12px" }}>→</div>
+                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
-              </div>
-            </div>
+              </Box>
+            </Box>
 
-            <div style={{ flex: 1, overflow: "auto" }}>
-              <div style={{ maxWidth: "700px", margin: "0 auto", padding: "16px" }}>
+            <Box sx={{ flex: 1, overflow: "auto" }}>
+              <Box sx={{ maxWidth: "700px", margin: "0 auto", padding: "16px" }}>
                 {[
                   { name: "John Smith", email: "john@example.com", passport: "US123456" },
                   { name: "Sarah Smith", email: "sarah@example.com", passport: "US789012" }
                 ].map((traveller, index) => (
-                  <div key={index} style={{
-                    background: "#ffffff",
-                    borderRadius: "10px",
-                    padding: "16px",
-                    marginBottom: "16px",
-                    border: "1px solid #e0e0e0"
-                  }}>
-                    <h3 style={{ fontSize: "14px", fontWeight: "600", margin: "0 0 12px 0", color: "#1d1d1f" }}>
+                  <Box
+                    key={index}
+                    sx={{
+                      background: "#ffffff",
+                      borderRadius: "10px",
+                      padding: "16px",
+                      marginBottom: "16px",
+                      border: "1px solid #e0e0e0"
+                    }}
+                  >
+                    <Box component="h3" sx={{ fontSize: "14px", fontWeight: "600", margin: "0 0 12px 0", color: "#1d1d1f" }}>
                       Traveller {index + 1}
-                    </h3>
-                    <div style={{ fontSize: "13px", color: "#6e6e73", lineHeight: "1.8" }}>
-                      <strong>Name:</strong> {traveller.name}<br/>
-                      <strong>Email:</strong> {traveller.email}<br/>
-                      <strong>Passport:</strong> {traveller.passport}
-                    </div>
-                  </div>
+                    </Box>
+                    <Box sx={{ fontSize: "13px", color: "#6e6e73", lineHeight: "1.8" }}>
+                      <Box component="span" sx={{ display: "block" }}>
+                        <Box component="span" sx={{ fontWeight: 600 }}>Name:</Box> {traveller.name}
+                      </Box>
+                      <Box component="span" sx={{ display: "block" }}>
+                        <Box component="span" sx={{ fontWeight: 600 }}>Email:</Box> {traveller.email}
+                      </Box>
+                      <Box component="span" sx={{ display: "block" }}>
+                        <Box component="span" sx={{ fontWeight: 600 }}>Passport:</Box> {traveller.passport}
+                      </Box>
+                    </Box>
+                  </Box>
                 ))}
-              </div>
-            </div>
+              </Box>
+            </Box>
 
-            <div style={{
-              background: "#ffffff",
-              borderTop: "2px solid #e0e0e0",
-              padding: "20px 24px",
-              display: "flex",
-              justifyContent: "flex-end",
-              boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
-            }}>
-              <button 
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderTop: "2px solid #e0e0e0",
+                padding: "20px 24px",
+                display: "flex",
+                justifyContent: "flex-end",
+                boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
+              }}
+            >
+              <Box 
+                component="button"
                 onClick={() => {
                   showLoadingThen('Loading payment form...', () => {
                     setShowTravellersPage(false);
                     setShowPaymentPage(true);
                   }, 3800);
                 }}
-                style={{
+                sx={{
                   padding: "14px 40px",
                   fontSize: "14px",
                   fontWeight: "600",
@@ -2592,28 +2749,33 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 Go to Payment →
-              </button>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
         )}
 
         {/* Payment Page */}
         {showPaymentPage && (
-          <div style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            background: "#f5f5f7",
-            overflow: "hidden"
-          }}>
-            <div style={{
-              background: "#ffffff",
-              borderBottom: "1px solid #e0e0e0",
-              padding: "14px 20px",
-              flexShrink: 0
-            }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              background: "#f5f5f7",
+              overflow: "hidden"
+            }}
+          >
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderBottom: "1px solid #e0e0e0",
+                px: 2.5,
+                py: 1.75,
+                flexShrink: 0
+              }}
+            >
               {/* Breadcrumb Steps */}
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 {[
                   { label: "Search", active: false, completed: true },
                   { label: "Review", active: false, completed: true },
@@ -2621,61 +2783,69 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   { label: "Payment", active: true, completed: false }
                 ].map((step, index, array) => (
                   <React.Fragment key={index}>
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      background: step.active ? "#e3f2fd" : "transparent",
-                      color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
-                      fontSize: "13px",
-                      fontWeight: step.active ? "600" : "400"
-                    }}>
-                      <span style={{
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
-                        color: "#ffffff",
+                    <Box
+                      sx={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "11px",
-                        fontWeight: "600"
-                      }}>
+                        gap: 0.75,
+                        px: 1.5,
+                        py: 0.75,
+                        borderRadius: "6px",
+                        background: step.active ? "#e3f2fd" : "transparent",
+                        color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
+                        fontSize: "13px",
+                        fontWeight: step.active ? 600 : 400
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: "50%",
+                          background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
+                          color: "#ffffff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "11px",
+                          fontWeight: 600
+                        }}
+                      >
                         {step.completed ? "✓" : index + 1}
-                      </span>
+                      </Box>
                       {step.label}
-                    </div>
+                    </Box>
                     {index < array.length - 1 && (
-                      <div style={{ color: "#d0d0d0", fontSize: "12px" }}>→</div>
+                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
-              </div>
-            </div>
+              </Box>
+            </Box>
 
-            <div style={{ flex: 1, overflow: "auto" }}>
-              <div style={{ maxWidth: "600px", margin: "0 auto", padding: "16px" }}>
-                <div style={{
-                  background: "#ffffff",
-                  borderRadius: "10px",
-                  padding: "16px",
-                  border: "1px solid #e0e0e0"
-                }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "0 0 20px 0", color: "#1d1d1f" }}>
+            <Box sx={{ flex: 1, overflow: "auto" }}>
+              <Box sx={{ maxWidth: "600px", margin: "0 auto", padding: "16px" }}>
+                <Box
+                  sx={{
+                    background: "#ffffff",
+                    borderRadius: "10px",
+                    padding: "16px",
+                    border: "1px solid #e0e0e0"
+                  }}
+                >
+                  <Box component="h3" sx={{ fontSize: "16px", fontWeight: "600", margin: "0 0 20px 0", color: "#1d1d1f" }}>
                     Credit Card Details
-                  </h3>
+                  </Box>
                   
-                  <div style={{ marginBottom: "16px" }}>
-                    <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
+                  <Box sx={{ marginBottom: "16px" }}>
+                    <Box component="label" sx={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
                       Card Number
-                    </label>
-                    <input
+                    </Box>
+                    <Box
+                      component="input"
                       type="text"
                       placeholder="1234 5678 9012 3456"
-                      style={{
+                      sx={{
                         width: "100%",
                         padding: "8px 10px",
                         fontSize: "14px",
@@ -2685,17 +2855,18 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                         boxSizing: "border-box"
                       }}
                     />
-                  </div>
+                  </Box>
 
-                  <div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
-                    <div style={{ flex: 1 }}>
-                      <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
+                  <Box sx={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Box component="label" sx={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
                         Expiry Date
-                      </label>
-                      <input
+                      </Box>
+                      <Box
+                        component="input"
                         type="text"
                         placeholder="MM/YY"
-                        style={{
+                        sx={{
                           width: "100%",
                           padding: "8px 10px",
                           fontSize: "14px",
@@ -2705,15 +2876,16 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                           boxSizing: "border-box"
                         }}
                       />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Box component="label" sx={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
                         CVV
-                      </label>
-                      <input
+                      </Box>
+                      <Box
+                        component="input"
                         type="text"
                         placeholder="123"
-                        style={{
+                        sx={{
                           width: "100%",
                           padding: "8px 10px",
                           fontSize: "14px",
@@ -2723,17 +2895,18 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                           boxSizing: "border-box"
                         }}
                       />
-                    </div>
-                  </div>
+                    </Box>
+                  </Box>
 
-                  <div style={{ marginBottom: "16px" }}>
-                    <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
+                  <Box sx={{ marginBottom: "16px" }}>
+                    <Box component="label" sx={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
                       Cardholder Name
-                    </label>
-                    <input
+                    </Box>
+                    <Box
+                      component="input"
                       type="text"
                       placeholder="John Smith"
-                      style={{
+                      sx={{
                         width: "100%",
                         padding: "8px 10px",
                         fontSize: "14px",
@@ -2743,48 +2916,53 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                         boxSizing: "border-box"
                       }}
                     />
-                  </div>
-                </div>
+                  </Box>
+                </Box>
 
-                <div style={{
-                  background: "#ffffff",
-                  borderRadius: "10px",
-                  padding: "16px",
-                  marginTop: "20px",
-                  border: "1px solid #e0e0e0"
-                }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "0 0 12px 0", color: "#1d1d1f" }}>
+                <Box
+                  sx={{
+                    background: "#ffffff",
+                    borderRadius: "10px",
+                    padding: "16px",
+                    marginTop: "20px",
+                    border: "1px solid #e0e0e0"
+                  }}
+                >
+                  <Box component="h3" sx={{ fontSize: "16px", fontWeight: "600", margin: "0 0 12px 0", color: "#1d1d1f" }}>
                     Payment Summary
-                  </h3>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#6e6e73", marginBottom: "8px" }}>
-                    <span>Hotel booking</span>
-                    <span>${selectedHotel && parseInt(selectedHotel.price.replace('$', '')) * 5 * 2}</span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#6e6e73", marginBottom: "8px" }}>
-                    <span>Taxes & fees</span>
-                    <span>${selectedHotel && Math.round(parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 * 0.12)}</span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#ff3b30", marginBottom: "12px" }}>
-                    <span>Amendment fee</span>
-                    <span>$45</span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "16px", fontWeight: "600", color: "#1d1d1f", paddingTop: "12px", borderTop: "2px solid #e0e0e0" }}>
-                    <span>Total Due</span>
-                    <span>${selectedHotel && parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 + Math.round(parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 * 0.12) + 45}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#6e6e73", marginBottom: "8px" }}>
+                    <Box component="span">Hotel booking</Box>
+                    <Box component="span">${selectedHotel && parseInt(selectedHotel.price.replace('$', '')) * 5 * 2}</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#6e6e73", marginBottom: "8px" }}>
+                    <Box component="span">Taxes & fees</Box>
+                    <Box component="span">${selectedHotel && Math.round(parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 * 0.12)}</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#ff3b30", marginBottom: "12px" }}>
+                    <Box component="span">Amendment fee</Box>
+                    <Box component="span">$45</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "16px", fontWeight: "600", color: "#1d1d1f", paddingTop: "12px", borderTop: "2px solid #e0e0e0" }}>
+                    <Box component="span">Total Due</Box>
+                    <Box component="span">${selectedHotel && parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 + Math.round(parseInt(selectedHotel.price.replace('$', '')) * 5 * 2 * 0.12) + 45}</Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
 
-            <div style={{
-              background: "#ffffff",
-              borderTop: "2px solid #e0e0e0",
-              padding: "20px 24px",
-              display: "flex",
-              justifyContent: "flex-end",
-              boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
-            }}>
-              <button 
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderTop: "2px solid #e0e0e0",
+                padding: "20px 24px",
+                display: "flex",
+                justifyContent: "flex-end",
+                boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
+              }}
+            >
+              <Box 
+                component="button"
                 onClick={() => {
                   showLoadingThen('Processing payment and updating booking...', () => {
                     setShowPaymentPage(false);
@@ -2794,7 +2972,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                     setTimeout(() => setShowSuccessToast(false), 4000);
                   }, 7000);
                 }}
-                style={{
+                sx={{
                   padding: "14px 40px",
                   fontSize: "14px",
                   fontWeight: "600",
@@ -2807,150 +2985,171 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 Confirm Payment ✓
-              </button>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
         )}
 
         {/* NEW FLOW - Step 1: Combined Amendment + Travellers + Search */}
         {showNewFlow && newFlowStep === 1 && (
-          <div style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            background: "#f5f5f7",
-            overflow: "hidden"
-          }}>
-            <div style={{
-              background: "#ffffff",
-              borderBottom: "1px solid #e0e0e0",
-              padding: "14px 20px",
-              flexShrink: 0
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              background: "#f5f5f7",
+              overflow: "hidden"
+            }}
+          >
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderBottom: "1px solid #e0e0e0",
+                padding: "14px 20px",
+                flexShrink: 0
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 {[
                   { label: "Details", active: true },
                   { label: "Select Hotel", active: false },
                   { label: "Checkout", active: false }
                 ].map((step, index, array) => (
                   <React.Fragment key={index}>
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      background: step.active ? "#e3f2fd" : "transparent",
-                      color: step.active ? "#0071e3" : "#6e6e73",
-                      fontSize: "13px",
-                      fontWeight: step.active ? "600" : "400"
-                    }}>
-                      <span style={{
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        background: step.active ? "#0071e3" : "#d0d0d0",
-                        color: "#ffffff",
+                    <Box
+                      sx={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "11px",
-                        fontWeight: "600"
-                      }}>
+                        gap: "6px",
+                        padding: "6px 12px",
+                        borderRadius: "6px",
+                        background: step.active ? "#e3f2fd" : "transparent",
+                        color: step.active ? "#0071e3" : "#6e6e73",
+                        fontSize: "13px",
+                        fontWeight: step.active ? "600" : "400"
+                      }}
+                    >
+                      <Box
+                        component="span"
+                        sx={{
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          background: step.active ? "#0071e3" : "#d0d0d0",
+                          color: "#ffffff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "11px",
+                          fontWeight: "600"
+                        }}
+                      >
                         {index + 1}
-                      </span>
+                      </Box>
                       {step.label}
-                    </div>
+                    </Box>
                     {index < array.length - 1 && (
-                      <div style={{ color: "#d0d0d0", fontSize: "12px" }}>→</div>
+                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
-              </div>
-            </div>
+              </Box>
+            </Box>
 
-            <div style={{ flex: 1, overflow: "auto" }}>
-              <div style={{ maxWidth: "800px", margin: "0 auto", padding: "16px" }}>
+            <Box sx={{ flex: 1, overflow: "auto" }}>
+              <Box sx={{ maxWidth: "800px", margin: "0 auto", padding: "16px" }}>
                 
                 {/* Amendment Fee Notice */}
-                <div style={{
-                  background: "#fff8e1",
-                  border: "1px solid #ffc107",
-                  borderRadius: "8px",
-                  padding: "16px",
-                  marginBottom: "20px"
-                }}>
-                  <div style={{ fontSize: "14px", color: "#856404", marginBottom: "4px" }}>
-                    <strong>Amendment Fee:</strong> $45
-                  </div>
-                  <div style={{ fontSize: "13px", color: "#856404" }}>
+                <Box
+                  sx={{
+                    background: "#fff8e1",
+                    border: "1px solid #ffc107",
+                    borderRadius: "8px",
+                    padding: "16px",
+                    marginBottom: "20px"
+                  }}
+                >
+                <Box sx={{ fontSize: "14px", color: "#856404", marginBottom: "4px" }}>
+                  <Box component="span" sx={{ fontWeight: 600 }}>Amendment Fee:</Box> $45
+                </Box>
+                  <Box sx={{ fontSize: "13px", color: "#856404" }}>
                     This fee covers the cost of modifying your existing booking
-                  </div>
-                </div>
+                  </Box>
+                </Box>
 
                 {/* Travellers Section */}
-                <div style={{
-                  background: "#ffffff",
-                  borderRadius: "10px",
-                  padding: "16px",
-                  marginBottom: "20px",
-                  border: "1px solid #e0e0e0"
-                }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
+                <Box
+                  sx={{
+                    background: "#ffffff",
+                    borderRadius: "10px",
+                    padding: "16px",
+                    marginBottom: "20px",
+                    border: "1px solid #e0e0e0"
+                  }}
+                >
+                  <Box component="h3" sx={{ fontSize: "16px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
                     Select Travellers
-                  </h3>
+                  </Box>
                   {[
                     { name: "John Smith", email: "john@example.com" },
                     { name: "Sarah Smith", email: "sarah@example.com" },
                     { name: "Emily Smith", email: "emily@example.com" },
                     { name: "Michael Smith", email: "michael@example.com" }
                   ].map((traveller, index) => (
-                    <label key={index} style={{
-                      display: "flex",
-                      alignItems: "center",
-                      padding: "8px 10px",
-                      marginBottom: "8px",
-                      border: "1px solid #e0e0e0",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      background: index < 2 ? "#f0f8ff" : "transparent"
-                    }}>
-                      <input
+                    <Box
+                      component="label"
+                      key={index}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "8px 10px",
+                        marginBottom: "8px",
+                        border: "1px solid #e0e0e0",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        background: index < 2 ? "#f0f8ff" : "transparent"
+                      }}
+                    >
+                      <Box
+                        component="input"
                         type="checkbox"
                         defaultChecked={index < 2}
-                        style={{ marginRight: "12px", width: "18px", height: "18px" }}
+                        sx={{ marginRight: "12px", width: "18px", height: "18px" }}
                       />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: "14px", fontWeight: "500", color: "#1d1d1f" }}>
+                      <Box sx={{ flex: 1 }}>
+                        <Box sx={{ fontSize: "14px", fontWeight: "500", color: "#1d1d1f" }}>
                           {traveller.name}
-                        </div>
-                        <div style={{ fontSize: "12px", color: "#6e6e73" }}>
+                        </Box>
+                        <Box sx={{ fontSize: "12px", color: "#6e6e73" }}>
                           {traveller.email}
-                        </div>
-                      </div>
-                    </label>
+                        </Box>
+                      </Box>
+                    </Box>
                   ))}
-                </div>
+                </Box>
 
                 {/* Search Parameters */}
-                <div style={{
-                  background: "#ffffff",
-                  borderRadius: "10px",
-                  padding: "16px",
-                  border: "1px solid #e0e0e0"
-                }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
+                <Box
+                  sx={{
+                    background: "#ffffff",
+                    borderRadius: "10px",
+                    padding: "16px",
+                    border: "1px solid #e0e0e0"
+                  }}
+                >
+                  <Box component="h3" sx={{ fontSize: "16px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
                     Search Parameters
-                  </h3>
+                  </Box>
                   
-                  <div style={{ marginBottom: "16px" }}>
-                    <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
+                  <Box sx={{ marginBottom: "16px" }}>
+                    <Box component="label" sx={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
                       Destination
-                    </label>
-                    <input
+                    </Box>
+                    <Box
+                      component="input"
                       type="text"
                       defaultValue="Honolulu, Hawaii"
-                      style={{
+                      sx={{
                         width: "100%",
                         padding: "10px 12px",
                         fontSize: "14px",
@@ -2962,17 +3161,18 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                         boxSizing: "border-box"
                       }}
                     />
-                  </div>
+                  </Box>
 
-                  <div style={{ display: "flex", gap: "12px" }}>
-                    <div style={{ flex: 1 }}>
-                      <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
+                  <Box sx={{ display: "flex", gap: "12px" }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Box component="label" sx={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
                         Check-in Date
-                      </label>
-                      <input
+                      </Box>
+                      <Box
+                        component="input"
                         type="date"
                         defaultValue="2024-05-15"
-                        style={{
+                        sx={{
                           width: "100%",
                           padding: "10px 12px",
                           fontSize: "14px",
@@ -2984,15 +3184,16 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                           boxSizing: "border-box"
                         }}
                       />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Box component="label" sx={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
                         Check-out Date
-                      </label>
-                      <input
+                      </Box>
+                      <Box
+                        component="input"
                         type="date"
                         defaultValue="2024-05-20"
-                        style={{
+                        sx={{
                           width: "100%",
                           padding: "10px 12px",
                           fontSize: "14px",
@@ -3004,23 +3205,26 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                           boxSizing: "border-box"
                         }}
                       />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
 
-            <div style={{
-              background: "#ffffff",
-              borderTop: "2px solid #e0e0e0",
-              padding: "20px 24px",
-              display: "flex",
-              justifyContent: "space-between",
-              boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
-            }}>
-              <button
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderTop: "2px solid #e0e0e0",
+                padding: "20px 24px",
+                display: "flex",
+                justifyContent: "space-between",
+                boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
+              }}
+            >
+              <Box
+                component="button"
                 onClick={() => setShowNewFlow(false)}
-                style={{
+                sx={{
                   padding: "12px 24px",
                   fontSize: "14px",
                   fontWeight: "500",
@@ -3032,14 +3236,15 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 Cancel
-              </button>
-              <button
+              </Box>
+              <Box
+                component="button"
                 onClick={() => {
                   showLoadingThen('Searching available hotels...', () => {
                     setNewFlowStep(2);
                   }, 3500);
                 }}
-                style={{
+                sx={{
                   padding: "12px 32px",
                   fontSize: "14px",
                   fontWeight: "600",
@@ -3051,70 +3256,79 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 Search Hotels →
-              </button>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
         )}
 
         {/* NEW FLOW - Step 2: Search Results */}
         {showNewFlow && newFlowStep === 2 && (
-          <div style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            background: "#f5f5f7",
-            overflow: "hidden"
-          }}>
-            <div style={{
-              background: "#ffffff",
-              borderBottom: "1px solid #e0e0e0",
-              padding: "14px 20px",
-              flexShrink: 0
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              background: "#f5f5f7",
+              overflow: "hidden"
+            }}
+          >
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderBottom: "1px solid #e0e0e0",
+                padding: "14px 20px",
+                flexShrink: 0
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 {[
                   { label: "Details", active: false, completed: true },
                   { label: "Select Hotel", active: true, completed: false },
                   { label: "Checkout", active: false, completed: false }
                 ].map((step, index, array) => (
                   <React.Fragment key={index}>
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      background: step.active ? "#e3f2fd" : "transparent",
-                      color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
-                      fontSize: "13px",
-                      fontWeight: step.active ? "600" : "400"
-                    }}>
-                      <span style={{
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
-                        color: "#ffffff",
+                    <Box
+                      sx={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "11px",
-                        fontWeight: "600"
-                      }}>
+                        gap: "6px",
+                        padding: "6px 12px",
+                        borderRadius: "6px",
+                        background: step.active ? "#e3f2fd" : "transparent",
+                        color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
+                        fontSize: "13px",
+                        fontWeight: step.active ? "600" : "400"
+                      }}
+                    >
+                      <Box
+                        component="span"
+                        sx={{
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
+                          color: "#ffffff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "11px",
+                          fontWeight: "600"
+                        }}
+                      >
                         {step.completed ? "✓" : index + 1}
-                      </span>
+                      </Box>
                       {step.label}
-                    </div>
+                    </Box>
                     {index < array.length - 1 && (
-                      <div style={{ color: "#d0d0d0", fontSize: "12px" }}>→</div>
+                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
-              </div>
-            </div>
+              </Box>
+            </Box>
 
-            <div style={{ flex: 1, overflow: "auto" }}>
-              <div style={{ maxWidth: "900px", margin: "0 auto", padding: "16px" }}>
+            <Box sx={{ flex: 1, overflow: "auto" }}>
+              <Box sx={{ maxWidth: "900px", margin: "0 auto", padding: "16px" }}>
                 
                 {/* Pre-selected Hotel - Expanded */}
                 {(() => {
@@ -3125,80 +3339,89 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   const currentHotel = selectedHotel || preSelectedHotel;
                   
                   return (
-                    <div style={{
-                      background: "#e3f2fd",
-                      borderRadius: "10px",
-                      padding: "16px",
-                      marginBottom: "20px",
-                      border: "2px solid #0071e3"
-                    }}>
-                      <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        marginBottom: "12px"
-                      }}>
-                        <div style={{
-                          width: "20px",
-                          height: "20px",
-                          borderRadius: "50%",
-                          background: "#0071e3",
-                          color: "#ffffff",
+                    <Box
+                      sx={{
+                        background: "#e3f2fd",
+                        borderRadius: "10px",
+                        padding: "16px",
+                        marginBottom: "20px",
+                        border: "2px solid #0071e3"
+                      }}
+                    >
+                      <Box
+                        sx={{
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "12px",
-                          fontWeight: "bold"
-                        }}>
+                          gap: "8px",
+                          marginBottom: "12px"
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: "20px",
+                            height: "20px",
+                            borderRadius: "50%",
+                            background: "#0071e3",
+                            color: "#ffffff",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "12px",
+                            fontWeight: "bold"
+                          }}
+                        >
                           ✓
-                        </div>
-                        <span style={{ fontSize: "13px", fontWeight: "600", color: "#0071e3" }}>
+                        </Box>
+                        <Box component="span" sx={{ fontSize: "13px", fontWeight: "600", color: "#0071e3" }}>
                           Selected
-                        </span>
-                      </div>
+                        </Box>
+                      </Box>
 
-                      <div style={{ display: "flex", gap: "16px" }}>
-                        <div style={{
-                          width: "140px",
-                          height: "105px",
-                          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                          borderRadius: "8px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "24px",
-                          flexShrink: 0
-                        }}>
+                      <Box sx={{ display: "flex", gap: "16px" }}>
+                        <Box
+                          sx={{
+                            width: "140px",
+                            height: "105px",
+                            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            borderRadius: "8px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "24px",
+                            flexShrink: 0
+                          }}
+                        >
                           {currentHotel.image}
-                        </div>
+                        </Box>
 
-                        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                          <h3 style={{ fontSize: "17px", fontWeight: "600", margin: "0 0 8px 0", color: "#1d1d1f" }}>
+                        <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                          <Box component="h3" sx={{ fontSize: "17px", fontWeight: "600", margin: "0 0 8px 0", color: "#1d1d1f" }}>
                             {currentHotel.name}
-                          </h3>
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-                            <span style={{ fontSize: "14px", color: "#f5a623" }}>★ {currentHotel.rating}</span>
-                            <span style={{ fontSize: "13px", color: "#6e6e73" }}>({currentHotel.reviews} reviews)</span>
-                          </div>
-                          <p style={{ fontSize: "13px", color: "#6e6e73", margin: "0 0 12px 0" }}>
+                          </Box>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                            <Box component="span" sx={{ fontSize: "14px", color: "#f5a623" }}>★ {currentHotel.rating}</Box>
+                            <Box component="span" sx={{ fontSize: "13px", color: "#6e6e73" }}>({currentHotel.reviews} reviews)</Box>
+                          </Box>
+                          <Box component="p" sx={{ fontSize: "13px", color: "#6e6e73", margin: "0 0 12px 0" }}>
                             Waikiki Beach · Free WiFi · Pool · Ocean View · Beachfront
-                          </p>
-                          <div style={{ marginTop: "auto" }}>
-                            <span style={{ fontSize: "13px", color: "#6e6e73" }}>From </span>
-                            <span style={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>{currentHotel.price}</span>
-                            <span style={{ fontSize: "13px", color: "#6e6e73" }}> /night</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                          </Box>
+                          <Box sx={{ marginTop: "auto" }}>
+                            <Box component="span" sx={{ fontSize: "13px", color: "#6e6e73" }}>From </Box>
+                            <Box component="span" sx={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>{currentHotel.price}</Box>
+                            <Box component="span" sx={{ fontSize: "13px", color: "#6e6e73" }}> /night</Box>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Box>
                   );
                 })()}
 
                 {/* Show Other Hotels Section */}
-                <div>
-                  <button
+                <Box>
+                  <Box
+                    component="button"
                     onClick={() => setShowOtherHotels(!showOtherHotels)}
-                    style={{
+                    sx={{
                       width: "100%",
                       padding: "14px 20px",
                       fontSize: "14px",
@@ -3216,86 +3439,94 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                     }}
                   >
                     {showOtherHotels ? "Hide" : "Show"} Other Hotels
-                    <span style={{ fontSize: "12px" }}>{showOtherHotels ? "▲" : "▼"}</span>
-                  </button>
+                    <Box component="span" sx={{ fontSize: "12px" }}>{showOtherHotels ? "▲" : "▼"}</Box>
+                  </Box>
 
                   {showOtherHotels && (
-                    <div>
+                    <Box>
                       {[
                         { name: "Hilton Hawaiian Village", price: "$289", rating: "4.5", reviews: "2,341", image: "🏨" },
                         { name: "Moana Surfrider", price: "$350", rating: "4.6", reviews: "1,567", image: "🏨" },
                         { name: "Sheraton Waikiki", price: "$315", rating: "4.4", reviews: "3,112", image: "🏨" },
                         { name: "Hyatt Regency Waikiki", price: "$298", rating: "4.5", reviews: "2,789", image: "🏨" }
                       ].map((hotel, index) => (
-                        <div key={index} style={{
-                          background: "#ffffff",
-                          borderRadius: "8px",
-                          padding: "16px",
-                          marginBottom: "12px",
-                          display: "flex",
-                          gap: "16px",
-                          border: "1px solid #e0e0e0",
-                          cursor: "pointer"
-                        }}
-                        onClick={() => {
-                          setSelectedHotel(hotel);
-                          setShowOtherHotels(false);
-                        }}>
-                          <div style={{
-                            width: "100px",
-                            height: "75px",
-                            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                            borderRadius: "6px",
+                        <Box
+                          key={index}
+                          sx={{
+                            background: "#ffffff",
+                            borderRadius: "8px",
+                            padding: "16px",
+                            marginBottom: "12px",
                             display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "20px",
-                            flexShrink: 0
-                          }}>
+                            gap: "16px",
+                            border: "1px solid #e0e0e0",
+                            cursor: "pointer"
+                          }}
+                          onClick={() => {
+                            setSelectedHotel(hotel);
+                            setShowOtherHotels(false);
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: "100px",
+                              height: "75px",
+                              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              borderRadius: "6px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "20px",
+                              flexShrink: 0
+                            }}
+                          >
                             {hotel.image}
-                          </div>
+                          </Box>
 
-                          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                            <h3 style={{ fontSize: "14px", fontWeight: "600", margin: "0 0 4px 0", color: "#1d1d1f" }}>
+                          <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                            <Box component="h3" sx={{ fontSize: "14px", fontWeight: "600", margin: "0 0 4px 0", color: "#1d1d1f" }}>
                               {hotel.name}
-                            </h3>
-                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-                              <span style={{ fontSize: "13px", color: "#f5a623" }}>★ {hotel.rating}</span>
-                              <span style={{ fontSize: "12px", color: "#6e6e73" }}>({hotel.reviews} reviews)</span>
-                            </div>
-                            <p style={{ fontSize: "12px", color: "#6e6e73", margin: "0 0 8px 0" }}>
+                            </Box>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                              <Box component="span" sx={{ fontSize: "13px", color: "#f5a623" }}>★ {hotel.rating}</Box>
+                              <Box component="span" sx={{ fontSize: "12px", color: "#6e6e73" }}>({hotel.reviews} reviews)</Box>
+                            </Box>
+                            <Box component="p" sx={{ fontSize: "12px", color: "#6e6e73", margin: "0 0 8px 0" }}>
                               Waikiki Beach · Free WiFi · Pool · Ocean View
-                            </p>
-                            <div style={{ marginTop: "auto" }}>
-                              <span style={{ fontSize: "12px", color: "#6e6e73" }}>From </span>
-                              <span style={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>{hotel.price}</span>
-                              <span style={{ fontSize: "12px", color: "#6e6e73" }}> /night</span>
-                            </div>
-                          </div>
-                        </div>
+                            </Box>
+                            <Box sx={{ marginTop: "auto" }}>
+                              <Box component="span" sx={{ fontSize: "12px", color: "#6e6e73" }}>From </Box>
+                              <Box component="span" sx={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>{hotel.price}</Box>
+                              <Box component="span" sx={{ fontSize: "12px", color: "#6e6e73" }}> /night</Box>
+                            </Box>
+                          </Box>
+                        </Box>
                       ))}
-                    </div>
+                    </Box>
                   )}
-                </div>
-              </div>
-            </div>
+                </Box>
+              </Box>
+            </Box>
 
             {/* Footer with Continue Button */}
-            <div style={{
-              background: "#ffffff",
-              borderTop: "2px solid #e0e0e0",
-              padding: "20px 24px",
-              display: "flex",
-              justifyContent: "flex-end",
-              boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
-            }}>
-              <button
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderTop: "2px solid #e0e0e0",
+                padding: "20px 24px",
+                display: "flex",
+                justifyContent: "flex-end",
+                boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
+              }}
+            >
+              <Box
+                component="button"
                 onClick={() => {
                   showLoadingThen('Preparing checkout...', () => {
                     setNewFlowStep(3);
                   }, 1500);
                 }}
-                style={{
+                sx={{
                   padding: "14px 40px",
                   fontSize: "14px",
                   fontWeight: "600",
@@ -3308,165 +3539,183 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 Continue to Checkout →
-              </button>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
         )}
 
         {/* NEW FLOW - Step 3: Checkout (Summary + Travellers + Payment) */}
         {showNewFlow && newFlowStep === 3 && (
-          <div style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            background: "#f5f5f7",
-            overflow: "hidden"
-          }}>
-            <div style={{
-              background: "#ffffff",
-              borderBottom: "1px solid #e0e0e0",
-              padding: "14px 20px",
-              flexShrink: 0
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              background: "#f5f5f7",
+              overflow: "hidden"
+            }}
+          >
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderBottom: "1px solid #e0e0e0",
+                padding: "14px 20px",
+                flexShrink: 0
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 {[
                   { label: "Details", active: false, completed: true },
                   { label: "Select Hotel", active: false, completed: true },
                   { label: "Checkout", active: true, completed: false }
                 ].map((step, index, array) => (
                   <React.Fragment key={index}>
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      background: step.active ? "#e3f2fd" : "transparent",
-                      color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
-                      fontSize: "13px",
-                      fontWeight: step.active ? "600" : "400"
-                    }}>
-                      <span style={{
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
-                        color: "#ffffff",
+                    <Box
+                      sx={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "11px",
-                        fontWeight: "600"
-                      }}>
+                        gap: "6px",
+                        padding: "6px 12px",
+                        borderRadius: "6px",
+                        background: step.active ? "#e3f2fd" : "transparent",
+                        color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
+                        fontSize: "13px",
+                        fontWeight: step.active ? "600" : "400"
+                      }}
+                    >
+                      <Box
+                        component="span"
+                        sx={{
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
+                          color: "#ffffff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "11px",
+                          fontWeight: "600"
+                        }}
+                      >
                         {step.completed ? "✓" : index + 1}
-                      </span>
+                      </Box>
                       {step.label}
-                    </div>
+                    </Box>
                     {index < array.length - 1 && (
-                      <div style={{ color: "#d0d0d0", fontSize: "12px" }}>→</div>
+                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
-              </div>
-            </div>
+              </Box>
+            </Box>
 
-            <div style={{ flex: 1, overflow: "auto" }}>
-              <div style={{ maxWidth: "900px", margin: "0 auto", padding: "16px", display: "flex", gap: "24px" }}>
+            <Box sx={{ flex: 1, overflow: "auto" }}>
+              <Box sx={{ maxWidth: "900px", margin: "0 auto", padding: "16px", display: "flex", gap: "24px" }}>
                 
                 {/* Left Column - Summary */}
-                <div style={{ flex: 2 }}>
+                <Box sx={{ flex: 2 }}>
                   {/* Booking Summary */}
-                  <div style={{
-                    background: "#ffffff",
-                    borderRadius: "10px",
-                    padding: "16px",
-                    marginBottom: "20px",
-                    border: "1px solid #e0e0e0"
-                  }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
+                  <Box
+                    sx={{
+                      background: "#ffffff",
+                      borderRadius: "10px",
+                      padding: "16px",
+                      marginBottom: "20px",
+                      border: "1px solid #e0e0e0"
+                    }}
+                  >
+                    <Box component="h3" sx={{ fontSize: "16px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
                       Booking Summary
-                    </h3>
-                    <div style={{ display: "flex", gap: "16px", paddingBottom: "16px", borderBottom: "1px solid #f0f0f0" }}>
-                      <div style={{
-                        width: "80px",
-                        height: "60px",
-                        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                        borderRadius: "6px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "20px",
-                        flexShrink: 0
-                      }}>
+                    </Box>
+                    <Box sx={{ display: "flex", gap: "16px", paddingBottom: "16px", borderBottom: "1px solid #f0f0f0" }}>
+                      <Box
+                        sx={{
+                          width: "80px",
+                          height: "60px",
+                          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                          borderRadius: "6px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "20px",
+                          flexShrink: 0
+                        }}
+                      >
                         {selectedHotel?.image}
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <h4 style={{ fontSize: "14px", fontWeight: "600", margin: "0 0 4px 0", color: "#1d1d1f" }}>
+                      </Box>
+                      <Box sx={{ flex: 1 }}>
+                        <Box component="h4" sx={{ fontSize: "14px", fontWeight: "600", margin: "0 0 4px 0", color: "#1d1d1f" }}>
                           {selectedHotel?.name}
-                        </h4>
-                        <div style={{ fontSize: "13px", color: "#6e6e73" }}>
+                        </Box>
+                        <Box sx={{ fontSize: "13px", color: "#6e6e73" }}>
                           May 15-20, 2024 · 5 nights · 2 rooms
-                        </div>
-                      </div>
-                    </div>
+                        </Box>
+                      </Box>
+                    </Box>
                     
-                    <div style={{ marginTop: "16px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6e6e73", marginBottom: "8px" }}>
-                        <span>{selectedHotel?.price} × 5 nights × 2 rooms</span>
-                        <span>${selectedHotel && parseInt(selectedHotel.price.replace('$', '')) * 10}</span>
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6e6e73", marginBottom: "8px" }}>
-                        <span>Taxes & fees</span>
-                        <span>${selectedHotel && Math.round(parseInt(selectedHotel.price.replace('$', '')) * 10 * 0.12)}</span>
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#ff3b30", marginBottom: "12px" }}>
-                        <span>Amendment fee</span>
-                        <span>$45</span>
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "16px", fontWeight: "600", color: "#1d1d1f", paddingTop: "12px", borderTop: "2px solid #e0e0e0" }}>
-                        <span>Total</span>
-                        <span>${selectedHotel && parseInt(selectedHotel.price.replace('$', '')) * 10 + Math.round(parseInt(selectedHotel.price.replace('$', '')) * 10 * 0.12) + 45}</span>
-                      </div>
-                    </div>
-                  </div>
+                    <Box sx={{ marginTop: "16px" }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6e6e73", marginBottom: "8px" }}>
+                      <Box component="span">{selectedHotel?.price} × 5 nights × 2 rooms</Box>
+                      <Box component="span">${selectedHotel && parseInt(selectedHotel.price.replace('$', '')) * 10}</Box>
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#6e6e73", marginBottom: "8px" }}>
+                      <Box component="span">Taxes & fees</Box>
+                      <Box component="span">${selectedHotel && Math.round(parseInt(selectedHotel.price.replace('$', '')) * 10 * 0.12)}</Box>
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "#ff3b30", marginBottom: "12px" }}>
+                      <Box component="span">Amendment fee</Box>
+                      <Box component="span">$45</Box>
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", fontSize: "16px", fontWeight: "600", color: "#1d1d1f", paddingTop: "12px", borderTop: "2px solid #e0e0e0" }}>
+                      <Box component="span">Total</Box>
+                      <Box component="span">${selectedHotel && parseInt(selectedHotel.price.replace('$', '')) * 10 + Math.round(parseInt(selectedHotel.price.replace('$', '')) * 10 * 0.12) + 45}</Box>
+                    </Box>
+                    </Box>
+                  </Box>
 
                   {/* Travellers */}
-                  <div style={{
-                    background: "#ffffff",
-                    borderRadius: "10px",
-                    padding: "16px",
-                    border: "1px solid #e0e0e0"
-                  }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "0 0 12px 0", color: "#1d1d1f" }}>
+                  <Box
+                    sx={{
+                      background: "#ffffff",
+                      borderRadius: "10px",
+                      padding: "16px",
+                      border: "1px solid #e0e0e0"
+                    }}
+                  >
+                    <Box component="h3" sx={{ fontSize: "16px", fontWeight: "600", margin: "0 0 12px 0", color: "#1d1d1f" }}>
                       Travellers
-                    </h3>
-                    <div style={{ fontSize: "13px", color: "#6e6e73", lineHeight: "1.8" }}>
-                      • John Smith (john@example.com)<br/>
-                      • Sarah Smith (sarah@example.com)
-                    </div>
-                  </div>
-                </div>
+                    </Box>
+                    <Box sx={{ fontSize: "13px", color: "#6e6e73", lineHeight: "1.8" }}>
+                      <Box component="span" sx={{ display: "block" }}>• John Smith (john@example.com)</Box>
+                      <Box component="span" sx={{ display: "block" }}>• Sarah Smith (sarah@example.com)</Box>
+                    </Box>
+                  </Box>
+                </Box>
 
                 {/* Right Column - Payment */}
-                <div style={{ flex: 1 }}>
-                  <div style={{
-                    background: "#ffffff",
-                    borderRadius: "10px",
-                    padding: "16px",
-                    border: "1px solid #e0e0e0"
-                  }}>
-                    <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
+                <Box sx={{ flex: 1 }}>
+                  <Box
+                    sx={{
+                      background: "#ffffff",
+                      borderRadius: "10px",
+                      padding: "16px",
+                      border: "1px solid #e0e0e0"
+                    }}
+                  >
+                    <Box component="h3" sx={{ fontSize: "16px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
                       Payment Details
-                    </h3>
+                    </Box>
                     
-                    <div style={{ marginBottom: "16px" }}>
-                      <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
+                    <Box sx={{ marginBottom: "16px" }}>
+                      <Box component="label" sx={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
                         Card Number
-                      </label>
-                      <input
+                      </Box>
+                      <Box
+                        component="input"
                         type="text"
                         placeholder="1234 5678 9012 3456"
-                        style={{
+                        sx={{
                           width: "100%",
                           padding: "10px 12px",
                           fontSize: "14px",
@@ -3476,17 +3725,18 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                           boxSizing: "border-box"
                         }}
                       />
-                    </div>
+                    </Box>
 
-                    <div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
-                      <div style={{ flex: 1 }}>
-                        <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
+                    <Box sx={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
+                      <Box sx={{ flex: 1 }}>
+                        <Box component="label" sx={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
                           Expiry
-                        </label>
-                        <input
+                        </Box>
+                        <Box
+                          component="input"
                           type="text"
                           placeholder="MM/YY"
-                          style={{
+                          sx={{
                             width: "100%",
                             padding: "10px 12px",
                             fontSize: "14px",
@@ -3496,15 +3746,16 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                             boxSizing: "border-box"
                           }}
                         />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
+                      </Box>
+                      <Box sx={{ flex: 1 }}>
+                        <Box component="label" sx={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
                           CVV
-                        </label>
-                        <input
+                        </Box>
+                        <Box
+                          component="input"
                           type="text"
                           placeholder="123"
-                          style={{
+                          sx={{
                             width: "100%",
                             padding: "10px 12px",
                             fontSize: "14px",
@@ -3514,17 +3765,18 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                             boxSizing: "border-box"
                           }}
                         />
-                      </div>
-                    </div>
+                      </Box>
+                    </Box>
 
-                    <div style={{ marginBottom: "16px" }}>
-                      <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
+                    <Box sx={{ marginBottom: "16px" }}>
+                      <Box component="label" sx={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "6px", color: "#1d1d1f" }}>
                         Cardholder Name
-                      </label>
-                      <input
+                      </Box>
+                      <Box
+                        component="input"
                         type="text"
                         placeholder="John Smith"
-                        style={{
+                        sx={{
                           width: "100%",
                           padding: "10px 12px",
                           fontSize: "14px",
@@ -3534,30 +3786,33 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                           boxSizing: "border-box"
                         }}
                       />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
 
-            <div style={{
-              background: "#ffffff",
-              borderTop: "2px solid #e0e0e0",
-              padding: "20px 24px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
-            }}>
-              <div>
-                <div style={{ fontSize: "12px", color: "#6e6e73", marginBottom: "2px" }}>
+            <Box
+              sx={{
+                background: "#ffffff",
+                borderTop: "2px solid #e0e0e0",
+                padding: "20px 24px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
+              }}
+            >
+              <Box>
+                <Box sx={{ fontSize: "12px", color: "#6e6e73", marginBottom: "2px" }}>
                   Total Amount
-                </div>
-                <div style={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>
+                </Box>
+                <Box sx={{ fontSize: "16px", fontWeight: "600", color: "#1d1d1f" }}>
                   ${selectedHotel && parseInt(selectedHotel.price.replace('$', '')) * 10 + Math.round(parseInt(selectedHotel.price.replace('$', '')) * 10 * 0.12) + 45}
-                </div>
-              </div>
-              <button
+                </Box>
+              </Box>
+              <Box
+                component="button"
                 onClick={() => {
                   showLoadingThen('Processing payment...', () => {
                     setShowNewFlow(false);
@@ -3568,7 +3823,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                     setTimeout(() => setShowSuccessToast(false), 4000);
                   }, 3000);
                 }}
-                style={{
+                sx={{
                   padding: "14px 40px",
                   fontSize: "14px",
                   fontWeight: "600",
@@ -3581,111 +3836,90 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 Confirm & Pay →
-              </button>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
         )}
 
         {activeTab === 'payments' && (
-          <div style={{ flex: 1, overflow: "auto", padding: "16px", background: "#fafafa" }}>
-            <div style={{
-              padding: "40px 24px",
-              textAlign: "center",
-              background: "#ffffff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "8px"
-            }}>
-              <div style={{ fontSize: "24px", marginBottom: "16px" }}>💳</div>
-              <h3 style={{
-                fontSize: "18px",
-                fontWeight: "600",
-                marginBottom: "12px",
-                color: "#1d1d1f"
-              }}>
+          <Box sx={{ flex: 1, overflow: "auto", p: 2, background: "#fafafa" }}>
+            <Box
+              sx={{
+                p: "40px 24px",
+                textAlign: "center",
+                background: "#ffffff",
+                border: "1px solid #d0d0d0",
+                borderRadius: "8px"
+              }}
+            >
+              <Box sx={{ fontSize: "24px", mb: 2 }}>💳</Box>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, color: "#1d1d1f" }}>
                 Payments Screen
-              </h3>
-              <p style={{
-                fontSize: "14px",
-                color: "#6e6e73"
-              }}>
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#6e6e73" }}>
                 Separate screen for payment management
-              </p>
-            </div>
-          </div>
+              </Typography>
+            </Box>
+          </Box>
         )}
 
         {activeTab === 'documents' && (
-          <div style={{ flex: 1, overflow: "auto", padding: "16px", background: "#fafafa" }}>
-            <div style={{
-              padding: "40px 24px",
-              textAlign: "center",
-              background: "#ffffff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "8px"
-            }}>
-              <div style={{ fontSize: "24px", marginBottom: "16px" }}>📄</div>
-              <h3 style={{
-                fontSize: "18px",
-                fontWeight: "600",
-                marginBottom: "12px",
-                color: "#1d1d1f"
-              }}>
+          <Box sx={{ flex: 1, overflow: "auto", p: 2, background: "#fafafa" }}>
+            <Box
+              sx={{
+                p: "40px 24px",
+                textAlign: "center",
+                background: "#ffffff",
+                border: "1px solid #d0d0d0",
+                borderRadius: "8px"
+              }}
+            >
+              <Box sx={{ fontSize: "24px", mb: 2 }}>📄</Box>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, color: "#1d1d1f" }}>
                 Documents Screen
-              </h3>
-              <p style={{
-                fontSize: "14px",
-                color: "#6e6e73"
-              }}>
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#6e6e73" }}>
                 Separate screen for document management
-              </p>
-            </div>
-          </div>
+              </Typography>
+            </Box>
+          </Box>
         )}
 
         {activeTab === 'notes' && (
-          <div style={{ flex: 1, overflow: "auto", padding: "16px", background: "#fafafa" }}>
-            <div style={{
-              padding: "40px 24px",
-              textAlign: "center",
-              background: "#ffffff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "8px"
-            }}>
-              <div style={{ fontSize: "24px", marginBottom: "16px" }}>📝</div>
-              <h3 style={{
-                fontSize: "18px",
-                fontWeight: "600",
-                marginBottom: "12px",
-                color: "#1d1d1f"
-              }}>
+          <Box sx={{ flex: 1, overflow: "auto", p: 2, background: "#fafafa" }}>
+            <Box
+              sx={{
+                p: "40px 24px",
+                textAlign: "center",
+                background: "#ffffff",
+                border: "1px solid #d0d0d0",
+                borderRadius: "8px"
+              }}
+            >
+              <Box sx={{ fontSize: "24px", mb: 2 }}>📝</Box>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, color: "#1d1d1f" }}>
                 Notes Screen
-              </h3>
-              <p style={{
-                fontSize: "14px",
-                color: "#6e6e73"
-              }}>
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#6e6e73" }}>
                 Separate screen for trip notes
-              </p>
-            </div>
-          </div>
+              </Typography>
+            </Box>
+          </Box>
         )}
-      </div>
+      </Box>
 
       {/* Amendment Modal */}
       {isAmendModalOpen && (
-        <div style={{
+        <Box sx={{
           position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          inset: 0,
           background: "rgba(0, 0, 0, 0.5)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           zIndex: 200
         }}>
-          <div style={{
+          <Box sx={{
             background: "#ffffff",
             borderRadius: "10px",
             width: "500px",
@@ -3693,69 +3927,65 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
             boxShadow: "0 8px 24px rgba(0,0,0,0.2)"
           }}>
             {/* Modal Header */}
-            <div style={{
-              padding: "20px 24px",
+            <Box sx={{
+              px: 3,
+              py: 2.5,
               borderBottom: "1px solid #e0e0e0",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between"
             }}>
-              <h3 style={{
-                fontSize: "18px",
-                fontWeight: "600",
-                margin: "0",
-                color: "#1d1d1f"
-              }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, color: "#1d1d1f" }}>
                 Amend {selectedShell?.type}
-              </h3>
-              <button
+              </Typography>
+              <IconButton
                 onClick={() => setIsAmendModalOpen(false)}
-                style={{
-                  width: "28px",
-                  height: "28px",
+                size="small"
+                sx={{
+                  width: 28,
+                  height: 28,
                   borderRadius: "50%",
-                  border: "none",
                   background: "#e0e0e0",
                   color: "#666",
-                  fontSize: "16px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center"
+                  "&:hover": { background: "#d5d5d5" }
                 }}
               >
-                ✕
-              </button>
-            </div>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Box>
 
             {/* Modal Content */}
-            <div style={{ padding: "16px" }}>
-              <div style={{
-                marginBottom: "20px",
-                padding: "8px 10px",
+            <Box sx={{ p: 2 }}>
+              <Box sx={{
+                mb: 2.5,
+                p: "8px 10px",
                 background: "#f8f9fa",
                 borderRadius: "6px",
                 fontSize: "13px",
                 color: "#6e6e73"
               }}>
                 {selectedShell?.name} · {selectedShell?.type}
-              </div>
+              </Box>
 
               {/* Question 1: Reason for Amendment */}
-              <div style={{ marginBottom: "20px" }}>
-                <label style={{
-                  display: "block",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  marginBottom: "8px",
-                  color: "#1d1d1f"
-                }}>
-                  1. Reason for Amendment <span style={{ color: "#dc3545" }}>*</span>
-                </label>
-                <select
+              <Box sx={{ marginBottom: "20px" }}>
+                <Box
+                  component="label"
+                  sx={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#1d1d1f"
+                  }}
+                >
+                  1. Reason for Amendment <Box component="span" sx={{ color: "#dc3545" }}>*</Box>
+                </Box>
+                <Box
+                  component="select"
                   value={reasonForAmendment}
                   onChange={(e) => setReasonForAmendment(e.target.value)}
-                  style={{
+                  sx={{
                     width: "100%",
                     padding: "10px 12px",
                     fontSize: "14px",
@@ -3775,24 +4005,28 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   <option value="pricing_error">Pricing Error</option>
                   <option value="availability_issue">Availability Issue</option>
                   <option value="other">Other</option>
-                </select>
-              </div>
+                </Box>
+              </Box>
 
               {/* Question 2: Type of Amendment */}
-              <div style={{ marginBottom: "24px" }}>
-                <label style={{
-                  display: "block",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  marginBottom: "8px",
-                  color: "#1d1d1f"
-                }}>
-                  2. Type of Amendment <span style={{ color: "#dc3545" }}>*</span>
-                </label>
-                <select
+              <Box sx={{ marginBottom: "24px" }}>
+                <Box
+                  component="label"
+                  sx={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#1d1d1f"
+                  }}
+                >
+                  2. Type of Amendment <Box component="span" sx={{ color: "#dc3545" }}>*</Box>
+                </Box>
+                <Box
+                  component="select"
                   value={causeOfAmendment}
                   onChange={(e) => setCauseOfAmendment(e.target.value)}
-                  style={{
+                  sx={{
                     width: "100%",
                     padding: "10px 12px",
                     fontSize: "14px",
@@ -3812,38 +4046,37 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   <option value="add_component">Add Component</option>
                   <option value="pricing_adjustment">Pricing Adjustment</option>
                   <option value="other">Other</option>
-                </select>
-              </div>
+                </Box>
+              </Box>
 
               {/* Warning Message - Shows when both answers selected */}
               {reasonForAmendment && causeOfAmendment && (
-                <div style={{
-                  padding: "16px",
-                  background: "#fff3cd",
-                  border: "1px solid #ffc107",
-                  borderRadius: "6px",
-                  marginBottom: "20px"
-                }}>
-                  <div style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center"
-                  }}>
-                    <div style={{ fontSize: "13px", color: "#856404", fontWeight: "600" }}>
+                <Box
+                  sx={{
+                    padding: "16px",
+                    background: "#fff3cd",
+                    border: "1px solid #ffc107",
+                    borderRadius: "6px",
+                    marginBottom: "20px"
+                  }}
+                >
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Box sx={{ fontSize: "13px", color: "#856404", fontWeight: "600" }}>
                       Amendment Fee
-                    </div>
-                    <div style={{ fontSize: "16px", fontWeight: "700", color: "#856404" }}>
+                    </Box>
+                    <Box sx={{ fontSize: "16px", fontWeight: "700", color: "#856404" }}>
                       $45.00
-                    </div>
-                  </div>
-                </div>
+                    </Box>
+                  </Box>
+                </Box>
               )}
 
               {/* Action Buttons */}
-              <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-                <button
+              <Box sx={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+                <Box
+                  component="button"
                   onClick={() => setIsAmendModalOpen(false)}
-                  style={{
+                  sx={{
                     padding: "10px 20px",
                     fontSize: "14px",
                     fontWeight: "500",
@@ -3856,8 +4089,9 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   }}
                 >
                   Cancel
-                </button>
-                <button
+                </Box>
+                <Box
+                  component="button"
                   disabled={!reasonForAmendment || !causeOfAmendment}
                   onClick={() => {
                     if (reasonForAmendment && causeOfAmendment) {
@@ -3867,7 +4101,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                       }, 3000);
                     }
                   }}
-                  style={{
+                  sx={{
                     padding: "10px 20px",
                     fontSize: "14px",
                     fontWeight: "500",
@@ -3880,56 +4114,66 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   }}
                 >
                   Continue to Travellers →
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       )}
 
       {/* Travellers Modal */}
       {isTravellersModalOpen && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0, 0, 0, 0.5)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 200
-        }}>
-          <div style={{
-            background: "#ffffff",
-            borderRadius: "10px",
-            width: "600px",
-            maxWidth: "90vw",
-            maxHeight: "80vh",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.5)",
             display: "flex",
-            flexDirection: "column"
-          }}>
-            {/* Modal Header */}
-            <div style={{
-              padding: "20px 24px",
-              borderBottom: "1px solid #e0e0e0",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 200
+          }}
+        >
+          <Box
+            sx={{
+              background: "#ffffff",
+              borderRadius: "10px",
+              width: "600px",
+              maxWidth: "90vw",
+              maxHeight: "80vh",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
               display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between"
-            }}>
-              <h3 style={{
-                fontSize: "18px",
-                fontWeight: "600",
-                margin: "0",
-                color: "#1d1d1f"
-              }}>
+              flexDirection: "column"
+            }}
+          >
+            {/* Modal Header */}
+            <Box
+              sx={{
+                padding: "20px 24px",
+                borderBottom: "1px solid #e0e0e0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between"
+              }}
+            >
+              <Box
+                component="h3"
+                sx={{
+                  fontSize: "18px",
+                  fontWeight: "600",
+                  margin: 0,
+                  color: "#1d1d1f"
+                }}
+              >
                 Adjust Travellers
-              </h3>
-              <button
+              </Box>
+              <Box
+                component="button"
                 onClick={() => setIsTravellersModalOpen(false)}
-                style={{
+                sx={{
                   width: "28px",
                   height: "28px",
                   borderRadius: "50%",
@@ -3944,37 +4188,42 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 ✕
-              </button>
-            </div>
+              </Box>
+            </Box>
 
             {/* Modal Content */}
-            <div style={{ flex: 1, overflow: "auto", padding: "16px" }}>
-              <div style={{
-                marginBottom: "20px",
-                padding: "8px 10px",
-                background: "#f8f9fa",
-                borderRadius: "6px",
-                fontSize: "13px",
-                color: "#6e6e73"
-              }}>
+            <Box sx={{ flex: 1, overflow: "auto", padding: "16px" }}>
+              <Box
+                sx={{
+                  marginBottom: "20px",
+                  padding: "8px 10px",
+                  background: "#f8f9fa",
+                  borderRadius: "6px",
+                  fontSize: "13px",
+                  color: "#6e6e73"
+                }}
+              >
                 {selectedShell?.name} · {selectedShell?.type}
-              </div>
+              </Box>
 
-              <h4 style={{
-                fontSize: "14px",
-                fontWeight: "600",
-                marginBottom: "16px",
-                color: "#1d1d1f"
-              }}>
+              <Box
+                component="h4"
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  marginBottom: "16px",
+                  color: "#1d1d1f"
+                }}
+              >
                 Select Travellers for Amendment
-              </h4>
+              </Box>
 
               {/* Traveller List */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
                 {['John Smith (Adult)', 'Jane Smith (Adult)', 'Emily Smith (Child - 12)', 'Max Smith (Child - 8)'].map((traveller, index) => (
-                  <div
+                  <Box
                     key={index}
-                    style={{
+                    sx={{
                       padding: "8px 10px",
                       background: "#ffffff",
                       border: "1px solid #d0d0d0",
@@ -3984,40 +4233,44 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                       gap: "12px"
                     }}
                   >
-                    <input
+                    <Box
+                      component="input"
                       type="checkbox"
                       defaultChecked={true}
-                      style={{
+                      sx={{
                         width: "18px",
                         height: "18px",
                         cursor: "pointer"
                       }}
                     />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: "14px", fontWeight: "500", color: "#1d1d1f" }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Box sx={{ fontSize: "14px", fontWeight: "500", color: "#1d1d1f" }}>
                         {traveller}
-                      </div>
-                    </div>
-                  </div>
+                      </Box>
+                    </Box>
+                  </Box>
                 ))}
-              </div>
+              </Box>
 
-            </div>
+            </Box>
 
             {/* Modal Footer */}
-            <div style={{
-              padding: "20px 24px",
-              borderTop: "1px solid #e0e0e0",
-              display: "flex",
-              gap: "12px",
-              justifyContent: "space-between"
-            }}>
-              <button
+            <Box
+              sx={{
+                padding: "20px 24px",
+                borderTop: "1px solid #e0e0e0",
+                display: "flex",
+                gap: "12px",
+                justifyContent: "space-between"
+              }}
+            >
+              <Box
+                component="button"
                 onClick={() => {
                   setIsTravellersModalOpen(false);
                   setIsAmendModalOpen(true);
                 }}
-                style={{
+                sx={{
                   padding: "10px 20px",
                   fontSize: "14px",
                   fontWeight: "500",
@@ -4030,15 +4283,16 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 ← Back
-              </button>
-              <button
+              </Box>
+              <Box
+                component="button"
                 onClick={() => {
                   showLoadingThen('Loading search form...', () => {
                     setIsTravellersModalOpen(false);
                     setIsSearchModalOpen(true);
                   }, 3000);
                 }}
-                style={{
+                sx={{
                   padding: "10px 20px",
                   fontSize: "14px",
                   fontWeight: "500",
@@ -4051,55 +4305,65 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 Continue to Search →
-              </button>
-            </div>
-          </div>
-        </div>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       )}
 
       {/* Search Parameters Modal */}
       {isSearchModalOpen && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0, 0, 0, 0.5)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 200
-        }}>
-          <div style={{
-            background: "#ffffff",
-            borderRadius: "10px",
-            width: "600px",
-            maxWidth: "90vw",
-            maxHeight: "80vh",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.5)",
             display: "flex",
-            flexDirection: "column"
-          }}>
-            {/* Modal Header */}
-            <div style={{
-              padding: "20px 24px",
-              borderBottom: "1px solid #e0e0e0",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 200
+          }}
+        >
+          <Box
+            sx={{
+              background: "#ffffff",
+              borderRadius: "10px",
+              width: "600px",
+              maxWidth: "90vw",
+              maxHeight: "80vh",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
               display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between"
-            }}>
-              <h3 style={{
-                fontSize: "18px",
-                fontWeight: "600",
-                margin: "0",
-                color: "#1d1d1f"
-              }}>
+              flexDirection: "column"
+            }}
+          >
+            {/* Modal Header */}
+            <Box
+              sx={{
+                padding: "20px 24px",
+                borderBottom: "1px solid #e0e0e0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between"
+              }}
+            >
+              <Box
+                component="h3"
+                sx={{
+                  fontSize: "18px",
+                  fontWeight: "600",
+                  margin: 0,
+                  color: "#1d1d1f"
+                }}
+              >
                 Search Parameters
-              </h3>
-              <button
+              </Box>
+              <Box
+                component="button"
                 onClick={() => setIsSearchModalOpen(false)}
-                style={{
+                sx={{
                   width: "28px",
                   height: "28px",
                   borderRadius: "50%",
@@ -4114,37 +4378,43 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 ✕
-              </button>
-            </div>
+              </Box>
+            </Box>
 
             {/* Modal Content */}
-            <div style={{ flex: 1, overflow: "auto", padding: "16px" }}>
-              <div style={{
-                marginBottom: "20px",
-                padding: "8px 10px",
-                background: "#f8f9fa",
-                borderRadius: "6px",
-                fontSize: "13px",
-                color: "#6e6e73"
-              }}>
+            <Box sx={{ flex: 1, overflow: "auto", padding: "16px" }}>
+              <Box
+                sx={{
+                  marginBottom: "20px",
+                  padding: "8px 10px",
+                  background: "#f8f9fa",
+                  borderRadius: "6px",
+                  fontSize: "13px",
+                  color: "#6e6e73"
+                }}
+              >
                 {selectedShell?.name} · {selectedShell?.type}
-              </div>
+              </Box>
 
               {/* Destination */}
-              <div style={{ marginBottom: "20px" }}>
-                <label style={{
-                  display: "block",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  marginBottom: "8px",
-                  color: "#1d1d1f"
-                }}>
+              <Box sx={{ marginBottom: "20px" }}>
+                <Box
+                  component="label"
+                  sx={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#1d1d1f"
+                  }}
+                >
                   Destination
-                </label>
-                <input
+                </Box>
+                <Box
+                  component="input"
                   type="text"
                   defaultValue="Honolulu, Hawaii"
-                  style={{
+                  sx={{
                     width: "100%",
                     padding: "10px 12px",
                     fontSize: "14px",
@@ -4156,23 +4426,27 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                     boxSizing: "border-box"
                   }}
                 />
-              </div>
+              </Box>
 
               {/* Check-in Date */}
-              <div style={{ marginBottom: "20px" }}>
-                <label style={{
-                  display: "block",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  marginBottom: "8px",
-                  color: "#1d1d1f"
-                }}>
+              <Box sx={{ marginBottom: "20px" }}>
+                <Box
+                  component="label"
+                  sx={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#1d1d1f"
+                  }}
+                >
                   Check-in Date
-                </label>
-                <input
+                </Box>
+                <Box
+                  component="input"
                   type="date"
                   defaultValue="2024-05-15"
-                  style={{
+                  sx={{
                     width: "100%",
                     padding: "10px 12px",
                     fontSize: "14px",
@@ -4184,23 +4458,27 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                     boxSizing: "border-box"
                   }}
                 />
-              </div>
+              </Box>
 
               {/* Check-out Date */}
-              <div style={{ marginBottom: "20px" }}>
-                <label style={{
-                  display: "block",
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  marginBottom: "8px",
-                  color: "#1d1d1f"
-                }}>
+              <Box sx={{ marginBottom: "20px" }}>
+                <Box
+                  component="label"
+                  sx={{
+                    display: "block",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    color: "#1d1d1f"
+                  }}
+                >
                   Check-out Date
-                </label>
-                <input
+                </Box>
+                <Box
+                  component="input"
                   type="date"
                   defaultValue="2024-05-20"
-                  style={{
+                  sx={{
                     width: "100%",
                     padding: "10px 12px",
                     fontSize: "14px",
@@ -4212,23 +4490,26 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                     boxSizing: "border-box"
                   }}
                 />
-              </div>
-            </div>
+              </Box>
+            </Box>
 
             {/* Modal Footer */}
-            <div style={{
-              padding: "20px 24px",
-              borderTop: "1px solid #e0e0e0",
-              display: "flex",
-              gap: "12px",
-              justifyContent: "space-between"
-            }}>
-              <button
+            <Box
+              sx={{
+                padding: "20px 24px",
+                borderTop: "1px solid #e0e0e0",
+                display: "flex",
+                gap: "12px",
+                justifyContent: "space-between"
+              }}
+            >
+              <Box
+                component="button"
                 onClick={() => {
                   setIsSearchModalOpen(false);
                   setIsTravellersModalOpen(true);
                 }}
-                style={{
+                sx={{
                   padding: "10px 20px",
                   fontSize: "14px",
                   fontWeight: "500",
@@ -4241,15 +4522,16 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 ← Back
-              </button>
-              <button
+              </Box>
+              <Box
+                component="button"
                 onClick={() => {
                   showLoadingThen('Searching available hotels...', () => {
                     setIsSearchModalOpen(false);
                     setShowSearchResults(true);
                   }, 6500);
                 }}
-                style={{
+                sx={{
                   padding: "10px 20px",
                   fontSize: "14px",
                   fontWeight: "500",
@@ -4262,112 +4544,125 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 }}
               >
                 Search Availability →
-              </button>
-            </div>
-          </div>
-        </div>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       )}
 
       {/* DREAM FLOW - Will render inline in the shell cards below */}
       {false && (
-        <div style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-          overflow: "hidden",
-          position: "relative"
-        }}>
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+            overflow: "hidden",
+            position: "relative"
+          }}
+        >
           {/* Future Vision Badge */}
-          <div style={{
-            position: "absolute",
-            top: "16px",
-            right: "16px",
-            background: "rgba(255,255,255,0.2)",
-            backdropFilter: "blur(10px)",
-            border: "1px solid rgba(255,255,255,0.3)",
-            borderRadius: "20px",
-            padding: "6px 12px",
-            fontSize: "11px",
-            fontWeight: "600",
-            color: "#ffffff",
-            zIndex: 10
-          }}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "16px",
+              right: "16px",
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.3)",
+              borderRadius: "20px",
+              padding: "6px 12px",
+              fontSize: "11px",
+              fontWeight: "600",
+              color: "#ffffff",
+              zIndex: 10
+            }}
+          >
             🔮 FUTURE VISION
-          </div>
+          </Box>
 
           {/* Header */}
-          <div style={{
-            background: "rgba(255,255,255,0.15)",
-            backdropFilter: "blur(20px)",
-            borderBottom: "1px solid rgba(255,255,255,0.2)",
-            padding: "16px 20px"
-          }}>
-            <div style={{ fontSize: "16px", fontWeight: "600", color: "#ffffff", marginBottom: "4px" }}>
+          <Box
+            sx={{
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(20px)",
+              borderBottom: "1px solid rgba(255,255,255,0.2)",
+              padding: "16px 20px"
+            }}
+          >
+            <Box sx={{ fontSize: "16px", fontWeight: "600", color: "#ffffff", marginBottom: "4px" }}>
               Natural Language Amendment Assistant
-            </div>
-            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.9)" }}>
+            </Box>
+            <Box sx={{ fontSize: "12px", color: "rgba(255,255,255,0.9)" }}>
               Just tell us what you want to change - AI handles the rest
-            </div>
-          </div>
+            </Box>
+          </Box>
 
           {/* Content */}
-          <div style={{ flex: 1, overflow: "auto", padding: "20px" }}>
-            <div style={{ maxWidth: "700px", margin: "0 auto" }}>
+          <Box sx={{ flex: 1, overflow: "auto", padding: "20px" }}>
+            <Box sx={{ maxWidth: "700px", margin: "0 auto" }}>
               
               {/* Current Booking Reference */}
-              <div style={{
-                background: "rgba(255,255,255,0.95)",
-                borderRadius: "10px",
-                padding: "12px 16px",
-                marginBottom: "16px",
-                border: "1px solid rgba(255,255,255,0.4)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <div style={{ fontSize: "16px" }}>📌</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "11px", fontWeight: "600", color: "#6e6e73", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "3px" }}>
+              <Box
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  borderRadius: "10px",
+                  padding: "12px 16px",
+                  marginBottom: "16px",
+                  border: "1px solid rgba(255,255,255,0.4)",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <Box sx={{ fontSize: "16px" }}>📌</Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Box sx={{ fontSize: "11px", fontWeight: "600", color: "#6e6e73", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "3px" }}>
                       Amending
-                    </div>
-                    <div style={{ fontSize: "13px", fontWeight: "600", color: "#1d1d1f" }}>
+                    </Box>
+                    <Box sx={{ fontSize: "13px", fontWeight: "600", color: "#1d1d1f" }}>
                       {selectedShell ? selectedShell.name : 'Royal Hawaiian Resort'}
-                    </div>
-                    <div style={{ fontSize: "12px", color: "#6e6e73" }}>
+                    </Box>
+                    <Box sx={{ fontSize: "12px", color: "#6e6e73" }}>
                       {selectedShell ? selectedShell.type : 'Hotel'} · May 15-20, 2024 · {selectedShell ? selectedShell.price : '$2,450'}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{
-                      fontSize: "10px",
-                      padding: "3px 8px",
-                      background: "#34c759",
-                      color: "#ffffff",
-                      borderRadius: "4px",
-                      fontWeight: "600"
-                    }}>
+                    </Box>
+                  </Box>
+                  <Box sx={{ textAlign: "right" }}>
+                    <Box
+                      sx={{
+                        fontSize: "10px",
+                        padding: "3px 8px",
+                        background: "#34c759",
+                        color: "#ffffff",
+                        borderRadius: "4px",
+                        fontWeight: "600"
+                      }}
+                    >
                       Confirmed
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
               
               {/* Natural Language Input */}
-              <div style={{
-                background: "rgba(255,255,255,0.95)",
-                borderRadius: "10px",
-                padding: "20px",
-                marginBottom: "16px",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
-              }}>
-                <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "12px" }}>
+              <Box
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  borderRadius: "10px",
+                  padding: "20px",
+                  marginBottom: "16px",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
+                }}
+              >
+                <Box sx={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "12px" }}>
                   What would you like to change?
-                </div>
-                <textarea
+                </Box>
+                <Box
+                  component="textarea"
                   value={nlInput}
                   onChange={(e) => setNlInput(e.target.value)}
                   placeholder="e.g., 'Change hotel to 5-star near beach with pool and ocean view' or 'Upgrade to luxury hotel, adjust car to match'"
-                  style={{
+                  sx={{
                     width: "100%",
                     minHeight: "80px",
                     padding: "12px",
@@ -4379,9 +4674,10 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                     boxSizing: "border-box"
                   }}
                 />
-                <button
+                <Box
+                  component="button"
                   onClick={() => setDreamFlowStep(2)}
-                  style={{
+                  sx={{
                     marginTop: "12px",
                     padding: "8px 16px",
                     fontSize: "13px",
@@ -4395,30 +4691,33 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   }}
                 >
                   ✨ Analyze & Find Options
-                </button>
-              </div>
+                </Box>
+              </Box>
 
               {/* Example Queries */}
-              <div style={{
-                background: "rgba(255,255,255,0.95)",
-                borderRadius: "10px",
-                padding: "16px",
-                marginBottom: "16px",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
-              }}>
-                <div style={{ fontSize: "12px", fontWeight: "600", color: "#1d1d1f", marginBottom: "10px" }}>
+              <Box
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  borderRadius: "10px",
+                  padding: "16px",
+                  marginBottom: "16px",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
+                }}
+              >
+                <Box sx={{ fontSize: "12px", fontWeight: "600", color: "#1d1d1f", marginBottom: "10px" }}>
                   💡 Try these examples:
-                </div>
+                </Box>
                 {[
                   "Change to cheaper hotel, similar quality",
                   "Upgrade hotel to luxury beachfront",
                   "Move entire trip forward 2 days",
                   "Add family suite with kitchen"
                 ].map((example, idx) => (
-                  <button
+                  <Box
+                    component="button"
                     key={idx}
                     onClick={() => setNlInput(example)}
-                    style={{
+                    sx={{
                       display: "block",
                       width: "100%",
                       textAlign: "left",
@@ -4430,59 +4729,65 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                       border: "1px solid #e0e0e0",
                       borderRadius: "6px",
                       cursor: "pointer",
-                      fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif"
+                      fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+                      "&:hover": {
+                        background: "#e8e8ed"
+                      }
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.background = "#e8e8ed"}
-                    onMouseOut={(e) => e.currentTarget.style.background = "#f5f5f7"}
                   >
                     "{example}"
-                  </button>
+                  </Box>
                 ))}
-              </div>
+              </Box>
 
               {/* Why This Couldn't Be Built */}
-              <div style={{
-                background: "rgba(255,255,255,0.95)",
-                borderRadius: "10px",
-                padding: "16px",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
-              }}>
-                <div style={{ display: "flex", gap: "12px" }}>
-                  <div style={{ fontSize: "16px" }}>⚠️</div>
-                  <div>
-                    <div style={{ fontSize: "12px", fontWeight: "600", color: "#1d1d1f", marginBottom: "6px" }}>
+              <Box
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  borderRadius: "10px",
+                  padding: "16px",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
+                }}
+              >
+                <Box sx={{ display: "flex", gap: "12px" }}>
+                  <Box sx={{ fontSize: "16px" }}>⚠️</Box>
+                  <Box>
+                    <Box sx={{ fontSize: "12px", fontWeight: "600", color: "#1d1d1f", marginBottom: "6px" }}>
                       Technical Constraints
-                    </div>
-                    <div style={{ fontSize: "12px", color: "#6e6e73", lineHeight: "1.5", marginBottom: "8px" }}>
+                    </Box>
+                    <Box sx={{ fontSize: "12px", color: "#6e6e73", lineHeight: "1.5", marginBottom: "8px" }}>
                       This vision couldn't be implemented due to:
-                    </div>
-                    <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "11px", color: "#6e6e73", lineHeight: "1.6" }}>
-                      <li>No NLP/AI infrastructure for natural language processing</li>
-                      <li>Complex dependency resolution across multiple booking systems</li>
-                      <li>Real-time availability checks required across all providers</li>
-                      <li>Pricing calculation engine not flexible enough for dynamic scenarios</li>
-                      <li>Legacy system architecture couldn't support automated workflows</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+                    </Box>
+                    <Box component="ul" sx={{ margin: 0, paddingLeft: "16px", fontSize: "11px", color: "#6e6e73", lineHeight: "1.6" }}>
+                      <Box component="li">No NLP/AI infrastructure for natural language processing</Box>
+                      <Box component="li">Complex dependency resolution across multiple booking systems</Box>
+                      <Box component="li">Real-time availability checks required across all providers</Box>
+                      <Box component="li">Pricing calculation engine not flexible enough for dynamic scenarios</Box>
+                      <Box component="li">Legacy system architecture couldn't support automated workflows</Box>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
 
-            </div>
-          </div>
+            </Box>
+          </Box>
 
           {/* Footer */}
-          <div style={{
-            background: "rgba(255,255,255,0.15)",
-            backdropFilter: "blur(20px)",
-            borderTop: "1px solid rgba(255,255,255,0.2)",
-            padding: "16px 20px",
-            display: "flex",
-            gap: "12px",
-            justifyContent: "flex-end"
-          }}>
-            <button
+          <Box
+            sx={{
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(20px)",
+              borderTop: "1px solid rgba(255,255,255,0.2)",
+              padding: "16px 20px",
+              display: "flex",
+              gap: "12px",
+              justifyContent: "flex-end"
+            }}
+          >
+            <Box
+              component="button"
               onClick={() => setShowDreamFlow(false)}
-              style={{
+              sx={{
                 padding: "7px 16px",
                 fontSize: "13px",
                 fontWeight: "500",
@@ -4495,138 +4800,154 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
               }}
             >
               Close
-            </button>
-          </div>
-        </div>
+            </Box>
+          </Box>
+        </Box>
       )}
 
       {false && (
-        <div style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-          overflow: "hidden",
-          position: "relative"
-        }}>
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+            overflow: "hidden",
+            position: "relative"
+          }}
+        >
           {/* Future Vision Badge */}
-          <div style={{
-            position: "absolute",
-            top: "16px",
-            right: "16px",
-            background: "rgba(255,255,255,0.2)",
-            backdropFilter: "blur(10px)",
-            border: "1px solid rgba(255,255,255,0.3)",
-            borderRadius: "20px",
-            padding: "6px 12px",
-            fontSize: "11px",
-            fontWeight: "600",
-            color: "#ffffff",
-            zIndex: 10
-          }}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "16px",
+              right: "16px",
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.3)",
+              borderRadius: "20px",
+              padding: "6px 12px",
+              fontSize: "11px",
+              fontWeight: "600",
+              color: "#ffffff",
+              zIndex: 10
+            }}
+          >
             🔮 FUTURE VISION
-          </div>
+          </Box>
 
           {/* Header */}
-          <div style={{
-            background: "rgba(255,255,255,0.15)",
-            backdropFilter: "blur(20px)",
-            borderBottom: "1px solid rgba(255,255,255,0.2)",
-            padding: "16px 20px"
-          }}>
-            <div style={{ fontSize: "16px", fontWeight: "600", color: "#ffffff", marginBottom: "4px" }}>
+          <Box
+            sx={{
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(20px)",
+              borderBottom: "1px solid rgba(255,255,255,0.2)",
+              padding: "16px 20px"
+            }}
+          >
+            <Box sx={{ fontSize: "16px", fontWeight: "600", color: "#ffffff", marginBottom: "4px" }}>
               AI Amendment Recommendations
-            </div>
-            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.9)" }}>
+            </Box>
+            <Box sx={{ fontSize: "12px", color: "rgba(255,255,255,0.9)" }}>
               Based on: "{nlInput || 'your request'}"
-            </div>
-          </div>
+            </Box>
+          </Box>
 
           {/* Content */}
-          <div style={{ flex: 1, overflow: "auto", padding: "20px" }}>
-            <div style={{ maxWidth: "700px", margin: "0 auto" }}>
+          <Box sx={{ flex: 1, overflow: "auto", padding: "20px" }}>
+            <Box sx={{ maxWidth: "700px", margin: "0 auto" }}>
               
               {/* Current Booking Reference */}
-              <div style={{
-                background: "rgba(255,255,255,0.95)",
-                borderRadius: "10px",
-                padding: "12px 16px",
-                marginBottom: "16px",
-                border: "1px solid rgba(255,255,255,0.4)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <div style={{ fontSize: "16px" }}>📌</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "11px", fontWeight: "600", color: "#6e6e73", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "3px" }}>
+              <Box
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  borderRadius: "10px",
+                  padding: "12px 16px",
+                  marginBottom: "16px",
+                  border: "1px solid rgba(255,255,255,0.4)",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <Box sx={{ fontSize: "16px" }}>📌</Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Box sx={{ fontSize: "11px", fontWeight: "600", color: "#6e6e73", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "3px" }}>
                       Current Selection
-                    </div>
-                    <div style={{ fontSize: "13px", fontWeight: "600", color: "#1d1d1f" }}>
+                    </Box>
+                    <Box sx={{ fontSize: "13px", fontWeight: "600", color: "#1d1d1f" }}>
                       {selectedShell ? selectedShell.name : 'Royal Hawaiian Resort'}
-                    </div>
-                    <div style={{ fontSize: "12px", color: "#6e6e73" }}>
+                    </Box>
+                    <Box sx={{ fontSize: "12px", color: "#6e6e73" }}>
                       {selectedShell ? selectedShell.type : 'Hotel'} · May 15-20, 2024 · {selectedShell ? selectedShell.price : '$2,450'}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{
-                      fontSize: "10px",
-                      padding: "3px 8px",
-                      background: "#34c759",
-                      color: "#ffffff",
-                      borderRadius: "4px",
-                      fontWeight: "600"
-                    }}>
+                    </Box>
+                  </Box>
+                  <Box sx={{ textAlign: "right" }}>
+                    <Box
+                      sx={{
+                        fontSize: "10px",
+                        padding: "3px 8px",
+                        background: "#34c759",
+                        color: "#ffffff",
+                        borderRadius: "4px",
+                        fontWeight: "600"
+                      }}
+                    >
                       Current
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
               
               {/* AI Understanding */}
-              <div style={{
-                background: "rgba(255,255,255,0.95)",
-                borderRadius: "10px",
-                padding: "16px",
-                marginBottom: "16px",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
-              }}>
-                <div style={{ display: "flex", gap: "12px", marginBottom: "12px" }}>
-                  <div style={{ fontSize: "20px" }}>🤖</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
+              <Box
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  borderRadius: "10px",
+                  padding: "16px",
+                  marginBottom: "16px",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
+                }}
+              >
+                <Box sx={{ display: "flex", gap: "12px", marginBottom: "12px" }}>
+                  <Box sx={{ fontSize: "20px" }}>🤖</Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Box sx={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
                       AI Interpretation
-                    </div>
-                    <div style={{ fontSize: "13px", color: "#6e6e73", lineHeight: "1.5" }}>
-                      Detected: <strong>Hotel upgrade</strong> · Looking for luxury beachfront properties with pools and ocean views
-                    </div>
-                  </div>
-                </div>
+                    </Box>
+                    <Box sx={{ fontSize: "13px", color: "#6e6e73", lineHeight: "1.5" }}>
+                      Detected: <Box component="span" sx={{ fontWeight: 600 }}>Hotel upgrade</Box> · Looking for luxury beachfront properties with pools and ocean views
+                    </Box>
+                  </Box>
+                </Box>
 
                 {/* Impact Analysis */}
-                <div style={{
-                  background: "#fff3cd",
-                  border: "1px solid #ffc107",
-                  borderRadius: "6px",
-                  padding: "10px",
-                  fontSize: "12px",
-                  color: "#856404"
-                }}>
-                  <strong>Auto-detected impacts:</strong> Car rental location adjusted · Transfer times updated · Activity schedules verified
-                </div>
-              </div>
+                <Box
+                  sx={{
+                    background: "#fff3cd",
+                    border: "1px solid #ffc107",
+                    borderRadius: "6px",
+                    padding: "10px",
+                    fontSize: "12px",
+                    color: "#856404"
+                  }}
+                >
+                  <Box component="span" sx={{ fontWeight: 600 }}>Auto-detected impacts:</Box> Car rental location adjusted · Transfer times updated · Activity schedules verified
+                </Box>
+              </Box>
 
               {/* Smart Hotel Recommendations */}
-              <div style={{
-                background: "rgba(255,255,255,0.95)",
-                borderRadius: "10px",
-                padding: "16px",
-                marginBottom: "16px",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
-              }}>
-                <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "12px" }}>
+              <Box
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  borderRadius: "10px",
+                  padding: "16px",
+                  marginBottom: "16px",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
+                }}
+              >
+                <Box sx={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "12px" }}>
                   Recommended Hotels (AI-Ranked)
-                </div>
+                </Box>
 
                 {[
                   {
@@ -4657,7 +4978,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                     features: ["Near Beach", "Pool", "Partial View"]
                   }
                 ].map((hotel, idx) => (
-                  <div
+                  <Box
                     key={idx}
                     onClick={() => {
                       setSelectedHotel(hotel);
@@ -4668,7 +4989,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                         setTimeout(() => setShowSuccessToast(false), 3000);
                       }, 1500);
                     }}
-                    style={{
+                    sx={{
                       padding: "12px",
                       background: idx === 0 ? "linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)" : "#ffffff",
                       border: idx === 0 ? "2px solid #667eea" : "1px solid #d0d0d0",
@@ -4676,155 +4997,172 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
                       marginBottom: "10px",
                       cursor: "pointer",
                       transition: "all 0.15s",
-                      position: "relative"
-                    }}
-                    onMouseOver={(e) => {
-                      if (idx !== 0) e.currentTarget.style.borderColor = "#fa709a";
-                    }}
-                    onMouseOut={(e) => {
-                      if (idx !== 0) e.currentTarget.style.borderColor = "#d0d0d0";
+                      position: "relative",
+                      "&:hover": idx !== 0 ? { borderColor: "#fa709a" } : {}
                     }}
                   >
                     {/* Badge */}
-                    <div style={{
-                      position: "absolute",
-                      top: "8px",
-                      right: "8px",
-                      background: hotel.badgeColor,
-                      color: "#ffffff",
-                      padding: "3px 8px",
-                      borderRadius: "4px",
-                      fontSize: "10px",
-                      fontWeight: "600"
-                    }}>
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: "8px",
+                        right: "8px",
+                        background: hotel.badgeColor,
+                        color: "#ffffff",
+                        padding: "3px 8px",
+                        borderRadius: "4px",
+                        fontSize: "10px",
+                        fontWeight: "600"
+                      }}
+                    >
                       {hotel.badge}
-                    </div>
+                    </Box>
 
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px", paddingRight: "90px" }}>
-                      <div>
-                        <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "3px" }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: "10px", paddingRight: "90px" }}>
+                      <Box>
+                        <Box sx={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "3px" }}>
                           {hotel.name}
-                        </div>
-                        <div style={{ fontSize: "12px", color: "#f5a623" }}>
+                        </Box>
+                        <Box sx={{ fontSize: "12px", color: "#f5a623" }}>
                           ★ {hotel.rating} · {hotel.match}% match to your request
-                        </div>
-                      </div>
-                    </div>
+                        </Box>
+                      </Box>
+                    </Box>
 
                     {/* Features */}
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "10px" }}>
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: "4px", marginBottom: "10px" }}>
                       {hotel.features.map((feature, fIdx) => (
-                        <div key={fIdx} style={{
-                          fontSize: "10px",
-                          padding: "3px 6px",
-                          background: idx === 0 ? "rgba(250, 112, 154, 0.1)" : "#f5f5f7",
-                          color: idx === 0 ? "#fa709a" : "#6e6e73",
-                          borderRadius: "4px",
-                          fontWeight: "500"
-                        }}>
+                        <Box
+                          key={fIdx}
+                          sx={{
+                            fontSize: "10px",
+                            padding: "3px 6px",
+                            background: idx === 0 ? "rgba(250, 112, 154, 0.1)" : "#f5f5f7",
+                            color: idx === 0 ? "#fa709a" : "#6e6e73",
+                            borderRadius: "4px",
+                            fontWeight: "500"
+                          }}
+                        >
                           ✓ {feature}
-                        </div>
+                        </Box>
                       ))}
-                    </div>
+                    </Box>
 
                     {/* Price Comparison */}
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "1px solid #f0f0f0" }}>
-                      <div style={{ fontSize: "11px", color: "#6e6e73" }}>
-                        <span style={{ textDecoration: "line-through" }}>$490</span>
-                        <span style={{ color: parseInt(hotel.price.replace('$','')) > 490 ? "#ff3b30" : "#34c759", fontWeight: "600", marginLeft: "6px" }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "1px solid #f0f0f0" }}>
+                      <Box sx={{ fontSize: "11px", color: "#6e6e73" }}>
+                        <Box component="span" sx={{ textDecoration: "line-through" }}>$490</Box>
+                        <Box
+                          component="span"
+                          sx={{
+                            color: parseInt(hotel.price.replace('$','')) > 490 ? "#ff3b30" : "#34c759",
+                            fontWeight: "600",
+                            marginLeft: "6px"
+                          }}
+                        >
                           {hotel.price} /night
-                        </span>
-                      </div>
-                      <div style={{ fontSize: "11px", fontWeight: "600", color: parseInt(hotel.price.replace('$','')) > 490 ? "#ff3b30" : "#34c759" }}>
+                        </Box>
+                      </Box>
+                      <Box sx={{ fontSize: "11px", fontWeight: "600", color: parseInt(hotel.price.replace('$','')) > 490 ? "#ff3b30" : "#34c759" }}>
                         {parseInt(hotel.price.replace('$','')) > 490 ? '+' : '-'}${Math.abs(parseInt(hotel.price.replace('$','')) - 490)} /night
-                      </div>
-                    </div>
-                  </div>
+                      </Box>
+                    </Box>
+                  </Box>
                 ))}
-              </div>
+              </Box>
 
               {/* Auto-Detected Dependencies */}
-              <div style={{
-                background: "rgba(255,255,255,0.95)",
-                borderRadius: "10px",
-                padding: "16px",
-                marginBottom: "16px",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
-              }}>
-                <div style={{ fontSize: "13px", fontWeight: "600", color: "#1d1d1f", marginBottom: "10px" }}>
+              <Box
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  borderRadius: "10px",
+                  padding: "16px",
+                  marginBottom: "16px",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
+                }}
+              >
+                <Box sx={{ fontSize: "13px", fontWeight: "600", color: "#1d1d1f", marginBottom: "10px" }}>
                   🔗 Dependencies Auto-Adjusted
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                </Box>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   {[
                     { item: "Car Rental Pickup", change: "Updated to new hotel location", icon: "🚗" },
                     { item: "Airport Transfer", change: "Time adjusted for new location", icon: "🚕" },
                     { item: "Pearl Harbor Tour", change: "Verified compatibility with new hotel", icon: "🎯" }
                   ].map((dep, idx) => (
-                    <div key={idx} style={{
-                      display: "flex",
-                      gap: "10px",
-                      padding: "8px",
-                      background: "#f5f5f7",
-                      borderRadius: "6px"
-                    }}>
-                      <div style={{ fontSize: "16px" }}>{dep.icon}</div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: "12px", fontWeight: "600", color: "#1d1d1f" }}>
+                    <Box
+                      key={idx}
+                      sx={{
+                        display: "flex",
+                        gap: "10px",
+                        padding: "8px",
+                        background: "#f5f5f7",
+                        borderRadius: "6px"
+                      }}
+                    >
+                      <Box sx={{ fontSize: "16px" }}>{dep.icon}</Box>
+                      <Box sx={{ flex: 1 }}>
+                        <Box sx={{ fontSize: "12px", fontWeight: "600", color: "#1d1d1f" }}>
                           {dep.item}
-                        </div>
-                        <div style={{ fontSize: "11px", color: "#6e6e73" }}>
+                        </Box>
+                        <Box sx={{ fontSize: "11px", color: "#6e6e73" }}>
                           {dep.change}
-                        </div>
-                      </div>
-                      <div style={{ fontSize: "16px", color: "#34c759" }}>✓</div>
-                    </div>
+                        </Box>
+                      </Box>
+                      <Box sx={{ fontSize: "16px", color: "#34c759" }}>✓</Box>
+                    </Box>
                   ))}
-                </div>
-              </div>
+                </Box>
+              </Box>
 
               {/* Technical Constraints */}
-              <div style={{
-                background: "rgba(255,255,255,0.95)",
-                borderRadius: "10px",
-                padding: "16px",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
-              }}>
-                <div style={{ display: "flex", gap: "12px" }}>
-                  <div style={{ fontSize: "16px" }}>⚠️</div>
-                  <div>
-                    <div style={{ fontSize: "12px", fontWeight: "600", color: "#1d1d1f", marginBottom: "6px" }}>
+              <Box
+                sx={{
+                  background: "rgba(255,255,255,0.95)",
+                  borderRadius: "10px",
+                  padding: "16px",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.1)"
+                }}
+              >
+                <Box sx={{ display: "flex", gap: "12px" }}>
+                  <Box sx={{ fontSize: "16px" }}>⚠️</Box>
+                  <Box>
+                    <Box sx={{ fontSize: "12px", fontWeight: "600", color: "#1d1d1f", marginBottom: "6px" }}>
                       Why This Remained a Concept
-                    </div>
-                    <div style={{ fontSize: "12px", color: "#6e6e73", lineHeight: "1.5", marginBottom: "8px" }}>
+                    </Box>
+                    <Box sx={{ fontSize: "12px", color: "#6e6e73", lineHeight: "1.5", marginBottom: "8px" }}>
                       This natural language approach required:
-                    </div>
-                    <ul style={{ margin: 0, paddingLeft: "16px", fontSize: "11px", color: "#6e6e73", lineHeight: "1.6" }}>
-                      <li>Advanced NLP/AI infrastructure not available in legacy platform</li>
-                      <li>Complex cross-system dependency resolution engine</li>
-                      <li>Real-time availability aggregation across all providers</li>
-                      <li>Intelligent pricing optimization algorithms</li>
-                      <li>Automated workflow orchestration beyond current capabilities</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+                    </Box>
+                    <Box component="ul" sx={{ margin: 0, paddingLeft: "16px", fontSize: "11px", color: "#6e6e73", lineHeight: "1.6" }}>
+                      <Box component="li">Advanced NLP/AI infrastructure not available in legacy platform</Box>
+                      <Box component="li">Complex cross-system dependency resolution engine</Box>
+                      <Box component="li">Real-time availability aggregation across all providers</Box>
+                      <Box component="li">Intelligent pricing optimization algorithms</Box>
+                      <Box component="li">Automated workflow orchestration beyond current capabilities</Box>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
 
-            </div>
-          </div>
+            </Box>
+          </Box>
 
           {/* Footer */}
-          <div style={{
-            background: "rgba(255,255,255,0.15)",
-            backdropFilter: "blur(20px)",
-            borderTop: "1px solid rgba(255,255,255,0.2)",
-            padding: "16px 20px",
-            display: "flex",
-            gap: "12px",
-            justifyContent: "space-between"
-          }}>
-            <button
+          <Box
+            sx={{
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(20px)",
+              borderTop: "1px solid rgba(255,255,255,0.2)",
+              padding: "16px 20px",
+              display: "flex",
+              gap: "12px",
+              justifyContent: "space-between"
+            }}
+          >
+            <Box
+              component="button"
               onClick={() => setDreamFlowStep(1)}
-              style={{
+              sx={{
                 padding: "7px 16px",
                 fontSize: "13px",
                 fontWeight: "500",
@@ -4837,10 +5175,11 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
               }}
             >
               ← Back
-            </button>
-            <button
+            </Box>
+            <Box
+              component="button"
               onClick={() => setShowDreamFlow(false)}
-              style={{
+              sx={{
                 padding: "7px 16px",
                 fontSize: "13px",
                 fontWeight: "500",
@@ -4853,135 +5192,148 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose }) => {
               }}
             >
               Close
-            </button>
-          </div>
-        </div>
+            </Box>
+          </Box>
+        </Box>
       )}
 
       {/* Loading Modal */}
       {showLoadingModal && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0, 0, 0, 0.4)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 300,
-          backdropFilter: "blur(4px)"
-        }}>
-          <div style={{
-            background: "#ffffff",
-            borderRadius: "10px",
-            padding: "32px 40px",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.4)",
             display: "flex",
-            flexDirection: "column",
             alignItems: "center",
-            gap: "20px",
-            minWidth: "320px"
-          }}>
+            justifyContent: "center",
+            zIndex: 300,
+            backdropFilter: "blur(4px)"
+          }}
+        >
+          <Box
+            sx={{
+              background: "#ffffff",
+              borderRadius: "10px",
+              padding: "32px 40px",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "20px",
+              minWidth: "320px"
+            }}
+          >
             {/* Spinner */}
-            <div style={{
-              width: "48px",
-              height: "48px",
-              border: "4px solid #f0f0f0",
-              borderTop: "4px solid #0071e3",
-              borderRadius: "50%",
-              animation: "spin 1s linear infinite"
-            }}></div>
+            <Box
+              sx={{
+                width: "48px",
+                height: "48px",
+                border: "4px solid #f0f0f0",
+                borderTop: "4px solid #0071e3",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite"
+              }}
+            />
             
             {/* Loading Message */}
-            <div style={{
-              fontSize: "14px",
-              fontWeight: "500",
-              color: "#1d1d1f",
-              textAlign: "center"
-            }}>
+            <Box
+              sx={{
+                fontSize: "14px",
+                fontWeight: "500",
+                color: "#1d1d1f",
+                textAlign: "center"
+              }}
+            >
               {loadingMessage}
-            </div>
-          </div>
-        </div>
+            </Box>
+          </Box>
+        </Box>
       )}
 
       {/* Success Toast */}
       {showSuccessToast && (
-        <div style={{
-          position: "fixed",
-          top: "24px",
-          right: "24px",
-          background: "#34c759",
-          color: "#ffffff",
-          padding: "14px 20px",
-          borderRadius: "10px",
-          boxShadow: "0 8px 24px rgba(52, 199, 89, 0.3)",
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          zIndex: 400,
-          animation: "slideInRight 0.3s ease-out"
-        }}>
-          <div style={{
-            width: "24px",
-            height: "24px",
-            borderRadius: "50%",
-            background: "#ffffff",
-            color: "#34c759",
+        <Box
+          sx={{
+            position: "fixed",
+            top: "24px",
+            right: "24px",
+            background: "#34c759",
+            color: "#ffffff",
+            padding: "14px 20px",
+            borderRadius: "10px",
+            boxShadow: "0 8px 24px rgba(52, 199, 89, 0.3)",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            fontSize: "16px",
-            fontWeight: "bold"
-          }}>
+            gap: "12px",
+            zIndex: 400,
+            animation: "slideInRight 0.3s ease-out"
+          }}
+        >
+          <Box
+            sx={{
+              width: "24px",
+              height: "24px",
+              borderRadius: "50%",
+              background: "#ffffff",
+              color: "#34c759",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "16px",
+              fontWeight: "bold"
+            }}
+          >
             ✓
-          </div>
-          <div>
-            <div style={{ fontSize: "14px", fontWeight: "600", marginBottom: "2px" }}>
+          </Box>
+          <Box>
+            <Box sx={{ fontSize: "14px", fontWeight: "600", marginBottom: "2px" }}>
               Amendment Completed
-            </div>
-            <div style={{ fontSize: "13px", opacity: 0.9 }}>
+            </Box>
+            <Box sx={{ fontSize: "13px", opacity: 0.9 }}>
               Hotel booking has been successfully updated
-            </div>
-          </div>
-        </div>
+            </Box>
+          </Box>
+        </Box>
       )}
 
-      {/* Add keyframes for animations */}
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        @keyframes slideInRight {
-          0% { transform: translateX(400px); opacity: 0; }
-          100% { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
-          20%, 40%, 60%, 80% { transform: translateX(3px); }
-        }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.05); opacity: 0.9; }
-        }
-        @keyframes shimmer {
-          0% { left: -100%; }
-          100% { left: 100%; }
-        }
-        @keyframes slideDown {
-          0% { opacity: 0; transform: translateY(-10px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-          0% { opacity: 0; }
-          100% { opacity: 1; }
-        }
-      `}</style>
-    </div>
+      <GlobalStyles
+        styles={{
+          "@keyframes spin": {
+            "0%": { transform: "rotate(0deg)" },
+            "100%": { transform: "rotate(360deg)" }
+          },
+          "@keyframes slideInRight": {
+            "0%": { transform: "translateX(400px)", opacity: 0 },
+            "100%": { transform: "translateX(0)", opacity: 1 }
+          },
+          "@keyframes shake": {
+            "0%, 100%": { transform: "translateX(0)" },
+            "10%, 30%, 50%, 70%, 90%": { transform: "translateX(-3px)" },
+            "20%, 40%, 60%, 80%": { transform: "translateX(3px)" }
+          },
+          "@keyframes pulse": {
+            "0%, 100%": { transform: "scale(1)", opacity: 1 },
+            "50%": { transform: "scale(1.05)", opacity: 0.9 }
+          },
+          "@keyframes shimmer": {
+            "0%": { left: "-100%" },
+            "100%": { left: "100%" }
+          },
+          "@keyframes slideDown": {
+            "0%": { opacity: 0, transform: "translateY(-10px)" },
+            "100%": { opacity: 1, transform: "translateY(0)" }
+          },
+          "@keyframes fadeIn": {
+            "0%": { opacity: 0 },
+            "100%": { opacity: 1 }
+          }
+        }}
+      />
+    </Box>
   );
 };
 

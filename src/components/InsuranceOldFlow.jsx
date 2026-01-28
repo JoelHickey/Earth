@@ -1,6 +1,32 @@
 import React, { useState } from 'react';
+import {
+  Alert,
+  Backdrop,
+  Box,
+  Button,
+  Checkbox,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormControlLabel,
+  GlobalStyles,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Snackbar,
+  Switch,
+  Tab,
+  Tabs,
+  TextField,
+  Typography
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
-const InsuranceOldFlow = ({ onBackToCaseStudy, onClose }) => {
+const InsuranceOldFlow = ({ onBackToCaseStudy, onClose, zIndex = 99, onDragStart, position }) => {
   const [activeTab, setActiveTab] = useState('booking');
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
@@ -43,526 +69,485 @@ const InsuranceOldFlow = ({ onBackToCaseStudy, onClose }) => {
     totalCost: "$4,850"
   };
 
+  const fallbackPosition = position || {
+    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 1000) / 2) : 50,
+    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 700) / 2) : 100
+  };
+
   return (
-    <div style={{
-      position: "fixed",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      zIndex: 99,
-      background: "#ffffff",
-      width: "1000px",
-      maxWidth: "95vw",
-      height: "700px",
-      maxHeight: "90vh",
-      boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
-      borderRadius: "10px",
-      display: "flex",
-      flexDirection: "column",
-      overflow: "hidden",
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif"
-    }}>
-      {/* Window Header - Apple Compact */}
-      <div style={{
-        padding: "8px 16px",
-        borderBottom: "1px solid #e0e0e0",
+    <Box
+      sx={(theme) => ({
+        position: "fixed",
+        left: `${fallbackPosition.x}px`,
+        top: `${fallbackPosition.y}px`,
+        zIndex,
+        backgroundColor: "background.paper",
+        width: { xs: "95vw", md: theme.spacing(125) },
+        maxWidth: "95vw",
+        height: { xs: "90vh", md: theme.spacing(87.5) },
+        maxHeight: "90vh",
+        boxShadow: 1,
+        borderRadius: theme.shape.borderRadius,
+        border: "1px solid",
+        borderColor: "divider",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        background: "#f8f9fa"
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <button
-            onClick={onBackToCaseStudy}
-            style={{
-              padding: "4px 10px",
-              fontSize: "12px",
-              fontWeight: "500",
-              color: "#0071e3",
-              background: "transparent",
-              border: "1px solid #0071e3",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
-              height: "24px"
+        flexDirection: "column",
+        overflow: "hidden",
+        fontFamily: theme.typography.fontFamily,
+        WebkitFontSmoothing: "antialiased"
+      })}
+    >
+      {/* Header Bar */}
+      <Box
+        sx={{
+          px: 3,
+          py: 1.5,
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          background: "background.paper"
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flex: 1 }}>
+          <Typography
+            variant="h5"
+            component="h1"
+            sx={{
+              m: 0,
+              fontWeight: 600,
+              letterSpacing: "0.02em",
+              color: "text.primary"
             }}
           >
-            ← Back to Case Study
-          </button>
-        </div>
-        
-        <button
-          onClick={onClose}
-          style={{
-            width: "24px",
-            height: "24px",
-            borderRadius: "50%",
-            border: "none",
-            background: "#e0e0e0",
-            color: "#666",
-            fontSize: "14px",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          ✕
-        </button>
-      </div>
+            Travel insurance integration
+          </Typography>
+          <Box
+            component="img"
+            src="/Flight_Centre_company_logo_(Non-free).png"
+            alt="Flight Centre logo"
+            sx={{
+              height: 32,
+              width: "auto",
+              display: "block"
+            }}
+          />
+        </Box>
 
-      {/* Header - Apple Compact */}
-      <div style={{ padding: "12px 16px", background: "#ffffff", borderBottom: "1px solid #e0e0e0" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <h2 style={{
-              fontSize: "16px",
-              fontWeight: "600",
-              margin: "0 0 2px 0",
-              color: "#1d1d1f"
-            }}>
-              Booking #{bookingData.bookingRef}
-            </h2>
-            <div style={{ fontSize: "12px", color: "#6e6e73" }}>
-              {bookingData.customer} · {bookingData.travelers} travelers
-            </div>
-          </div>
-          <div style={{ textAlign: "right", whiteSpace: "nowrap" }}>
-            <div style={{ fontSize: "12px", color: "#6e6e73", marginBottom: "2px" }}>
-              📍 {bookingData.destination}
-            </div>
-            <div style={{ fontSize: "12px", color: "#6e6e73" }}>
-              📅 {bookingData.startDate} - {bookingData.endDate}
-            </div>
-          </div>
-        </div>
-      </div>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <FormControlLabel
+            label="Interactive Demo"
+            labelPlacement="start"
+            sx={{
+              m: 0,
+              gap: 1,
+              "& .MuiFormControlLabel-label": {
+                fontSize: "0.8rem",
+                fontWeight: 500
+              }
+            }}
+            control={
+              <Switch
+                size="small"
+                checked
+                onChange={(event) => {
+                  if (!event.target.checked) {
+                    onBackToCaseStudy?.();
+                  }
+                }}
+                inputProps={{ "aria-label": "Interactive demo toggle" }}
+              />
+            }
+          />
 
-        {/* Tab Navigation - Apple Compact */}
-        {!showOldFlow && !showNewFlow && !showDreamFlow && (
-        <div style={{
-          display: "flex",
-          gap: "0",
-          borderBottom: "1px solid #d0d0d0",
-          background: "#f0f0f0",
-          padding: "0"
-        }}>
-          {['booking', 'payments', 'documents'].map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{
-                padding: "8px 16px",
-                fontSize: "12px",
-                fontWeight: activeTab === tab ? "600" : "400",
-                color: activeTab === tab ? "#1d1d1f" : "#6e6e73",
-                background: activeTab === tab ? "#ffffff" : "transparent",
-                border: "none",
-                borderBottom: activeTab === tab ? "2px solid #0071e3" : "2px solid transparent",
-                cursor: "pointer",
-                textTransform: "capitalize",
-                fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif"
-              }}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+          <IconButton
+            onClick={onClose}
+            aria-label="Close Insurance Demo"
+            size="large"
+            sx={{
+              color: "text.primary",
+              "&:focus": {
+                outline: "1px dotted",
+                outlineColor: "text.primary",
+                outlineOffset: "2px"
+              },
+              "&:focus-visible": {
+                outline: "1px dotted",
+                outlineColor: "text.primary",
+                outlineOffset: "2px"
+              }
+            }}
+          >
+            <CloseIcon fontSize="medium" />
+          </IconButton>
+        </Box>
+      </Box>
+
+      {/* Tab Navigation */}
+      {!showOldFlow && !showNewFlow && !showDreamFlow && (
+        <Box sx={{ borderBottom: "1px solid", borderColor: "divider", backgroundColor: "action.hover" }}>
+          <Tabs
+            value={activeTab}
+            onChange={(event, value) => setActiveTab(value)}
+            aria-label="Insurance demo tabs"
+            textColor="primary"
+            indicatorColor="primary"
+            sx={{ minHeight: 0, px: 1 }}
+          >
+            {['booking', 'payments', 'documents'].map((tab) => (
+              <Tab
+                key={tab}
+                value={tab}
+                label={tab}
+                sx={{ minHeight: 0, textTransform: "capitalize", fontSize: "0.75rem", fontWeight: 600 }}
+              />
+            ))}
+          </Tabs>
+        </Box>
       )}
 
       {/* Booking Tab Content */}
       {activeTab === 'booking' && (!showOldFlow || (showOldFlow && (oldFlowStep === 1 || oldFlowStep === 2))) && !showNewFlow && (
-        <div 
-          style={{ flex: 1, overflow: showOnboarding ? "visible" : "auto", padding: "16px", background: "#fafafa" }}
+        <Box
+          sx={{ flex: 1, overflow: showOnboarding ? "visible" : "auto", p: 2, background: "#fafafa" }}
           onClick={() => setShowFlowMenu(false)}
         >
-          <div 
-            style={{ display: "flex", flexDirection: "column", gap: "12px", position: "relative" }}
+          <Box
+            sx={{ display: "flex", flexDirection: "column", gap: 1.5, position: "relative" }}
             onClick={(e) => e.stopPropagation()}
           >
-            
             {/* Insurance Component */}
-            <div style={{
-              padding: "12px",
-              background: "#ffffff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "8px",
-              position: "relative",
-              zIndex: showOnboarding ? 10 : "auto"
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ fontSize: "20px" }}>{insuranceAdded ? "✅" : "🛡️"}</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
+            <Box
+              sx={{
+                p: 1.5,
+                background: "#ffffff",
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 2,
+                position: "relative",
+                zIndex: showOnboarding ? 10 : "auto"
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                <Typography sx={{ fontSize: "20px" }}>{insuranceAdded ? "✅" : "🛡️"}</Typography>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
                     {insuranceAdded ? "Travel Insurance - Comprehensive Plan" : "Travel Insurance"}
-                  </div>
-                  <div style={{ fontSize: "12px", color: "#6e6e73", marginBottom: insuranceAdded ? "0" : "8px" }}>
+                  </Typography>
+                  <Box sx={{ color: "text.secondary", mb: insuranceAdded ? 0 : 1 }}>
                     {insuranceAdded ? (
                       <>
-                        <div>Medical coverage up to $500K · Trip cancellation · Baggage protection</div>
-                        <div style={{ fontSize: "11px", marginTop: "4px", color: "#86868b" }}>🌍 Global coverage · 24/7 emergency assistance</div>
+                        <Typography variant="caption" sx={{ display: "block" }}>
+                          Medical coverage up to $500K · Trip cancellation · Baggage protection
+                        </Typography>
+                        <Typography variant="caption" sx={{ display: "block", mt: 0.5, color: "#86868b" }}>
+                          🌍 Global coverage · 24/7 emergency assistance
+                        </Typography>
                       </>
                     ) : (
-                      "Protect your trip with comprehensive coverage"
+                      <Typography variant="caption">Protect your trip with comprehensive coverage</Typography>
                     )}
-                  </div>
-                  
+                  </Box>
+
                   {/* DREAM FLOW - Inline AI Assistant Bar */}
                   {!insuranceAdded && showDreamFlow && (
-                    <div style={{ marginTop: "12px", animation: "fadeIn 0.5s ease-out" }}>
-                      {/* AI Bar - Collapsed */}
-                      <div 
+                    <Box sx={{ mt: 1.5, animation: "fadeIn 0.5s ease-out" }}>
+                      <Box
                         onClick={() => setDreamFlowExpanded(!dreamFlowExpanded)}
-                        style={{
+                        sx={{
                           background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                          borderRadius: "8px",
-                          padding: "12px",
+                          borderRadius: 2,
+                          p: 1.5,
                           cursor: "pointer",
                           position: "relative",
-                          marginBottom: dreamFlowExpanded ? "12px" : "0",
+                          mb: dreamFlowExpanded ? 1.5 : 0,
                           overflow: "hidden",
                           transition: "all 0.3s ease",
-                          boxShadow: dreamFlowExpanded ? "0 4px 16px rgba(102, 126, 234, 0.3)" : "0 2px 8px rgba(102, 126, 234, 0.2)"
+                          boxShadow: dreamFlowExpanded
+                            ? "0 4px 16px rgba(102, 126, 234, 0.3)"
+                            : "0 2px 8px rgba(102, 126, 234, 0.2)"
                         }}
                       >
-                        {/* Animated shimmer effect */}
-                        <div style={{
-                          position: "absolute",
-                          top: 0,
-                          left: "-100%",
-                          width: "100%",
-                          height: "100%",
-                          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
-                          animation: "shimmer 3s infinite"
-                        }}></div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px", position: "relative", zIndex: 1 }}>
-                          <div style={{ 
-                            fontSize: "18px",
-                            animation: "pulse 2s ease-in-out infinite",
-                            filter: "drop-shadow(0 0 8px rgba(255,255,255,0.5))"
-                          }}>🤖</div>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: "13px", fontWeight: "600", color: "#ffffff", marginBottom: "3px" }}>
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: 0,
+                            left: "-100%",
+                            width: "100%",
+                            height: "100%",
+                            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+                            animation: "shimmer 3s infinite"
+                          }}
+                        />
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, position: "relative", zIndex: 1 }}>
+                          <Typography
+                            sx={{
+                              fontSize: "18px",
+                              animation: "pulse 2s ease-in-out infinite",
+                              filter: "drop-shadow(0 0 8px rgba(255,255,255,0.5))"
+                            }}
+                          >
+                            🤖
+                          </Typography>
+                          <Box sx={{ flex: 1 }}>
+                            <Typography variant="caption" sx={{ display: "block", fontWeight: 600, color: "#ffffff", mb: 0.25 }}>
                               AI-Powered Insurance Selection
-                            </div>
-                            <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.9)" }}>
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: "rgba(255,255,255,0.9)" }}>
                               ✨ Medical history detected · Recommending enhanced coverage
-                            </div>
-                          </div>
-                          <div style={{ 
-                            fontSize: "12px", 
-                            color: "#ffffff", 
-                            fontWeight: "500",
-                            transition: "transform 0.3s ease"
-                          }}>
+                            </Typography>
+                          </Box>
+                          <Typography sx={{ fontSize: "12px", color: "#ffffff", fontWeight: 500 }}>
                             {dreamFlowExpanded ? "▼" : "▶"}
-                          </div>
-                        </div>
-                      </div>
+                          </Typography>
+                        </Box>
+                      </Box>
 
-                      {/* Expanded Content */}
                       {dreamFlowExpanded && (
-                        <div style={{ animation: "slideDown 0.4s ease-out" }}>
-                          {/* Success Message - Inline */}
+                        <Box sx={{ animation: "slideDown 0.4s ease-out" }}>
                           {confirmingInsuranceIdx !== null && (
-                            <div style={{
-                              padding: "8px 10px",
-                              background: "#d4edda",
-                              border: "1px solid #34c759",
-                              borderRadius: "4px",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "6px",
-                              animation: "slideDown 0.3s ease-out"
-                            }}>
-                              <div style={{ fontSize: "14px" }}>✓</div>
-                              <div>
-                                <div style={{ fontSize: "10px", fontWeight: "600", color: "#155724" }}>
+                            <Box
+                              sx={{
+                                p: "8px 10px",
+                                background: "#d4edda",
+                                border: "1px solid #34c759",
+                                borderRadius: 1,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                animation: "slideDown 0.3s ease-out"
+                              }}
+                            >
+                              <Typography sx={{ fontSize: "14px" }}>✓</Typography>
+                              <Box>
+                                <Typography variant="caption" sx={{ fontWeight: 600, color: "#155724" }}>
                                   Insurance Added Successfully
-                                </div>
-                                <div style={{ fontSize: "8px", color: "#155724", marginTop: "2px" }}>
+                                </Typography>
+                                <Typography variant="caption" sx={{ display: "block", color: "#155724", mt: 0.25 }}>
                                   Coverage confirmed · Added to booking
-                                </div>
-                              </div>
-                            </div>
+                                </Typography>
+                              </Box>
+                            </Box>
                           )}
-                          
-                          {confirmingInsuranceIdx === null && (
-                          <>
-                          {/* Medical Alert - Compact */}
-                          <div style={{
-                            padding: "6px 8px",
-                            background: "#ffe3e3",
-                            border: "1px solid #ff3b30",
-                            borderRadius: "4px",
-                            display: "flex",
-                            gap: "6px",
-                            alignItems: "center",
-                            marginBottom: "8px"
-                          }}>
-                            <div style={{ fontSize: "12px" }}>🏥</div>
-                            <div style={{ flex: 1 }}>
-                              <div style={{ fontSize: "9px", fontWeight: "600", color: "#ff3b30" }}>
-                                Medical History Detected
-                              </div>
-                              <div style={{ fontSize: "8px", color: "#c41e3a", marginTop: "1px" }}>
-                                Heart condition (2019) · Enhanced coverage recommended
-                              </div>
-                            </div>
-                          </div>
 
-                          {/* Trust Signals */}
-                          <div style={{ 
-                            display: "flex", 
-                            gap: "6px", 
-                            marginBottom: "6px",
-                            alignItems: "center",
-                            flexWrap: "wrap"
-                          }}>
-                            <div style={{
-                              fontSize: "8px",
-                              padding: "2px 5px",
-                              background: "#34c759",
-                              color: "#ffffff",
-                              borderRadius: "3px",
-                              fontWeight: "600",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "3px"
-                            }}>
-                              <span style={{ fontSize: "10px" }}>●</span> LIVE
-                            </div>
-                            <div style={{ fontSize: "9px", color: "#6e6e73" }}>
-                              Updated 3s ago
-                            </div>
-                            <div style={{ fontSize: "9px", color: "#6e6e73" }}>·</div>
-                            <div style={{ fontSize: "9px", color: "#6e6e73" }}>
-                              Direct from providers
-                            </div>
-                          </div>
-                          
-                          {/* Provider Options - Compact */}
-                          <div style={{
-                            marginBottom: "10px"
-                          }}>
-                            
-                            {[
-                              { provider: "Allianz", plan: "Comprehensive+ (Medical)", price: "$185", score: 9.4, badge: "AI Pick", color: "#34c759", medical: true, commission: "$32", commissionRate: "17%" },
-                              { provider: "Covermore", plan: "Premium", price: "$210", score: 9.1, badge: "High Coverage", color: "#0071e3", medical: false, commission: "$29", commissionRate: "14%" },
-                              { provider: "Travel Guard", plan: "Standard", price: "$145", score: 8.7, badge: "Budget", color: "#ff9500", medical: false, commission: "$18", commissionRate: "12%" }
-                            ].map((opt, idx) => (
-                              <div
-                                key={idx}
-                                style={{
-                                  padding: "4px 5px",
-                                  background: "#fafafa",
-                                  border: "1px solid #e0e0e0",
-                                  borderRadius: "3px",
-                                  marginBottom: "2px",
-                                  transition: "all 0.15s",
-                                  animation: `fadeIn 0.4s ease-out ${idx * 0.1}s both`,
-                                  position: "relative"
-                                }}
-                                onMouseOver={(e) => {
-                                  e.currentTarget.style.borderColor = "#667eea";
-                                }}
-                                onMouseOut={(e) => {
-                                  e.currentTarget.style.borderColor = "#e0e0e0";
+                          {confirmingInsuranceIdx === null && (
+                            <>
+                              <Box
+                                sx={{
+                                  p: "6px 8px",
+                                  background: "#ffe3e3",
+                                  border: "1px solid #ff3b30",
+                                  borderRadius: 1,
+                                  display: "flex",
+                                  gap: 1,
+                                  alignItems: "center",
+                                  mb: 1
                                 }}
                               >
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "6px" }}>
-                                  <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div style={{ display: "flex", alignItems: "center", gap: "4px", marginBottom: "1px" }}>
-                                      <div style={{ fontSize: "9px", fontWeight: "600", color: "#1d1d1f" }}>
-                                        {opt.provider}
-                                      </div>
-                                      {idx === 0 && (
-                                        <span style={{
-                                          fontSize: "6px",
-                                          padding: "1px 3px",
-                                          background: "#34c759",
-                                          color: "#ffffff",
-                                          borderRadius: "2px",
-                                          fontWeight: "600"
-                                        }}>
-                                          AI PICK
-                                        </span>
-                                      )}
-                                    </div>
-                                    <div style={{ fontSize: "7px", color: "#86868b" }}>
-                                      {opt.plan}
-                                      {opt.medical && <span style={{ color: "#ff3b30", fontWeight: "600" }}> · 🏥 Pre-existing</span>}
-                                    </div>
-                                    <div style={{ fontSize: "7px", color: "#86868b", marginTop: "2px" }}>
-                                      Score {opt.score}/10 · Commission {opt.commission} ({opt.commissionRate})
-                                    </div>
-                                  </div>
-                                  <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
-                                    <div style={{ textAlign: "right" }}>
-                                      <div style={{ fontSize: "10px", fontWeight: "600", color: "#1d1d1f" }}>
-                                        {opt.price}
-                                      </div>
-                                    </div>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setConfirmingInsuranceIdx(idx);
-                                        setTimeout(() => {
-                                          setInsuranceAdded(true);
-                                          setConfirmingInsuranceIdx(null);
-                                          setTimeout(() => {
-                                            setShowDreamFlow(false);
-                                          }, 2000);
-                                        }, 2500);
-                                      }}
-                                      disabled={confirmingInsuranceIdx === idx}
-                                      style={{
-                                        fontSize: "8px",
-                                        padding: "2px 6px",
-                                        background: confirmingInsuranceIdx === idx ? "#34c759" : "#667eea",
-                                        color: "#ffffff",
-                                        border: "none",
-                                        borderRadius: "3px",
-                                        cursor: confirmingInsuranceIdx === idx ? "default" : "pointer",
-                                        fontWeight: "600",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "3px",
-                                        transition: "all 0.3s ease"
-                                      }}
-                                      onMouseOver={(e) => confirmingInsuranceIdx !== idx && (e.currentTarget.style.background = "#5566d9")}
-                                      onMouseOut={(e) => confirmingInsuranceIdx !== idx && (e.currentTarget.style.background = "#667eea")}
-                                    >
-                                      {confirmingInsuranceIdx === idx ? (
-                                        <>
-                                          <div style={{
-                                            width: "6px",
-                                            height: "6px",
-                                            border: "1.5px solid #ffffff",
-                                            borderTopColor: "transparent",
-                                            borderRadius: "50%",
-                                            animation: "spin 0.6s linear infinite"
-                                          }} />
-                                          <span>...</span>
-                                        </>
-                                      ) : (
-                                        'Select'
-                                      )}
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                          </>
-                          )}
+                                <Typography sx={{ fontSize: "12px" }}>🏥</Typography>
+                                <Box sx={{ flex: 1 }}>
+                                  <Typography variant="caption" sx={{ fontWeight: 600, color: "#ff3b30" }}>
+                                    Medical History Detected
+                                  </Typography>
+                                  <Typography variant="caption" sx={{ display: "block", color: "#c41e3a", mt: 0.25 }}>
+                                    Heart condition (2019) · Enhanced coverage recommended
+                                  </Typography>
+                                </Box>
+                              </Box>
 
-                          {/* Technical Constraints */}
-                        </div>
+                              <Box sx={{ display: "flex", gap: 0.75, mb: 1, alignItems: "center", flexWrap: "wrap" }}>
+                                <Box
+                                  sx={{
+                                    fontSize: "8px",
+                                    px: 0.5,
+                                    py: "1px",
+                                    background: "#34c759",
+                                    color: "#ffffff",
+                                    borderRadius: "3px",
+                                    fontWeight: 600,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 0.5
+                                  }}
+                                >
+                                  <Box component="span" sx={{ fontSize: "10px" }}>●</Box> LIVE
+                                </Box>
+                                <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                                  Updated 3s ago
+                                </Typography>
+                                <Typography variant="caption" sx={{ color: "text.secondary" }}>·</Typography>
+                                <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                                  Direct from providers
+                                </Typography>
+                              </Box>
+
+                              <Box sx={{ mb: 1 }}>
+                                {[
+                                  { provider: "Allianz", plan: "Comprehensive+ (Medical)", price: "$185", score: 9.4, badge: "AI Pick", color: "#34c759", medical: true, commission: "$32", commissionRate: "17%" },
+                                  { provider: "Covermore", plan: "Premium", price: "$210", score: 9.1, badge: "High Coverage", color: "#0071e3", medical: false, commission: "$29", commissionRate: "14%" },
+                                  { provider: "Travel Guard", plan: "Standard", price: "$145", score: 8.7, badge: "Budget", color: "#ff9500", medical: false, commission: "$18", commissionRate: "12%" }
+                                ].map((opt, idx) => (
+                                  <Box
+                                    key={opt.provider}
+                                    sx={{
+                                      p: "4px 5px",
+                                      background: "#fafafa",
+                                      border: "1px solid #e0e0e0",
+                                      borderRadius: "3px",
+                                      mb: 0.5,
+                                      animation: `fadeIn 0.4s ease-out ${idx * 0.1}s both`,
+                                      position: "relative"
+                                    }}
+                                  >
+                                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 1 }}>
+                                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.25 }}>
+                                          <Typography sx={{ fontSize: "9px", fontWeight: 600, color: "#1d1d1f" }}>
+                                            {opt.provider}
+                                          </Typography>
+                                          {idx === 0 && (
+                                            <Box
+                                              component="span"
+                                              sx={{
+                                                fontSize: "6px",
+                                                px: "3px",
+                                                background: "#34c759",
+                                                color: "#ffffff",
+                                                borderRadius: "2px",
+                                                fontWeight: 600
+                                              }}
+                                            >
+                                              AI PICK
+                                            </Box>
+                                          )}
+                                        </Box>
+                                        <Typography sx={{ fontSize: "7px", color: "#86868b" }}>
+                                          {opt.plan}
+                                          {opt.medical && (
+                                            <Box component="span" sx={{ color: "#ff3b30", fontWeight: 600 }}>
+                                              {" "}· 🏥 Pre-existing
+                                            </Box>
+                                          )}
+                                        </Typography>
+                                        <Typography sx={{ fontSize: "7px", color: "#86868b", mt: 0.25 }}>
+                                          Score {opt.score}/10 · Commission {opt.commission} ({opt.commissionRate})
+                                        </Typography>
+                                      </Box>
+                                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, flexShrink: 0 }}>
+                                        <Typography sx={{ fontSize: "10px", fontWeight: 600, color: "#1d1d1f" }}>
+                                          {opt.price}
+                                        </Typography>
+                                        <Button
+                                          size="small"
+                                          variant="contained"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setConfirmingInsuranceIdx(idx);
+                                            setTimeout(() => {
+                                              setInsuranceAdded(true);
+                                              setConfirmingInsuranceIdx(null);
+                                              setTimeout(() => {
+                                                setShowDreamFlow(false);
+                                              }, 2000);
+                                            }, 2500);
+                                          }}
+                                          disabled={confirmingInsuranceIdx === idx}
+                                          sx={{ minWidth: 0, px: 0.75, fontSize: "8px", lineHeight: 1 }}
+                                        >
+                                          {confirmingInsuranceIdx === idx ? <CircularProgress size={10} sx={{ color: "white" }} /> : "Select"}
+                                        </Button>
+                                      </Box>
+                                    </Box>
+                                  </Box>
+                                ))}
+                              </Box>
+                            </>
+                          )}
+                        </Box>
                       )}
-                    </div>
+                    </Box>
                   )}
-                  
+
                   {!insuranceAdded && !showDreamFlow && (
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "8px", position: "relative" }}>
-                      {/* Onboarding Tooltip */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1, position: "relative" }}>
                       {showOnboarding && (
-                        <div style={{
-                          position: "absolute",
-                          bottom: "calc(100% + 8px)",
-                          left: "0px",
-                          background: "rgba(0, 0, 0, 0.85)",
-                          color: "#ffffff",
-                          padding: "6px 8px",
-                          borderRadius: "6px",
-                          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-                          zIndex: 1000,
-                          fontSize: "11px",
-                          fontWeight: "500",
-                          lineHeight: "1.4",
-                          animation: "pulse 2s infinite",
-                          whiteSpace: "nowrap"
-                        }}>
-                          👋 Click here to try the old or new flow
-                          <div style={{
+                        <Box
+                          sx={{
                             position: "absolute",
-                            bottom: "-4px",
-                            left: "16px",
-                            width: "8px",
-                            height: "8px",
+                            bottom: "calc(100% + 8px)",
+                            left: 0,
                             background: "rgba(0, 0, 0, 0.85)",
-                            transform: "rotate(45deg)"
-                          }}></div>
-                        </div>
+                            color: "#ffffff",
+                            px: 1,
+                            py: 0.75,
+                            borderRadius: 1,
+                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+                            zIndex: 1000,
+                            fontSize: "11px",
+                            fontWeight: 500,
+                            lineHeight: 1.4,
+                            animation: "pulse 2s infinite",
+                            whiteSpace: "nowrap"
+                          }}
+                        >
+                          👋 Click here to try the old or new flow
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              bottom: "-4px",
+                              left: "16px",
+                              width: "8px",
+                              height: "8px",
+                              background: "rgba(0, 0, 0, 0.85)",
+                              transform: "rotate(45deg)"
+                            }}
+                          />
+                        </Box>
                       )}
-                      <button
+                      <Button
+                        size="small"
+                        variant="contained"
                         onClick={() => {
                           setShowFlowMenu(!showFlowMenu);
                           setShowOnboarding(false);
                         }}
-                        style={{
-                          padding: "6px 14px",
-                          fontSize: "13px",
-                          fontWeight: "500",
-                          color: "#ffffff",
-                          background: "#0071e3",
-                          border: "none",
-                          borderRadius: "6px",
-                          cursor: "pointer",
-                          transition: "all 0.15s"
-                        }}
-                        onMouseOver={(e) => {
-                          e.currentTarget.style.background = '#106ebe';
-                        }}
-                        onMouseOut={(e) => {
-                          e.currentTarget.style.background = '#0071e3';
-                        }}
+                        sx={{ fontSize: "0.8rem", textTransform: "none" }}
                       >
                         Add to Trip
-                      </button>
-                      <div style={{ fontSize: "12px", color: "#6e6e73" }}>
-                        from <span style={{ fontWeight: "500", color: "#1d1d1f" }}>$95</span>
-                      </div>
+                      </Button>
+                      <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                        from <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>$95</Box>
+                      </Typography>
 
-                      {/* Flow Selection Menu */}
                       {showFlowMenu && (
-                        <div style={{
-                          position: "absolute",
-                          top: "100%",
-                          left: "0",
-                          marginTop: "8px",
-                          background: "#ffffff",
-                          border: "1px solid #d0d0d0",
-                          borderRadius: "6px",
-                          boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-                          minWidth: "200px",
-                          zIndex: 100
-                        }}>
-                          <button
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "100%",
+                            left: 0,
+                            mt: 1,
+                            background: "#ffffff",
+                            border: "1px solid #d0d0d0",
+                            borderRadius: 1,
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+                            minWidth: 200,
+                            zIndex: 100
+                          }}
+                        >
+                          <Button
+                            fullWidth
                             onClick={() => {
                               setShowOldFlow(true);
                               setOldFlowStep(1);
                               setShowFlowMenu(false);
                             }}
-                            style={{
-                              width: "100%",
-                              padding: "8px 12px",
-                              fontSize: "13px",
-                              fontWeight: "500",
-                              color: "#1d1d1f",
-                              background: "transparent",
-                              border: "none",
-                              textAlign: "left",
-                              cursor: "pointer",
-                              fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                              whiteSpace: "nowrap"
-                            }}
-                            onMouseOver={(e) => e.currentTarget.style.background = "#f8f9fa"}
-                            onMouseOut={(e) => e.currentTarget.style.background = "transparent"}
+                            sx={{ justifyContent: "flex-start", textTransform: "none", fontSize: "0.8rem" }}
                           >
                             🐢 Old Flow (Separate System)
-                          </button>
-                          <button
+                          </Button>
+                          <Button
+                            fullWidth
                             onClick={() => {
                               setShowFlowMenu(false);
                               showLoadingThen('Loading insurance options...', () => {
@@ -570,1032 +555,465 @@ const InsuranceOldFlow = ({ onBackToCaseStudy, onClose }) => {
                                 setNewFlowStep(1);
                               }, 800);
                             }}
-                            style={{
-                              width: "100%",
-                              padding: "8px 12px",
-                              fontSize: "13px",
-                              fontWeight: "500",
-                              color: "#1d1d1f",
-                              background: "transparent",
-                              border: "none",
-                              borderTop: "1px solid #e0e0e0",
-                              textAlign: "left",
-                              cursor: "pointer",
-                              fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                              whiteSpace: "nowrap"
+                            sx={{
+                              justifyContent: "flex-start",
+                              textTransform: "none",
+                              fontSize: "0.8rem",
+                              borderTop: "1px solid #e0e0e0"
                             }}
-                            onMouseOver={(e) => e.currentTarget.style.background = "#f8f9fa"}
-                            onMouseOut={(e) => e.currentTarget.style.background = "transparent"}
                           >
                             ⚡ New Flow (Integrated)
-                          </button>
-                          <button
+                          </Button>
+                          <Button
+                            fullWidth
                             onClick={() => {
                               setShowFlowMenu(false);
                               setShowOnboarding(false);
                               setShowDreamFlow(true);
                               setDreamFlowExpanded(false);
-                              // Auto-expand after a brief moment for effect
                               setTimeout(() => setDreamFlowExpanded(true), 300);
                             }}
-                            style={{
-                              width: "100%",
-                              padding: "8px 12px",
-                              fontSize: "13px",
-                              fontWeight: "500",
-                              color: "#1d1d1f",
-                              background: "transparent",
-                              border: "none",
-                              borderTop: "1px solid #e0e0e0",
-                              textAlign: "left",
-                              cursor: "pointer",
-                              fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                              whiteSpace: "nowrap"
+                            sx={{
+                              justifyContent: "flex-start",
+                              textTransform: "none",
+                              fontSize: "0.8rem",
+                              borderTop: "1px solid #e0e0e0"
                             }}
-                            onMouseOver={(e) => e.currentTarget.style.background = "#f8f9fa"}
-                            onMouseOut={(e) => e.currentTarget.style.background = "transparent"}
                           >
                             🚀 Dream Flow (Future Vision)
-                          </button>
-                        </div>
+                          </Button>
+                        </Box>
                       )}
-                    </div>
+                    </Box>
                   )}
-                </div>
-                <div style={{ textAlign: "right", display: "flex", alignItems: "center", gap: "8px" }}>
+                </Box>
+                <Box sx={{ textAlign: "right", display: "flex", alignItems: "center", gap: 1 }}>
                   {insuranceAdded ? (
-                    <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f" }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                       $185
-                    </div>
+                    </Typography>
                   ) : null}
-                </div>
-              </div>
-            </div>
+                </Box>
+              </Box>
+            </Box>
 
             {/* Flight Component */}
-            <div style={{
-              padding: "12px",
-              background: "#ffffff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "8px"
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ fontSize: "20px" }}>✈️</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "2px" }}>
+            <Box sx={{ p: 1.5, background: "#ffffff", border: "1px solid", borderColor: "divider", borderRadius: 2 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                <Typography sx={{ fontSize: "20px" }}>✈️</Typography>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.25 }}>
                     Round Trip Flights
-                  </div>
-                  <div style={{ fontSize: "12px", color: "#6e6e73" }}>
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
                     SYD → CDG · {bookingData.startDate} - {bookingData.endDate}
-                  </div>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ padding: "2px 8px", background: "#dff6dd", color: "#0b6a0b", borderRadius: "6px", fontSize: "11px", fontWeight: "500", marginBottom: "2px" }}>
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: "right" }}>
+                  <Box sx={{ px: 1, py: "2px", background: "#dff6dd", color: "#0b6a0b", borderRadius: 1, fontSize: "11px", fontWeight: 500, mb: 0.25 }}>
                     Confirmed
-                  </div>
-                  <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f" }}>
+                  </Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                     $2,850
-                  </div>
-                </div>
-              </div>
-            </div>
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
 
             {/* Hotel Component */}
-            <div style={{
-              padding: "12px",
-              background: "#ffffff",
-              border: "1px solid #d0d0d0",
-              borderRadius: "8px"
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ fontSize: "20px" }}>🏨</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "2px" }}>
+            <Box sx={{ p: 1.5, background: "#ffffff", border: "1px solid", borderColor: "divider", borderRadius: 2 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                <Typography sx={{ fontSize: "20px" }}>🏨</Typography>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.25 }}>
                     Le Meurice Paris
-                  </div>
-                  <div style={{ fontSize: "12px", color: "#6e6e73" }}>
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
                     7 nights · Deluxe Room
-                  </div>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ padding: "2px 8px", background: "#dff6dd", color: "#0b6a0b", borderRadius: "6px", fontSize: "11px", fontWeight: "500", marginBottom: "2px" }}>
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: "right" }}>
+                  <Box sx={{ px: 1, py: "2px", background: "#dff6dd", color: "#0b6a0b", borderRadius: 1, fontSize: "11px", fontWeight: 500, mb: 0.25 }}>
                     Confirmed
-                  </div>
-                  <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f" }}>
+                  </Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                     $2,000
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       )}
 
       {/* OLD FLOW - Step 1: Travellers Modal */}
       {showOldFlow && oldFlowStep === 1 && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0,0,0,0.5)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 10000
-        }}>
-          <div style={{
-            background: "#ffffff",
-            borderRadius: "10px",
-            width: "90%",
-            maxWidth: "500px",
-            maxHeight: "80vh",
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-            boxShadow: "0 20px 60px rgba(0,0,0,0.3)"
-          }}>
-            <div style={{
-              padding: "16px",
-              borderBottom: "1px solid #e0e0e0"
-            }}>
-              <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "6px" }}>
-                Select Travellers for Insurance
-              </div>
-              <div style={{ fontSize: "14px", color: "#6e6e73" }}>
-                Choose which travellers to add insurance for
-              </div>
-            </div>
-
-            <div style={{ flex: 1, overflow: "auto", padding: "16px" }}>
+        <Dialog open fullWidth maxWidth="sm" onClose={() => setShowOldFlow(false)}>
+          <DialogTitle>Select Travellers for Insurance</DialogTitle>
+          <DialogContent dividers>
+            <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
+              Choose which travellers to add insurance for
+            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
               {[
                 { name: "Sarah Mitchell", email: "sarah.mitchell@email.com" },
                 { name: "James Mitchell", email: "james.mitchell@email.com" }
-              ].map((traveller, index) => (
-                <div key={index} style={{
-                  padding: "12px",
-                  background: "#f8f9fa",
-                  borderRadius: "10px",
-                  marginBottom: "12px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px"
-                }}>
-                  <input
-                    type="checkbox"
-                    defaultChecked
-                    style={{
-                      width: "18px",
-                      height: "18px",
-                      cursor: "pointer"
-                    }}
+              ].map((traveller) => (
+                <Box
+                  key={traveller.email}
+                  sx={{
+                    p: 1.5,
+                    background: "#f8f9fa",
+                    borderRadius: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1.5
+                  }}
+                >
+                  <FormControlLabel
+                    control={<Checkbox defaultChecked />}
+                    label=""
+                    sx={{ m: 0 }}
                   />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "14px", fontWeight: "500", color: "#1d1d1f" }}>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                       {traveller.name}
-                    </div>
-                    <div style={{ fontSize: "13px", color: "#6e6e73" }}>
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: "text.secondary" }}>
                       {traveller.email}
-                    </div>
-                  </div>
-                </div>
+                    </Typography>
+                  </Box>
+                </Box>
               ))}
-            </div>
-
-            <div style={{
-              padding: "16px 20px",
-              borderTop: "1px solid #e0e0e0",
-              display: "flex",
-              gap: "12px",
-              justifyContent: "flex-end"
-            }}>
-              <button
-                onClick={() => setShowOldFlow(false)}
-                style={{
-                  padding: "7px 16px",
-                  fontSize: "13px",
-                  fontWeight: "500",
-                  color: "#6e6e73",
-                  background: "#f8f9fa",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer"
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  showLoadingThen('Loading insurance form...', () => {
-                    setOldFlowStep(2);
-                  }, 800);
-                }}
-                style={{
-                  padding: "7px 16px",
-                  fontSize: "13px",
-                  fontWeight: "500",
-                  color: "#ffffff",
-                  background: "#0071e3",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer"
-                }}
-              >
-                Continue
-              </button>
-            </div>
-          </div>
-        </div>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowOldFlow(false)} color="inherit">
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                showLoadingThen('Loading insurance form...', () => {
+                  setOldFlowStep(2);
+                }, 800);
+              }}
+            >
+              Continue
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
 
       {/* OLD FLOW - Step 2: Manual Insurance Form Modal */}
       {showOldFlow && oldFlowStep === 2 && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0,0,0,0.5)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 10000
-        }}>
-          <div style={{
-            background: "#ffffff",
-            borderRadius: "10px",
-            width: "90%",
-            maxWidth: "700px",
-            maxHeight: "85vh",
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.15)"
-          }}>
-            <div style={{
-              padding: "16px 20px",
-              borderBottom: "1px solid #d0d0d0"
-            }}>
-              <div style={{ fontSize: "18px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
-                Add Manual Item - Travel Insurance
-              </div>
-              <div style={{ fontSize: "14px", color: "#6e6e73", marginBottom: "12px" }}>
-                Enter insurance details manually
-              </div>
-              
-              {/* Helper Text */}
-              <div style={{
+        <Dialog open fullWidth maxWidth="md" onClose={() => setShowOldFlow(false)}>
+          <DialogTitle>Add Manual Item - Travel Insurance</DialogTitle>
+          <DialogContent dividers>
+            <Typography variant="body2" sx={{ color: "text.secondary", mb: 1.5 }}>
+              Enter insurance details manually
+            </Typography>
+            <Box
+              sx={{
                 background: "#fff3cd",
                 border: "1px solid #ffc107",
-                borderRadius: "8px",
-                padding: "10px 12px",
+                borderRadius: 2,
+                p: 1.5,
                 display: "flex",
-                gap: "10px",
-                alignItems: "flex-start"
-              }}>
-                <div style={{ fontSize: "16px", lineHeight: "1" }}>💡</div>
-                <div style={{ fontSize: "12px", color: "#856404", lineHeight: "1.5" }}>
-                  <strong>Note:</strong> You need to go to the Covermore website to get a quote first, then copy the details across to this form.
-                </div>
-              </div>
-            </div>
+                gap: 1.25,
+                alignItems: "flex-start",
+                mb: 2
+              }}
+            >
+              <Typography sx={{ fontSize: "16px", lineHeight: 1 }}>💡</Typography>
+              <Typography variant="caption" sx={{ color: "#856404", lineHeight: 1.5 }}>
+                <Box component="span" sx={{ fontWeight: 700 }}>Note:</Box> You need to go to the Covermore website to get a quote first, then copy the details across to this form.
+              </Typography>
+            </Box>
 
-            <div style={{ flex: 1, overflow: "auto", padding: "16px" }}>
-              <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                  Item Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g., Travel Insurance - Comprehensive Plan"
-                  style={{
-                    width: "100%",
-                    padding: "8px 10px",
-                    fontSize: "14px",
-                    border: "1px solid #d0d0d0",
-                    borderRadius: "6px",
-                    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                    boxSizing: "border-box"
-                  }}
-                />
-              </div>
+            <Box sx={{ display: "grid", gap: 2 }}>
+              <TextField label="Item Name" placeholder="e.g., Travel Insurance - Comprehensive Plan" fullWidth size="small" />
+              <TextField label="Provider" placeholder="e.g., Covermore, Allianz" fullWidth size="small" />
+              <FormControl size="small" fullWidth>
+                <InputLabel id="coverage-type-label">Coverage Type</InputLabel>
+                <Select labelId="coverage-type-label" label="Coverage Type" defaultValue="">
+                  <MenuItem value="">Select coverage type...</MenuItem>
+                  <MenuItem value="basic">Basic Coverage</MenuItem>
+                  <MenuItem value="comprehensive">Comprehensive Coverage</MenuItem>
+                  <MenuItem value="premium">Premium Coverage</MenuItem>
+                </Select>
+              </FormControl>
+              <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2 }}>
+                <TextField label="Coverage Amount" placeholder="e.g., $500,000" fullWidth size="small" />
+                <TextField label="Price per Person" placeholder="e.g., $185.00" fullWidth size="small" />
+              </Box>
+              <TextField label="Number of Travellers" placeholder="2" type="number" fullWidth size="small" />
+              <TextField
+                label="Coverage Description"
+                placeholder="Enter coverage details (e.g., Medical coverage, Trip cancellation, Baggage protection, etc.)"
+                multiline
+                rows={3}
+                fullWidth
+              />
+            </Box>
 
-              <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                  Provider
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g., Covermore, Allianz"
-                  style={{
-                    width: "100%",
-                    padding: "8px 10px",
-                    fontSize: "14px",
-                    border: "1px solid #d0d0d0",
-                    borderRadius: "6px",
-                    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                    boxSizing: "border-box"
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                  Coverage Type
-                </label>
-                <select
-                  style={{
-                    width: "100%",
-                    padding: "8px 10px",
-                    fontSize: "14px",
-                    border: "1px solid #d0d0d0",
-                    borderRadius: "6px",
-                    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                    boxSizing: "border-box",
-                    color: "#6e6e73"
-                  }}
-                >
-                  <option value="">Select coverage type...</option>
-                  <option value="basic">Basic Coverage</option>
-                  <option value="comprehensive">Comprehensive Coverage</option>
-                  <option value="premium">Premium Coverage</option>
-                </select>
-              </div>
-
-              <div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                    Coverage Amount
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., $500,000"
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      fontSize: "14px",
-                      border: "1px solid #d0d0d0",
-                      borderRadius: "6px",
-                      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                      boxSizing: "border-box"
-                    }}
-                  />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                    Price per Person
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., $185.00"
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      fontSize: "14px",
-                      border: "1px solid #d0d0d0",
-                      borderRadius: "6px",
-                      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                      boxSizing: "border-box"
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                  Number of Travellers
-                </label>
-                <input
-                  type="number"
-                  placeholder="2"
-                  style={{
-                    width: "100%",
-                    padding: "8px 10px",
-                    fontSize: "14px",
-                    border: "1px solid #d0d0d0",
-                    borderRadius: "6px",
-                    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                    boxSizing: "border-box"
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                  Coverage Description
-                </label>
-                <textarea
-                  placeholder="Enter coverage details (e.g., Medical coverage, Trip cancellation, Baggage protection, etc.)"
-                  rows={3}
-                  style={{
-                    width: "100%",
-                    padding: "8px 10px",
-                    fontSize: "14px",
-                    border: "1px solid #d0d0d0",
-                    borderRadius: "6px",
-                    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                    boxSizing: "border-box",
-                    resize: "vertical"
-                  }}
-                />
-              </div>
-
-              <div style={{
-                background: "#f8f9fa",
-                padding: "16px",
-                borderRadius: "10px",
-                marginTop: "20px"
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: "14px", fontWeight: "500", color: "#1d1d1f" }}>
-                    Total Price:
-                  </span>
-                  <span style={{ fontSize: "18px", fontWeight: "600", color: "#0071e3" }}>
-                    $370.00
-                  </span>
-                </div>
-                <div style={{ fontSize: "13px", color: "#6e6e73", marginTop: "4px" }}>
-                  $185.00 × 2 travellers
-                </div>
-              </div>
-            </div>
-
-            <div style={{
-              padding: "16px 20px",
-              borderTop: "1px solid #e0e0e0",
-              display: "flex",
-              gap: "12px",
-              justifyContent: "flex-end"
-            }}>
-              <button
-                onClick={() => setShowOldFlow(false)}
-                style={{
-                  padding: "7px 16px",
-                  fontSize: "13px",
-                  fontWeight: "500",
-                  color: "#6e6e73",
-                  background: "#f8f9fa",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer"
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  showLoadingThen('Adding to cart...', () => {
-                    setOldFlowStep(3);
-                  }, 1000);
-                }}
-                style={{
-                  padding: "7px 16px",
-                  fontSize: "13px",
-                  fontWeight: "500",
-                  color: "#ffffff",
-                  background: "#0071e3",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer"
-                }}
-              >
-                Add to Cart →
-              </button>
-            </div>
-          </div>
-        </div>
+            <Box sx={{ background: "#f8f9fa", p: 2, borderRadius: 2, mt: 2 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  Total Price:
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: "#0071e3" }}>
+                  $370.00
+                </Typography>
+              </Box>
+              <Typography variant="caption" sx={{ color: "text.secondary", mt: 0.5, display: "block" }}>
+                $185.00 × 2 travellers
+              </Typography>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowOldFlow(false)} color="inherit">
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                showLoadingThen('Adding to cart...', () => {
+                  setOldFlowStep(3);
+                }, 1000);
+              }}
+            >
+              Add to Cart →
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
 
       {/* OLD FLOW - Step 3: Cart Page */}
       {showOldFlow && oldFlowStep === 3 && (
-        <div style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          background: "#f8f9fa",
-          overflow: "hidden"
-        }}>
-          <div style={{
-            background: "#ffffff",
-            borderBottom: "1px solid #d0d0d0",
-            padding: "16px 20px",
-            flexShrink: 0
-          }}>
-            <div style={{ fontSize: "18px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
+        <Box sx={{ flex: 1, display: "flex", flexDirection: "column", background: "#f8f9fa", overflow: "hidden" }}>
+          <Box sx={{ background: "#ffffff", borderBottom: "1px solid #d0d0d0", p: 2, flexShrink: 0 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
               Cart
-            </div>
-            <div style={{ fontSize: "14px", color: "#6e6e73" }}>
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               Review your items before checkout
-            </div>
-          </div>
+            </Typography>
+          </Box>
 
-          <div style={{ flex: 1, overflow: "auto", padding: "16px" }}>
-            <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-              
-              {/* Cart Item */}
-              <div style={{
-                background: "#ffffff",
-                borderRadius: "10px",
-                padding: "16px",
-                border: "1px solid #e0e0e0",
-                marginBottom: "16px"
-              }}>
-                <div style={{ display: "flex", gap: "16px" }}>
-                  <div style={{ fontSize: "20px" }}>🛡️</div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "14px", fontWeight: "600", color: "#1d1d1f", marginBottom: "6px" }}>
+          <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
+            <Box sx={{ maxWidth: 800, mx: "auto" }}>
+              <Box sx={{ background: "#ffffff", borderRadius: 2, p: 2, border: "1px solid #e0e0e0", mb: 2 }}>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <Typography sx={{ fontSize: "20px" }}>🛡️</Typography>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
                       Travel Insurance - Comprehensive Plan
-                    </div>
-                    <div style={{ fontSize: "13px", color: "#6e6e73", marginBottom: "8px" }}>
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: "text.secondary", mb: 1 }}>
                       SafeTravel Insurance Co.
-                    </div>
-                    <div style={{ fontSize: "13px", color: "#6e6e73", lineHeight: "1.6" }}>
-                      • Medical coverage up to $500K<br/>
-                      • Trip cancellation protection<br/>
-                      • Baggage protection<br/>
-                      • Emergency evacuation
-                    </div>
-                    <div style={{ fontSize: "13px", color: "#6e6e73", marginTop: "8px" }}>
-                      <strong>Travellers:</strong> Sarah Mitchell, James Mitchell (2 people)
-                    </div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: "18px", fontWeight: "500", color: "#1d1d1f" }}>
+                    </Typography>
+                    <Box sx={{ color: "text.secondary", lineHeight: 1.6 }}>
+                      <Typography variant="body2">• Medical coverage up to $500K</Typography>
+                      <Typography variant="body2">• Trip cancellation protection</Typography>
+                      <Typography variant="body2">• Baggage protection</Typography>
+                      <Typography variant="body2">• Emergency evacuation</Typography>
+                    </Box>
+                    <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
+                      <Box component="span" sx={{ fontWeight: 700 }}>Travellers:</Box> Sarah Mitchell, James Mitchell (2 people)
+                    </Typography>
+                  </Box>
+                  <Box sx={{ textAlign: "right" }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
                       $370.00
-                    </div>
-                    <div style={{ fontSize: "12px", color: "#6e6e73" }}>
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: "text.secondary" }}>
                       $185.00 × 2
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
 
-              {/* Order Summary */}
-              <div style={{
-                background: "#ffffff",
-                borderRadius: "10px",
-                padding: "16px",
-                border: "1px solid #e0e0e0"
-              }}>
-                <h3 style={{ fontSize: "14px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
+              <Box sx={{ background: "#ffffff", borderRadius: 2, p: 2, border: "1px solid #e0e0e0" }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 2 }}>
                   Order Summary
-                </h3>
-                <div style={{ fontSize: "14px", color: "#6e6e73", marginBottom: "12px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                    <span>Subtotal</span>
-                    <span>$370.00</span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                    <span>Tax</span>
-                    <span>$37.00</span>
-                  </div>
-                  <div style={{ borderTop: "1px solid #e0e0e0", paddingTop: "12px", marginTop: "12px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "18px", fontWeight: "500", color: "#1d1d1f" }}>
-                      <span>Total</span>
-                      <span>$407.00</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                </Typography>
+                <Box sx={{ color: "text.secondary" }}>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                    <Typography variant="body2">Subtotal</Typography>
+                    <Typography variant="body2">$370.00</Typography>
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                    <Typography variant="body2">Tax</Typography>
+                    <Typography variant="body2">$37.00</Typography>
+                  </Box>
+                  <Box sx={{ borderTop: "1px solid #e0e0e0", pt: 1.5, mt: 1.5 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Typography variant="h6" sx={{ fontWeight: 600, color: "#1d1d1f" }}>
+                        Total
+                      </Typography>
+                      <Typography variant="h6" sx={{ fontWeight: 600, color: "#1d1d1f" }}>
+                        $407.00
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
 
-          <div style={{
-            background: "#ffffff",
-            borderTop: "2px solid #e0e0e0",
-            padding: "16px 20px",
-            display: "flex",
-            justifyContent: "space-between"
-          }}>
-            <button
-              onClick={() => setOldFlowStep(2)}
-              style={{
-                padding: "12px 24px",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#6e6e73",
-                background: "#f8f9fa",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
-            >
+          <Box sx={{ background: "#ffffff", borderTop: "2px solid #e0e0e0", p: 2, display: "flex", justifyContent: "space-between" }}>
+            <Button onClick={() => setOldFlowStep(2)} color="inherit">
               ← Back
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="contained"
               onClick={() => {
                 showLoadingThen('Loading passenger details...', () => {
                   setOldFlowStep(4);
                 }, 1000);
               }}
-              style={{
-                padding: "12px 32px",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#ffffff",
-                background: "#0071e3",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
             >
               Continue to Checkout →
-            </button>
-          </div>
-        </div>
+            </Button>
+          </Box>
+        </Box>
       )}
 
       {/* OLD FLOW - Step 4: Passenger Details */}
       {showOldFlow && oldFlowStep === 4 && (
-        <div style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          background: "#fafafa",
-          overflow: "hidden"
-        }}>
-          <div style={{
-            background: "#ffffff",
-            borderBottom: "1px solid #e0e0e0",
-            padding: "16px 20px",
-            flexShrink: 0
-          }}>
-            <div style={{ fontSize: "18px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
+        <Box sx={{ flex: 1, display: "flex", flexDirection: "column", background: "#fafafa", overflow: "hidden" }}>
+          <Box sx={{ background: "#ffffff", borderBottom: "1px solid #e0e0e0", p: 2, flexShrink: 0 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
               Passenger Details
-            </div>
-            <div style={{ fontSize: "14px", color: "#6e6e73" }}>
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               Enter details for each traveller
-            </div>
-          </div>
+            </Typography>
+          </Box>
 
-          <div style={{ flex: 1, overflow: "auto", padding: "16px" }}>
-            <div style={{ maxWidth: "700px", margin: "0 auto" }}>
-              
-              {/* Passenger 1 */}
-              <div style={{
-                background: "#ffffff",
-                borderRadius: "10px",
-                padding: "16px",
-                border: "1px solid #e0e0e0",
-                marginBottom: "16px"
-              }}>
-                <h3 style={{ fontSize: "14px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
+          <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
+            <Box sx={{ maxWidth: 700, mx: "auto" }}>
+              <Box sx={{ background: "#ffffff", borderRadius: 2, p: 2, border: "1px solid #e0e0e0", mb: 2 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 2 }}>
                   Passenger 1
-                </h3>
-                <div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      defaultValue="Sarah"
-                      style={{
-                        width: "100%",
-                        padding: "12px",
-                        fontSize: "14px",
-                        border: "1px solid #d0d0d0",
-                        borderRadius: "6px",
-                        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                        boxSizing: "border-box"
-                      }}
-                    />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      defaultValue="Mitchell"
-                      style={{
-                        width: "100%",
-                        padding: "12px",
-                        fontSize: "14px",
-                        border: "1px solid #d0d0d0",
-                        borderRadius: "6px",
-                        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                        boxSizing: "border-box"
-                      }}
-                    />
-                  </div>
-                </div>
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                    Date of Birth
-                  </label>
-                  <input
-                    type="date"
-                    defaultValue="1985-06-15"
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      fontSize: "14px",
-                      border: "1px solid #d0d0d0",
-                      borderRadius: "6px",
-                      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                      boxSizing: "border-box"
-                    }}
-                  />
-                </div>
-              </div>
+                </Typography>
+                <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 2 }}>
+                  <TextField label="First Name" defaultValue="Sarah" size="small" />
+                  <TextField label="Last Name" defaultValue="Mitchell" size="small" />
+                </Box>
+                <TextField label="Date of Birth" defaultValue="1985-06-15" type="date" size="small" InputLabelProps={{ shrink: true }} fullWidth />
+              </Box>
 
-              {/* Passenger 2 */}
-              <div style={{
-                background: "#ffffff",
-                borderRadius: "10px",
-                padding: "16px",
-                border: "1px solid #e0e0e0"
-              }}>
-                <h3 style={{ fontSize: "14px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
+              <Box sx={{ background: "#ffffff", borderRadius: 2, p: 2, border: "1px solid #e0e0e0" }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 2 }}>
                   Passenger 2
-                </h3>
-                <div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      defaultValue="James"
-                      style={{
-                        width: "100%",
-                        padding: "12px",
-                        fontSize: "14px",
-                        border: "1px solid #d0d0d0",
-                        borderRadius: "6px",
-                        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                        boxSizing: "border-box"
-                      }}
-                    />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      defaultValue="Mitchell"
-                      style={{
-                        width: "100%",
-                        padding: "12px",
-                        fontSize: "14px",
-                        border: "1px solid #d0d0d0",
-                        borderRadius: "6px",
-                        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                        boxSizing: "border-box"
-                      }}
-                    />
-                  </div>
-                </div>
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                    Date of Birth
-                  </label>
-                  <input
-                    type="date"
-                    defaultValue="1983-03-22"
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      fontSize: "14px",
-                      border: "1px solid #d0d0d0",
-                      borderRadius: "6px",
-                      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                      boxSizing: "border-box"
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+                </Typography>
+                <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 2 }}>
+                  <TextField label="First Name" defaultValue="James" size="small" />
+                  <TextField label="Last Name" defaultValue="Mitchell" size="small" />
+                </Box>
+                <TextField label="Date of Birth" defaultValue="1983-03-22" type="date" size="small" InputLabelProps={{ shrink: true }} fullWidth />
+              </Box>
+            </Box>
+          </Box>
 
-          <div style={{
-            background: "#ffffff",
-            borderTop: "2px solid #e0e0e0",
-            padding: "16px 20px",
-            display: "flex",
-            justifyContent: "space-between"
-          }}>
-            <button
-              onClick={() => setOldFlowStep(3)}
-              style={{
-                padding: "12px 24px",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#6e6e73",
-                background: "#f8f9fa",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
-            >
+          <Box sx={{ background: "#ffffff", borderTop: "2px solid #e0e0e0", p: 2, display: "flex", justifyContent: "space-between" }}>
+            <Button onClick={() => setOldFlowStep(3)} color="inherit">
               ← Back
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="contained"
               onClick={() => {
                 showLoadingThen('Loading payment...', () => {
                   setOldFlowStep(5);
                 }, 1000);
               }}
-              style={{
-                padding: "12px 32px",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#ffffff",
-                background: "#0071e3",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
             >
               Continue to Payment →
-            </button>
-          </div>
-        </div>
+            </Button>
+          </Box>
+        </Box>
       )}
 
       {/* OLD FLOW - Step 5: Payment Page */}
       {showOldFlow && oldFlowStep === 5 && (
-        <div style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          background: "#f8f9fa",
-          overflow: "hidden"
-        }}>
-          <div style={{
-            background: "#ffffff",
-            borderBottom: "1px solid #e0e0e0",
-            padding: "16px 20px",
-            flexShrink: 0
-          }}>
-            <div style={{ fontSize: "18px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
+        <Box sx={{ flex: 1, display: "flex", flexDirection: "column", background: "#f8f9fa", overflow: "hidden" }}>
+          <Box sx={{ background: "#ffffff", borderBottom: "1px solid #e0e0e0", p: 2, flexShrink: 0 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
               Payment
-            </div>
-            <div style={{ fontSize: "14px", color: "#6e6e73" }}>
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               Complete your purchase
-            </div>
-          </div>
+            </Typography>
+          </Box>
 
-          <div style={{ flex: 1, overflow: "auto", padding: "16px" }}>
-            <div style={{ maxWidth: "700px", margin: "0 auto" }}>
-              
-              {/* Payment Method */}
-              <div style={{
-                background: "#ffffff",
-                borderRadius: "10px",
-                padding: "16px",
-                border: "1px solid #e0e0e0",
-                marginBottom: "16px"
-              }}>
-                <h3 style={{ fontSize: "14px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
+          <Box sx={{ flex: 1, overflow: "auto", p: 2 }}>
+            <Box sx={{ maxWidth: 700, mx: "auto" }}>
+              <Box sx={{ background: "#ffffff", borderRadius: 2, p: 2, border: "1px solid #e0e0e0", mb: 2 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 2 }}>
                   Payment Method
-                </h3>
-                
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                    Card Number
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="1234 5678 9012 3456"
-                    defaultValue="4532 1234 5678 9010"
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      fontSize: "14px",
-                      border: "1px solid #d0d0d0",
-                      borderRadius: "6px",
-                      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                      boxSizing: "border-box"
-                    }}
-                  />
-                </div>
+                </Typography>
+                <TextField
+                  label="Card Number"
+                  placeholder="1234 5678 9012 3456"
+                  defaultValue="4532 1234 5678 9010"
+                  fullWidth
+                  size="small"
+                  sx={{ mb: 2 }}
+                />
+                <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 2, mb: 2 }}>
+                  <TextField label="Expiry Date" placeholder="MM/YY" defaultValue="12/25" size="small" />
+                  <TextField label="CVV" placeholder="123" defaultValue="***" size="small" />
+                </Box>
+                <TextField label="Cardholder Name" placeholder="Name on card" defaultValue="Sarah Mitchell" fullWidth size="small" />
+              </Box>
 
-                <div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                      Expiry Date
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="MM/YY"
-                      defaultValue="12/25"
-                      style={{
-                        width: "100%",
-                        padding: "12px",
-                        fontSize: "14px",
-                        border: "1px solid #d0d0d0",
-                        borderRadius: "6px",
-                        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                        boxSizing: "border-box"
-                      }}
-                    />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                      CVV
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="123"
-                      defaultValue="***"
-                      style={{
-                        width: "100%",
-                        padding: "12px",
-                        fontSize: "14px",
-                        border: "1px solid #d0d0d0",
-                        borderRadius: "6px",
-                        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                        boxSizing: "border-box"
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                    Cardholder Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Name on card"
-                    defaultValue="Sarah Mitchell"
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      fontSize: "14px",
-                      border: "1px solid #d0d0d0",
-                      borderRadius: "6px",
-                      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                      boxSizing: "border-box"
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Order Summary */}
-              <div style={{
-                background: "#ffffff",
-                borderRadius: "10px",
-                padding: "16px",
-                border: "1px solid #e0e0e0"
-              }}>
-                <h3 style={{ fontSize: "14px", fontWeight: "600", margin: "0 0 16px 0", color: "#1d1d1f" }}>
+              <Box sx={{ background: "#ffffff", borderRadius: 2, p: 2, border: "1px solid #e0e0e0" }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 2 }}>
                   Order Summary
-                </h3>
-                <div style={{ fontSize: "14px", color: "#6e6e73", marginBottom: "12px" }}>
-                  <div style={{ marginBottom: "8px" }}>
-                    <strong>Travel Insurance - Comprehensive Plan</strong><br/>
-                    2 travellers × $185.00
-                  </div>
-                  <div style={{ borderTop: "1px solid #e0e0e0", paddingTop: "12px", marginTop: "12px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                      <span>Subtotal</span>
-                      <span>$370.00</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                      <span>Tax</span>
-                      <span>$37.00</span>
-                    </div>
-                    <div style={{ borderTop: "1px solid #e0e0e0", paddingTop: "12px", marginTop: "12px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "18px", fontWeight: "600", color: "#1d1d1f" }}>
-                        <span>Total</span>
-                        <span>$407.00</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                </Typography>
+                <Box sx={{ color: "text.secondary" }}>
+                  <Typography variant="body2" sx={{ mb: 1 }}>
+                    <Box component="span" sx={{ fontWeight: 700, color: "#1d1d1f" }}>
+                      Travel Insurance - Comprehensive Plan
+                    </Box>
+                    <Box component="span" sx={{ display: "block" }}>
+                      2 travellers × $185.00
+                    </Box>
+                  </Typography>
+                  <Box sx={{ borderTop: "1px solid #e0e0e0", pt: 1.5, mt: 1.5 }}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                      <Typography variant="body2">Subtotal</Typography>
+                      <Typography variant="body2">$370.00</Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                      <Typography variant="body2">Tax</Typography>
+                      <Typography variant="body2">$37.00</Typography>
+                    </Box>
+                    <Box sx={{ borderTop: "1px solid #e0e0e0", pt: 1.5, mt: 1.5 }}>
+                      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600, color: "#1d1d1f" }}>
+                          Total
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 600, color: "#1d1d1f" }}>
+                          $407.00
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
 
-          <div style={{
-            background: "#ffffff",
-            borderTop: "2px solid #e0e0e0",
-            padding: "16px 20px",
-            display: "flex",
-            justifyContent: "space-between"
-          }}>
-            <button
-              onClick={() => setOldFlowStep(4)}
-              style={{
-                padding: "12px 24px",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#6e6e73",
-                background: "#f8f9fa",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
-            >
+          <Box sx={{ background: "#ffffff", borderTop: "2px solid #e0e0e0", p: 2, display: "flex", justifyContent: "space-between" }}>
+            <Button onClick={() => setOldFlowStep(4)} color="inherit">
               ← Back
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="contained"
+              color="success"
               onClick={() => {
                 showLoadingThen('Processing payment...', () => {
                   setInsuranceAdded(true);
@@ -1605,142 +1023,42 @@ const InsuranceOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   setTimeout(() => setShowSuccessToast(false), 3000);
                 }, 2000);
               }}
-              style={{
-                padding: "12px 32px",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#ffffff",
-                background: "#34c759",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
             >
               Pay $407.00 →
-            </button>
-          </div>
-        </div>
+            </Button>
+          </Box>
+        </Box>
       )}
 
       {/* OLD FLOW - Step 6: Add to Booking (Back in Main System) */}
       {showOldFlow && oldFlowStep === 6 && (
-        <div style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          background: "#f8f9fa",
-          overflow: "hidden"
-        }}>
-          <div style={{
-            background: "#ffffff",
-            borderBottom: "1px solid #e0e0e0",
-            padding: "16px 24px",
-            flexShrink: 0
-          }}>
-            <div style={{ fontSize: "18px", fontWeight: "500", color: "#1d1d1f" }}>
+        <Box sx={{ flex: 1, display: "flex", flexDirection: "column", background: "#f8f9fa", overflow: "hidden" }}>
+          <Box sx={{ background: "#ffffff", borderBottom: "1px solid #e0e0e0", p: 2, flexShrink: 0 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
               Add Insurance to Booking
-            </div>
-            <div style={{ fontSize: "13px", color: "#6e6e73", marginTop: "4px" }}>
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary", mt: 0.5 }}>
               Manually enter insurance details
-            </div>
-          </div>
+            </Typography>
+          </Box>
 
-          <div style={{ flex: 1, overflow: "auto" }}>
-            <div style={{ maxWidth: "700px", margin: "0 auto", padding: "16px" }}>
-              <div style={{
-                background: "#ffffff",
-                borderRadius: "10px",
-                padding: "16px",
-                border: "1px solid #e0e0e0"
-              }}>
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                    Insurance Provider
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="EA Travel Insurance"
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      fontSize: "14px",
-                      border: "1px solid #d0d0d0",
-                      borderRadius: "6px",
-                      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                      boxSizing: "border-box"
-                    }}
-                  />
-                </div>
+          <Box sx={{ flex: 1, overflow: "auto" }}>
+            <Box sx={{ maxWidth: 700, mx: "auto", p: 2 }}>
+              <Box sx={{ background: "#ffffff", borderRadius: 2, p: 2, border: "1px solid #e0e0e0" }}>
+                <Box sx={{ display: "grid", gap: 2 }}>
+                  <TextField label="Insurance Provider" placeholder="EA Travel Insurance" fullWidth size="small" />
+                  <TextField label="Plan Name" defaultValue={selectedCoverage?.name} fullWidth size="small" />
+                  <TextField label="Premium Amount" defaultValue={selectedCoverage?.price} fullWidth size="small" />
+                  <TextField label="Policy Number" placeholder="Enter from insurance system" fullWidth size="small" />
+                </Box>
+              </Box>
+            </Box>
+          </Box>
 
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                    Plan Name
-                  </label>
-                  <input
-                    type="text"
-                    defaultValue={selectedCoverage?.name}
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      fontSize: "14px",
-                      border: "1px solid #d0d0d0",
-                      borderRadius: "6px",
-                      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                      boxSizing: "border-box"
-                    }}
-                  />
-                </div>
-
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                    Premium Amount
-                  </label>
-                  <input
-                    type="text"
-                    defaultValue={selectedCoverage?.price}
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      fontSize: "14px",
-                      border: "1px solid #d0d0d0",
-                      borderRadius: "6px",
-                      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                      boxSizing: "border-box"
-                    }}
-                  />
-                </div>
-
-                <div style={{ marginBottom: "16px" }}>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "600", marginBottom: "4px", color: "#1d1d1f" }}>
-                    Policy Number
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter from insurance system"
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      fontSize: "14px",
-                      border: "1px solid #d0d0d0",
-                      borderRadius: "6px",
-                      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-                      boxSizing: "border-box"
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div style={{
-            background: "#ffffff",
-            borderTop: "2px solid #e0e0e0",
-            padding: "16px 20px",
-            display: "flex",
-            justifyContent: "flex-end",
-            boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
-          }}>
-            <button
+          <Box sx={{ background: "#ffffff", borderTop: "2px solid #e0e0e0", p: 2, display: "flex", justifyContent: "flex-end", boxShadow: "0 -4px 12px rgba(0,0,0,0.1)" }}>
+            <Button
+              variant="contained"
+              color="success"
               onClick={() => {
                 showLoadingThen('Adding insurance to booking...', () => {
                   setShowOldFlow(false);
@@ -1751,104 +1069,80 @@ const InsuranceOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   setTimeout(() => setShowSuccessToast(false), 4000);
                 }, 4000);
               }}
-              style={{
-                padding: "8px 20px",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#ffffff",
-                background: "#34c759",
-                border: "none",
-                borderRadius: "10px",
-                cursor: "pointer",
-                boxShadow: "0 4px 12px rgba(52, 199, 89, 0.3)"
-              }}
             >
               Add to Booking ✓
-            </button>
-          </div>
-        </div>
+            </Button>
+          </Box>
+        </Box>
       )}
 
       {/* NEW FLOW - Step 1: Integrated Insurance Panel */}
       {showNewFlow && newFlowStep === 1 && (
-        <div style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          background: "#f8f9fa",
-          overflow: "hidden"
-        }}>
-          <div style={{
-            background: "#ffffff",
-            borderBottom: "1px solid #e0e0e0",
-            padding: "16px 24px",
-            flexShrink: 0
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <Box sx={{ flex: 1, display: "flex", flexDirection: "column", background: "#f8f9fa", overflow: "hidden" }}>
+          <Box sx={{ background: "#ffffff", borderBottom: "1px solid #e0e0e0", p: 2, flexShrink: 0 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               {[
                 { label: "Select Coverage", active: true },
                 { label: "Confirm & Add", active: false }
               ].map((step, index, array) => (
-                <React.Fragment key={index}>
-                  <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    padding: "6px 12px",
-                    borderRadius: "6px",
-                    background: step.active ? "#e3f2fd" : "transparent",
-                    color: step.active ? "#0071e3" : "#6e6e73",
-                    fontSize: "13px",
-                    fontWeight: step.active ? "600" : "400"
-                  }}>
-                    <span style={{
-                      width: "20px",
-                      height: "20px",
-                      borderRadius: "50%",
-                      background: step.active ? "#0071e3" : "#d0d0d0",
-                      color: "#ffffff",
+                <React.Fragment key={step.label}>
+                  <Box
+                    sx={{
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "11px",
-                      fontWeight: "500"
-                    }}>
+                      gap: 0.75,
+                      px: 1.5,
+                      py: 0.75,
+                      borderRadius: 1.5,
+                      background: step.active ? "#e3f2fd" : "transparent",
+                      color: step.active ? "#0071e3" : "#6e6e73",
+                      fontSize: "13px",
+                      fontWeight: step.active ? 600 : 400
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: "50%",
+                        background: step.active ? "#0071e3" : "#d0d0d0",
+                        color: "#ffffff",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "11px",
+                        fontWeight: 500
+                      }}
+                    >
                       {index + 1}
-                    </span>
+                    </Box>
                     {step.label}
-                  </div>
+                  </Box>
                   {index < array.length - 1 && (
-                    <div style={{ color: "#d0d0d0", fontSize: "12px" }}>→</div>
+                    <Typography variant="caption" sx={{ color: "#d0d0d0" }}>
+                      →
+                    </Typography>
                   )}
                 </React.Fragment>
               ))}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          <div style={{ flex: 1, overflow: "auto" }}>
-            <div style={{ maxWidth: "900px", margin: "0 auto", padding: "16px" }}>
-              
-              {/* Auto-filled Customer Info Banner */}
-              <div style={{
-                background: "#e8f5e9",
-                border: "1px solid #4caf50",
-                borderRadius: "10px",
-                padding: "16px",
-                marginBottom: "24px"
-              }}>
-                <div style={{ fontSize: "14px", color: "#2e7d32", marginBottom: "4px" }}>
-                  ✓ <strong>Customer information auto-filled from booking</strong>
-                </div>
-                <div style={{ fontSize: "13px", color: "#2e7d32" }}>
+          <Box sx={{ flex: 1, overflow: "auto" }}>
+            <Box sx={{ maxWidth: 900, mx: "auto", p: 2 }}>
+              <Box sx={{ background: "#e8f5e9", border: "1px solid #4caf50", borderRadius: 2, p: 2, mb: 3 }}>
+                <Typography variant="body2" sx={{ color: "#2e7d32", mb: 0.5 }}>
+                  ✓ <Box component="span" sx={{ fontWeight: 700 }}>Customer information auto-filled from booking</Box>
+                </Typography>
+                <Typography variant="caption" sx={{ color: "#2e7d32" }}>
                   {bookingData.customer} · {bookingData.destination} · {bookingData.startDate} - {bookingData.endDate}
-                </div>
-              </div>
+                </Typography>
+              </Box>
 
-              <h3 style={{ fontSize: "18px", fontWeight: "500", margin: "0 0 16px 0", color: "#1d1d1f" }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
                 Select Coverage Level
-              </h3>
+              </Typography>
 
-              {/* Pre-selected Coverage */}
               {(() => {
                 const preSelected = { name: "Comprehensive Plan", price: "$185", coverage: "$500K medical, Trip cancellation, Baggage protection" };
                 if (!selectedCoverage) {
@@ -1857,103 +1151,45 @@ const InsuranceOldFlow = ({ onBackToCaseStudy, onClose }) => {
                 const current = selectedCoverage || preSelected;
 
                 return (
-                  <div style={{
-                    background: "#e3f2fd",
-                    borderRadius: "10px",
-                    padding: "16px",
-                    marginBottom: "16px",
-                    border: "2px solid #0071e3"
-                  }}>
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      marginBottom: "12px"
-                    }}>
-                      <div style={{
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        background: "#0071e3",
-                        color: "#ffffff",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "12px",
-                        fontWeight: "bold"
-                      }}>
+                  <Box sx={{ background: "#e3f2fd", borderRadius: 2, p: 2, mb: 2, border: "2px solid #0071e3" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
+                      <Box sx={{ width: 20, height: 20, borderRadius: "50%", background: "#0071e3", color: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "bold" }}>
                         ✓
-                      </div>
-                      <span style={{ fontSize: "13px", fontWeight: "500", color: "#0071e3" }}>
+                      </Box>
+                      <Typography variant="caption" sx={{ fontWeight: 600, color: "#0071e3" }}>
                         Recommended
-                      </span>
-                    </div>
-                    
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div>
-                        <h4 style={{ fontSize: "14px", fontWeight: "500", margin: "0 0 8px 0", color: "#1d1d1f" }}>
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
                           {current.name}
-                        </h4>
-                        <p style={{ fontSize: "14px", color: "#6e6e73", margin: 0 }}>
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "text.secondary" }}>
                           {current.coverage}
-                        </p>
-                      </div>
-                      <div style={{ fontSize: "20px", fontWeight: "500", color: "#1d1d1f" }}>
+                        </Typography>
+                      </Box>
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
                         {current.price}
-                      </div>
-                    </div>
-                  </div>
+                      </Typography>
+                    </Box>
+                  </Box>
                 );
               })()}
 
-              {/* Other Options Collapsed */}
-              <button
-                style={{
-                  width: "100%",
-                  padding: "14px 20px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  color: "#0071e3",
-                  background: "#ffffff",
-                  border: "1px solid #e0e0e0",
-                  borderRadius: "10px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px"
-                }}
-              >
-                Show Other Plans
-                <span style={{ fontSize: "12px" }}>▼</span>
-              </button>
-            </div>
-          </div>
+              <Button variant="outlined" fullWidth sx={{ py: 1.5, textTransform: "none", fontWeight: 600 }}>
+                Show Other Plans <Box component="span" sx={{ fontSize: "12px", ml: 1 }}>▼</Box>
+              </Button>
+            </Box>
+          </Box>
 
-          <div style={{
-            background: "#ffffff",
-            borderTop: "2px solid #e0e0e0",
-            padding: "16px 20px",
-            display: "flex",
-            justifyContent: "space-between",
-            boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
-          }}>
-            <button
-              onClick={() => setShowNewFlow(false)}
-              style={{
-                padding: "12px 24px",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#6e6e73",
-                background: "#f8f9fa",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
-            >
+          <Box sx={{ background: "#ffffff", borderTop: "2px solid #e0e0e0", p: 2, display: "flex", justifyContent: "space-between", boxShadow: "0 -4px 12px rgba(0,0,0,0.1)" }}>
+            <Button onClick={() => setShowNewFlow(false)} color="inherit">
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="contained"
+              color="success"
               onClick={() => {
                 showLoadingThen('Adding insurance to booking...', () => {
                   setShowNewFlow(false);
@@ -1964,178 +1200,101 @@ const InsuranceOldFlow = ({ onBackToCaseStudy, onClose }) => {
                   setTimeout(() => setShowSuccessToast(false), 4000);
                 }, 1500);
               }}
-              style={{
-                padding: "8px 20px",
-                fontSize: "14px",
-                fontWeight: "500",
-                color: "#ffffff",
-                background: "#34c759",
-                border: "none",
-                borderRadius: "10px",
-                cursor: "pointer",
-                boxShadow: "0 4px 12px rgba(52, 199, 89, 0.3)"
-              }}
             >
               Add to Booking ✓
-            </button>
-          </div>
-        </div>
+            </Button>
+          </Box>
+        </Box>
       )}
 
       {/* Other Tabs */}
       {activeTab === 'payments' && (
-        <div style={{ flex: 1, overflow: "auto", padding: "16px", background: "#fafafa" }}>
-          <div style={{
-            padding: "40px 24px",
-            textAlign: "center",
-            background: "#ffffff",
-            border: "1px solid #d0d0d0",
-            borderRadius: "10px"
-          }}>
-            <div style={{ fontSize: "36px", marginBottom: "16px" }}>💳</div>
-            <h3 style={{ fontSize: "18px", fontWeight: "500", marginBottom: "12px", color: "#1d1d1f" }}>
+        <Box sx={{ flex: 1, overflow: "auto", p: 2, background: "#fafafa" }}>
+          <Box sx={{ p: 5, textAlign: "center", background: "#ffffff", border: "1px solid #d0d0d0", borderRadius: 2 }}>
+            <Typography sx={{ fontSize: "36px", mb: 2 }}>💳</Typography>
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
               Payments
-            </h3>
-          </div>
-        </div>
+            </Typography>
+          </Box>
+        </Box>
       )}
 
       {activeTab === 'documents' && (
-        <div style={{ flex: 1, overflow: "auto", padding: "16px", background: "#fafafa" }}>
-          <div style={{
-            padding: "40px 24px",
-            textAlign: "center",
-            background: "#ffffff",
-            border: "1px solid #d0d0d0",
-            borderRadius: "10px"
-          }}>
-            <div style={{ fontSize: "36px", marginBottom: "16px" }}>📄</div>
-            <h3 style={{ fontSize: "18px", fontWeight: "500", marginBottom: "12px", color: "#1d1d1f" }}>
+        <Box sx={{ flex: 1, overflow: "auto", p: 2, background: "#fafafa" }}>
+          <Box sx={{ p: 5, textAlign: "center", background: "#ffffff", border: "1px solid #d0d0d0", borderRadius: 2 }}>
+            <Typography sx={{ fontSize: "36px", mb: 2 }}>📄</Typography>
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
               Documents
-            </h3>
-          </div>
-        </div>
+            </Typography>
+          </Box>
+        </Box>
       )}
 
-      {/* DREAM FLOW - Will render inline in the insurance card below */}
-
       {/* Loading Modal */}
-      {showLoadingModal && (
-        <div style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: "rgba(0, 0, 0, 0.4)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 20000,
-          backdropFilter: "blur(4px)"
-        }}>
-          <div style={{
+      <Backdrop open={showLoadingModal} sx={{ zIndex: 20000, color: "#ffffff", backdropFilter: "blur(4px)" }}>
+        <Box
+          sx={{
             background: "#ffffff",
-            borderRadius: "10px",
-            padding: "20px 24px",
+            borderRadius: 2,
+            p: 3,
             boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: "16px",
-            minWidth: "280px"
-          }}>
-            <div style={{
-              width: "40px",
-              height: "40px",
-              border: "3px solid #f0f0f0",
-              borderTop: "3px solid #0071e3",
-              borderRadius: "50%",
-              animation: "spin 1s linear infinite"
-            }}></div>
-            
-            <div style={{
-              fontSize: "14px",
-              fontWeight: "500",
-              color: "#1d1d1f",
-              textAlign: "center"
-            }}>
-              {loadingMessage}
-            </div>
-          </div>
-        </div>
-      )}
+            gap: 2,
+            minWidth: 280,
+            color: "#1d1d1f"
+          }}
+        >
+          <CircularProgress size={40} />
+          <Typography variant="body2" sx={{ fontWeight: 600, textAlign: "center" }}>
+            {loadingMessage}
+          </Typography>
+        </Box>
+      </Backdrop>
 
       {/* Success Toast */}
-      {showSuccessToast && (
-        <div style={{
-          position: "fixed",
-          top: "20px",
-          right: "20px",
-          background: "#34c759",
-          color: "#ffffff",
-          padding: "12px 16px",
-          borderRadius: "8px",
-          boxShadow: "0 4px 12px rgba(52, 199, 89, 0.25)",
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          zIndex: 400,
-          animation: "slideInRight 0.3s ease-out"
-        }}>
-          <div style={{
-            width: "20px",
-            height: "20px",
-            borderRadius: "50%",
-            background: "#ffffff",
-            color: "#34c759",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "14px",
-            fontWeight: "bold"
-          }}>
-            ✓
-          </div>
-          <div>
-            <div style={{ fontSize: "14px", fontWeight: "600", marginBottom: "2px" }}>
-              Insurance Added
-            </div>
-            <div style={{ fontSize: "12px", opacity: 0.9 }}>
-              Travel insurance successfully added to booking
-            </div>
-          </div>
-        </div>
-      )}
+      <Snackbar
+        open={showSuccessToast}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        onClose={() => setShowSuccessToast(false)}
+        autoHideDuration={3000}
+      >
+        <Alert severity="success" variant="filled" sx={{ alignItems: "center" }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+            Insurance Added
+          </Typography>
+          <Typography variant="caption">
+            Travel insurance successfully added to booking
+          </Typography>
+        </Alert>
+      </Snackbar>
 
-      {/* Animations */}
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        @keyframes slideInRight {
-          0% { transform: translateX(400px); opacity: 0; }
-          100% { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.05); opacity: 0.9; }
-        }
-        @keyframes shimmer {
-          0% { left: -100%; }
-          100% { left: 100%; }
-        }
-        @keyframes slideDown {
-          0% { opacity: 0; transform: translateY(-10px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-          0% { opacity: 0; }
-          100% { opacity: 1; }
-        }
-      `}</style>
-    </div>
+      <GlobalStyles
+        styles={{
+          "@keyframes spin": {
+            "0%": { transform: "rotate(0deg)" },
+            "100%": { transform: "rotate(360deg)" }
+          },
+          "@keyframes pulse": {
+            "0%, 100%": { transform: "scale(1)", opacity: 1 },
+            "50%": { transform: "scale(1.05)", opacity: 0.9 }
+          },
+          "@keyframes shimmer": {
+            "0%": { left: "-100%" },
+            "100%": { left: "100%" }
+          },
+          "@keyframes slideDown": {
+            "0%": { opacity: 0, transform: "translateY(-10px)" },
+            "100%": { opacity: 1, transform: "translateY(0)" }
+          },
+          "@keyframes fadeIn": {
+            "0%": { opacity: 0 },
+            "100%": { opacity: 1 }
+          }
+        }}
+      />
+    </Box>
   );
 };
 

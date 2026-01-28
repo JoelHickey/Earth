@@ -1,45 +1,111 @@
 import React, { useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Box, Dialog, DialogContent, FormControlLabel, IconButton, Switch, Typography } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import GroupsIcon from '@mui/icons-material/Groups';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import PivotTableChartIcon from '@mui/icons-material/PivotTableChart';
+import RuleIcon from '@mui/icons-material/Rule';
+import InsightsIcon from '@mui/icons-material/Insights';
+import TouchAppIcon from '@mui/icons-material/TouchApp';
+import HubIcon from '@mui/icons-material/Hub';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import LayersIcon from '@mui/icons-material/Layers';
+import ShieldIcon from '@mui/icons-material/Shield';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import BuildIcon from '@mui/icons-material/Build';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
 
-const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
+const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose, position, onDragStart, zIndex = 120 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [lightbox, setLightbox] = useState({ isOpen: false, gallery: null, currentIndex: 0 });
+  const [isDemoEnabled, setIsDemoEnabled] = useState(false);
   
   const handleScroll = (e) => {
     setIsScrolled(e.target.scrollTop > 200);
+  };
+
+  const handleDemoToggle = (event) => {
+    const checked = event.target.checked;
+    setIsDemoEnabled(checked);
+    if (checked) {
+      onViewOldFlow?.();
+    }
   };
 
   // Discovery artifacts mapped to their bullet points
   const discoveryActivities = [
     {
       title: "Global workshops",
-      description: "60+ consultants, support staff, and key stakeholders across multiple brands to uncover insights",
+      description: "Co-led interactive workshops with 60+ consultants and stakeholders across all brands globally to ensure complete coverage.",
+      icon: GroupsIcon,
       artifact: { src: "/images/amendments/image1.png", alt: "Global workshops artifact" }
     },
     {
-      title: "Consultant shadowing",
-      description: "Real-time observation during amendment calls to understand and validate friction and pain points",
-      artifact: { src: "/images/amendments/image2.png", alt: "Consultant shadowing artifact" }
+      title: "Problem discovery workshop",
+      description: "Captured pain points and context during the problem discovery session.",
+      icon: GroupsIcon,
+      artifact: { src: "/images/amendments/Problem discovery.png", alt: "Problem discovery workshop artifact" }
     },
     {
-      title: "Workflow mapping",
-      description: "Extensive and detailed documentation of the manual process across product verticals",
+      title: "Voting on pain points",
+      description: "Mapped manual amendment steps across product verticals.",
+      icon: AccountTreeIcon,
       artifact: { src: "/images/amendments/image3.png", alt: "Workflow mapping artifact" }
     },
     {
       title: "Matrix analysis",
-      description: "Mapped amendment types by frequency vs. friction to prioritize highest-impact improvements",
-      artifact: { src: "/images/amendments/image4.png", alt: "Matrix analysis artifact" }
-    },
-    {
-      title: "System audit",
-      description: "Analyzed technical constraints and integration points across multiple systems (Codegen, GDS, etc.)",
-      artifact: { src: "/images/473090009_1018467526977191_2576338417500917263_n.png", alt: "System audit artifact" }
+      description: "Prioritized amendment types by frequency versus friction, with stakeholder voting to align on the biggest productivity wins.",
+      icon: PivotTableChartIcon,
+      artifact: { src: "/images/amendments/matrix.png", alt: "Matrix analysis artifact" }
     },
     {
       title: "Competitive analysis",
-      description: "How other travel platforms and enterprise systems handled amendments",
+      description: "Benchmarked amendment flows across key competitors.",
+      icon: InsightsIcon,
       artifact: null // No artifact for this one
+    },
+    {
+      title: "Risk assessment",
+      description: "Assessed technical and financial impacts and risks.",
+      icon: ShieldIcon,
+      artifact: null // No artifact for this one
+    }
+  ];
+
+  const keyFindings = [
+    {
+      title: "Click-heavy flow",
+      detail: "13+ clicks with hidden dependency impacts",
+      icon: TouchAppIcon
+    },
+    {
+      title: "Error-prone process",
+      detail: "Manual data entry caused booking errors",
+      icon: ErrorOutlineIcon
+    },
+    {
+      title: "Need for bulk amendments",
+      detail: "Complex bookings required updates across all components",
+      icon: LayersIcon
+    },
+    {
+      title: "Reduced confidence",
+      detail: "Slow performance and unclear errors eroded trust",
+      icon: ThumbDownIcon
+    },
+    {
+      title: "Customer frustration",
+      detail: "Long hold times and slow service",
+      icon: SentimentDissatisfiedIcon
+    },
+    {
+      title: "Technical constraints",
+      detail: "Core fixes were blocked by platform constraints",
+      icon: BuildIcon
     }
   ];
 
@@ -50,7 +116,16 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
 
   // Wireframes gallery images
   const wireframeImages = [
-    { src: "/images/473130931_927600946148291_7743877648821863913_n.png", alt: "Wireframes" }
+    { src: "/images/amendments/amendment-wireframes-r16.png", alt: "Amendment wireframes" },
+    { src: "/images/amendments/amendment-wiresframes2.png", alt: "Amendment wireframes 2" }
+  ];
+
+  const hifiImages = [
+    { src: "/images/amendments/amendments-hifi.png", alt: "Hi-fidelity prototypes" }
+  ];
+
+  const userTestingImages = [
+    { src: "/images/amendments/amendments-proto-testing.png", alt: "Prototype testing" }
   ];
 
   const openLightbox = (gallery, index) => {
@@ -61,8 +136,22 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
     setLightbox({ isOpen: false, gallery: null, currentIndex: 0 });
   };
 
+  const getGalleryImages = () => {
+    switch (lightbox.gallery) {
+      case 'discovery':
+        return discoveryImages;
+      case 'hifi':
+        return hifiImages;
+      case 'userTesting':
+        return userTestingImages;
+      case 'wireframes':
+      default:
+        return wireframeImages;
+    }
+  };
+
   const navigateLightbox = (direction) => {
-    const currentGallery = lightbox.gallery === 'discovery' ? discoveryImages : wireframeImages;
+    const currentGallery = getGalleryImages();
     let newIndex = lightbox.currentIndex;
     
     if (direction === 'next') {
@@ -92,1153 +181,1134 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [lightbox.isOpen, lightbox.currentIndex, lightbox.gallery]);
   
+  const fallbackPosition = position || {
+    x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 1000) / 2) : 50,
+    y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 600) / 2) : 100
+  };
+
+  const sectionHeadingSx = {
+    mb: 2.5,
+    fontWeight: 700,
+    color: "#4b2f73",
+    letterSpacing: "0.04em"
+  };
+
+  const subsectionHeadingSx = {
+    mb: 2,
+    fontWeight: 700,
+    color: "text.primary"
+  };
+
+  const bodyTextSx = {
+    lineHeight: 1.6,
+    color: "text.primary"
+  };
+
+  const bodySecondarySx = {
+    lineHeight: 1.6,
+    color: "text.secondary"
+  };
+  
   return (
-    <div style={{
+    <Box
+      sx={(theme) => ({
       position: "fixed",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      zIndex: 99,
-      background: "#ffffff",
-      width: "1000px",
+        left: `${fallbackPosition.x}px`,
+        top: `${fallbackPosition.y}px`,
+        zIndex,
+        backgroundColor: "background.paper",
+        width: { xs: "95vw", md: theme.spacing(125) },
       maxWidth: "95vw",
-      height: "700px",
+        height: { xs: "90vh", md: theme.spacing(87.5) },
       maxHeight: "90vh",
-      boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
-      borderRadius: "10px",
+        boxShadow: 1,
+        borderRadius: theme.shape.borderRadius,
+        border: "1px solid",
+        borderColor: "divider",
       display: "flex",
       flexDirection: "column",
-      overflow: "hidden",
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif"
-    }}>
+        overflow: "hidden"
+      })}
+    >
       {/* Content */}
-      <div 
+      <Box
         onScroll={handleScroll}
-        style={{
+        sx={(theme) => ({
           flex: 1,
           overflow: "auto",
-          padding: "0",
+          p: 0,
+          fontFamily: theme.typography.fontFamily,
           WebkitFontSmoothing: "antialiased",
           position: "relative"
-        }}
+        })}
       >
         {/* Sticky Header */}
-        <div style={{
-          position: "sticky",
-          top: 0,
-          background: "#ffffff",
-          zIndex: 10,
-          padding: isScrolled ? "12px 32px" : "24px 32px",
-          borderBottom: isScrolled ? "1px solid #e0e0e0" : "none",
-          transition: "all 0.2s ease"
-        }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "16px", flex: 1 }}>
-              <h1 style={{
-                fontSize: isScrolled ? "20px" : "32px",
-                fontWeight: "700",
-                letterSpacing: "-0.5px",
-                margin: "0",
-                color: "#1d1d1f",
-                lineHeight: "1.1",
-                transition: "all 0.2s ease"
-              }}>
-                Flight Centre Amendments
-              </h1>
-            
-            {/* Mini Metrics (only when scrolled) */}
-            {isScrolled && (
-              <div style={{
-                display: "flex",
-                gap: "12px",
-                alignItems: "center",
-                opacity: isScrolled ? 1 : 0,
-                transition: "opacity 0.3s ease"
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  <span style={{ fontSize: "14px", fontWeight: "700", color: "#34c759" }}>+67%</span>
-                  <span style={{ fontSize: "9px", color: "#86868b" }}>Productivity</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  <span style={{ fontSize: "14px", fontWeight: "700", color: "#34c759" }}>-75%</span>
-                  <span style={{ fontSize: "9px", color: "#86868b" }}>Time</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  <span style={{ fontSize: "14px", fontWeight: "700", color: "#34c759" }}>89%</span>
-                  <span style={{ fontSize: "9px", color: "#86868b" }}>CSAT</span>
-                </div>
-              </div>
-            )}
-            </div>
-            
-            {/* Header Actions */}
-            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-              <button
-                onClick={onViewOldFlow}
-                style={{
-                  padding: "8px 16px",
-                  fontSize: "12px",
-                  fontWeight: "600",
-                  color: "#ffffff",
-                  background: "#0071e3",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  transition: "all 0.15s",
-                  boxShadow: "0 2px 6px rgba(0, 113, 227, 0.25)",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px"
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = "#0077ed";
-                  e.currentTarget.style.transform = "translateY(-1px)";
-                  e.currentTarget.style.boxShadow = "0 3px 8px rgba(0, 113, 227, 0.35)";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = "#0071e3";
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 2px 6px rgba(0, 113, 227, 0.25)";
-                }}
-              >
-                <Sparkles size={16} strokeWidth={2} />
-                Try Interactive Demo
-              </button>
-              
-              <button
-                onClick={onClose}
-                style={{
-                  width: "28px",
-                  height: "28px",
-                  borderRadius: "50%",
-                  border: "none",
-                  background: "#f5f5f7",
-                  color: "#86868b",
-                  fontSize: "16px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "all 0.15s",
-                  fontWeight: "300",
-                  lineHeight: "1"
-                }}
-                onMouseOver={(e) => e.currentTarget.style.background = "#e8e8ed"}
-                onMouseOut={(e) => e.currentTarget.style.background = "#f5f5f7"}
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content Container */}
-        <div style={{ padding: "0 32px 32px 32px" }}>
-        
-        {/* Impact Metrics - Inline */}
-        <div style={{ 
-          marginBottom: "28px",
-          display: "flex",
-          gap: "24px",
-          alignItems: "center",
-          flexWrap: "wrap"
-        }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-            <span style={{ fontSize: "26px", fontWeight: "700", color: "#34c759" }}>+67%</span>
-            <span style={{ fontSize: "13px", color: "#6e6e73", fontWeight: "500" }}>Productivity</span>
-          </div>
-          <div style={{ width: "1px", height: "20px", background: "#e0e0e0" }}></div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-            <span style={{ fontSize: "26px", fontWeight: "700", color: "#34c759" }}>-75%</span>
-            <span style={{ fontSize: "13px", color: "#6e6e73", fontWeight: "500" }}>Time</span>
-          </div>
-          <div style={{ width: "1px", height: "20px", background: "#e0e0e0" }}></div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-            <span style={{ fontSize: "26px", fontWeight: "700", color: "#34c759" }}>89%</span>
-            <span style={{ fontSize: "13px", color: "#6e6e73", fontWeight: "500" }}>CSAT</span>
-          </div>
-        </div>
-
-        {/* Executive Summary (Always Visible) */}
-        <div style={{ marginBottom: "28px" }}>
-
-          <div style={{
-            fontSize: "13px",
-            lineHeight: "1.7",
-            color: "#1d1d1f",
-            marginBottom: "28px"
-          }}>
-            <p style={{ marginBottom: "16px" }}>
-              When customers wanted to modify their bookings, they contacted Flight Centre travel consultants. The existing booking system required consultants to navigate through multiple screens and manual steps to complete even simple travel amendments.
-            </p>
-
-            <p style={{ marginBottom: "16px" }}>
-              Designing a successful solution in a complex environment such as travel, while working with an offshore vendor was fraught with many challenges and learnings. It wasn't easy—it was stressful, many tears were shed, and the path forward often felt uncertain.
-            </p>
-
-            <p>
-              But in the end, we designed and implemented a streamlined solution that achieved 75% faster processing times.
-            </p>
-          </div>
-
-          <div style={{
-            padding: "14px 16px",
-            background: "#f8f9fa",
-            borderRadius: "4px",
-            marginBottom: "24px"
-          }}>
-            <p style={{ fontSize: "12px", lineHeight: "1.5", color: "#1d1d1f", margin: "0 0 8px 0", fontStyle: "italic" }}>
-              "What used to take my entire shift now takes minutes. I finally have time to build real relationships with customers."
-            </p>
-            <div style={{ fontSize: "10px", color: "#6e6e73" }}>
-              — Sarah Mitchell, Senior Consultant, Melbourne
-            </div>
-          </div>
-        </div>
-
-        {/* Divider before full details */}
-        <div style={{ 
-          paddingTop: "24px",
-          marginBottom: "32px",
-          borderTop: "1px solid #e0e0e0"
-        }}>
-
-        {/* Discovery */}
-        <div style={{ marginBottom: "32px" }}>
-          <h2 style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-            color: "#1d1d1f",
-            letterSpacing: "-0.3px"
-          }}>
-            Discovery
-          </h2>
-          <div style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#1d1d1f",
-            marginBottom: "24px"
-          }}>
-            {/* Research Activities - nested subsection */}
-            <div style={{ marginBottom: "24px" }}>
-              <h3 style={{
-                fontSize: "14px",
-                fontWeight: "600",
-                marginBottom: "16px",
-                color: "#1d1d1f"
-              }}>
-                Research Activities
-              </h3>
-              <ul style={{ paddingLeft: "24px", marginBottom: "16px" }}>
-                <li style={{ marginBottom: "12px" }}><strong>Global workshops</strong> - 60+ consultants, support staff, and key stakeholders across multiple brands to uncover insights</li>
-                <li style={{ marginBottom: "12px" }}><strong>Consultant shadowing</strong> - Real-time observation during amendment calls to understand and validate friction and pain points</li>
-                <li style={{ marginBottom: "12px" }}><strong>Workflow mapping</strong> - Extensive and detailed documentation of the manual process across product verticals</li>
-                <li style={{ marginBottom: "12px" }}><strong>Matrix analysis</strong> - Mapped amendment types by frequency vs. friction to prioritize highest-impact improvements</li>
-                <li style={{ marginBottom: "12px" }}><strong>System audit</strong> - Analyzed technical constraints and integration points across multiple systems (Codegen, GDS, etc.)</li>
-                <li style={{ marginBottom: "0" }}><strong>Competitive analysis</strong> - How other travel platforms and enterprise systems handled amendments</li>
-              </ul>
-
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "12px",
-                marginTop: "24px",
-                marginBottom: "16px"
-              }}>
-                {discoveryImages.map((image, index) => (
-                  <div
-                    key={index}
-                    onClick={() => openLightbox('discovery', index)}
-                    style={{
-                      background: "#ffffff",
-                      border: "1px solid #d2d2d7",
-                      borderRadius: "10px",
-                      overflow: "hidden",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                      cursor: "pointer",
-                      transition: "transform 0.2s, box-shadow 0.2s"
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "scale(1.02)";
-                      e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "scale(1)";
-                      e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
-                    }}
-                  >
-                    <img 
-                      src={image.src} 
-                      alt={image.alt}
-                      style={{
-                        width: "100%",
-                        height: "auto",
-                        display: "block"
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Key Findings - nested subsection */}
-          <div style={{ marginTop: "28px" }}>
-            <h3 style={{
-              fontSize: "14px",
-              fontWeight: "600",
-              marginBottom: "16px",
-              color: "#1d1d1f"
-            }}>
-              Key Findings
-            </h3>
-            <ul style={{ paddingLeft: "24px", marginBottom: "0", fontSize: "11px", lineHeight: "1.6" }}>
-              <li style={{ marginBottom: "8px" }}><strong>5-7 screens and excessive click counts per task</strong> - Minimum 13 clicks for basic amendments. Excessive navigation required</li>
-              <li style={{ marginBottom: "8px" }}><strong>No dependency checking</strong> - Changes didn't account for booking impacts, and components requiring amendments were often forgotten</li>
-              <li style={{ marginBottom: "8px" }}><strong>Error-prone process</strong> - Manual entry led to booking mistakes</li>
-              <li style={{ marginBottom: "8px" }}><strong>Need for bulk amendments</strong> - Consultants managing complex bookings required amendments across the entire booking simultaneously</li>
-              <li style={{ marginBottom: "8px" }}><strong>Reduced confidence</strong> - Consultants didn't trust the system due to perceived speed and unusable error messaging</li>
-              <li style={{ marginBottom: "8px" }}><strong>Customer frustration</strong> - Long hold times and slow service</li>
-              <li style={{ marginBottom: "0" }}><strong>Technical constraints</strong> - Some problems could not be solved due to underlying technical constraints</li>
-            </ul>
-            <p style={{ marginTop: "16px", marginBottom: "0", fontSize: "11px", lineHeight: "1.6", color: "#1d1d1f" }}>
-              Key findings were presented to stakeholders to align on priorities and secure buy-in for the redesign initiative.
-            </p>
-          </div>
-
-          {/* Problem Definition - nested subsection */}
-          <div style={{ marginTop: "28px" }}>
-            <h3 style={{
-              fontSize: "14px",
-              fontWeight: "600",
-              marginBottom: "16px",
-              color: "#1d1d1f"
-            }}>
-              Problem Definition
-            </h3>
-            <div style={{
-              fontSize: "11px",
-              lineHeight: "1.6",
-              color: "#1d1d1f"
-            }}>
-            <div style={{
-              padding: "16px 20px",
-              background: "#fff3cd",
-              borderLeft: "4px solid #ffc107",
-              borderRadius: "4px",
-              marginBottom: "16px"
-            }}>
-              <p style={{ margin: "0", fontStyle: "italic", color: "#856404" }}>
-                <strong>How might we</strong> enable consultants to complete booking amendments quickly and accurately while ensuring all booking dependencies are validated, without requiring them to navigate multiple disconnected systems?
-              </p>
-            </div>
-            <p style={{ marginBottom: "0" }}>
-              This reframing shifted focus from "fixing screens" to "removing friction" - enabling us to rethink the entire amendment experience rather than incrementally improving the existing flow.
-            </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Ideation */}
-        <div style={{ marginBottom: "32px" }}>
-          <h2 style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-            color: "#1d1d1f",
-            letterSpacing: "-0.3px"
-          }}>
-            Ideation
-          </h2>
-          <div style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#1d1d1f"
-          }}>
-            <ul style={{ paddingLeft: "24px", marginBottom: "16px" }}>
-              <li style={{ marginBottom: "12px" }}><strong>Design studio workshops</strong> - Consultants, developers, and product managers sketching solutions together</li>
-              <li style={{ marginBottom: "12px" }}><strong>Crazy 8s exercises</strong> - 8 rapid sketches in 8 minutes to explore breadth</li>
-              <li style={{ marginBottom: "12px" }}><strong>How Might We sessions</strong> - Generated 50+ problem reframes to unlock creative solutions</li>
-              <li style={{ marginBottom: "12px" }}><strong>Competitive teardowns</strong> - Analyzed flows from Booking.com, Expedia, and other travel platforms</li>
-              <li style={{ marginBottom: "0" }}><strong>Technology exploration</strong> - Assessed feasibility of AI, automation, and real-time integrations</li>
-            </ul>
-            <p style={{ marginBottom: "0" }}>
-              From 30+ initial concepts, I narrowed to 4 viable approaches for deeper exploration based on technical feasibility, user needs, and business constraints.
-            </p>
-          </div>
-        </div>
-
-        {/* Concept Development */}
-        <div style={{ marginBottom: "32px" }}>
-          <h2 style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-            color: "#1d1d1f",
-            letterSpacing: "-0.3px"
-          }}>
-            Concept Development
-          </h2>
-          <div style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#1d1d1f"
-          }}>
-            <p style={{ marginBottom: "16px" }}>
-              I explored multiple approaches, from incremental improvements to transformational solutions:
-            </p>
-            <ul style={{ paddingLeft: "24px", marginBottom: "16px" }}>
-              <li style={{ marginBottom: "12px" }}><strong>AI-powered conversational interface</strong> - Natural language amendment requests (ideal, not feasible due to technical constraints)</li>
-              <li style={{ marginBottom: "12px" }}><strong>Single-page unified workflow</strong> - All amendment logic on one screen (too complex, failed usability testing)</li>
-              <li style={{ marginBottom: "12px" }}><strong>Three-page guided workflow</strong> - Step-by-step validation with dependency checking (selected approach)</li>
-              <li style={{ marginBottom: "12px" }}><strong>Wizard-based flow</strong> - Question-and-answer format (too slow for experienced consultants)</li>
-              <li style={{ marginBottom: "12px" }}><strong>Inline flow</strong> - Changes made directly within the booking view (cluttered interface, unclear validation states)</li>
-              <li style={{ marginBottom: "0" }}><strong>Modal flow</strong> - Pop-up dialogs for each amendment (disrupted context, frustrated users)</li>
-            </ul>
-            <p style={{ marginBottom: "0" }}>
-              The three-page approach balanced simplicity with power-user needs, reducing cognitive load while maintaining flexibility for complex amendments.
-            </p>
-            <p style={{ marginBottom: "0", marginTop: "16px" }}>
-              <strong>Technical and financial impacts, risks</strong> - Assessed technical and financial impacts, risks
-            </p>
-
-            {/* Codegen-Led Solutions - nested subsection */}
-            <div style={{ marginTop: "28px" }}>
-              <h3 style={{
-                fontSize: "14px",
-                fontWeight: "600",
-                marginBottom: "16px",
-                color: "#1d1d1f"
-              }}>
-                Codegen-Led Solutions (Not Used)
-              </h3>
-              <div style={{
-                fontSize: "11px",
-                lineHeight: "1.6",
-                color: "#1d1d1f"
-              }}>
-                <p style={{ marginBottom: "0" }}>
-                  [Content about Codegen-led solutions that were proposed but not used will go here]
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Wireframes */}
-        <div style={{ marginBottom: "32px" }}>
-          <h2 style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-            color: "#1d1d1f",
-            letterSpacing: "-0.3px"
-          }}>
-            Wireframes
-          </h2>
-          <div style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#1d1d1f",
-            marginBottom: "24px"
-          }}>
-            <p style={{ marginBottom: "16px" }}>
-              [Wireframes section will go here]
-            </p>
-
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "12px",
-              marginTop: "24px",
-              marginBottom: "0"
-            }}>
-              {wireframeImages.map((image, index) => (
-                <div
-                  key={index}
-                  onClick={() => openLightbox('wireframes', index)}
-                  style={{
-                    background: "#ffffff",
-                    border: "1px solid #d2d2d7",
-                    borderRadius: "10px",
-                    overflow: "hidden",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                    cursor: "pointer",
-                    transition: "transform 0.2s, box-shadow 0.2s"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "scale(1.02)";
-                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "scale(1)";
-                    e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
+        <Box
+          onMouseDown={onDragStart}
+          sx={(theme) => ({
+            position: "sticky",
+            top: 0,
+            backgroundColor: "background.paper",
+            zIndex: 10,
+            minHeight: 0,
+            px: 3,
+            py: 1.5,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            transition: "all 0.2s ease",
+            cursor: "move"
+          })}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25, flex: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                <Typography
+                  variant="h5"
+                  component="h1"
+                  sx={{
+                    m: 0,
+                    fontWeight: 700,
+                    letterSpacing: "0.02em",
+                    color: "text.primary"
                   }}
                 >
-                  <img 
-                    src={image.src} 
-                    alt={image.alt}
-                    style={{
-                      width: "100%",
-                      height: "auto",
+                  Streamlining amendments
+                </Typography>
+                <Typography
+                  variant="h6"
+                  component="p"
+                  sx={{ fontWeight: 400, m: 0, color: "text.secondary", letterSpacing: "0.01em" }}
+                >
+                  <Box
+                    component="img"
+                    src="/Flight_Centre_company_logo_(Non-free).png"
+                    alt="Flight Centre logo"
+                    sx={{
+                      height: 32,
+                      width: "auto",
                       display: "block"
                     }}
                   />
-                </div>
+                </Typography>
+              </Box>
+            </Box>
+            
+            {/* Header Actions */}
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+              <FormControlLabel
+                label="Interactive Demo"
+                labelPlacement="start"
+                sx={{
+                  m: 0,
+                  gap: 1,
+                  "& .MuiFormControlLabel-label": {
+                    fontSize: "0.8rem",
+                    fontWeight: 500
+                  }
+                }}
+                control={
+                  <Switch
+                    size="small"
+                    checked={isDemoEnabled}
+                    onChange={handleDemoToggle}
+                    inputProps={{ "aria-label": "Interactive demo toggle" }}
+                  />
+                }
+              />
+              
+              <IconButton
+                onClick={onClose}
+                aria-label="Close Amendments"
+                size="large"
+                sx={{
+                  color: "text.primary",
+                  "&:focus": {
+                    outline: "1px dotted",
+                    outlineColor: "text.primary",
+                    outlineOffset: "2px"
+                  },
+                  "&:focus-visible": {
+                    outline: "1px dotted",
+                    outlineColor: "text.primary",
+                    outlineOffset: "2px"
+                  }
+                }}
+              >
+                <CloseIcon fontSize="medium" />
+              </IconButton>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Main Content Container */}
+        <Box
+          sx={(theme) => ({
+            px: 4,
+            pt: 2,
+            pb: 0,
+            ...theme.typography.body2,
+            color: theme.palette.text.primary
+          })}
+        >
+        {/* Impact Metrics - Inline */}
+        <Box sx={{ mb: 3.5, display: "flex", gap: 6, alignItems: "flex-start", flexWrap: "wrap" }}>
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: "success.main" }}>
+              89%
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
+              Satisfaction
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: "success.main" }}>
+              —
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
+              Conversion
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: "success.main" }}>
+              +67%
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
+              Efficiency
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Executive Summary (Always Visible) */}
+        <Box sx={{ mb: 3.5 }}>
+          <Box sx={{ mb: 3.5 }}>
+            <Typography variant="body2" sx={{ mb: 2, lineHeight: 1.7 }}>
+              For a change to be made to a customer's booking, the system forced the Consultant through multiple screens and manual steps for even simple amendments. Building a streamlined flow in a complex travel stack, with an offshore vendor, was tough and full of learning. Here is how we did it.
+            </Typography>
+          </Box>
+
+          <Box sx={{ p: 2, backgroundColor: "action.hover", borderRadius: 1, mb: 2 }}>
+            <Typography variant="body2" sx={{ lineHeight: 1.5, m: 0, fontStyle: "italic", mb: 1 }}>
+              "What used to take my entire shift now takes minutes. I finally have time to build real relationships with customers."
+            </Typography>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+              — Sarah Mitchell, Senior Consultant, Melbourne
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Divider before full details */}
+        <Box sx={{ pt: 3, mb: 4 }}>
+
+        {/* Discovery */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
+            Discovery
+          </Typography>
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+              Research
+            </Typography>
+            <Box
+              component="ul"
+              sx={{
+                m: 0,
+                pl: 2.5,
+                listStyle: "disc",
+                "& > li": { mb: 1 },
+                "& > li:last-of-type": { mb: 0 }
+              }}
+            >
+              {discoveryActivities.map((activity) => (
+                <Typography
+                  key={activity.title}
+                  component="li"
+                  variant="body2"
+                  sx={{ lineHeight: 1.6, color: "text.primary" }}
+                >
+                  {activity.description}
+                </Typography>
               ))}
-            </div>
-          </div>
-        </div>
+            </Box>
+            <Box
+              sx={{
+                mt: 2,
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(180px, 180px))",
+                gap: 1.5,
+                justifyContent: "start"
+              }}
+            >
+              {discoveryActivities
+                .filter((activity) => activity.artifact)
+                .map((activity, index) => (
+                  <Box
+                    key={activity.title}
+                    onClick={() => openLightbox("discovery", index)}
+                    sx={{
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 2,
+                      overflow: "hidden",
+                      cursor: "pointer",
+                      backgroundColor: "background.paper",
+                      width: 180,
+                      "&:hover": { boxShadow: 2 }
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={activity.artifact.src}
+                      alt={activity.artifact.alt}
+                      sx={{ width: "100%", height: 120, objectFit: "cover", display: "block" }}
+                    />
+                    <Box sx={{ px: 1.25, py: 0.75 }}>
+                      <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                        {activity.title}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+            </Box>
+          </Box>
 
-        {/* Hi-Fidelity Prototypes */}
-        <div style={{ marginBottom: "32px" }}>
-          <h2 style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-            color: "#1d1d1f",
-            letterSpacing: "-0.3px"
-          }}>
-            Hi-Fidelity Prototypes
-          </h2>
-          <div style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#1d1d1f",
-            marginBottom: "24px"
-          }}>
-            <p style={{ marginBottom: "16px" }}>
-              [Hi-fidelity prototypes section will go here]
-            </p>
-          </div>
-        </div>
+          {/* Key Findings - nested subsection */}
+          <Box sx={{ mt: 3 }}>
+            <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+              Findings
+            </Typography>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 2
+              }}
+            >
+              {keyFindings.map((finding, index) => {
+                const FindingIcon = finding.icon;
+                return (
+                  <Box
+                    key={finding.title}
+                    sx={(theme) => ({
+                      position: "relative",
+                      p: 1.5,
+                      borderRadius: "12px",
+                      border: "1px solid",
+                      borderColor: "divider",
+                      backgroundColor: "background.paper"
+                    })}
+                  >
+                    <Box sx={{ display: "flex", gap: 1.25, alignItems: "flex-start" }}>
+                      <Box
+                        sx={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: "8px",
+                          flexShrink: 0,
+                          color: "text.secondary",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center"
+                        }}
+                      >
+                        {FindingIcon ? <FindingIcon fontSize="small" /> : null}
+                      </Box>
+                      <Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.25, mb: 0.25 }}>
+                          {finding.title}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.4 }}>
+                          {finding.detail}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Box>
+          </Box>
 
-        {/* User Testing */}
-        <div style={{ marginBottom: "32px" }}>
-          <h2 style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-            color: "#1d1d1f",
-            letterSpacing: "-0.3px"
-          }}>
-            User Testing
-          </h2>
-          <div style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#1d1d1f"
-          }}>
-            <p style={{ marginBottom: "16px" }}>
-              I conducted moderated usability testing with consultants across experience levels:
-            </p>
-            <ul style={{ paddingLeft: "24px", marginBottom: "16px" }}>
-              <li style={{ marginBottom: "12px" }}><strong>Task-based testing</strong> - 15 common amendment scenarios tested with 24 consultants</li>
-              <li style={{ marginBottom: "12px" }}><strong>Think-aloud protocols</strong> - Identified confusion points and mental model mismatches</li>
-              <li style={{ marginBottom: "12px" }}><strong>A/B testing</strong> - Compared new workflow against legacy system for time and accuracy</li>
-              <li style={{ marginBottom: "12px" }}><strong>Edge case validation</strong> - Tested complex multi-component amendments (e.g., date change + hotel swap)</li>
-              <li style={{ marginBottom: "0" }}><strong>Accessibility audit</strong> - Keyboard navigation, screen reader compatibility, color contrast</li>
-            </ul>
-            <div style={{
-              padding: "14px 18px",
+          {/* Problem Definition - nested subsection */}
+          <Box sx={{ mt: 3.5 }}>
+            <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+              Problem Definition
+            </Typography>
+            <Box sx={bodyTextSx}>
+              <Typography component="p" variant="body2" sx={{ mb: 2, color: "text.primary" }}>
+                How might we help consultants complete amendments quickly and accurately with dependency checks, without jumping between systems?
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Ideation */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
+            Ideation
+          </Typography>
+          <Box sx={bodyTextSx}>
+            <Box
+              component="ul"
+              sx={{
+                m: 0,
+                pl: 2.5,
+                listStyle: "disc",
+                "& > li": { mb: 1 },
+                "& > li:last-of-type": { mb: 0 }
+              }}
+            >
+              <Typography component="li" variant="body2" sx={{ lineHeight: 1.6, color: "text.primary" }}>
+                Design studio workshops and Crazy 8s with internal and external stakeholders produced rapid sketches and 50+ reframes to explore breadth.
+              </Typography>
+              <Typography component="li" variant="body2" sx={{ lineHeight: 1.6, color: "text.primary" }}>
+                Competitive reviews and technology exploration benchmarked flows and assessed AI, automation, and real-time integration feasibility.
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Concept Development */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
+            Concept Development
+          </Typography>
+          <Box sx={bodyTextSx}>
+            <Box component="ul" sx={{ pl: 3, mb: 2 }}>
+              <Box component="li" sx={{ mb: 1.5 }}>
+                <strong>AI-powered conversational interface</strong> - Natural language amendment requests (ideal, not feasible due to technical constraints)
+              </Box>
+              <Box component="li" sx={{ mb: 1.5 }}>
+                <strong>Single-page unified workflow</strong> - All amendment logic on one screen (too complex, failed usability testing)
+              </Box>
+              <Box component="li" sx={{ mb: 1.5 }}>
+                <strong>Three-page guided workflow</strong> - Step-by-step validation with dependency checking (selected approach)
+              </Box>
+              <Box component="li" sx={{ mb: 1.5 }}>
+                <strong>Inline flow</strong> - Changes made directly within the booking view (cluttered interface, unclear validation states)
+              </Box>
+              <Box component="li" sx={{ mb: 0 }}>
+                <strong>Modal flow</strong> - Pop-up dialogs for each amendment (disrupted context, frustrated users)
+              </Box>
+              <Box component="li" sx={{ mb: 0, mt: 1.5 }}>
+                <strong>Codegen-led solutions (not used)</strong> - Technical and financial impacts and risks assessed; UX unsatisfactory.
+              </Box>
+            </Box>
+            <Box sx={{
+              p: "14px 18px",
               background: "#d4edda",
               borderRadius: "4px",
-              marginTop: "16px"
+              mt: 2
             }}>
-              <p style={{ margin: "0", color: "#155724" }}>
+              <Typography component="p" variant="inherit" sx={{ m: 0, color: "#155724" }}>
+                <strong>Chosen concept:</strong> Three-page guided workflow with dependency validation.
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Prototyping */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
+            Prototyping
+          </Typography>
+
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+              Wireframes
+            </Typography>
+            <Box sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(180px, 180px))",
+              gap: 1.5,
+              mt: 2,
+              mb: 0,
+              justifyContent: "start"
+            }}>
+              {wireframeImages.map((image, index) => (
+                <Box
+                  key={index}
+                  onClick={() => openLightbox('wireframes', index)}
+                  sx={{
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                    cursor: "pointer",
+                    backgroundColor: "background.paper",
+                    width: 180,
+                    "&:hover": { boxShadow: 2 }
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={image.src} 
+                    alt={image.alt}
+                    sx={{
+                      width: "100%",
+                      height: 120,
+                      objectFit: "cover",
+                      display: "block"
+                    }}
+                  />
+                  <Box sx={{ px: 1.25, py: 0.75 }}>
+                    <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                      {image.alt}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+              Hi-Fidelity Prototypes
+            </Typography>
+            <Box sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(180px, 180px))",
+              gap: 1.5,
+              mt: 2,
+              mb: 0,
+              justifyContent: "start"
+            }}>
+              <Box
+                onClick={() => openLightbox('hifi', 0)}
+                sx={{
+                  border: "1px solid",
+                  borderColor: "divider",
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  backgroundColor: "background.paper",
+                  width: 180,
+                  "&:hover": { boxShadow: 2 }
+                }}
+              >
+                <Box
+                  component="img"
+                  src="/images/amendments/amendments-hifi.png"
+                  alt="Hi-fidelity prototypes"
+                  sx={{
+                    width: "100%",
+                    height: 120,
+                    objectFit: "cover",
+                    display: "block"
+                  }}
+                />
+                <Box sx={{ px: 1.25, py: 0.75 }}>
+                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                    Hi-fidelity prototypes
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ mb: 0 }}>
+            <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+              Usability Testing
+            </Typography>
+            <Box sx={bodyTextSx}>
+            <Typography component="p" variant="inherit" sx={{ mb: 2 }}>
+              I conducted moderated usability testing with consultants across experience levels:
+            </Typography>
+            <Box component="ul" sx={{ pl: 3, mb: 2 }}>
+              <Box component="li" sx={{ mb: 1.5 }}>
+                <strong>Task-based testing</strong> - 15 common amendment scenarios tested with 24 consultants
+              </Box>
+              <Box component="li" sx={{ mb: 1.5 }}>
+                <strong>Think-aloud protocols</strong> - Identified confusion points and mental model mismatches
+              </Box>
+              <Box component="li" sx={{ mb: 1.5 }}>
+                <strong>A/B testing</strong> - Compared new workflow against legacy system for time and accuracy
+              </Box>
+              <Box component="li" sx={{ mb: 1.5 }}>
+                <strong>Edge case validation</strong> - Tested complex multi-component amendments (e.g., date change + hotel swap)
+              </Box>
+              <Box component="li" sx={{ mb: 0 }}>
+                <strong>Accessibility audit</strong> - Keyboard navigation, screen reader compatibility, color contrast
+              </Box>
+            </Box>
+            <Box sx={{
+              p: "14px 18px",
+              background: "#d4edda",
+              borderRadius: "4px",
+              mt: 2
+            }}>
+              <Typography component="p" variant="inherit" sx={{ m: 0, color: "#155724" }}>
                 <strong>Testing Results:</strong> 97% task success rate | 89% CSAT | Average time reduced from 8-12 min to 2-3 min
-              </p>
-            </div>
-          </div>
-        </div>
+              </Typography>
+            </Box>
+            <Box sx={{ p: 2, backgroundColor: "action.hover", borderRadius: 1, mt: 2 }}>
+              <Typography variant="body2" sx={{ lineHeight: 1.5, m: 0, fontStyle: "italic", mb: 1 }}>
+                "If this works the way it looks, amendments will take minutes, dependencies will be clear, and the risk of missed changes drops."
+              </Typography>
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                — Alex Carter, Senior Consultant, Sydney
+              </Typography>
+            </Box>
+            <Box sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(180px, 180px))",
+              gap: 1.5,
+              mt: 2,
+              mb: 0,
+              justifyContent: "start"
+            }}>
+              {userTestingImages.map((image, index) => (
+                <Box
+                  key={image.src}
+                  onClick={() => openLightbox('userTesting', index)}
+                  sx={{
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                    cursor: "pointer",
+                    backgroundColor: "background.paper",
+                    width: 180,
+                    "&:hover": { boxShadow: 2 }
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={image.src}
+                    alt={image.alt}
+                    sx={{
+                      width: "100%",
+                      height: 120,
+                      objectFit: "cover",
+                      display: "block"
+                    }}
+                  />
+                  <Box sx={{ px: 1.25, py: 0.75 }}>
+                    <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                      {image.alt}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+            </Box>
+          </Box>
+        </Box>
 
         {/* Development & Implementation */}
-        <div style={{ marginBottom: "32px" }}>
-          <h2 style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-            color: "#1d1d1f",
-            letterSpacing: "-0.3px"
-          }}>
-            Development & Implementation
-          </h2>
-          <div style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#1d1d1f"
-          }}>
-            <p style={{ marginBottom: "16px" }}>
-              I led the build phase in partnership with an offshore development team in Sri Lanka:
-            </p>
-            <ul style={{ paddingLeft: "24px", marginBottom: "16px" }}>
-              <li style={{ marginBottom: "12px" }}><strong>Design handoff</strong> - Created detailed specs with visual flowcharts and annotated prototypes (reduced ambiguity by 60%)</li>
-              <li style={{ marginBottom: "12px" }}><strong>Agile sprints</strong> - 2-week iterations with daily standups bridging the 5.5-hour time zone gap</li>
-              <li style={{ marginBottom: "12px" }}><strong>Component library</strong> - Built reusable UI patterns for consistency across all amendment types</li>
-              <li style={{ marginBottom: "12px" }}><strong>Progressive rollout</strong> - Phased deployment starting with Australian market, then global</li>
-              <li style={{ marginBottom: "0" }}><strong>Real-time collaboration</strong> - Shifted working hours for overlap windows and used Loom videos for async communication</li>
-            </ul>
-            <p style={{ marginBottom: "0" }}>
-              Close collaboration and over-documentation were critical to success - visual walkthroughs proved more effective than written specs for complex interaction patterns.
-            </p>
-          </div>
-        </div>
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
+            Development
+          </Typography>
+          <Box sx={bodyTextSx}>
+            <Box component="ul" sx={{ pl: 3, mb: 0 }}>
+              <Box component="li" sx={{ mb: 1.5 }}>
+                <strong>Design handoff</strong> - Detailed specs for Codegen with flowcharts and annotated prototypes to reduce ambiguity.
+              </Box>
+              <Box component="li" sx={{ mb: 1.5 }}>
+                <strong>Delivery cycles</strong> - 3-month cycles with planned checkpoints across the 5.5-hour time gap.
+              </Box>
+              <Box component="li" sx={{ mb: 1.5 }}>
+                <strong>Real-time collaboration</strong> - Continuous UI/UX alignment and fast adjustments during build.
+              </Box>
+            </Box>
+            <Box sx={{ mt: 3 }}>
+              <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+                Quality Assurance
+              </Typography>
+              <Box component="ul" sx={{ pl: 3, mb: 2 }}>
+                <Box component="li" sx={{ mb: 1.5 }}>
+                  <strong>Comprehensive testing</strong> - Real-world scenarios validated through UAT.
+                </Box>
+                <Box component="li" sx={{ mb: 1.5 }}>
+                  <strong>Data validation</strong> - Edge cases like past dates, sold-out inventory, and concurrent bookings.
+                </Box>
+                <Box component="li" sx={{ mb: 1.5 }}>
+                  <strong>UAT with consultants</strong> - 2-week pilot with 50 consultants.
+                </Box>
+                <Box component="li" sx={{ mb: 1.5 }}>
+                  <strong>Regression testing</strong> - Existing booking flows stayed stable.
+                </Box>
+                <Box component="li" sx={{ mb: 0 }}>
+                  <strong>Iteration</strong> - Fixes tested and patched as needed.
+                </Box>
+              </Box>
+              <Box sx={{
+                p: "14px 18px",
+                background: "#d1ecf1",
+                borderRadius: "4px",
+                mt: 2
+              }}>
+                <Typography component="p" variant="inherit" sx={{ m: 0, color: "#0c5460" }}>
+                  <strong>Launch readiness:</strong> Zero critical bugs, 94% UAT approval, benchmarks exceeded.
+                </Typography>
+              </Box>
+            </Box>
+            <Box sx={{ mt: 3 }}>
+              <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+                Delivery
+              </Typography>
+              <Typography component="p" variant="inherit" sx={{ mb: 2 }}>
+                Coordinated teams and regions while keeping consultants productive during the transition:
+              </Typography>
+              <Box sx={{
+                p: 3,
+                background: "#f5f5f7",
+                borderRadius: "10px",
+                mb: 3
+              }}>
+                <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+                  Delivery Approach
+                </Typography>
+                <Box component="ul" sx={{ pl: 3, mb: 0 }}>
+                  <Box component="li" sx={{ mb: 1.5 }}>
+                    <strong>Global partnership</strong> - Codegen delivered within HELiO.
+                  </Box>
+                  <Box component="li" sx={{ mb: 1.5 }}>
+                    <strong>Cross-functional delivery</strong> - Engineering, design, ops, and training across time zones.
+                  </Box>
+                  <Box component="li" sx={{ mb: 1.5 }}>
+                    <strong>Pilots first</strong> - Validate with select markets before global rollout.
+                  </Box>
+                  <Box component="li" sx={{ mb: 1.5 }}>
+                    <strong>Training</strong> - Materials and sessions for 60+ consultants.
+                  </Box>
+                  <Box component="li" sx={{ mb: 1.5 }}>
+                    <strong>Change management</strong> - Support docs and feedback loops.
+                  </Box>
+                  <Box component="li" sx={{ mb: 1.5 }}>
+                    <strong>Feature toggles</strong> - Enable/disable releases safely.
+                  </Box>
+                  <Box component="li" sx={{ mb: 0 }}>
+                    <strong>Success tracking</strong> - Adoption and efficiency monitoring.
+                  </Box>
+                </Box>
+              </Box>
+              <Box sx={{
+                p: 2,
+                background: "#e8f5e9",
+                border: "1px solid #4caf50",
+                borderRadius: "8px"
+              }}>
+                <Typography component="p" variant="inherit" sx={{ m: 0, color: "#2e7d32", fontWeight: 600 }}>
+                  ✓ <strong>On‑time, zero downtime</strong> - Transitioned without disrupting daily operations.
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
 
-        {/* Quality Assurance */}
-        <div style={{ marginBottom: "32px" }}>
-          <h2 style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-            color: "#1d1d1f",
-            letterSpacing: "-0.3px"
-          }}>
-            Quality Assurance
-          </h2>
-          <div style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#1d1d1f"
-          }}>
-            <p style={{ marginBottom: "16px" }}>
-              Comprehensive testing across browsers, devices, and real-world scenarios:
-            </p>
-            <ul style={{ paddingLeft: "24px", marginBottom: "16px" }}>
-              <li style={{ marginBottom: "12px" }}><strong>Cross-browser testing</strong> - IE11, Chrome, Firefox, Safari (consultants used varied setups)</li>
-              <li style={{ marginBottom: "12px" }}><strong>Performance testing</strong> - Load times under 2 seconds even with slow GDS integrations</li>
-              <li style={{ marginBottom: "12px" }}><strong>Data validation</strong> - Tested edge cases like past dates, sold-out inventory, concurrent bookings</li>
-              <li style={{ marginBottom: "12px" }}><strong>UAT with consultants</strong> - 2-week pilot with 50 consultants processing real amendments</li>
-              <li style={{ marginBottom: "0" }}><strong>Regression testing</strong> - Ensured existing booking flows remained unaffected</li>
-            </ul>
-            <div style={{
-              padding: "14px 18px",
-              background: "#d1ecf1",
-              borderRadius: "4px",
-              marginTop: "16px"
-            }}>
-              <p style={{ margin: "0", color: "#0c5460" }}>
-                <strong>Launch readiness:</strong> Zero critical bugs | 94% consultant approval in UAT | Performance benchmarks exceeded
-              </p>
-            </div>
-          </div>
-        </div>
+        {/* Rollout */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
+            Rollout
+          </Typography>
+          <Box sx={bodyTextSx}>
+            <Box component="ul" sx={{ pl: 3, mb: 3 }}>
+              <Box component="li" sx={{ mb: 0 }}>
+                <strong>Progressive rollout</strong> - Shipped high-impact verticals first, then expanded in later releases from Australia to global
+              </Box>
+            </Box>
+          </Box>
 
-        {/* The Dream vs Reality */}
-        <div style={{ marginBottom: "28px" }}>
-          <h2 style={{
-            fontSize: "14px",
-            fontWeight: "600",
-            marginBottom: "16px",
-            color: "#1d1d1f"
-          }}>
-            The Dream vs Reality
-          </h2>
-          <div style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#1d1d1f",
-            marginBottom: "24px"
-          }}>
-            <p style={{ marginBottom: "16px" }}>
-              The ideal solution would have been a fully AI-powered "Dream Flow" interface where consultants could simply describe what the customer wanted in natural language, and the system would:
-            </p>
-            
-            <ul style={{ paddingLeft: "24px", marginBottom: "16px" }}>
-              <li style={{ marginBottom: "8px" }}>Understand the intent and automatically suggest the best options</li>
-              <li style={{ marginBottom: "8px" }}>Check dependencies across all booking components (flights, hotels, transfers, activities)</li>
-              <li style={{ marginBottom: "8px" }}>Show live pricing and availability without manual searching</li>
-              <li style={{ marginBottom: "8px" }}>Auto-validate business rules and policy compliance</li>
-              <li style={{ marginBottom: "0" }}>Complete the amendment in a single conversational flow</li>
-            </ul>
-
-            <div style={{
-              marginTop: "16px",
-              padding: "16px",
-              background: "#fff3cd",
-              borderRadius: "10px",
-              border: "1px solid #ffc107"
-            }}>
-              <strong style={{ color: "#856404" }}>Why we couldn't build this (2019-2020):</strong>
-              <ul style={{ paddingLeft: "24px", marginTop: "8px", marginBottom: "0" }}>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Technical constraints:</strong> Legacy systems couldn't support real-time inventory aggregation across multiple GDS providers</li>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Data silos:</strong> Hotel, car, and activity inventory lived in separate systems with no unified API</li>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>AI limitations:</strong> NLP and intent recognition weren't mature enough for production use in complex booking scenarios</li>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Business risk:</strong> Commission structures and SLA agreements required human validation</li>
-                <li style={{ marginBottom: "0", color: "#856404" }}><strong>Timeline pressure:</strong> Consultants needed immediate relief, not a multi-year AI project</li>
-              </ul>
-            </div>
-
-            <p style={{ marginTop: "16px", marginBottom: "0", fontStyle: "italic", color: "#6e6e73" }}>
-              So we delivered what was achievable: a simplified three-page workflow that still delivered 75% time savings. The "Dream Flow" concept later evolved into the AI-powered amendment tool you can try in the interactive demo (built in 2024 as a portfolio piece to show what's now possible).
-            </p>
-          </div>
-        </div>
-
-        {/* Workflow Efficiency Measurements */}
-        <div style={{ marginBottom: "28px" }}>
-          <h2 style={{
-            fontSize: "14px",
-            fontWeight: "600",
-            marginBottom: "16px",
-            color: "#1d1d1f"
-          }}>
+          <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
             Workflow Efficiency Measurements
-          </h2>
-          <p style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#6e6e73",
-            marginBottom: "24px"
-          }}>
-            Technical breakdown of workflow improvements between old and new flows
-          </p>
+          </Typography>
+            <Typography component="p" variant="inherit" sx={{ ...bodySecondarySx, mb: 3 }}>
+              Old vs new workflow efficiency at a glance.
+            </Typography>
           
-          <div style={{
-            padding: "24px",
+          <Box sx={{
+            p: 3,
             background: "#f8f9fa",
             borderRadius: "10px",
             border: "1px solid #e0e0e0"
           }}>
-            <div style={{
+            <Box sx={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr 1fr",
               gap: "20px"
             }}>
               {/* Screens */}
-              <div style={{
+              <Box sx={{
                 background: "#ffffff",
                 padding: "14px",
                 borderRadius: "10px",
                 border: "1px solid #e0e0e0",
                 textAlign: "center"
               }}>
-                <div style={{ fontSize: "13px", color: "#6e6e73", marginBottom: "8px", fontWeight: "500" }}>
+                <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 500 }}>
                   Screens
-                </div>
-                <div style={{ fontSize: "26px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
+                </Box>
+                <Box sx={{ fontSize: "26px", fontWeight: 600, color: "#1d1d1f", mb: 0.5 }}>
                   67%
-                </div>
-                <div style={{ fontSize: "13px", color: "#34c759", fontWeight: "600" }}>
+                </Box>
+                <Box sx={{ fontSize: "13px", color: "#34c759", fontWeight: 600 }}>
                   ↓ fewer
-                </div>
-                <div style={{ fontSize: "12px", color: "#6e6e73", marginTop: "8px" }}>
+                </Box>
+                <Box sx={{ fontSize: "12px", color: "#6e6e73", mt: 1 }}>
                   9 → 3 screens
-                </div>
-              </div>
+                </Box>
+              </Box>
 
               {/* Loading Time */}
-              <div style={{
+              <Box sx={{
                 background: "#ffffff",
                 padding: "14px",
                 borderRadius: "10px",
                 border: "1px solid #e0e0e0",
                 textAlign: "center"
               }}>
-                <div style={{ fontSize: "13px", color: "#6e6e73", marginBottom: "8px", fontWeight: "500" }}>
-                  Loading Time
-                </div>
-                <div style={{ fontSize: "26px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
+                <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 500 }}>
+                  Loading time
+                </Box>
+                <Box sx={{ fontSize: "26px", fontWeight: 600, color: "#1d1d1f", mb: 0.5 }}>
                   69%
-                </div>
-                <div style={{ fontSize: "13px", color: "#34c759", fontWeight: "600" }}>
+                </Box>
+                <Box sx={{ fontSize: "13px", color: "#34c759", fontWeight: 600 }}>
                   ↓ faster
-                </div>
-                <div style={{ fontSize: "12px", color: "#6e6e73", marginTop: "8px" }}>
+                </Box>
+                <Box sx={{ fontSize: "12px", color: "#6e6e73", mt: 1 }}>
                   30s → 9s
-                </div>
-              </div>
+                </Box>
+              </Box>
 
               {/* User Actions */}
-              <div style={{
+              <Box sx={{
                 background: "#ffffff",
                 padding: "14px",
                 borderRadius: "10px",
                 border: "1px solid #e0e0e0",
                 textAlign: "center"
               }}>
-                <div style={{ fontSize: "13px", color: "#6e6e73", marginBottom: "8px", fontWeight: "500" }}>
-                  User Actions
-                </div>
-                <div style={{ fontSize: "26px", fontWeight: "600", color: "#1d1d1f", marginBottom: "4px" }}>
+                <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 500 }}>
+                  User actions
+                </Box>
+                <Box sx={{ fontSize: "26px", fontWeight: 600, color: "#1d1d1f", mb: 0.5 }}>
                   55%
-                </div>
-                <div style={{ fontSize: "13px", color: "#34c759", fontWeight: "600" }}>
+                </Box>
+                <Box sx={{ fontSize: "13px", color: "#34c759", fontWeight: 600 }}>
                   ↓ fewer
-                </div>
-                <div style={{ fontSize: "12px", color: "#6e6e73", marginTop: "8px" }}>
+                </Box>
+                <Box sx={{ fontSize: "12px", color: "#6e6e73", mt: 1 }}>
                   18+ → 8-10 clicks
-                </div>
-              </div>
-            </div>
+                </Box>
+              </Box>
+            </Box>
 
-            <div style={{
+            <Box sx={{
               textAlign: "center",
-              fontSize: "11px",
-              color: "#6e6e73",
+              color: "text.secondary",
               fontStyle: "italic",
-              marginTop: "20px"
+              mt: 2.5
             }}>
               Try the interactive demo to experience both workflows
-            </div>
-          </div>
-        </div>
+            </Box>
+          </Box>
 
-        {/* Delivery */}
-        <div style={{ marginBottom: "32px" }}>
-          <h2 style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-            color: "#1d1d1f",
-            letterSpacing: "-0.3px"
-          }}>
-            Delivery
-          </h2>
-          <div style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#1d1d1f",
-            marginBottom: "24px"
-          }}>
-            <p style={{ marginBottom: "16px" }}>
-              Delivering this solution required coordinating across multiple teams and regions while ensuring consultants remained productive during the transition:
-            </p>
-            
-            <div style={{
-              padding: "24px",
-              background: "#f5f5f7",
-              borderRadius: "10px",
-              marginBottom: "24px"
-            }}>
-              <h3 style={{
-                fontSize: "14px",
-                fontWeight: "600",
-                marginBottom: "16px",
-                color: "#1d1d1f"
-              }}>
-                Delivery Approach
-              </h3>
-              <ul style={{ paddingLeft: "24px", marginBottom: "0" }}>
-                <li style={{ marginBottom: "12px" }}><strong>Global development partnership</strong> - Partnered with Codegen (Sri Lankan software team) to implement changes within HELiO platform</li>
-                <li style={{ marginBottom: "12px" }}><strong>Cross-functional coordination</strong> - Led engineering, design, operations, and training teams across multiple time zones</li>
-                <li style={{ marginBottom: "12px" }}><strong>Phased rollout</strong> - Piloted with select markets before global deployment to validate and refine</li>
-                <li style={{ marginBottom: "12px" }}><strong>Global training program</strong> - Developed and delivered training materials for 60+ consultants across regions</li>
-                <li style={{ marginBottom: "12px" }}><strong>Change management</strong> - Created support documentation and established feedback channels for continuous improvement</li>
-                <li style={{ marginBottom: "12px" }}><strong>Feature toggles</strong> - UACs for Codegen specified that toggles be added so features could be switched on and off as required</li>
-                <li style={{ marginBottom: "0" }}><strong>Success metrics tracking</strong> - Implemented monitoring to measure adoption, efficiency gains, and consultant satisfaction</li>
-              </ul>
-            </div>
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+              Post-Release Validation
+            </Typography>
+            <Typography component="p" variant="inherit" sx={{ ...bodySecondarySx, mb: 3 }}>
+              FullStory used to validate real‑world impact post‑launch.
+            </Typography>
 
-            <div style={{
-              padding: "14px",
-              background: "#e8f5e9",
-              border: "1px solid #4caf50",
-              borderRadius: "8px"
-            }}>
-              <p style={{ margin: "0", color: "#2e7d32", fontSize: "14px" }}>
-                ✓ <strong>Delivered on time with zero downtime</strong> - Smooth transition from old to new workflow without disrupting daily operations
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Post-Release Metrics */}
-        <div style={{ marginBottom: "32px" }}>
-          <h2 style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-            color: "#1d1d1f",
-            letterSpacing: "-0.3px"
-          }}>
-            Post-Release Validation
-          </h2>
-          <p style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#6e6e73",
-            marginBottom: "24px"
-          }}>
-            Used FullStory to track real-world usage and validate impact after global rollout
-          </p>
-
-          <div style={{
-            padding: "24px",
+          <Box sx={{
+            p: 3,
             background: "#f8f9fa",
             borderRadius: "10px",
             border: "1px solid #e0e0e0"
           }}>
-            <h3 style={{
-              fontSize: "16px",
-              fontWeight: "600",
-              marginBottom: "20px",
-              color: "#1d1d1f"
-            }}>
+            <Typography variant="subtitle1" component="h3" sx={{ ...subsectionHeadingSx, mb: 2.5 }}>
               FullStory Analytics (First 90 Days)
-            </h3>
+            </Typography>
 
-            <div style={{
+            <Box sx={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
               gap: "20px",
-              marginBottom: "24px"
+              mb: 3
             }}>
               {/* Adoption Rate */}
-              <div style={{
+              <Box sx={{
                 background: "#ffffff",
                 padding: "14px",
                 borderRadius: "10px",
                 border: "1px solid #e0e0e0"
               }}>
-                <div style={{ fontSize: "13px", color: "#6e6e73", marginBottom: "8px", fontWeight: "600" }}>
-                  Adoption Rate
-                </div>
-                <div style={{ fontSize: "26px", fontWeight: "700", color: "#34c759", marginBottom: "8px" }}>
+                <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 600 }}>
+                  Adoption rate
+                </Box>
+                <Box sx={{ fontSize: "26px", fontWeight: 700, color: "#34c759", mb: 1 }}>
                   94%
-                </div>
-                <div style={{ fontSize: "11px", color: "#1d1d1f", lineHeight: "1.5" }}>
-                  of consultants actively using new flow within 30 days
-                </div>
-              </div>
+                </Box>
+                <Box sx={{ ...bodyTextSx, lineHeight: 1.5 }}>
+                  active within 30 days
+                </Box>
+              </Box>
 
               {/* Task Completion */}
-              <div style={{
+              <Box sx={{
                 background: "#ffffff",
                 padding: "14px",
                 borderRadius: "10px",
                 border: "1px solid #e0e0e0"
               }}>
-                <div style={{ fontSize: "13px", color: "#6e6e73", marginBottom: "8px", fontWeight: "600" }}>
-                  Task Completion Rate
-                </div>
-                <div style={{ fontSize: "26px", fontWeight: "700", color: "#34c759", marginBottom: "8px" }}>
+                <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 600 }}>
+                  Task completion
+                </Box>
+                <Box sx={{ fontSize: "26px", fontWeight: 700, color: "#34c759", mb: 1 }}>
                   97%
-                </div>
-                <div style={{ fontSize: "11px", color: "#1d1d1f", lineHeight: "1.5" }}>
-                  successful amendments without errors or support tickets
-                </div>
-              </div>
+                </Box>
+                <Box sx={{ ...bodyTextSx, lineHeight: 1.5 }}>
+                  error-free amendments
+                </Box>
+              </Box>
 
               {/* Average Session Time */}
-              <div style={{
+              <Box sx={{
                 background: "#ffffff",
                 padding: "14px",
                 borderRadius: "10px",
                 border: "1px solid #e0e0e0"
               }}>
-                <div style={{ fontSize: "13px", color: "#6e6e73", marginBottom: "8px", fontWeight: "600" }}>
-                  Average Session Time
-                </div>
-                <div style={{ fontSize: "26px", fontWeight: "700", color: "#0071e3", marginBottom: "8px" }}>
+                <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 600 }}>
+                  Avg session time
+                </Box>
+                <Box sx={{ fontSize: "26px", fontWeight: 700, color: "#0071e3", mb: 1 }}>
                   2.4m
-                </div>
-                <div style={{ fontSize: "11px", color: "#1d1d1f", lineHeight: "1.5" }}>
-                  average time to complete an amendment (down from 10.2m)
-                </div>
-              </div>
+                </Box>
+                <Box sx={{ ...bodyTextSx, lineHeight: 1.5 }}>
+                  down from 10.2m
+                </Box>
+              </Box>
 
               {/* User Satisfaction */}
-              <div style={{
+              <Box sx={{
                 background: "#ffffff",
                 padding: "14px",
                 borderRadius: "10px",
                 border: "1px solid #e0e0e0"
               }}>
-                <div style={{ fontSize: "13px", color: "#6e6e73", marginBottom: "8px", fontWeight: "600" }}>
-                  Rage Clicks Detected
-                </div>
-                <div style={{ fontSize: "26px", fontWeight: "700", color: "#34c759", marginBottom: "8px" }}>
+                <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 600 }}>
+                  Rage clicks
+                </Box>
+                <Box sx={{ fontSize: "26px", fontWeight: 700, color: "#34c759", mb: 1 }}>
                   -82%
-                </div>
-                <div style={{ fontSize: "11px", color: "#1d1d1f", lineHeight: "1.5" }}>
-                  reduction in frustrated user interactions
-                </div>
-              </div>
-            </div>
+                </Box>
+                <Box sx={{ ...bodyTextSx, lineHeight: 1.5 }}>
+                  reduction in frustrated interactions
+                </Box>
+              </Box>
+            </Box>
 
-            <div style={{
-              padding: "16px",
+            <Box sx={{
+              p: 2,
               background: "#e3f2fd",
               borderRadius: "10px",
               border: "1px solid #90caf9"
             }}>
-              <p style={{ margin: "0", fontSize: "11px", color: "#0d47a1", lineHeight: "1.6" }}>
-                <strong>FullStory Insights:</strong> Session replay analysis revealed consultants were completing amendments 76% faster with the new flow, and support tickets related to amendment errors dropped by 88% in the first quarter post-launch.
-              </p>
-            </div>
+              <Typography component="p" variant="inherit" sx={{ m: 0, ...bodyTextSx, color: "#0d47a1" }}>
+                <strong>FullStory insights:</strong> Amendments completed 76% faster; error‑related tickets down 88% in the first quarter.
+              </Typography>
+            </Box>
 
-            <p style={{ 
-              marginTop: "20px", 
-              marginBottom: "0", 
-              fontSize: "11px", 
-              fontStyle: "italic", 
-              color: "#6e6e73" 
-            }}>
-              💼 <strong>Business impact details available upon request</strong> — Labor cost savings, ROI calculations, and revenue attribution figures can be shared in conversation.
-            </p>
-          </div>
-        </div>
+            <Typography component="p" variant="inherit" sx={{ mt: 2.5, mb: 0, fontStyle: "italic", color: "text.secondary" }}>
+              💼 <strong>Business impact available on request</strong> — ROI, labor savings, and revenue attribution.
+            </Typography>
+          </Box>
+          </Box>
+        </Box>
 
-        {/* Challenges & Learnings */}
-        <div style={{ marginBottom: "32px" }}>
-          <h2 style={{
-            fontSize: "18px",
-            fontWeight: "700",
-            marginBottom: "20px",
-            color: "#1d1d1f",
-            letterSpacing: "-0.3px"
+        {/* Reflection */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
+            Reflection
+          </Typography>
+          <Box sx={{
+            lineHeight: 1.6,
+            color: "text.primary",
+            mb: 3
           }}>
-            Challenges & Learnings
-          </h2>
-          <div style={{
-            fontSize: "11px",
-            lineHeight: "1.6",
-            color: "#1d1d1f",
-            marginBottom: "24px"
-          }}>
-            <p style={{ marginBottom: "16px" }}>
-              Working with Codegen (Sri Lankan offshore development team) across 7+ hour time zones presented unique coordination challenges:
-            </p>
+            <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+              Challenges & Learnings
+            </Typography>
+            <Box sx={{ mb: 3 }}>
+              <Typography component="p" variant="inherit" sx={{ mb: 2 }}>
+                Working with Codegen across 7+ hour time zones created coordination challenges:
+              </Typography>
 
-            <div style={{
-              padding: "16px",
+              <Box sx={{
+                p: 2,
+                background: "#fff3cd",
+                borderRadius: "10px",
+                border: "1px solid #ffc107",
+                mb: 2.5
+              }}>
+                <Typography sx={{ fontSize: "12px", fontWeight: 600, color: "#856404", mb: 1 }}>
+                  Key Challenges
+                </Typography>
+                <Box component="ul" sx={{ pl: 3, mt: 1, mb: 0 }}>
+                  <Box component="li" sx={{ mb: 1, color: "#856404" }}><strong>Limited domain context:</strong> Engineers lacked direct exposure to consultant workflows.</Box>
+                  <Box component="li" sx={{ mb: 1, color: "#856404" }}><strong>Bulk amendments out of scope:</strong> Group/corporate flows weren’t covered initially.</Box>
+                  <Box component="li" sx={{ mb: 1, color: "#856404" }}><strong>Stakeholder pushback:</strong> UX improvements conflicted with delivery effort.</Box>
+                  <Box component="li" sx={{ mb: 1, color: "#856404" }}><strong>Decision noise:</strong> Too many stakeholders and unclear ownership slowed progress.</Box>
+                  <Box component="li" sx={{ mb: 1, color: "#856404" }}><strong>Async gaps:</strong> 12+ hour feedback loops delayed decisions.</Box>
+                  <Box component="li" sx={{ mb: 1, color: "#856404" }}><strong>Context loss:</strong> Edge cases didn’t transfer well through docs alone.</Box>
+                  <Box component="li" sx={{ mb: 1, color: "#856404" }}><strong>Long cycles:</strong> 3‑month delivery limited iteration during build.</Box>
+                  <Box component="li" sx={{ mb: 1, color: "#856404" }}><strong>Quality trade‑offs:</strong> Timelines constrained UX refinement.</Box>
+                  <Box component="li" sx={{ mb: 0, color: "#856404" }}><strong>Testing limits:</strong> Limited production‑like environments slowed validation.</Box>
+                </Box>
+              </Box>
+
+              <Box sx={{
+                p: 2,
+                background: "#d4edda",
+                borderRadius: "10px",
+                border: "1px solid #c3e6cb"
+              }}>
+                <Typography sx={{ fontSize: "12px", fontWeight: 600, color: "#155724", mb: 1 }}>
+                  What I Learned
+                </Typography>
+                <Box component="ul" sx={{ pl: 3, mt: 1, mb: 0 }}>
+                  <Box component="li" sx={{ mb: 1, color: "#155724" }}><strong>Kick‑off alignment:</strong> Early workshops prevented months of rework.</Box>
+                  <Box component="li" sx={{ mb: 1, color: "#155724" }}><strong>Visual specs win:</strong> Flowcharts and annotated screenshots cut back‑and‑forth by 60%.</Box>
+                  <Box component="li" sx={{ mb: 1, color: "#155724" }}><strong>Video walkthroughs:</strong> Short Looms beat long documents.</Box>
+                  <Box component="li" sx={{ mb: 1, color: "#155724" }}><strong>Overlap windows:</strong> Small time‑shift enabled real‑time decisions.</Box>
+                  <Box component="li" sx={{ mb: 1, color: "#155724" }}><strong>Reliability builds trust:</strong> Consistent cadence reduced uncertainty.</Box>
+                  <Box component="li" sx={{ mb: 0, color: "#155724" }}><strong>Embrace constraints:</strong> Limits led to simpler, maintainable solutions.</Box>
+                </Box>
+              </Box>
+            </Box>
+            <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+              Dream vs Reality
+            </Typography>
+            <Typography component="p" variant="inherit" sx={{ mb: 2 }}>
+              The ideal solution was an AI “Dream Flow” where consultants describe the change in plain language and the system handles the rest.
+            </Typography>
+            
+            <Box component="ul" sx={{ pl: 3, mb: 2 }}>
+              <Box component="li" sx={{ mb: 1 }}>Interpret intent and recommend best options</Box>
+              <Box component="li" sx={{ mb: 1 }}>Validate dependencies across flights, hotels, transfers, and activities</Box>
+              <Box component="li" sx={{ mb: 1 }}>Show live pricing and availability</Box>
+              <Box component="li" sx={{ mb: 1 }}>Auto-check business rules and compliance</Box>
+              <Box component="li" sx={{ mb: 0 }}>Complete the amendment in one conversational flow</Box>
+            </Box>
+
+            <Box sx={{
+              mt: 2,
+              p: 2,
               background: "#fff3cd",
               borderRadius: "10px",
-              border: "1px solid #ffc107",
-              marginBottom: "20px"
+              border: "1px solid #ffc107"
             }}>
-              <div style={{ fontSize: "12px", fontWeight: "600", color: "#856404", marginBottom: "8px" }}>
-                Key Challenges
-              </div>
-              <ul style={{ paddingLeft: "24px", marginTop: "8px", marginBottom: "0" }}>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Lack of problem understanding:</strong> Development team had limited exposure to actual consultant pain points and workflows</li>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Need for bulk amendment flows:</strong> Consultants needed to modify multiple bookings at once (group travel, corporate clients) - not addressed in initial scope</li>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Battles with Codegen stakeholders:</strong> Push-back on UX improvements that required additional development effort or complexity</li>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Noise and inefficiencies in design process:</strong> Multiple stakeholders, excessive meetings, and unclear decision-making authority slowed progress</li>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Async communication gaps:</strong> Design decisions made during my day required waiting 12+ hours for engineering feedback</li>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Context loss:</strong> Detailed user requirements and edge cases were difficult to convey through written specs alone</li>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>3-month delivery cycles:</strong> Not true agile - limited ability to iterate based on user feedback during development, impacting designer stress levels</li>
-                <li style={{ marginBottom: "8px", color: "#856404" }}><strong>Quality trade-offs:</strong> Tight timelines meant prioritizing core functionality over ideal UX refinements</li>
-                <li style={{ marginBottom: "0", color: "#856404" }}><strong>Testing limitations:</strong> Limited access to production-like test environments delayed validation cycles</li>
-              </ul>
-            </div>
+              <Typography component="p" variant="inherit" sx={{ m: 0, fontWeight: 600, color: "#856404" }}>
+                Why we couldn’t build this (2019–2020):
+              </Typography>
+              <Box component="ul" sx={{ pl: 3, mt: 1, mb: 0 }}>
+                <Box component="li" sx={{ mb: 1, color: "#856404" }}>
+                  <strong>Technical constraints:</strong> Legacy systems couldn’t aggregate real-time inventory across GDS providers.
+                </Box>
+                <Box component="li" sx={{ mb: 1, color: "#856404" }}>
+                  <strong>Data silos:</strong> Hotel, car, and activity inventory had no unified API.
+                </Box>
+                <Box component="li" sx={{ mb: 1, color: "#856404" }}>
+                  <strong>AI limitations:</strong> NLP wasn’t production-ready for complex bookings.
+                </Box>
+                <Box component="li" sx={{ mb: 1, color: "#856404" }}>
+                  <strong>Business risk:</strong> Commission/SLA requirements needed human validation.
+                </Box>
+                <Box component="li" sx={{ mb: 0, color: "#856404" }}>
+                  <strong>Timeline pressure:</strong> Consultants needed relief now, not a multi‑year build.
+                </Box>
+              </Box>
+            </Box>
 
-            <div style={{
-              padding: "16px",
-              background: "#d4edda",
-              borderRadius: "10px",
-              border: "1px solid #c3e6cb"
-            }}>
-              <div style={{ fontSize: "12px", fontWeight: "600", color: "#155724", marginBottom: "8px" }}>
-                What I Learned
-              </div>
-              <ul style={{ paddingLeft: "24px", marginTop: "8px", marginBottom: "0" }}>
-                <li style={{ marginBottom: "8px", color: "#155724" }}><strong>Value of early kick-off meetings:</strong> Comprehensive alignment sessions at project start prevented months of misalignment and rework</li>
-                <li style={{ marginBottom: "8px", color: "#155724" }}><strong>Over-document edge cases:</strong> Created visual flowcharts and annotated screenshots instead of written specs - reduced back-and-forth by 60%</li>
-                <li style={{ marginBottom: "8px", color: "#155724" }}><strong>Record video walkthroughs:</strong> 3-minute Loom videos explaining user flows were more effective than 10-page documents</li>
-                <li style={{ marginBottom: "8px", color: "#155724" }}><strong>Overlap working hours:</strong> Shifted my hours 2-3 hours earlier to create real-time collaboration windows</li>
-                <li style={{ marginBottom: "8px", color: "#155724" }}><strong>Build trust through reliability:</strong> Consistent daily standups and clear decision-making frameworks reduced uncertainty</li>
-                <li style={{ marginBottom: "0", color: "#155724" }}><strong>Embrace constraints:</strong> Working within limitations led to simpler, more maintainable solutions than the "perfect" design would have</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-          </div>
-        </div>
+            <Typography component="p" variant="inherit" sx={{ mt: 2, mb: 0, fontStyle: "italic", color: "text.secondary" }}>
+              We delivered a practical three‑page workflow with 75% time savings. The Dream Flow later became the 2024 demo showing what’s now possible.
+            </Typography>
+          </Box>
+        </Box>
+          </Box>
+        </Box>
 
         {/* Lightbox Modal */}
-        {lightbox.isOpen && (
-          <div
-            onClick={closeLightbox}
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: "rgba(0, 0, 0, 0.95)",
-              zIndex: 9999,
+        <Dialog
+          open={lightbox.isOpen}
+          onClose={closeLightbox}
+          fullScreen
+          PaperProps={{
+            sx: {
+              backgroundColor: "transparent",
+              boxShadow: "none"
+            }
+          }}
+          BackdropProps={{
+            sx: { backgroundColor: "rgba(0, 0, 0, 0.95)" }
+          }}
+        >
+          <DialogContent
+            sx={{
+              p: 0,
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer"
+              justifyContent: "center"
             }}
+            onClick={closeLightbox}
           >
-            <div
+            <Box
               onClick={(e) => e.stopPropagation()}
-              style={{
+              sx={{
                 position: "relative",
                 maxWidth: "95vw",
                 maxHeight: "95vh",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                cursor: "default"
+                justifyContent: "center"
               }}
             >
-              {/* Close Button */}
-              <button
+              <IconButton
                 onClick={closeLightbox}
-                style={{
+                aria-label="Close lightbox"
+                sx={{
                   position: "absolute",
                   top: "-50px",
-                  right: "0",
+                  right: 0,
                   background: "rgba(255, 255, 255, 0.2)",
-                  border: "none",
-                  borderRadius: "50%",
+                  color: "#ffffff",
                   width: "40px",
                   height: "40px",
-                  color: "#ffffff",
-                  fontSize: "24px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "background 0.2s",
-                  zIndex: 10000
+                  "&:hover": { background: "rgba(255, 255, 255, 0.3)" }
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.3)"}
-                onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)"}
               >
-                ×
-              </button>
+                <CloseIcon fontSize="small" />
+              </IconButton>
 
-              {/* Previous Arrow */}
-              {(lightbox.gallery === 'discovery' ? discoveryImages : wireframeImages).length > 1 && (
-                <button
+              {getGalleryImages().length > 1 && (
+                <IconButton
                   onClick={(e) => {
                     e.stopPropagation();
                     navigateLightbox('prev');
                   }}
-                  style={{
+                  aria-label="Previous image"
+                  sx={{
                     position: "absolute",
                     left: "-60px",
                     background: "rgba(255, 255, 255, 0.2)",
-                    border: "none",
-                    borderRadius: "50%",
+                    color: "#ffffff",
                     width: "50px",
                     height: "50px",
-                    color: "#ffffff",
-                    fontSize: "24px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    transition: "background 0.2s"
+                    "&:hover": { background: "rgba(255, 255, 255, 0.3)" }
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.3)"}
-                  onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)"}
                 >
-                  ‹
-                </button>
+                  <ChevronLeftIcon />
+                </IconButton>
               )}
 
-              {/* Image */}
-              <img
-                src={(lightbox.gallery === 'discovery' ? discoveryImages : wireframeImages)[lightbox.currentIndex].src}
-                alt={(lightbox.gallery === 'discovery' ? discoveryImages : wireframeImages)[lightbox.currentIndex].alt}
-                style={{
+              <Box
+                component="img"
+                src={getGalleryImages()[lightbox.currentIndex].src}
+                alt={getGalleryImages()[lightbox.currentIndex].alt}
+                sx={{
                   maxWidth: "100%",
                   maxHeight: "95vh",
                   objectFit: "contain",
@@ -1246,40 +1316,30 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
                 }}
               />
 
-              {/* Next Arrow */}
-              {(lightbox.gallery === 'discovery' ? discoveryImages : wireframeImages).length > 1 && (
-                <button
+              {getGalleryImages().length > 1 && (
+                <IconButton
                   onClick={(e) => {
                     e.stopPropagation();
                     navigateLightbox('next');
                   }}
-                  style={{
+                  aria-label="Next image"
+                  sx={{
                     position: "absolute",
                     right: "-60px",
                     background: "rgba(255, 255, 255, 0.2)",
-                    border: "none",
-                    borderRadius: "50%",
+                    color: "#ffffff",
                     width: "50px",
                     height: "50px",
-                    color: "#ffffff",
-                    fontSize: "24px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    transition: "background 0.2s"
+                    "&:hover": { background: "rgba(255, 255, 255, 0.3)" }
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.3)"}
-                  onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255, 255, 255, 0.2)"}
                 >
-                  ›
-                </button>
+                  <ChevronRightIcon />
+                </IconButton>
               )}
 
-              {/* Image Counter */}
-              {(lightbox.gallery === 'discovery' ? discoveryImages : wireframeImages).length > 1 && (
-                <div
-                  style={{
+              {getGalleryImages().length > 1 && (
+                <Box
+                  sx={{
                     position: "absolute",
                     bottom: "-50px",
                     left: "50%",
@@ -1287,18 +1347,19 @@ const AmendmentsCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
                     color: "#ffffff",
                     fontSize: "14px",
                     background: "rgba(0, 0, 0, 0.5)",
-                    padding: "8px 16px",
+                    px: 2,
+                    py: 1,
                     borderRadius: "20px"
                   }}
                 >
-                  {lightbox.currentIndex + 1} / {(lightbox.gallery === 'discovery' ? discoveryImages : wireframeImages).length}
-                </div>
+                  {lightbox.currentIndex + 1} / {getGalleryImages().length}
+                </Box>
               )}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+            </Box>
+          </DialogContent>
+        </Dialog>
+      </Box>
+    </Box>
   );
 };
 

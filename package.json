@@ -15,7 +15,6 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
-  "homepage": "https://joelhickey.github.io/Earth",
   "keywords": [
     "react",
     "windows95",
@@ -45,9 +44,11 @@
     "@mui/material": "^7.3.4",
     "@supabase/supabase-js": "^2.56.1",
     "@vercel/analytics": "^1.5.0",
+    "fft-js": "^0.0.12",
     "lucide-react": "^0.555.0",
     "platinum": "github:robbiebyrd/classicy",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "sharp": "^0.34.5"
   }
 }
