@@ -3,15 +3,15 @@ import AxeBuilder from '@axe-core/playwright';
 
 test('desktop icons are accessible buttons', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'CV' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'FCTG Amendments' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'FCTG Insurance' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Curriculum Vitae' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Flight Centre Amendments' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Flight Centre Insurance' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Earth' })).toBeVisible();
 });
 
 test('desktop icons are keyboard activatable', async ({ page }) => {
   await page.goto('/');
-  const cvIcon = page.getByRole('button', { name: 'CV' });
+  const cvIcon = page.getByRole('button', { name: 'Curriculum Vitae' });
   await cvIcon.focus();
   await page.keyboard.press('Enter');
   await expect(page.getByText('Senior Product Designer')).toBeVisible();
@@ -20,9 +20,9 @@ test('desktop icons are keyboard activatable', async ({ page }) => {
 test('desktop icons meet target size', async ({ page }) => {
   await page.goto('/');
   const icons = [
-    page.getByRole('button', { name: 'CV' }),
-    page.getByRole('button', { name: 'FCTG Amendments' }),
-    page.getByRole('button', { name: 'FCTG Insurance' }),
+    page.getByRole('button', { name: 'Curriculum Vitae' }),
+    page.getByRole('button', { name: 'Flight Centre Amendments' }),
+    page.getByRole('button', { name: 'Flight Centre Insurance' }),
     page.getByRole('button', { name: 'Earth' })
   ];
 
@@ -36,7 +36,7 @@ test('desktop icons meet target size', async ({ page }) => {
 
 test('desktop icons show hover and focus outlines', async ({ page }) => {
   await page.goto('/');
-  const cvIcon = page.getByRole('button', { name: 'CV' });
+  const cvIcon = page.getByRole('button', { name: 'Curriculum Vitae' });
 
   await cvIcon.hover();
   const hoverOutlineStyle = await cvIcon.evaluate((el) => getComputedStyle(el).outlineStyle);

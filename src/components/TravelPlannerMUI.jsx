@@ -8,7 +8,8 @@ const TravelPlannerMUI = ({
   onDragStart,
   isMinimized,
   onBackToCaseStudy,
-  showBackButton = false
+  showBackButton = false,
+  zIndex = 1000
 }) => {
   const [editingId, setEditingId] = useState(null);
   const [editingTripName, setEditingTripName] = useState(false);
@@ -244,7 +245,7 @@ const TravelPlannerMUI = ({
         maxWidth: '90vw',
         height: '1310px',
         maxHeight: '90vh',
-        zIndex: 1000,
+        zIndex,
         display: isMinimized ? 'none' : 'flex',
         flexDirection: 'column',
         background: '#ffffff',
