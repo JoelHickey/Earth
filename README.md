@@ -109,6 +109,7 @@ npm run preview
 3. Output directory: `dist`
 4. Set environment variables (if using Supabase)
 5. Add your custom domain in Vercel → Settings → Domains
+6. Production URL: `https://joelhickey.com`
 
 ### Usage
 1. **Navigate Views**: Use the toolbar buttons to switch between different monitoring sections
