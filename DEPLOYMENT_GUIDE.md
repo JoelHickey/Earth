@@ -117,14 +117,9 @@ CREATE POLICY "Users can update own data" ON user_mental_health_data
 3. Configure DNS records as instructed
 4. Enable HTTPS
 
-## 📊 Step 6: Monitoring & Analytics
+## 📊 Step 6: Monitoring
 
-### 6.1 Vercel Analytics
-1. In Vercel dashboard, go to **Analytics**
-2. Enable analytics for your project
-3. Monitor performance and usage
-
-### 6.2 Supabase Monitoring
+### 6.1 Supabase Monitoring
 1. In Supabase dashboard, go to **Logs**
 2. Monitor authentication and database activity
 3. Set up alerts for errors

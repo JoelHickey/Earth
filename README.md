@@ -55,7 +55,6 @@ npm run test:e2e
 ## Deployment
 
 - **Vercel**: Build `npm run build`, output `dist`
-- **GitHub Pages**: `npm run deploy`
 
 ## Project Structure
 

@@ -13,7 +13,6 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import SportsBasketballIcon from '@mui/icons-material/SportsBasketball';
-import { Analytics } from '@vercel/analytics/react';
 import Header from './components/Header';
 import Toolbar from './components/Toolbar';
 import Slider from './components/Slider';
@@ -3377,7 +3376,7 @@ function App() {
                           <div style={{ padding: "4px", background: "#ffffff", fontSize: "8px", marginTop: "2px" }}>
                             <strong>Development:</strong> Vite dev server on port 3000<br/>
                             <strong>Build:</strong> vite build → static files in /dist<br/>
-                            <strong>Hosting:</strong> Static hosting (Netlify, Vercel, or GitHub Pages)<br/>
+                            <strong>Hosting:</strong> Static hosting (Vercel)<br/>
                             <strong>CI/CD:</strong> Git push → Auto build → Deploy to production<br/>
                             <strong>Rollback:</strong> Git revert → Redeploy previous version
                           </div>
@@ -5583,7 +5582,6 @@ function App() {
         </div>
       )}
 
-      <Analytics />
     </div>
   );
 }
