@@ -5,11 +5,11 @@ import { generateHotelUpgrades, generateDifferentHotels } from '../data/mockHote
 import { generateCalendarMonths } from '../data/mockCalendar';
 
 /**
- * BEFORE: TravelOldFlow was 4,615 lines with everything mixed together
+ * BEFORE: AmendmentsFlowDemo was 4,615 lines with everything mixed together
  * AFTER: This shows how clean it becomes with foundations
  * 
  * This is a simplified example showing the pattern.
- * The full refactor would break TravelOldFlow into multiple focused components.
+ * The full refactor would break AmendmentsFlowDemo into multiple focused components.
  */
 const DreamFlowExample = () => {
   // ✅ Custom hooks handle all business logic

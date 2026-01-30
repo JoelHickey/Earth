@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import {
   Box as MuiBox,
+  FormControl as MuiFormControl,
   FormControlLabel as MuiFormControlLabel,
   IconButton as MuiIconButton,
   Chip as MuiChip,
+  InputLabel as MuiInputLabel,
+  MenuItem,
+  Select as MuiSelect,
   Switch as MuiSwitch,
   Tab as MuiTab,
   Tabs as MuiTabs,
@@ -72,6 +76,10 @@ const mapHexToToken = (hex, theme) => {
     '#f2f2f2': theme.palette.background.default,
     '#f0f0f0': theme.palette.background.default,
     '#f9f9fb': theme.palette.background.default,
+    '#e3f2fd': theme.palette.background.default,
+    '#f3e5f5': theme.palette.background.default,
+    '#fff3cd': theme.palette.background.default,
+    '#fff8e1': theme.palette.background.default,
     '#ffffff': theme.palette.background.paper,
     '#667eea': theme.palette.primary.main,
     '#5566d9': theme.palette.primary.dark,
@@ -170,15 +178,18 @@ const withTokenSx = (Component) =>
   });
 
 const Box = withTokenSx(MuiBox);
+const FormControl = withTokenSx(MuiFormControl);
 const Typography = withTokenSx(MuiTypography);
 const IconButton = withTokenSx(MuiIconButton);
 const Chip = withTokenSx(MuiChip);
+const InputLabel = withTokenSx(MuiInputLabel);
+const Select = withTokenSx(MuiSelect);
 const Tabs = withTokenSx(MuiTabs);
 const Tab = withTokenSx(MuiTab);
 const FormControlLabel = withTokenSx(MuiFormControlLabel);
 const Switch = withTokenSx(MuiSwitch);
 
-const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) => {
+const AmendmentsFlowDemo = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) => {
   const [activeTab, setActiveTab] = useState('itinerary');
   const [openMenuId, setOpenMenuId] = useState(null);
   const [isAmendModalOpen, setIsAmendModalOpen] = useState(false);
@@ -201,6 +212,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
   const [hotelAmended, setHotelAmended] = useState(false);
   const [reasonForAmendment, setReasonForAmendment] = useState('');
   const [causeOfAmendment, setCauseOfAmendment] = useState('');
+  const isAmendFormComplete = Boolean(reasonForAmendment) && Boolean(causeOfAmendment);
   
   // Dream Flow States
   const [showDreamFlow, setShowDreamFlow] = useState(false);
@@ -234,6 +246,20 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
       callback();
       setShowLoadingModal(false);
     }, duration);
+  };
+
+  const resetOldFlow = () => {
+    setIsAmendModalOpen(false);
+    setIsTravellersModalOpen(false);
+    setIsSearchModalOpen(false);
+    setShowSearchResults(false);
+    setShowCartPage(false);
+    setShowTravellersPage(false);
+    setShowPaymentPage(false);
+    setSelectedHotel(null);
+    setReasonForAmendment('');
+    setCauseOfAmendment('');
+    setActiveTab('itinerary');
   };
 
   // Live inventory countdown simulation
@@ -291,7 +317,32 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
     destination: "Honolulu, Hawaii",
     startDate: "June 15, 2026",
     endDate: "June 20, 2026",
-    travelers: 4
+    travelers: 4,
+    totalPriceAud: "A$4,250"
+  };
+
+  const reasonOptions = [
+    { value: "customer_request", label: "Customer Request" },
+    { value: "date_change", label: "Date Change" },
+    { value: "upgrade", label: "Upgrade" },
+    { value: "downgrade", label: "Downgrade" },
+    { value: "pricing_error", label: "Pricing Error" },
+    { value: "availability_issue", label: "Availability Issue" },
+    { value: "other", label: "Other" }
+  ];
+
+  const amendmentTypeOptions = [
+    { value: "date_change", label: "Date Change" },
+    { value: "room_change", label: "Room/Vehicle Change" },
+    { value: "passenger_change", label: "Passenger/Traveller Change" },
+    { value: "cancel_component", label: "Cancel Component" },
+    { value: "add_component", label: "Add Component" },
+    { value: "pricing_adjustment", label: "Pricing Adjustment" },
+    { value: "other", label: "Other" }
+  ];
+
+  const getOptionLabel = (options, value) => {
+    return options.find((option) => option.value === value)?.label || "";
   };
 
   const shells = [
@@ -456,15 +507,12 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                 {tripData.tripName}
               </Typography>
               <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                Trip #{tripData.tripNo} · {tripData.travelers} travelers
+                Trip #{tripData.tripNo} · 📍 {tripData.destination} · 📅 Jun 15–20, 2026 · {tripData.travelers} travelers
               </Typography>
             </Box>
             <Box sx={{ textAlign: "right", whiteSpace: "nowrap" }}>
-              <Typography variant="caption" sx={{ color: "text.secondary", display: "block", mb: 0.25 }}>
-                📍 {tripData.destination}
-              </Typography>
-              <Typography variant="caption" sx={{ color: "text.secondary", display: "block" }}>
-                📅 {tripData.startDate} - {tripData.endDate}
+              <Typography variant="subtitle2" sx={{ color: "text.primary", fontWeight: 700 }}>
+                {tripData.totalPriceAud}
               </Typography>
             </Box>
           </Box>
@@ -497,7 +545,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
               sx: { backgroundColor: "#0071e3", height: "2px" }
             }}
           >
-            {['itinerary', 'payments', 'documents', 'notes'].map(tab => (
+            {['itinerary', 'documents', 'payments', 'notes', 'history'].map(tab => (
               <Tab key={tab} label={tab} value={tab} />
             ))}
           </Tabs>
@@ -617,7 +665,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                             lineHeight: 1,
                             position: "relative"
                           }}
-                          title="Actions"
+                          title="Actions menu"
+                          aria-label="Actions menu"
                         >
                           ⋮
                         </Box>
@@ -629,13 +678,14 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                               top: "100%",
                               right: 0,
                               mt: "4px",
-                              background: "background.paper",
+                              backgroundColor: "background.paper",
                               border: "1px solid",
                               borderColor: "divider",
                               borderRadius: "6px",
                               boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                               minWidth: "140px",
-                              zIndex: 100
+                              zIndex: 100,
+                              opacity: 1
                             }}
                           >
                             <Box
@@ -906,14 +956,14 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                                       flex: 2,
                                       fontSize: "9px",
                                       p: "4px 10px",
-                                      background: selectedPayment ? "#667eea" : "#d1d1d6",
-                                      color: "#ffffff",
+                                      backgroundColor: selectedPayment ? "primary.main" : "action.disabledBackground",
+                                      color: selectedPayment ? "primary.contrastText" : "text.disabled",
                                       border: "none",
                                       borderRadius: "4px",
                                       cursor: selectedPayment ? "pointer" : "not-allowed",
                                       fontWeight: 600,
                                       "&:hover": {
-                                        background: selectedPayment ? "#5566d9" : "#d1d1d6"
+                                        backgroundColor: selectedPayment ? "primary.dark" : "action.disabledBackground"
                                       }
                                     }}
                                   >
@@ -1043,7 +1093,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                                     fontSize: "11px",
                                     fontWeight: 500,
                                     color: "#ffffff",
-                                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                                    background: "background.default",
                                     border: "none",
                                     borderRadius: "4px",
                                     cursor: "pointer"
@@ -2062,7 +2112,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                         fontSize: "13px",
                         fontWeight: "500",
                         color: "#ffffff",
-                        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        background: "background.default",
                         border: "none",
                         borderRadius: "6px",
                         cursor: "pointer"
@@ -2165,11 +2215,15 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                 borderBottom: "1px solid #e0e0e0",
                 px: 2.5,
                 py: 1.75,
-                flexShrink: 0
+                flexShrink: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 2
               }}
             >
               {/* Breadcrumb Steps */}
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
                 {[
                   { label: "Search", active: true },
                   { label: "Review", active: false },
@@ -2185,8 +2239,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                         px: 1.5,
                         py: 0.75,
                         borderRadius: "6px",
-                        background: step.active ? "#e3f2fd" : "transparent",
-                        color: step.active ? "#0071e3" : "#6e6e73",
+                        background: step.active ? "action.hover" : "transparent",
+                        color: step.active ? "text.primary" : "text.secondary",
                         fontSize: "13px",
                         fontWeight: step.active ? 600 : 400
                       }}
@@ -2196,8 +2250,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                           width: 20,
                           height: 20,
                           borderRadius: "50%",
-                          background: step.active ? "#0071e3" : "#d0d0d0",
-                          color: "#ffffff",
+                          background: step.active ? "text.primary" : "divider",
+                          color: "background.paper",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -2210,10 +2264,54 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                       {step.label}
                     </Box>
                     {index < array.length - 1 && (
-                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
+                      <Box sx={{ color: "divider", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
+              </Box>
+
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={() => {
+                    setShowSearchResults(false);
+                    setIsSearchModalOpen(true);
+                  }}
+                  sx={{
+                    padding: "6px 12px",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    color: "text.secondary",
+                    background: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    "&:hover": { background: "action.hover" }
+                  }}
+                >
+                  Back to Search
+                </Box>
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={resetOldFlow}
+                  sx={{
+                    padding: "6px 12px",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    color: "text.secondary",
+                    background: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    "&:hover": { background: "action.hover" }
+                  }}
+                >
+                  Cancel amendment
+                </Box>
               </Box>
             </Box>
 
@@ -2238,13 +2336,14 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                   <Box
                     key={index}
                     sx={{
-                      background: "#ffffff",
+                      background: "background.paper",
                       borderRadius: "8px",
                       p: 2,
                       mb: 1.5,
                       display: "flex",
                       gap: 2,
-                      border: "1px solid #e0e0e0"
+                      border: "1px solid",
+                      borderColor: "divider"
                     }}
                   >
                     {/* Hotel Image Placeholder */}
@@ -2252,7 +2351,9 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                       sx={{
                         width: "120px",
                         height: "90px",
-                        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        background: "background.default",
+                        border: "1px solid",
+                        borderColor: "divider",
                         borderRadius: "6px",
                         display: "flex",
                         alignItems: "center",
@@ -2270,7 +2371,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                         {hotel.name}
                       </Typography>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-                        <Typography variant="body2" sx={{ color: "#f5a623" }}>★ {hotel.rating}</Typography>
+                        <Typography variant="body2" sx={{ color: "text.secondary" }}>★ {hotel.rating}</Typography>
                         <Typography variant="caption" sx={{ color: "#6e6e73" }}>
                           ({hotel.reviews} reviews)
                         </Typography>
@@ -2296,12 +2397,14 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                           sx={{
                             padding: "8px 20px",
                             fontSize: "13px",
-                            fontWeight: "500",
-                            color: "#ffffff",
-                            background: "#0071e3",
-                            border: "none",
+                            fontWeight: 600,
+                            color: "text.primary",
+                            background: "background.paper",
+                            border: "1px solid",
+                            borderColor: "divider",
                             borderRadius: "6px",
-                            cursor: "pointer"
+                            cursor: "pointer",
+                            "&:hover": { background: "action.hover" }
                           }}
                         >
                           Select Room
@@ -2410,8 +2513,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                         px: 1.5,
                         py: 0.75,
                         borderRadius: "6px",
-                        background: step.active ? "#e3f2fd" : "transparent",
-                        color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
+                        background: step.active ? "action.hover" : "transparent",
+                        color: step.active ? "text.primary" : "text.secondary",
                         fontSize: "13px",
                         fontWeight: step.active ? 600 : 400
                       }}
@@ -2421,8 +2524,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                           width: 20,
                           height: 20,
                           borderRadius: "50%",
-                          background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
-                          color: "#ffffff",
+                          background: step.active ? "text.primary" : step.completed ? "text.secondary" : "divider",
+                          color: "background.paper",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -2435,7 +2538,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                       {step.label}
                     </Box>
                     {index < array.length - 1 && (
-                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
+                      <Box sx={{ color: "divider", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
@@ -2469,7 +2572,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                       sx={{
                         width: "100px",
                         height: "75px",
-                        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        background: "background.default",
                         borderRadius: "6px",
                         display: "flex",
                         alignItems: "center",
@@ -2580,6 +2683,49 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                 boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
               }}
             >
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={() => {
+                    setShowCartPage(false);
+                    setShowSearchResults(true);
+                  }}
+                  sx={{
+                    padding: "10px 18px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    color: "text.secondary",
+                    background: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    "&:hover": { background: "action.hover" }
+                  }}
+                >
+                  Back to Results
+                </Box>
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={resetOldFlow}
+                  sx={{
+                    padding: "10px 18px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    color: "text.secondary",
+                    background: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    "&:hover": { background: "action.hover" }
+                  }}
+                >
+                  Cancel amendment
+                </Box>
+              </Box>
               <Box>
                 <Box sx={{ fontSize: "12px", color: "#6e6e73", marginBottom: "2px" }}>
                   Total Amount
@@ -2600,12 +2746,13 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                   padding: "14px 40px",
                   fontSize: "14px",
                   fontWeight: "600",
-                  color: "#ffffff",
-                  background: "#0071e3",
+                  color: "primary.contrastText",
+                  backgroundColor: "primary.main",
                   border: "none",
                   borderRadius: "10px",
                   cursor: "pointer",
-                  boxShadow: "0 4px 12px rgba(0, 113, 227, 0.3)"
+                  boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
+                  "&:hover": { backgroundColor: "primary.dark" }
                 }}
               >
                 Proceed to Travellers →
@@ -2651,8 +2798,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                         px: 1.5,
                         py: 0.75,
                         borderRadius: "6px",
-                        background: step.active ? "#e3f2fd" : "transparent",
-                        color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
+                        background: step.active ? "action.hover" : "transparent",
+                        color: step.active ? "text.primary" : "text.secondary",
                         fontSize: "13px",
                         fontWeight: step.active ? 600 : 400
                       }}
@@ -2662,8 +2809,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                           width: 20,
                           height: 20,
                           borderRadius: "50%",
-                          background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
-                          color: "#ffffff",
+                          background: step.active ? "text.primary" : step.completed ? "text.secondary" : "divider",
+                          color: "background.paper",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -2676,7 +2823,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                       {step.label}
                     </Box>
                     {index < array.length - 1 && (
-                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
+                      <Box sx={{ color: "divider", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
@@ -2724,10 +2871,53 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                 borderTop: "2px solid #e0e0e0",
                 padding: "20px 24px",
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: "space-between",
                 boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
               }}
             >
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={() => {
+                    setShowTravellersPage(false);
+                    setShowCartPage(true);
+                  }}
+                  sx={{
+                    padding: "10px 18px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    color: "text.secondary",
+                    background: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    "&:hover": { background: "action.hover" }
+                  }}
+                >
+                  Back to Review
+                </Box>
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={resetOldFlow}
+                  sx={{
+                    padding: "10px 18px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    color: "text.secondary",
+                    background: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    "&:hover": { background: "action.hover" }
+                  }}
+                >
+                  Cancel amendment
+                </Box>
+              </Box>
               <Box 
                 component="button"
                 onClick={() => {
@@ -2740,12 +2930,13 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                   padding: "14px 40px",
                   fontSize: "14px",
                   fontWeight: "600",
-                  color: "#ffffff",
-                  background: "#0071e3",
+                  color: "primary.contrastText",
+                  backgroundColor: "primary.main",
                   border: "none",
                   borderRadius: "10px",
                   cursor: "pointer",
-                  boxShadow: "0 4px 12px rgba(0, 113, 227, 0.3)"
+                  boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
+                  "&:hover": { backgroundColor: "primary.dark" }
                 }}
               >
                 Go to Payment →
@@ -2791,8 +2982,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                         px: 1.5,
                         py: 0.75,
                         borderRadius: "6px",
-                        background: step.active ? "#e3f2fd" : "transparent",
-                        color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
+                        background: step.active ? "action.hover" : "transparent",
+                        color: step.active ? "text.primary" : "text.secondary",
                         fontSize: "13px",
                         fontWeight: step.active ? 600 : 400
                       }}
@@ -2802,8 +2993,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                           width: 20,
                           height: 20,
                           borderRadius: "50%",
-                          background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
-                          color: "#ffffff",
+                          background: step.active ? "text.primary" : step.completed ? "text.secondary" : "divider",
+                          color: "background.paper",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -2816,7 +3007,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                       {step.label}
                     </Box>
                     {index < array.length - 1 && (
-                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
+                      <Box sx={{ color: "divider", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
@@ -2957,10 +3148,53 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                 borderTop: "2px solid #e0e0e0",
                 padding: "20px 24px",
                 display: "flex",
-                justifyContent: "flex-end",
+                justifyContent: "space-between",
                 boxShadow: "0 -4px 12px rgba(0,0,0,0.1)"
               }}
             >
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={() => {
+                    setShowPaymentPage(false);
+                    setShowTravellersPage(true);
+                  }}
+                  sx={{
+                    padding: "10px 18px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    color: "text.secondary",
+                    background: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    "&:hover": { background: "action.hover" }
+                  }}
+                >
+                  Back to Travellers
+                </Box>
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={resetOldFlow}
+                  sx={{
+                    padding: "10px 18px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    color: "text.secondary",
+                    background: "background.paper",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    "&:hover": { background: "action.hover" }
+                  }}
+                >
+                  Cancel amendment
+                </Box>
+              </Box>
               <Box 
                 component="button"
                 onClick={() => {
@@ -2976,12 +3210,15 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                   padding: "14px 40px",
                   fontSize: "14px",
                   fontWeight: "600",
-                  color: "#ffffff",
-                  background: "#34c759",
+                  color: "primary.contrastText",
+                  backgroundColor: "primary.main",
                   border: "none",
                   borderRadius: "10px",
                   cursor: "pointer",
-                  boxShadow: "0 4px 12px rgba(52, 199, 89, 0.3)"
+                  boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
+                  "&:hover": {
+                    backgroundColor: "primary.dark"
+                  }
                 }}
               >
                 Confirm Payment ✓
@@ -3023,8 +3260,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                         gap: "6px",
                         padding: "6px 12px",
                         borderRadius: "6px",
-                        background: step.active ? "#e3f2fd" : "transparent",
-                        color: step.active ? "#0071e3" : "#6e6e73",
+                        background: step.active ? "action.hover" : "transparent",
+                        color: step.active ? "text.primary" : "text.secondary",
                         fontSize: "13px",
                         fontWeight: step.active ? "600" : "400"
                       }}
@@ -3035,8 +3272,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                           width: "20px",
                           height: "20px",
                           borderRadius: "50%",
-                          background: step.active ? "#0071e3" : "#d0d0d0",
-                          color: "#ffffff",
+                          background: step.active ? "text.primary" : "divider",
+                          color: "background.paper",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -3049,7 +3286,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                       {step.label}
                     </Box>
                     {index < array.length - 1 && (
-                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
+                      <Box sx={{ color: "divider", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
@@ -3294,8 +3531,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                         gap: "6px",
                         padding: "6px 12px",
                         borderRadius: "6px",
-                        background: step.active ? "#e3f2fd" : "transparent",
-                        color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
+                        background: step.active ? "action.hover" : "transparent",
+                        color: step.active ? "text.primary" : "text.secondary",
                         fontSize: "13px",
                         fontWeight: step.active ? "600" : "400"
                       }}
@@ -3306,8 +3543,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                           width: "20px",
                           height: "20px",
                           borderRadius: "50%",
-                          background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
-                          color: "#ffffff",
+                          background: step.active ? "text.primary" : step.completed ? "text.secondary" : "divider",
+                          color: "background.paper",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -3320,7 +3557,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                       {step.label}
                     </Box>
                     {index < array.length - 1 && (
-                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
+                      <Box sx={{ color: "divider", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
@@ -3382,7 +3619,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                           sx={{
                             width: "140px",
                             height: "105px",
-                            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            background: "background.default",
                             borderRadius: "8px",
                             display: "flex",
                             alignItems: "center",
@@ -3471,7 +3708,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                             sx={{
                               width: "100px",
                               height: "75px",
-                              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                              background: "background.default",
                               borderRadius: "6px",
                               display: "flex",
                               alignItems: "center",
@@ -3530,12 +3767,15 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                   padding: "14px 40px",
                   fontSize: "14px",
                   fontWeight: "600",
-                  color: "#ffffff",
-                  background: "#0071e3",
+                  color: "primary.contrastText",
+                  backgroundColor: "primary.main",
                   border: "none",
                   borderRadius: "10px",
                   cursor: "pointer",
-                  boxShadow: "0 4px 12px rgba(0, 113, 227, 0.3)"
+                  boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
+                  "&:hover": {
+                    backgroundColor: "primary.dark"
+                  }
                 }}
               >
                 Continue to Checkout →
@@ -3577,8 +3817,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                         gap: "6px",
                         padding: "6px 12px",
                         borderRadius: "6px",
-                        background: step.active ? "#e3f2fd" : "transparent",
-                        color: step.active ? "#0071e3" : step.completed ? "#34c759" : "#6e6e73",
+                        background: step.active ? "action.hover" : "transparent",
+                        color: step.active ? "text.primary" : "text.secondary",
                         fontSize: "13px",
                         fontWeight: step.active ? "600" : "400"
                       }}
@@ -3589,8 +3829,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                           width: "20px",
                           height: "20px",
                           borderRadius: "50%",
-                          background: step.active ? "#0071e3" : step.completed ? "#34c759" : "#d0d0d0",
-                          color: "#ffffff",
+                          background: step.active ? "text.primary" : step.completed ? "text.secondary" : "divider",
+                          color: "background.paper",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -3603,7 +3843,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                       {step.label}
                     </Box>
                     {index < array.length - 1 && (
-                      <Box sx={{ color: "#d0d0d0", fontSize: "12px" }}>→</Box>
+                      <Box sx={{ color: "divider", fontSize: "12px" }}>→</Box>
                     )}
                   </React.Fragment>
                 ))}
@@ -3633,7 +3873,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                         sx={{
                           width: "80px",
                           height: "60px",
-                          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                          background: "background.default",
                           borderRadius: "6px",
                           display: "flex",
                           alignItems: "center",
@@ -3827,12 +4067,15 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                   padding: "14px 40px",
                   fontSize: "14px",
                   fontWeight: "600",
-                  color: "#ffffff",
-                  background: "#34c759",
+                  color: "primary.contrastText",
+                  backgroundColor: "primary.main",
                   border: "none",
                   borderRadius: "10px",
                   cursor: "pointer",
-                  boxShadow: "0 4px 12px rgba(52, 199, 89, 0.3)"
+                  boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
+                  "&:hover": {
+                    backgroundColor: "primary.dark"
+                  }
                 }}
               >
                 Confirm & Pay →
@@ -3906,6 +4149,28 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
             </Box>
           </Box>
         )}
+
+        {activeTab === 'history' && (
+          <Box sx={{ flex: 1, overflow: "auto", p: 2, background: "#fafafa" }}>
+            <Box
+              sx={{
+                p: "40px 24px",
+                textAlign: "center",
+                background: "#ffffff",
+                border: "1px solid #d0d0d0",
+                borderRadius: "8px"
+              }}
+            >
+              <Box sx={{ fontSize: "24px", mb: 2 }}>🗂️</Box>
+              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5, color: "#1d1d1f" }}>
+                History Screen
+              </Typography>
+              <Typography variant="body2" sx={{ color: "#6e6e73" }}>
+                Timeline of amendments and updates
+              </Typography>
+            </Box>
+          </Box>
+        )}
       </Box>
 
       {/* Amendment Modal */}
@@ -3940,6 +4205,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
               </Typography>
               <IconButton
                 onClick={() => setIsAmendModalOpen(false)}
+                aria-label="Close amend modal"
                 size="small"
                 sx={{
                   width: 28,
@@ -3956,115 +4222,136 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
 
             {/* Modal Content */}
             <Box sx={{ p: 2 }}>
-              <Box sx={{
-                mb: 2.5,
-                p: "8px 10px",
-                background: "#f8f9fa",
-                borderRadius: "6px",
-                fontSize: "13px",
-                color: "#6e6e73"
-              }}>
-                {selectedShell?.name} · {selectedShell?.type}
+              <Box
+                sx={{
+                  mb: 2.5,
+                  p: "6px 10px",
+                  backgroundColor: "action.selected",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontSize: "13px",
+                  color: "text.secondary",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.75
+                }}
+              >
+                <Box component="span" sx={{ fontSize: "14px" }}>
+                  {selectedShell?.icon || "🏨"}
+                </Box>
+                <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                  {selectedShell?.name}
+                </Box>
+                <Box component="span" sx={{ color: "text.secondary" }}>
+                  · {selectedShell?.type}
+                </Box>
               </Box>
 
               {/* Question 1: Reason for Amendment */}
               <Box sx={{ marginBottom: "20px" }}>
-                <Box
-                  component="label"
-                  sx={{
-                    display: "block",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    marginBottom: "8px",
-                    color: "#1d1d1f"
-                  }}
-                >
-                  1. Reason for Amendment <Box component="span" sx={{ color: "#dc3545" }}>*</Box>
-                </Box>
-                <Box
-                  component="select"
-                  value={reasonForAmendment}
-                  onChange={(e) => setReasonForAmendment(e.target.value)}
-                  sx={{
-                    width: "100%",
-                    padding: "10px 12px",
-                    fontSize: "14px",
-                    border: "1px solid #d0d0d0",
-                    borderRadius: "6px",
-                    background: "#ffffff",
-                    color: "#1d1d1f",
-                    cursor: "pointer",
-                    fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif"
-                  }}
-                >
-                  <option value="">Select reason...</option>
-                  <option value="customer_request">Customer Request</option>
-                  <option value="date_change">Date Change</option>
-                  <option value="upgrade">Upgrade</option>
-                  <option value="downgrade">Downgrade</option>
-                  <option value="pricing_error">Pricing Error</option>
-                  <option value="availability_issue">Availability Issue</option>
-                  <option value="other">Other</option>
-                </Box>
+                <FormControl fullWidth size="small">
+                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 1, color: "text.primary" }}>
+                    Reason for Amendment <Box component="span" sx={{ color: "text.secondary" }}>*</Box>
+                  </Typography>
+                  <Select
+                    id="amendment-reason"
+                    value={reasonForAmendment}
+                    displayEmpty
+                    onChange={(e) => setReasonForAmendment(String(e.target.value))}
+                    renderValue={(selected) =>
+                      selected ? (
+                        getOptionLabel(reasonOptions, selected)
+                      ) : (
+                        <Box sx={{ color: "text.secondary" }}>Select reason...</Box>
+                      )
+                    }
+                    sx={{
+                      backgroundColor: "background.paper",
+                      pr: 4,
+                      "& .MuiSelect-icon": {
+                        right: 10
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "divider"
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "text.secondary"
+                      }
+                    }}
+                  >
+                    <MenuItem value="" disabled>
+                      Select reason...
+                    </MenuItem>
+                    {reasonOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Box>
 
               {/* Question 2: Type of Amendment */}
               <Box sx={{ marginBottom: "24px" }}>
-                <Box
-                  component="label"
-                  sx={{
-                    display: "block",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    marginBottom: "8px",
-                    color: "#1d1d1f"
-                  }}
-                >
-                  2. Type of Amendment <Box component="span" sx={{ color: "#dc3545" }}>*</Box>
-                </Box>
-                <Box
-                  component="select"
-                  value={causeOfAmendment}
-                  onChange={(e) => setCauseOfAmendment(e.target.value)}
-                  sx={{
-                    width: "100%",
-                    padding: "10px 12px",
-                    fontSize: "14px",
-                    border: "1px solid #d0d0d0",
-                    borderRadius: "6px",
-                    background: "#ffffff",
-                    color: "#1d1d1f",
-                    cursor: "pointer",
-                    fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif"
-                  }}
-                >
-                  <option value="">Select type...</option>
-                  <option value="date_change">Date Change</option>
-                  <option value="room_change">Room/Vehicle Change</option>
-                  <option value="passenger_change">Passenger/Traveller Change</option>
-                  <option value="cancel_component">Cancel Component</option>
-                  <option value="add_component">Add Component</option>
-                  <option value="pricing_adjustment">Pricing Adjustment</option>
-                  <option value="other">Other</option>
-                </Box>
+                <FormControl fullWidth size="small">
+                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 1, color: "text.primary" }}>
+                    Type of Amendment <Box component="span" sx={{ color: "text.secondary" }}>*</Box>
+                  </Typography>
+                  <Select
+                    id="amendment-type"
+                    value={causeOfAmendment}
+                    displayEmpty
+                    onChange={(e) => setCauseOfAmendment(String(e.target.value))}
+                    renderValue={(selected) =>
+                      selected ? (
+                        getOptionLabel(amendmentTypeOptions, selected)
+                      ) : (
+                        <Box sx={{ color: "text.secondary" }}>Select type...</Box>
+                      )
+                    }
+                    sx={{
+                      backgroundColor: "background.paper",
+                      pr: 4,
+                      "& .MuiSelect-icon": {
+                        right: 10
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "divider"
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "text.secondary"
+                      }
+                    }}
+                  >
+                    <MenuItem value="" disabled>
+                      Select type...
+                    </MenuItem>
+                    {amendmentTypeOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Box>
 
               {/* Warning Message - Shows when both answers selected */}
-              {reasonForAmendment && causeOfAmendment && (
+              {isAmendFormComplete && (
                 <Box
                   sx={{
-                    padding: "16px",
-                    background: "#fff3cd",
-                    border: "1px solid #ffc107",
+                    padding: "12px 14px",
+                    background: "background.default",
+                    border: "1px solid",
+                    borderColor: "divider",
                     borderRadius: "6px",
                     marginBottom: "20px"
                   }}
                 >
                   <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <Box sx={{ fontSize: "13px", color: "#856404", fontWeight: "600" }}>
+                    <Box sx={{ fontSize: "12px", color: "text.secondary", fontWeight: 600 }}>
                       Amendment Fee
                     </Box>
-                    <Box sx={{ fontSize: "16px", fontWeight: "700", color: "#856404" }}>
+                    <Box sx={{ fontSize: "15px", fontWeight: 700, color: "text.primary" }}>
                       $45.00
                     </Box>
                   </Box>
@@ -4074,27 +4361,49 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
               {/* Action Buttons */}
               <Box sx={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Box
-                  component="button"
+                  component="span"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setIsAmendModalOpen(false)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      setIsAmendModalOpen(false);
+                    }
+                  }}
                   sx={{
                     padding: "10px 20px",
                     fontSize: "14px",
-                    fontWeight: "500",
-                    color: "#6e6e73",
-                    background: "#f5f5f7",
+                    fontWeight: 600,
+                    color: "text.secondary",
+                    background: "transparent",
                     border: "none",
                     borderRadius: "6px",
                     cursor: "pointer",
-                    fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif"
+                    fontFamily: "inherit",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    "&:hover": { textDecoration: "underline" }
                   }}
                 >
                   Cancel
                 </Box>
                 <Box
-                  component="button"
-                  disabled={!reasonForAmendment || !causeOfAmendment}
+                  component="span"
+                  role="button"
+                  aria-disabled={!isAmendFormComplete}
+                  tabIndex={isAmendFormComplete ? 0 : -1}
                   onClick={() => {
-                    if (reasonForAmendment && causeOfAmendment) {
+                    if (!isAmendFormComplete) return;
+                    showLoadingThen('Loading traveller selection...', () => {
+                      setIsAmendModalOpen(false);
+                      setIsTravellersModalOpen(true);
+                    }, 3000);
+                  }}
+                  onKeyDown={(event) => {
+                    if (!isAmendFormComplete) return;
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
                       showLoadingThen('Loading traveller selection...', () => {
                         setIsAmendModalOpen(false);
                         setIsTravellersModalOpen(true);
@@ -4104,13 +4413,19 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                   sx={{
                     padding: "10px 20px",
                     fontSize: "14px",
-                    fontWeight: "500",
-                    color: "#ffffff",
-                    background: (!reasonForAmendment || !causeOfAmendment) ? "#d0d0d0" : "#0071e3",
+                    fontWeight: 600,
+                    color: (!isAmendFormComplete) ? "text.disabled" : "primary.contrastText",
+                    backgroundColor: (!isAmendFormComplete) ? "action.disabledBackground" : "primary.main",
                     border: "none",
                     borderRadius: "6px",
-                    cursor: (!reasonForAmendment || !causeOfAmendment) ? "not-allowed" : "pointer",
-                    fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif"
+                    cursor: (!isAmendFormComplete) ? "not-allowed" : "pointer",
+                    fontFamily: "inherit",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    "&:hover": {
+                      backgroundColor: (!isAmendFormComplete) ? "action.disabledBackground" : "primary.dark"
+                    },
+                    opacity: 1
                   }}
                 >
                   Continue to Travellers →
@@ -4139,7 +4454,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
         >
           <Box
             sx={{
-              background: "#ffffff",
+              backgroundColor: "background.paper",
               borderRadius: "10px",
               width: "600px",
               maxWidth: "90vw",
@@ -4153,7 +4468,8 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
             <Box
               sx={{
                 padding: "20px 24px",
-                borderBottom: "1px solid #e0e0e0",
+                borderBottom: "1px solid",
+                borderColor: "divider",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between"
@@ -4165,7 +4481,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                   fontSize: "18px",
                   fontWeight: "600",
                   margin: 0,
-                  color: "#1d1d1f"
+                  color: "text.primary"
                 }}
               >
                 Adjust Travellers
@@ -4173,13 +4489,14 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
               <Box
                 component="button"
                 onClick={() => setIsTravellersModalOpen(false)}
+                aria-label="Close travellers modal"
                 sx={{
                   width: "28px",
                   height: "28px",
                   borderRadius: "50%",
                   border: "none",
-                  background: "#e0e0e0",
-                  color: "#666",
+                  background: "action.hover",
+                  color: "text.secondary",
                   fontSize: "16px",
                   cursor: "pointer",
                   display: "flex",
@@ -4196,14 +4513,26 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
               <Box
                 sx={{
                   marginBottom: "20px",
-                  padding: "8px 10px",
-                  background: "#f8f9fa",
+                  padding: "6px 10px",
+                  backgroundColor: "action.selected",
+                  border: "none",
                   borderRadius: "6px",
                   fontSize: "13px",
-                  color: "#6e6e73"
+                  color: "text.secondary",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.75
                 }}
               >
-                {selectedShell?.name} · {selectedShell?.type}
+                <Box component="span" sx={{ fontSize: "14px" }}>
+                  {selectedShell?.icon || "🏨"}
+                </Box>
+                <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                  {selectedShell?.name}
+                </Box>
+                <Box component="span" sx={{ color: "text.secondary" }}>
+                  · {selectedShell?.type}
+                </Box>
               </Box>
 
               <Box
@@ -4296,12 +4625,15 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                   padding: "10px 20px",
                   fontSize: "14px",
                   fontWeight: "500",
-                  color: "#ffffff",
-                  background: "#0071e3",
+                  color: "primary.contrastText",
+                  backgroundColor: "primary.main",
                   border: "none",
                   borderRadius: "6px",
                   cursor: "pointer",
-                  fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif"
+                  fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+                  "&:hover": {
+                    backgroundColor: "primary.dark"
+                  }
                 }}
               >
                 Continue to Search →
@@ -4363,6 +4695,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
               <Box
                 component="button"
                 onClick={() => setIsSearchModalOpen(false)}
+                aria-label="Close search modal"
                 sx={{
                   width: "28px",
                   height: "28px",
@@ -4386,14 +4719,26 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
               <Box
                 sx={{
                   marginBottom: "20px",
-                  padding: "8px 10px",
-                  background: "#f8f9fa",
+                  padding: "6px 10px",
+                  backgroundColor: "action.selected",
+                  border: "none",
                   borderRadius: "6px",
                   fontSize: "13px",
-                  color: "#6e6e73"
+                  color: "text.secondary",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.75
                 }}
               >
-                {selectedShell?.name} · {selectedShell?.type}
+                <Box component="span" sx={{ fontSize: "14px" }}>
+                  {selectedShell?.icon || "🏨"}
+                </Box>
+                <Box component="span" sx={{ fontWeight: 600, color: "text.primary" }}>
+                  {selectedShell?.name}
+                </Box>
+                <Box component="span" sx={{ color: "text.secondary" }}>
+                  · {selectedShell?.type}
+                </Box>
               </Box>
 
               {/* Destination */}
@@ -4683,7 +5028,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                     fontSize: "13px",
                     fontWeight: "500",
                     color: "#ffffff",
-                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    background: "background.default",
                     border: "none",
                     borderRadius: "6px",
                     cursor: "pointer",
@@ -4991,7 +5336,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
                     }}
                     sx={{
                       padding: "12px",
-                      background: idx === 0 ? "linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)" : "#ffffff",
+                      background: idx === 0 ? "background.default" : "background.paper",
                       border: idx === 0 ? "2px solid #667eea" : "1px solid #d0d0d0",
                       borderRadius: "8px",
                       marginBottom: "10px",
@@ -5337,7 +5682,7 @@ const TravelOldFlow = ({ onBackToCaseStudy, onClose, position, zIndex = 99 }) =>
   );
 };
 
-export default TravelOldFlow;
+export default AmendmentsFlowDemo;
 
 
 

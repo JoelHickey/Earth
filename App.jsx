@@ -28,7 +28,7 @@ import { SearchProgress, ErrorMessage, NoResultsMessage, HotelSkeleton } from '.
 import TravelPlannerMUI from './src/components/TravelPlannerMUI';
 import AmendmentsCaseStudy from './src/components/AmendmentsCaseStudy';
 import InsuranceCaseStudy from './src/components/InsuranceCaseStudy';
-import TravelOldFlow from './src/components/TravelOldFlow';
+import AmendmentsFlowDemo from './src/components/AmendmentsFlowDemo';
 import InsuranceOldFlow from './src/components/InsuranceOldFlow';
 
 function App() {
@@ -4541,7 +4541,7 @@ function App() {
           )}
           
           {travelWindow.view === 'oldFlow' && (
-            <TravelOldFlow
+            <AmendmentsFlowDemo
               onBackToCaseStudy={() => updateTravelWindowView(travelWindow.id, 'caseStudy')}
               onClose={() => closeTravelApp(travelWindow.id)}
               position={travelWindow.position}
