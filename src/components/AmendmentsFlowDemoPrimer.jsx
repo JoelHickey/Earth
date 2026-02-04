@@ -56,6 +56,11 @@ const DREAM_ROOM_OPTIONS = [
   { id: 'deluxe', label: 'Deluxe Room', delta: 180 },
   { id: 'ocean', label: 'Ocean View Suite', delta: 420 }
 ];
+const DREAM_ROOM_PRICES = {
+  standard: '$289',
+  deluxe: '$325',
+  ocean: '$375'
+};
 const DREAM_HOTEL_TOTALS = {
   'Hilton Hawaiian Village': 4200,
   'Royal Hawaiian Resort': 4805,
@@ -113,6 +118,10 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
     background: '#ffffff',
     boxShadow: '0 1px 2px rgba(31,35,40,0.12)'
   };
+  const newFlowCompactCardStyle = {
+    ...newFlowCardStyle,
+    padding: '12px'
+  };
   const columnStackSx = { display: 'flex', flexDirection: 'column', gap: 3 };
   const rowBetweenSx = {
     display: 'flex',
@@ -155,12 +164,6 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
   };
   const pillButtonSx = {
     borderRadius: 999,
-    px: 0.5,
-    py: 0,
-    height: 18,
-    minHeight: 18,
-    fontSize: '9px',
-    lineHeight: '12px',
     width: 'fit-content',
     minWidth: 'unset',
     flex: '0 0 auto',
@@ -168,6 +171,22 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
     alignSelf: 'flex-start',
     whiteSpace: 'nowrap',
     maxWidth: 'max-content'
+  };
+  const compactPillStyle = {
+    appearance: 'none',
+    border: '1px solid var(--borderColor-default)',
+    background: 'var(--canvas-default)',
+    color: 'var(--fgColor-default)',
+    borderRadius: 999,
+    height: 20,
+    minHeight: 20,
+    padding: '0 8px',
+    fontSize: '12px',
+    lineHeight: '18px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 4,
+    cursor: 'pointer'
   };
   const sectionListSx = { display: 'flex', flexDirection: 'column', gap: 2 };
   const cardSlimSx = {
@@ -217,6 +236,29 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
     py: 2,
     border: '1px solid',
     borderColor: 'success.muted'
+  };
+  const compactFormStackSx = { display: 'flex', flexDirection: 'column', gap: 2 };
+  const travellersGridStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gap: 8
+  };
+  const searchGridStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+    gap: 8
+  };
+  const reviewGridStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gap: 12,
+    alignItems: 'start'
+  };
+  const compactCardStyle = {
+    border: 'var(--borderWidth-thin) solid var(--borderColor-default)',
+    borderRadius: 8,
+    background: 'transparent',
+    padding: 10
   };
   const [isAmendModalOpen, setIsAmendModalOpen] = useState(false);
   const [isTravellersModalOpen, setIsTravellersModalOpen] = useState(false);
@@ -387,6 +429,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
               resetOldFlow();
               setShowNewFlow(false);
               setShowDreamFlow(true);
+              startDreamPlan('dates');
             }}
           >
             🚀 Amend (Dream Flow)
@@ -431,8 +474,17 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
   };
 
   const startDreamPlan = (intent) => {
-    setDreamResults(intent === 'hotel');
-    setDreamDateChange(intent === 'dates');
+    if (intent === 'room') {
+      setShowRoomOptions(true);
+      setDreamResults(true);
+    }
+    if (intent === 'hotel') {
+      setShowRoomOptions(false);
+      setDreamResults(true);
+    }
+    if (intent === 'dates') {
+      setDreamDateChange(true);
+    }
     setDreamNewDates(false);
     setDreamPayment(false);
     setDreamConfirmed(false);
@@ -487,6 +539,16 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
     const taxes = Math.round(subtotal * 0.12);
     return { nights, rooms, subtotal, taxes, total: subtotal + taxes + 45 };
   }, [oldFlowSelectedHotel]);
+  const newFlowTotals = useMemo(() => {
+    const nights = 5;
+    const rooms = 2;
+    const nightlyRate = newFlowSelectedHotel?.price
+      ? parseInt(newFlowSelectedHotel.price.replace('$', ''), 10)
+      : 0;
+    const subtotal = nightlyRate * nights * rooms;
+    const taxes = Math.round(subtotal * 0.12);
+    return { nights, rooms, subtotal, taxes, total: subtotal + taxes + 45 };
+  }, [newFlowSelectedHotel]);
 
   const dreamCalendarMonths = useMemo(
     () => generateCalendarMonths(dreamDateRange.start, dreamDateRange.end, dreamDateRange.month),
@@ -531,7 +593,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                   style={{
                     display: 'grid',
                     gridTemplateColumns: '1fr auto',
-                    alignItems: 'center',
+                    alignItems: 'start',
                     gap: 8,
                     width: '100%'
                   }}
@@ -540,9 +602,9 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                     style={{
                       width: '100%',
                       display: 'grid',
-                      gridTemplateColumns: 'minmax(0, 1fr) auto',
+                      gridTemplateColumns: 'minmax(0, 1fr)',
                       alignItems: 'center',
-                      gap: 8
+                      gap: 6
                     }}
                   >
                     <TextInput
@@ -554,47 +616,52 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                     <div
                       style={{
                         display: 'flex',
-                        gap: 6,
-                        flexWrap: 'nowrap'
+                        gap: 4,
+                        flexWrap: 'wrap'
                       }}
                     >
-                      <IconButton
-                        size="small"
-                        variant="default"
-                        sx={pillButtonSx}
-                        icon={CalendarIcon}
-                        aria-label="Extend stay +1 night"
-                        title="Extend stay +1 night"
-                        style={{ width: 20, height: 20, minWidth: 20, padding: 0 }}
+                      <button
+                        type="button"
+                        style={{
+                          ...compactPillStyle,
+                          background: dreamDateChange ? 'var(--bgColor-accent-muted)' : 'var(--canvas-default)',
+                          borderColor: dreamDateChange ? 'var(--borderColor-accent-emphasis)' : 'var(--borderColor-default)',
+                          color: dreamDateChange ? 'var(--fgColor-accent)' : 'var(--fgColor-default)'
+                        }}
                         onClick={() => {
                           startDreamPlan('dates');
                         }}
-                      />
-                      <IconButton
-                        size="small"
-                        variant="default"
-                        sx={pillButtonSx}
-                        icon={HomeIcon}
-                        aria-label="Swap hotel"
-                        title="Swap hotel"
-                        style={{ width: 20, height: 20, minWidth: 20, padding: 0 }}
+                      >
+                        Change dates
+                      </button>
+                      <button
+                        type="button"
+                        style={{
+                          ...compactPillStyle,
+                          background: showRoomOptions ? 'var(--bgColor-accent-muted)' : 'var(--canvas-default)',
+                          borderColor: showRoomOptions ? 'var(--borderColor-accent-emphasis)' : 'var(--borderColor-default)',
+                          color: showRoomOptions ? 'var(--fgColor-accent)' : 'var(--fgColor-default)'
+                        }}
+                        onClick={() => {
+                          startDreamPlan('room');
+                        }}
+                      >
+                        Upgrade room
+                      </button>
+                      <button
+                        type="button"
+                        style={{
+                          ...compactPillStyle,
+                          background: dreamResults && !showRoomOptions ? 'var(--bgColor-accent-muted)' : 'var(--canvas-default)',
+                          borderColor: dreamResults && !showRoomOptions ? 'var(--borderColor-accent-emphasis)' : 'var(--borderColor-default)',
+                          color: dreamResults && !showRoomOptions ? 'var(--fgColor-accent)' : 'var(--fgColor-default)'
+                        }}
                         onClick={() => {
                           startDreamPlan('hotel');
                         }}
-                      />
-                      <IconButton
-                        size="small"
-                        variant="default"
-                        sx={pillButtonSx}
-                        icon={ArrowUpIcon}
-                        aria-label="Upgrade room"
-                        title="Upgrade room"
-                        style={{ width: 20, height: 20, minWidth: 20, padding: 0 }}
-                        onClick={() => {
-                          setShowRoomOptions(true);
-                          startDreamPlan('hotel');
-                        }}
-                      />
+                      >
+                        Swap hotel
+                      </button>
                     </div>
                   </div>
                   <Button
@@ -602,7 +669,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                     onClick={closeDreamFlow}
                     variant="default"
                     size="small"
-                    sx={{ width: 28, height: 28, minWidth: 28, p: 0, justifySelf: 'end' }}
+                    sx={{ width: 28, height: 28, minWidth: 28, p: 0, justifySelf: 'end', mt: '2px' }}
                   >
                     <XIcon size={12} />
                   </Button>
@@ -613,53 +680,86 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
 
           {dreamResults && (
             <Box sx={cardSx}>
-              <Box sx={cardHeaderSx}>
-                <Text as="strong">Suggested hotels</Text>
-                <Text sx={{ color: 'fg.muted', fontSize: 0 }}>Instant repricing</Text>
-              </Box>
               <Stack gap="condensed">
-                {DREAM_RESULTS.map((item) => {
-                  const nextTotal = DREAM_HOTEL_TOTALS[item.name] || DREAM_BASE_TOTAL;
-                  const delta = nextTotal - DREAM_BASE_TOTAL;
-                  return (
-                    <div
-                      key={item.name}
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr auto',
-                        gap: 12,
-                        alignItems: 'center',
-                        borderBottom: '1px solid var(--borderColor-default)',
-                        paddingBottom: 8
-                      }}
-                    >
-                      <div>
-                        <Text as="div" sx={{ fontWeight: 600 }}>{item.name}</Text>
-                        <Text sx={{ color: 'fg.muted', fontSize: 0 }}>
-                          {item.price} per night · {formatDelta(delta)} total
-                        </Text>
-                      </div>
-                      <Button
-                        size="small"
-                        variant="primary"
-                        onClick={() => {
-                          setDreamSelection({
-                            type: 'hotel',
-                            label: item.name,
-                            summary: '5 nights · 2 rooms',
-                            priceDelta: delta,
-                            total: nextTotal
-                          });
-                          setDreamResults(false);
-                          setDreamDateChange(false);
-                          setDreamPayment(true);
+                {showRoomOptions
+                  ? DREAM_ROOM_OPTIONS.map((room) => (
+                      <div
+                        key={room.id}
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr auto',
+                          gap: 12,
+                          alignItems: 'center',
+                          borderBottom: '1px solid var(--borderColor-default)',
+                          paddingBottom: 8
                         }}
                       >
-                        Review change
-                      </Button>
-                    </div>
-                  );
-                })}
+                        <div>
+                          <Text as="div" sx={{ fontWeight: 600 }}>
+                            {room.label} · {DREAM_ROOM_PRICES[room.id]} per night · {formatDelta(room.delta)} total
+                          </Text>
+                        </div>
+                        <Button
+                          size="small"
+                          variant="primary"
+                          onClick={() => {
+                            setDreamSelection({
+                              type: 'room',
+                              label: `Room: ${room.label}`,
+                              summary: '5 nights · 2 rooms',
+                              priceDelta: room.delta,
+                              total: DREAM_BASE_TOTAL + room.delta
+                            });
+                            setDreamResults(false);
+                            setDreamDateChange(false);
+                            setDreamPayment(true);
+                          }}
+                        >
+                          Review change
+                        </Button>
+                      </div>
+                    ))
+                  : DREAM_RESULTS.map((item) => {
+                      const nextTotal = DREAM_HOTEL_TOTALS[item.name] || DREAM_BASE_TOTAL;
+                      const delta = nextTotal - DREAM_BASE_TOTAL;
+                      return (
+                        <div
+                          key={item.name}
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto',
+                            gap: 12,
+                            alignItems: 'center',
+                            borderBottom: '1px solid var(--borderColor-default)',
+                            paddingBottom: 8
+                          }}
+                        >
+                          <div>
+                            <Text as="div" sx={{ fontWeight: 600 }}>
+                              {item.name} · {item.price} per night · {formatDelta(delta)} total
+                            </Text>
+                          </div>
+                          <Button
+                            size="small"
+                            variant="primary"
+                            onClick={() => {
+                              setDreamSelection({
+                                type: 'hotel',
+                                label: item.name,
+                                summary: '5 nights · 2 rooms',
+                                priceDelta: delta,
+                                total: nextTotal
+                              });
+                              setDreamResults(false);
+                              setDreamDateChange(false);
+                              setDreamPayment(true);
+                            }}
+                          >
+                            Review change
+                          </Button>
+                        </div>
+                      );
+                    })}
               </Stack>
             </Box>
           )}
@@ -676,8 +776,9 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                   currentRange={currentBookingRange}
                   selectedRange={dreamNewDates ? dreamDateRange : null}
                   onDateClick={(date, month) => {
-                    const nextEnd = Math.min(date + 5, 28);
-                    setDreamDateRange({ start: date, end: nextEnd, month: month.toUpperCase() });
+                    const nextStart = currentBookingRange.start;
+                    const nextEnd = Math.max(date, nextStart);
+                    setDreamDateRange({ start: nextStart, end: nextEnd, month: month.toUpperCase() });
                     setDreamNewDates(true);
                     setDreamSelection({
                       type: 'dates',
@@ -757,32 +858,6 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                       {isApplyingDates && <Spinner size="small" />}
                       {isApplyingDates ? 'Applying…' : 'Confirm new dates'}
                       </Button>
-                    </div>
-                  </div>
-                )}
-                {showRoomOptions && (
-                  <div>
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'nowrap', overflowX: 'auto' }}>
-                      {DREAM_ROOM_OPTIONS.map((room) => (
-                        <Button
-                          key={room.id}
-                          size="small"
-                          variant={dreamRoomType === room.id ? 'primary' : 'default'}
-                          sx={pillButtonSx}
-                          onClick={() => {
-                            setDreamRoomType(room.id);
-                            setDreamSelection({
-                              type: 'room',
-                              label: `Room: ${room.label}`,
-                            summary: `${dreamDateRange.month} ${dreamDateRange.start}–${dreamDateRange.end}, 2024`,
-                              priceDelta: room.delta,
-                              total: DREAM_BASE_TOTAL + room.delta
-                            });
-                          }}
-                        >
-                          {room.label} {room.delta ? `+$${room.delta}` : ''}
-                        </Button>
-                      ))}
                     </div>
                   </div>
                 )}
@@ -1283,11 +1358,11 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                     <Text sx={{ fontWeight: 600, mb: 0 }} as="span">Amendment Fee:</Text>{' '}
                     <Text sx={{ color: 'fg.muted' }} as="span">$95.00 (includes agency service fee)</Text>
                   </Flash>
-                  <Box sx={newFlowCardSx} style={newFlowCardStyle}>
+                  <Box sx={newFlowCardSx} style={newFlowCompactCardStyle}>
                     <Box sx={cardHeaderSx}>
                       <Text as="strong">Travellers</Text>
                     </Box>
-                    <Stack sx={formStackSx}>
+                    <div style={travellersGridStyle}>
                       {[
                         { id: 'john-smith-new', label: 'John Smith', checked: true },
                         { id: 'sarah-smith-new', label: 'Sarah Smith', checked: true },
@@ -1303,35 +1378,35 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                           <Text as="span" sx={{ fontWeight: 400 }}>{traveller.label}</Text>
                         </label>
                       ))}
-                    </Stack>
+                    </div>
                   </Box>
-                  <Box sx={{ ...newFlowCardSx, mt: 3 }} style={newFlowCardStyle}>
+                  <Box sx={{ ...newFlowCardSx, mt: 3 }} style={newFlowCompactCardStyle}>
                     <Box sx={cardHeaderSx}>
                       <Text as="strong">Search Parameters</Text>
                     </Box>
-                    <Stack sx={formStackSx}>
-                      <FormControl>
-                        <FormControl.Label>Destination</FormControl.Label>
-                        <TextInput defaultValue="Honolulu, Hawaii" block />
-                      </FormControl>
-                      <Stack direction="horizontal" gap="condensed" wrap="wrap">
+                    <Stack sx={compactFormStackSx}>
+                      <div style={searchGridStyle}>
+                        <FormControl style={{ gridColumn: '1 / -1' }}>
+                          <FormControl.Label sx={{ fontSize: 0, mb: 1 }}>Destination</FormControl.Label>
+                          <TextInput defaultValue="Honolulu, Hawaii" block />
+                        </FormControl>
                         <FormControl>
-                          <FormControl.Label>Check-in Date</FormControl.Label>
+                          <FormControl.Label sx={{ fontSize: 0, mb: 1 }}>Check-in Date</FormControl.Label>
                           <TextInput defaultValue="2024-05-15" block />
                         </FormControl>
                         <FormControl>
-                          <FormControl.Label>Check-out Date</FormControl.Label>
+                          <FormControl.Label sx={{ fontSize: 0, mb: 1 }}>Check-out Date</FormControl.Label>
                           <TextInput defaultValue="2024-05-20" block />
                         </FormControl>
-                      </Stack>
-                      <FormControl>
-                        <FormControl.Label>Rooms</FormControl.Label>
-                        <Select defaultValue="2" block>
-                          <Select.Option value="1">1 room</Select.Option>
-                          <Select.Option value="2">2 rooms</Select.Option>
-                          <Select.Option value="3">3 rooms</Select.Option>
-                        </Select>
-                      </FormControl>
+                        <FormControl>
+                          <FormControl.Label sx={{ fontSize: 0, mb: 1 }}>Rooms</FormControl.Label>
+                          <Select defaultValue="2" block>
+                            <Select.Option value="1">1 room</Select.Option>
+                            <Select.Option value="2">2 rooms</Select.Option>
+                            <Select.Option value="3">3 rooms</Select.Option>
+                          </Select>
+                        </FormControl>
+                      </div>
                     </Stack>
                   </Box>
                 </Box>
@@ -1424,64 +1499,41 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
               )}
               {newFlowStep === 3 && (
                 <Box sx={columnStackSx}>
-                  <div
-                    style={{
-                      border: 'var(--borderWidth-thin) solid var(--borderColor-default)',
-                      borderRadius: 8,
-                      background: 'transparent',
-                      padding: 12
-                    }}
-                  >
-                    <Text>Total Amount</Text>
-                    <Text>{newFlowSelectedHotel?.name === 'Hilton Hawaiian Village' ? '$3282' : '$4805'}</Text>
-                  </div>
-                  <div
-                    style={{
-                      border: 'var(--borderWidth-thin) solid var(--borderColor-default)',
-                      borderRadius: 8,
-                      background: 'transparent',
-                      padding: 12,
-                      marginTop: 12
-                    }}
-                  >
-                    <Stack gap="condensed">
-                      <Text as="strong">Booking Summary</Text>
-                      <Text sx={{ color: 'fg.muted' }}>
-                        {(newFlowSelectedHotel?.price || '$425')} × 5 nights × 2 rooms
-                      </Text>
-                      <Text>{newFlowSelectedHotel?.name === 'Hilton Hawaiian Village' ? '$3282' : '$4805'}</Text>
-                    </Stack>
-                  </div>
-                  <div
-                    style={{
-                      border: 'var(--borderWidth-thin) solid var(--borderColor-default)',
-                      borderRadius: 8,
-                      background: 'transparent',
-                      padding: 12,
-                      marginTop: 12
-                    }}
-                  >
-                    <Text as="strong">Payment Details</Text>
-                    <Stack sx={{ ...formStackSx, mt: 2 }}>
-                      <FormControl>
-                        <FormControl.Label>Card Number</FormControl.Label>
-                        <TextInput placeholder="1234 5678 9012 3456" block />
-                      </FormControl>
-                      <Stack direction="horizontal" gap="condensed" wrap="wrap">
-                        <FormControl>
-                          <FormControl.Label>Expiry Date</FormControl.Label>
-                          <TextInput placeholder="MM/YY" block />
-                        </FormControl>
-                        <FormControl>
-                          <FormControl.Label>CVV</FormControl.Label>
-                          <TextInput placeholder="123" block />
-                        </FormControl>
+                  <div style={reviewGridStyle}>
+                    <div style={compactCardStyle}>
+                      <Stack gap="condensed">
+                        <Text as="strong">Booking Summary</Text>
+                        <Text sx={{ color: 'fg.muted', fontSize: 0 }}>
+                          {(newFlowSelectedHotel?.price || '$425')} × 5 nights × 2 rooms
+                        </Text>
+                        <Text sx={{ fontWeight: 600 }}>
+                          Total ${newFlowTotals.total.toLocaleString()} (incl. taxes & fees)
+                        </Text>
                       </Stack>
-                      <FormControl>
-                        <FormControl.Label>Cardholder Name</FormControl.Label>
-                        <TextInput placeholder="John Smith" block />
-                      </FormControl>
-                    </Stack>
+                    </div>
+                    <div style={{ ...compactCardStyle, gridColumn: '1 / -1' }}>
+                      <Text as="strong">Payment Details</Text>
+                      <Stack sx={{ ...compactFormStackSx, mt: 1 }}>
+                        <FormControl>
+                          <FormControl.Label sx={{ fontSize: 0, mb: 1 }}>Card Number</FormControl.Label>
+                          <TextInput placeholder="1234 5678 9012 3456" block />
+                        </FormControl>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8 }}>
+                          <FormControl>
+                            <FormControl.Label sx={{ fontSize: 0, mb: 1 }}>Expiry Date</FormControl.Label>
+                            <TextInput placeholder="MM/YY" block />
+                          </FormControl>
+                          <FormControl>
+                            <FormControl.Label sx={{ fontSize: 0, mb: 1 }}>CVV</FormControl.Label>
+                            <TextInput placeholder="123" block />
+                          </FormControl>
+                          <FormControl>
+                            <FormControl.Label sx={{ fontSize: 0, mb: 1 }}>Name</FormControl.Label>
+                            <TextInput placeholder="John Smith" block />
+                          </FormControl>
+                        </div>
+                      </Stack>
+                    </div>
                   </div>
                 </Box>
               )}
