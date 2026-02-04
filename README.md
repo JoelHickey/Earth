@@ -61,6 +61,12 @@ fresh-project/
 └── tests/                  # Playwright specs
 ```
 
+## 🛠️ Tech Stack
+Frontend: React 18 + Vite  
+UI: Primer React + MUI + Emotion  
+Testing: Playwright + Vitest  
+Optional: Supabase client
+
 ## 🧪 Development
 Available Scripts
 ```bash
@@ -88,12 +94,6 @@ Windows 95 palette (from `DESIGN_GUIDE.md`):
 | `--win95-dark-grey` | `#808080` | Dark borders |
 | `--win95-white` | `#ffffff` | Highlights |
 | `--win95-blue` | `#000080` | Title bar |
-
-## 🛠️ Tech Stack
-Frontend: React 18 + Vite  
-UI: Primer React + MUI + Emotion  
-Testing: Playwright + Vitest  
-Optional: Supabase client
 
 ## 🚀 Deployment
 Vercel: Build `npm run build`, output `dist`
