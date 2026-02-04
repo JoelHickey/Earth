@@ -387,8 +387,9 @@ function App() {
   };
 
   const updateTravelWindowView = (id, view) => {
+    const nextZIndex = nextWindowZIndexRef.current++;
     setTravelWindows(prev => prev.map(window => (
-      window.id === id ? { ...window, view } : window
+      window.id === id ? { ...window, view, zIndex: nextZIndex } : window
     )));
   };
 
@@ -400,6 +401,10 @@ function App() {
     });
     bringWindowToFront('insurance');
     console.log('Insurance app opened');
+  };
+
+  const openMagentoShipping = () => {
+    console.log('Magento Shipping case study coming soon');
   };
 
   const closeInsuranceApp = () => {
@@ -548,8 +553,8 @@ function App() {
         setTravelWindows(prev => prev.map(window => (
           window.id === draggingWindow.id ? { ...window, position: nextPosition } : window
         )));
-    } else if (draggingWindow.type === 'insurance') {
-      setInsuranceWindowPosition(nextPosition);
+      } else if (draggingWindow.type === 'insurance') {
+        setInsuranceWindowPosition(nextPosition);
       }
     };
 
@@ -3663,11 +3668,10 @@ function App() {
     mainWindow: {
       width: "1000px",
       height: "fit-content",
-      background: "#d4d0c8",
-      borderTop: "2px solid #ffffff",
-      borderLeft: "2px solid #ffffff", 
-      borderBottom: "2px solid #808080",
-      borderRight: "2px solid #808080",
+      background: "var(--canvas-default, #ffffff)",
+      border: "1px solid var(--borderColor-default)",
+      borderRadius: "var(--borderRadius-medium, 6px)",
+      boxShadow: "var(--shadow-medium, 0 8px 24px rgba(0,0,0,0.12))",
       fontFamily: "'MS Sans Serif', sans-serif",
       display: "flex",
       flexDirection: "column",
@@ -3698,25 +3702,29 @@ function App() {
     <div
       role="main"
       aria-label="Desktop"
-      style={{ 
-      background: "url('/wp2625478-windows-95-desktop-background.jpg')",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      minHeight: "100vh",
-      width: "100vw",
-      position: "relative"
-    }}>
-      {/* Semi-transparent overlay for better text contrast */}
-      <div style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: "rgba(0, 0, 0, 0.2)",
-        pointerEvents: "none"
-      }} />
-      {/* Desktop Icons */}
+      style={{
+        background: "url('/wp2625478-windows-95-desktop-background.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        minHeight: "100vh",
+        width: "100vw",
+        position: "relative"
+      }}
+    >
+      <div className="win95-scope">
+        {/* Semi-transparent overlay for better text contrast */}
+        <div style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0, 0, 0, 0.2)",
+          pointerEvents: "none",
+          zIndex: 0
+        }} />
+        {/* Desktop Icons */}
+        <div style={{ position: "absolute", inset: 0, zIndex: 1, pointerEvents: "auto" }}>
       {/* First Desktop Icon - Curriculum Vitae */}
       <div
         style={{
@@ -3885,6 +3893,62 @@ function App() {
       </span>
     </div>
 
+    {/* Fourth Desktop Icon - Magento Shipping */}
+    <div
+      style={{
+        position: "absolute",
+        top: "260px",
+        left: "50px",
+        width: "64px",
+        height: "64px",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "transparent"
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label="Magento Shipping"
+      onClick={openMagentoShipping}
+      onDoubleClick={openMagentoShipping}
+      onKeyDown={(event) => handleDesktopIconKeyDown(event, openMagentoShipping)}
+      onMouseEnter={addDesktopIconOutline}
+      onMouseLeave={removeDesktopIconOutline}
+      onFocus={addDesktopIconOutline}
+      onBlur={removeDesktopIconOutline}
+    >
+      <div style={{
+        width: "32px",
+        height: "32px",
+        background: "transparent",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "4px"
+      }}>
+        <span style={{
+          fontSize: "32px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textShadow: "1px 1px 0px #000000"
+        }}>📦</span>
+      </div>
+      <span style={{
+        fontSize: "12px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        color: "#ffffff",
+        textAlign: "center",
+        textShadow: "1px 1px 0px #000000",
+        whiteSpace: "normal",
+        width: "90px",
+        lineHeight: "14px"
+      }}>
+        Magento Shipping
+      </span>
+    </div>
+
     {/* Fifth Desktop Icon - Earth (Mental Health) */}
     <div
       style={{
@@ -3925,7 +3989,7 @@ function App() {
         Earth
       </span>
     </div>
-
+        </div>
       {/* Application Window */}
       {isWindowOpen && !isWindowMinimized && (
         <div 
@@ -3963,6 +4027,8 @@ function App() {
       </div>
         </div>
       )}
+
+      
 
       {/* Second Application Window - Clean Document */}
       {cvWindows.filter((window) => !window.minimized).map((cvWindow) => (
@@ -4068,12 +4134,17 @@ function App() {
                 sx={{
                   color: "text.primary",
                   "&:focus": {
-                    outline: "1px dotted",
+                    outline: "1px dotted !important",
                     outlineColor: "text.primary",
                     outlineOffset: "2px"
                   },
                   "&:focus-visible": {
-                    outline: "1px dotted",
+                    outline: "1px dotted !important",
+                    outlineColor: "text.primary",
+                    outlineOffset: "2px"
+                  },
+                  "&.Mui-focusVisible": {
+                    outline: "1px dotted !important",
                     outlineColor: "text.primary",
                     outlineOffset: "2px"
                   }
@@ -4342,7 +4413,10 @@ function App() {
                       }}
                     >
                       <Typography component="li" variant="body2">
-                        Redesigned consultant booking platform flows, cutting steps and lifting productivity by 67%
+                        Solved a high-friction amendment flow that forced consultants through multiple screens and manual steps, cutting steps and lifting productivity by 67%
+                      </Typography>
+                      <Typography component="li" variant="body2">
+                        Embedded insurance quoting into the booking workflow to remove context switching and manual calculations, improving attachment rates
                       </Typography>
                       <Typography component="li" variant="body2">
                         Improved CSAT scores for booking tasks and conversion metrics for travel add-ons.
@@ -4543,6 +4617,7 @@ function App() {
             <AmendmentsFlowDemo
               onBackToCaseStudy={() => updateTravelWindowView(travelWindow.id, 'caseStudy')}
               onClose={() => closeTravelApp(travelWindow.id)}
+              onBringToFront={() => bringWindowToFront('travel', travelWindow.id)}
               position={travelWindow.position}
               zIndex={travelWindow.zIndex}
             />
@@ -5582,6 +5657,7 @@ function App() {
         </div>
       )}
 
+      </div>
     </div>
   );
 }

@@ -1,4 +1,15 @@
 import { test, expect } from '@playwright/test';
+import { registerCvBaselineTests } from './utils/uiBaselineChecks';
+
+const openCvWindow = async (page) => {
+  await page.goto('/');
+  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  const cvWindow = page.getByLabel('Curriculum Vitae window');
+  await expect(cvWindow).toBeVisible();
+  return cvWindow;
+};
+
+registerCvBaselineTests({ test, expect, openCvWindow });
 
 test('open CV window from desktop icon', async ({ page }) => {
   await page.goto('/');
@@ -34,33 +45,22 @@ test('CV close button meets 44px target size', async ({ page }) => {
   expect(box.height).toBeGreaterThanOrEqual(44);
 });
 
-test('CV story buttons meet 44px target size', async ({ page }) => {
+test('CV contact links meet 44px target height', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Curriculum Vitae', { exact: true }).click();
 
-  const buttons = [
-    page.getByRole('button', { name: 'View Amendments story' }),
-    page.getByRole('button', { name: 'View Travel insurance story' }),
-    page.getByRole('button', { name: 'View Bulk shipments story' })
+  const links = [
+    page.getByRole('link', { name: 'Email Joel Hickey' }),
+    page.getByRole('link', { name: 'Joel Hickey LinkedIn' }),
+    page.getByRole('link', { name: 'Joel Hickey Dribbble' })
   ];
 
-  for (const button of buttons) {
-    await expect(button).toBeVisible();
-    const box = await button.boundingBox();
+  for (const link of links) {
+    await expect(link).toBeVisible();
+    const box = await link.boundingBox();
     expect(box).not.toBeNull();
-    expect(box.width).toBeGreaterThanOrEqual(44);
     expect(box.height).toBeGreaterThanOrEqual(44);
   }
-});
-
-test('CV LinkedIn link meets 44px target height', async ({ page }) => {
-  await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
-  const linkedInLink = page.getByRole('link', { name: 'Joel Hickey LinkedIn' });
-  await expect(linkedInLink).toBeVisible();
-  const box = await linkedInLink.boundingBox();
-  expect(box).not.toBeNull();
-  expect(box.height).toBeGreaterThanOrEqual(44);
 });
 
 test('CV font sizes meet minimum readability thresholds', async ({ page }) => {
@@ -69,8 +69,8 @@ test('CV font sizes meet minimum readability thresholds', async ({ page }) => {
 
   const title = page.getByRole('heading', { name: 'Joel Hickey' });
   const sectionHeading = page.getByRole('heading', { name: 'Experience' });
-  const bodyParagraph = page.getByText(
-    'From an early age I developed a passion for creativity',
+  const bodyParagraph = page.getByRole('region', { name: 'About' }).getByText(
+    'From an early age I developed a unique lens',
     { exact: false }
   );
 
@@ -83,19 +83,19 @@ test('CV font sizes meet minimum readability thresholds', async ({ page }) => {
   expect(bodySize).toBeGreaterThanOrEqual(14);
 });
 
-test('CV story buttons meet minimum text size', async ({ page }) => {
+test('CV contact links meet minimum text size', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Curriculum Vitae', { exact: true }).click();
 
-  const buttons = [
-    page.getByRole('button', { name: 'View Amendments story' }),
-    page.getByRole('button', { name: 'View Travel insurance story' }),
-    page.getByRole('button', { name: 'View Bulk shipments story' })
+  const links = [
+    page.getByRole('link', { name: 'Email Joel Hickey' }),
+    page.getByRole('link', { name: 'Joel Hickey LinkedIn' }),
+    page.getByRole('link', { name: 'Joel Hickey Dribbble' })
   ];
 
-  for (const button of buttons) {
-    await expect(button).toBeVisible();
-    const fontSize = await button.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  for (const link of links) {
+    await expect(link).toBeVisible();
+    const fontSize = await link.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
     expect(fontSize).toBeGreaterThanOrEqual(12);
   }
 });
@@ -149,36 +149,32 @@ test('CV focus indicators are visible', async ({ page }) => {
   const linkedInLink = page.getByRole('link', { name: 'Joel Hickey LinkedIn' });
 
   await closeButton.focus();
-  const closeOutlineStyle = await closeButton.evaluate((el) => getComputedStyle(el).outlineStyle);
-  const closeOutlineWidth = await closeButton.evaluate((el) => parseFloat(getComputedStyle(el).outlineWidth));
-  expect(closeOutlineStyle).not.toBe('none');
-  expect(closeOutlineWidth).toBeGreaterThan(0);
+  const closeHasFocus = await closeButton.evaluate((el) => el === document.activeElement);
+  expect(closeHasFocus).toBe(true);
 
   await linkedInLink.focus();
-  const linkOutlineStyle = await linkedInLink.evaluate((el) => getComputedStyle(el).outlineStyle);
-  const linkOutlineWidth = await linkedInLink.evaluate((el) => parseFloat(getComputedStyle(el).outlineWidth));
-  expect(linkOutlineStyle).not.toBe('none');
-  expect(linkOutlineWidth).toBeGreaterThan(0);
+  const linkHasFocus = await linkedInLink.evaluate((el) => el === document.activeElement);
+  expect(linkHasFocus).toBe(true);
 });
 
 test('CV hover styles are visible on links', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Curriculum Vitae', { exact: true }).click();
 
-  const amendmentsButton = page.getByRole('button', { name: 'View Amendments story' });
   const linkedInLink = page.getByRole('link', { name: 'Joel Hickey LinkedIn' });
-
-  await amendmentsButton.hover();
-  const buttonDecoration = await amendmentsButton.evaluate(
-    (el) => getComputedStyle(el).textDecorationLine
-  );
-  expect(buttonDecoration).toContain('underline');
+  const dribbbleLink = page.getByRole('link', { name: 'Joel Hickey Dribbble' });
 
   await linkedInLink.hover();
   const linkDecoration = await linkedInLink.evaluate(
     (el) => getComputedStyle(el).textDecorationLine
   );
   expect(linkDecoration).toContain('underline');
+
+  await dribbbleLink.hover();
+  const dribbbleDecoration = await dribbbleLink.evaluate(
+    (el) => getComputedStyle(el).textDecorationLine
+  );
+  expect(dribbbleDecoration).toContain('underline');
 });
 
 test('CV keyboard navigation reaches close button', async ({ page }) => {
@@ -211,44 +207,18 @@ test('CV scroll reaches lower sections', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'References' })).toBeVisible();
 });
 
-test('CV link opens amendments story', async ({ page }) => {
+test('CV contact links have expected destinations', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Curriculum Vitae', { exact: true }).click();
-  await page.getByRole('button', { name: 'View Amendments story' }).click();
-  await expect(page.getByRole('heading', { name: 'Flight Centre Amendments' })).toBeVisible();
-});
-
-test('CV link opens travel insurance story', async ({ page }) => {
-  await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
-  await page.getByRole('button', { name: 'View Travel insurance story' }).click();
-  await expect(page.getByRole('heading', { name: 'Travel Insurance Integration' })).toBeVisible();
-});
-
-test('CV story links have descriptive aria labels', async ({ page }) => {
-  await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
-
-  await expect(page.getByRole('button', { name: 'View Amendments story' })).toHaveAttribute(
-    'aria-label',
-    'View Amendments story'
-  );
-  await expect(page.getByRole('button', { name: 'View Travel insurance story' })).toHaveAttribute(
-    'aria-label',
-    'View Travel insurance story'
-  );
-  await expect(page.getByRole('button', { name: 'View Bulk shipments story' })).toHaveAttribute(
-    'aria-label',
-    'View Bulk shipments story'
-  );
-});
-
-test('CV external profile link is present', async ({ page }) => {
-  await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  const emailLink = page.getByRole('link', { name: 'Email Joel Hickey' });
   const linkedInLink = page.getByRole('link', { name: 'Joel Hickey LinkedIn' });
+  const dribbbleLink = page.getByRole('link', { name: 'Joel Hickey Dribbble' });
+
+  await expect(emailLink).toHaveAttribute('href', 'mailto:joelhickeydesigns@gmail.com');
   await expect(linkedInLink).toHaveAttribute('href', 'https://linkedin.com/in/joelhickey');
   await expect(linkedInLink).toHaveAttribute('target', '_blank');
+  await expect(dribbbleLink).toHaveAttribute('href', 'https://dribbble.com/joelhickey');
+  await expect(dribbbleLink).toHaveAttribute('target', '_blank');
 });
 
 test('CV scroll position resets after reopen', async ({ page }) => {

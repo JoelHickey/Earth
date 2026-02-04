@@ -6,8 +6,30 @@
   color: #000000;
 }
 
+.updated-status::after {
+  content: '...';
+  display: inline-block;
+  width: 0;
+  overflow: hidden;
+  margin-left: 2px;
+  vertical-align: baseline;
+  animation: updatedDots 1.2s steps(4, end) infinite;
+}
+
+@keyframes updatedDots {
+  to {
+    width: 12px;
+  }
+}
+
+.win95-scope {
+  position: relative;
+  minHeight: 100vh;
+  width: 100vw;
+}
+
 /* Windows 95 Button Styles */
-button {
+.win95-scope button {
   font-family: 'MS Sans Serif', sans-serif;
   font-size: 11px;
   font-weight: bold;
@@ -17,22 +39,22 @@ button {
   padding: 2px 6px;
 }
 
-button:hover {
+.win95-scope button:hover {
   background: #e0e0e0;
 }
 
-.cv-link-button:hover {
+.win95-scope .cv-link-button:hover {
   text-decoration: underline;
   background: none;
 }
 
-button:active {
+.win95-scope button:active {
   border: 1px inset #c0c0c0;
   background: #c0c0c0;
 }
 
 /* Windows 95 Input Styles */
-input {
+.win95-scope input {
   font-family: 'MS Sans Serif', sans-serif;
   font-size: 9px;
   background: white;
@@ -41,48 +63,72 @@ input {
 }
 
 /* Windows 95 Scrollbar Styles */
-::-webkit-scrollbar {
+.win95-scope ::-webkit-scrollbar {
   width: 16px;
   height: 16px;
 }
 
-::-webkit-scrollbar-track {
+.win95-scope ::-webkit-scrollbar-track {
   background: #c0c0c0;
   border: 1px inset #c0c0c0;
 }
 
-::-webkit-scrollbar-thumb {
+.win95-scope ::-webkit-scrollbar-thumb {
   background: #d4d0c8;
   border: 1px outset #c0c0c0;
 }
 
-::-webkit-scrollbar-thumb:hover {
+.win95-scope ::-webkit-scrollbar-thumb:hover {
   background: #e0e0e0;
 }
 
-::-webkit-scrollbar-thumb:active {
+.win95-scope ::-webkit-scrollbar-thumb:active {
   border: 1px inset #c0c0c0;
   background: #c0c0c0;
 }
 
 /* Windows 95 Focus Styles */
-button:focus,
-input:focus {
+.win95-scope button:focus,
+.win95-scope input:focus {
   outline: 1px dotted #000000;
 }
 
-a:focus {
+.win95-scope a:focus {
   outline: 1px dotted #000000;
 }
+
+/* Reset Windows95 globals inside Primer Builder */
+.primer-builder-root button,
+.primer-builder-root input,
+.primer-builder-root select,
+.primer-builder-root textarea {
+  all: revert;
+}
+
+.primer-builder-root button,
+.primer-builder-root input,
+.primer-builder-root select,
+.primer-builder-root textarea,
+.primer-builder-root a {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.amendments-action-menu-button::after,
+.amendments-action-menu-button::before {
+  display: none;
+}
+
 
 /* Windows 95 Selection Styles */
-::selection {
+.win95-scope ::selection {
   background: #000080;
   color: white;
 }
 
 /* Windows 95 Disabled Styles */
-button:disabled {
+.win95-scope button:disabled {
   background: #c0c0c0;
   color: #808080;
   border: 1px inset #c0c0c0;

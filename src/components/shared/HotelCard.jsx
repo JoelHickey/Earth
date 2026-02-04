@@ -7,7 +7,8 @@ const HotelCard = ({
   onSelect,
   isConfirming = false,
   inventoryChange,
-  soldOut = false
+  soldOut = false,
+  showSelect = true
 }) => {
   return (
     <Card compact hoverable>
@@ -110,13 +111,15 @@ const HotelCard = ({
               </div>
             )}
           </div>
-          <Button 
-            size="small" 
-            onClick={onSelect}
-            loading={isConfirming}
-          >
-            Select
-          </Button>
+          {showSelect && (
+            <Button 
+              size="small" 
+              onClick={onSelect}
+              loading={isConfirming}
+            >
+              Select
+            </Button>
+          )}
         </div>
       </div>
     </Card>

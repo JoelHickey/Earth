@@ -4,7 +4,7 @@ A comprehensive design guide incorporating user-centered design principles from 
 
 ## User-Centered Design Principles
 
-This design system version 2 is built upon the foundational 7 user-centered design principles established in the Windows 95 interface guidelines, ensuring optimal user experience for mental health monitoring.
+This design system version 2 is inspired by the Windows 95 interface guidelines and translated into seven product pillars tailored for mental health monitoring.
 
 ### 1. Simple and Direct
 
@@ -139,6 +139,73 @@ border-bottom: 2px solid #808080;
 - Consistent font: MS Sans Serif, 8pt
 - Uniform spacing: 8px base unit for all margins/padding
 ```
+
+### Windows 95 Guideline Pillars (1995)
+
+These are the original Windows 95 user-centered design principles that inform our seven product pillars above.
+
+#### 1. User in Control
+
+**Principle**: Users initiate actions, can customize the interface, and can easily exit modes or cancel operations.
+
+**Application in Mental Health App**:
+- All actions are user-initiated; no forced flows or auto-submissions
+- Respect system settings for fonts and colors where applicable
+- Any temporary modes are obvious, user-selected, and easy to cancel
+
+#### 2. Directness
+
+**Principle**: Users directly manipulate on-screen objects and see immediate, visible results of their actions.
+
+**Application in Mental Health App**:
+- Dragging knobs updates values in real time
+- Visual changes occur at the point of interaction
+- Metaphors support recognition (familiar Windows 95 controls and layout)
+
+#### 3. Consistency
+
+**Principle**: Consistent commands, visuals, and behaviors within the product and the broader Windows environment.
+
+**Application in Mental Health App**:
+- One control type behaves the same everywhere
+- Consistent naming, spacing, and interaction patterns
+- Visual language aligned with Windows 95 conventions
+
+#### 4. Forgiveness
+
+**Principle**: Users can safely explore, and mistakes are easy to avoid or recover from.
+
+**Application in Mental Health App**:
+- Reversible actions without heavy confirmation flows
+- Clear, constrained options to prevent accidental data loss
+- No irreversible changes without explicit user intent
+
+#### 5. Feedback
+
+**Principle**: Every action receives timely, appropriate feedback close to the interaction.
+
+**Application in Mental Health App**:
+- Instant visual response on sliders and checkboxes
+- Processing states are visible and cancelable when applicable
+- Feedback scales from subtle cues to explicit messages when needed
+
+#### 6. Aesthetics
+
+**Principle**: Visual design supports usability and focus without competing for attention.
+
+**Application in Mental Health App**:
+- Authentic Windows 95 visual language with restrained ornamentation
+- Clear visual hierarchy with minimal clutter
+- Visual cues reinforce interaction affordances
+
+#### 7. Simplicity
+
+**Principle**: Provide only what is needed, use natural mappings, and reveal detail progressively.
+
+**Application in Mental Health App**:
+- Minimal, task-focused screens
+- Progressive disclosure for optional detail
+- Short, clear labels and messages
 
 ## Component Design Standards
 

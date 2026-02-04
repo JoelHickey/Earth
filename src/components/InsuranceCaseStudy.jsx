@@ -1,22 +1,96 @@
-import React, { useState } from 'react';
-import { Box, Dialog, DialogContent, FormControlLabel, IconButton, Switch, Typography } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import GroupsIcon from '@mui/icons-material/Groups';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import RuleIcon from '@mui/icons-material/Rule';
-import InsightsIcon from '@mui/icons-material/Insights';
-import TouchAppIcon from '@mui/icons-material/TouchApp';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import LayersIcon from '@mui/icons-material/Layers';
-import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
-import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import React, { useEffect, useMemo, useState } from 'react';
+import { BaseStyles, Button, Heading, Text } from '@primer/react';
+import { insuranceFlowTokens } from '../styles/insuranceFlowTokens';
+
+const Box = ({ as: Component = "div", sx, style, ...props }) => (
+  <Component {...props} style={{ ...(sx || {}), ...(style || {}) }} />
+);
 
 const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex = 99 }) => {
   const [lightbox, setLightbox] = useState({ isOpen: false, gallery: null, currentIndex: 0 });
   const [isDemoEnabled, setIsDemoEnabled] = useState(false);
+
+  const discoveryActivities = useMemo(
+    () => [
+      {
+        title: "Remote usability testing",
+        description: "Remote moderated usability testing with consultants and advisors to validate the end-to-end flow.",
+        icon: "🧑‍🤝‍🧑",
+        artifact: { src: "/images/insurance/image1.png", alt: "Usability testing session notes" }
+      },
+      {
+        title: "Usability goal",
+        description: "Focused on the consultant insurance experience and key friction points in quoting and conversion.",
+        icon: "👀",
+        artifact: { src: "/images/insurance/image2.png", alt: "Usability goal artifact" }
+      },
+      {
+        title: "Participants",
+        description: "5 participants across brands (3 Flight Centre AU consultants + 2 Travel Associates AU advisors).",
+        icon: "👥",
+        artifact: { src: "/images/insurance/image3.png", alt: "Participant summary artifact" }
+      },
+      {
+        title: "Quote task",
+        description: "Task-based testing for adding an insurance quote directly into HELiO bookings.",
+        icon: "🧩",
+        artifact: { src: "/images/insurance/image4.png", alt: "Quote task artifact" }
+      },
+      {
+        title: "Policy task",
+        description: "Validated conversion from quote to policy without leaving the booking workflow.",
+        icon: "✅",
+        artifact: { src: "/images/insurance/image5.png", alt: "Policy conversion artifact" }
+      },
+      {
+        title: "Insights synthesis",
+        description: "Captured usability gains and click reduction outcomes from the pilot.",
+        icon: "📈",
+        artifact: { src: "/images/insurance/image6.png", alt: "Insights synthesis artifact" }
+      }
+    ],
+    []
+  );
+
+  const keyFindings = useMemo(
+    () => [
+      {
+        title: "Separate system",
+        detail: "Insurance quoting lived in a different platform with re-login required",
+        icon: "🔀"
+      },
+      {
+        title: "Manual calculations",
+        detail: "Consultants calculated premiums manually based on trip details",
+        icon: "🧮"
+      },
+      {
+        title: "Duplicate data entry",
+        detail: "Customer details were entered twice across platforms",
+        icon: "📋"
+      },
+      {
+        title: "Lengthy process",
+        detail: "5-8 minutes to add insurance to a booking",
+        icon: "⏱️"
+      },
+      {
+        title: "Low attachment rates",
+        detail: "Complexity discouraged consultants from offering coverage",
+        icon: "📉"
+      },
+      {
+        title: "Lost revenue",
+        detail: "Missed insurance opportunities on 60% of eligible bookings",
+        icon: "💸"
+      }
+    ],
+    []
+  );
+
+  const wireframeImages = [];
+  const hifiImages = [];
+  const userTestingImages = [];
 
   const handleDemoToggle = (event) => {
     const checked = event.target.checked;
@@ -25,86 +99,6 @@ const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex
       onViewDemo?.();
     }
   };
-
-  const discoveryActivities = [
-    {
-      title: "Remote usability testing",
-      description: "Remote moderated usability testing with consultants and advisors to validate the end-to-end flow.",
-      icon: GroupsIcon,
-      artifact: { src: "/images/insurance/image1.png", alt: "Usability testing session notes" }
-    },
-    {
-      title: "Usability goal",
-      description: "Focused on the consultant insurance experience and key friction points in quoting and conversion.",
-      icon: VisibilityIcon,
-      artifact: { src: "/images/insurance/image2.png", alt: "Usability goal artifact" }
-    },
-    {
-      title: "Participants",
-      description: "5 participants across brands (3 Flight Centre AU consultants + 2 Travel Associates AU advisors).",
-      icon: GroupsIcon,
-      artifact: { src: "/images/insurance/image3.png", alt: "Participant summary artifact" }
-    },
-    {
-      title: "Quote task",
-      description: "Task-based testing for adding an insurance quote directly into HELiO bookings.",
-      icon: AccountTreeIcon,
-      artifact: { src: "/images/insurance/image4.png", alt: "Quote task artifact" }
-    },
-    {
-      title: "Policy task",
-      description: "Validated conversion from quote to policy without leaving the booking workflow.",
-      icon: RuleIcon,
-      artifact: { src: "/images/insurance/image5.png", alt: "Policy conversion artifact" }
-    },
-    {
-      title: "Insights synthesis",
-      description: "Captured usability gains and click reduction outcomes from the pilot.",
-      icon: InsightsIcon,
-      artifact: { src: "/images/insurance/image6.png", alt: "Insights synthesis artifact" }
-    }
-  ];
-
-  const keyFindings = [
-    {
-      title: "Separate system",
-      detail: "Insurance quoting lived in a different platform with re-login required",
-      icon: AccountTreeIcon
-    },
-    {
-      title: "Manual calculations",
-      detail: "Consultants calculated premiums manually based on trip details",
-      icon: ErrorOutlineIcon
-    },
-    {
-      title: "Duplicate data entry",
-      detail: "Customer details were entered twice across platforms",
-      icon: LayersIcon
-    },
-    {
-      title: "Lengthy process",
-      detail: "5-8 minutes to add insurance to a booking",
-      icon: TouchAppIcon
-    },
-    {
-      title: "Low attachment rates",
-      detail: "Complexity discouraged consultants from offering coverage",
-      icon: ThumbDownIcon
-    },
-    {
-      title: "Lost revenue",
-      detail: "Missed insurance opportunities on 60% of eligible bookings",
-      icon: SentimentDissatisfiedIcon
-    }
-  ];
-
-  const discoveryImages = discoveryActivities
-    .filter((activity) => activity.artifact)
-    .map((activity) => activity.artifact);
-
-  const wireframeImages = [];
-  const hifiImages = [];
-  const userTestingImages = [];
 
   const openLightbox = (gallery, index) => {
     setLightbox({ isOpen: true, gallery, currentIndex: index });
@@ -117,7 +111,7 @@ const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex
   const getGalleryImages = () => {
     switch (lightbox.gallery) {
       case 'discovery':
-        return discoveryImages;
+        return discoveryActivities.map((activity) => activity.artifact);
       case 'hifi':
         return hifiImages;
       case 'userTesting':
@@ -142,1155 +136,492 @@ const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex
     setLightbox({ ...lightbox, currentIndex: newIndex });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!lightbox.isOpen) return;
 
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
         closeLightbox();
-      } else if (e.key === 'ArrowLeft') {
+      } else if (event.key === 'ArrowLeft') {
         navigateLightbox('prev');
-      } else if (e.key === 'ArrowRight') {
+      } else if (event.key === 'ArrowRight') {
         navigateLightbox('next');
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightbox.isOpen, lightbox.currentIndex, lightbox.gallery]);
+  }, [lightbox]);
 
   const fallbackPosition = position || {
     x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 1000) / 2) : 50,
     y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 600) / 2) : 100
   };
 
-  const sectionHeadingSx = {
-    mb: 2.5,
-    fontWeight: 700,
-    color: "#4b2f73",
-    letterSpacing: "0.04em"
-  };
-
-  const subsectionHeadingSx = {
-    mb: 2,
-    fontWeight: 700,
-    color: "text.primary"
-  };
-
-  const bodyTextSx = {
-    lineHeight: 1.6,
-    color: "text.primary"
-  };
-
-  const bodySecondarySx = {
-    lineHeight: 1.6,
-    color: "text.secondary"
+  const windowSx = {
+    ...insuranceFlowTokens.windowSx,
+    left: `${fallbackPosition.x}px`,
+    top: `${fallbackPosition.y}px`,
+    zIndex,
+    width: "min(95vw, 1000px)",
+    maxWidth: "95vw",
+    height: "min(90vh, 700px)",
+    maxHeight: "90vh"
   };
 
   const galleryImages = lightbox.isOpen ? getGalleryImages() : [];
 
   return (
-    <Box
-      sx={(theme) => ({
-        position: "fixed",
-        left: `${fallbackPosition.x}px`,
-        top: `${fallbackPosition.y}px`,
-        zIndex,
-        backgroundColor: "background.paper",
-        width: { xs: "95vw", md: theme.spacing(125) },
-        maxWidth: "95vw",
-        height: { xs: "90vh", md: theme.spacing(87.5) },
-        maxHeight: "90vh",
-        boxShadow: 1,
-        borderRadius: theme.shape.borderRadius,
-        border: "1px solid",
-        borderColor: "divider",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden"
-      })}
-    >
-      <Box
-        sx={(theme) => ({
-          flex: 1,
-          overflow: "auto",
-          p: 0,
-          fontFamily: theme.typography.fontFamily,
-          WebkitFontSmoothing: "antialiased",
-          position: "relative"
-        })}
-      >
-        <Box
-          onMouseDown={onDragStart}
-          sx={(theme) => ({
-            position: "sticky",
-            top: 0,
-            backgroundColor: "background.paper",
-            zIndex: 10,
-            minHeight: 0,
-            px: 3,
-            py: 1.5,
-            borderBottom: "1px solid",
-            borderColor: "divider",
-            transition: "all 0.2s ease",
-            cursor: "move"
-          })}
-        >
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2 }}>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25, flex: 1 }}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                <Typography
-                  variant="h5"
-                  component="h1"
-                  sx={{
-                    m: 0,
-                    fontWeight: 700,
-                    letterSpacing: "0.02em",
-                    color: "text.primary"
-                  }}
-                >
-                  Travel insurance integration
-                </Typography>
-                <Typography
-                  variant="h6"
-                  component="p"
-                  sx={{ fontWeight: 400, m: 0, color: "text.secondary", letterSpacing: "0.01em" }}
-                >
-                  <Box
-                    component="img"
-                    src="/Flight_Centre_company_logo_(Non-free).png"
-                    alt="Flight Centre logo"
-                    sx={{
-                      height: 32,
-                      width: "auto",
-                      display: "block"
-                    }}
-                  />
-                </Typography>
-              </Box>
-            </Box>
-
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-              <FormControlLabel
-                label="Interactive Demo"
-                labelPlacement="start"
-                sx={{
-                  m: 0,
-                  gap: 1,
-                  "& .MuiFormControlLabel-label": {
-                    fontSize: "0.8rem",
-                    fontWeight: 500
-                  }
-                }}
-                control={
-                  <Switch
-                    size="small"
-                    checked={isDemoEnabled}
-                    onChange={handleDemoToggle}
-                    inputProps={{ "aria-label": "Interactive demo toggle" }}
-                  />
-                }
+    <BaseStyles>
+      <Box sx={windowSx}>
+        <Box sx={insuranceFlowTokens.headerSx} onMouseDown={onDragStart}>
+          <Box>
+            <Heading as="h1" sx={insuranceFlowTokens.headerTitleSx}>
+              Travel insurance integration
+            </Heading>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 8, mt: 1 }}>
+              <Box
+                as="img"
+                src="/Flight_Centre_company_logo_(Non-free).png"
+                alt="Flight Centre logo"
+                sx={{ height: 24, width: "auto", display: "block" }}
               />
-
-              <IconButton
-                onClick={onClose}
-                aria-label="Close Insurance"
-                size="large"
-                sx={{
-                  color: "text.primary",
-                  "&:focus": {
-                    outline: "1px dotted",
-                    outlineColor: "text.primary",
-                    outlineOffset: "2px"
-                  },
-                  "&:focus-visible": {
-                    outline: "1px dotted",
-                    outlineColor: "text.primary",
-                    outlineOffset: "2px"
-                  }
-                }}
-              >
-                <CloseIcon fontSize="medium" />
-              </IconButton>
+              <Text sx={insuranceFlowTokens.headerMetaSx}>Flight Centre · Pilot program</Text>
             </Box>
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <Text sx={insuranceFlowTokens.toggleLabelSx}>Interactive Demo</Text>
+              <input
+                type="checkbox"
+                checked={isDemoEnabled}
+                onChange={handleDemoToggle}
+                aria-label="Interactive demo toggle"
+              />
+            </label>
+            <Button onClick={onClose}>Close</Button>
           </Box>
         </Box>
 
-        <Box
-          sx={(theme) => ({
-            px: 4,
-            pt: 2,
-            pb: 0,
-            ...theme.typography.body2,
-            color: theme.palette.text.primary
-          })}
-        >
-          <Box sx={{ mb: 3.5, display: "flex", gap: 6, alignItems: "flex-start", flexWrap: "wrap" }}>
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-              <Typography variant="h5" sx={{ fontWeight: 700, color: "success.main" }}>
-                +45%
-              </Typography>
-              <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
-                Attachment Rate
-              </Typography>
-            </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-              <Typography variant="h5" sx={{ fontWeight: 700, color: "success.main" }}>
-                90%
-              </Typography>
-              <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
-                Time Saved
-              </Typography>
-            </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-              <Typography variant="h5" sx={{ fontWeight: 700, color: "success.main" }}>
-                $2.4M
-              </Typography>
-              <Typography variant="body2" sx={{ color: "text.secondary", fontWeight: 500 }}>
-                Annual Revenue
-              </Typography>
-            </Box>
+        <Box sx={insuranceFlowTokens.bodySx}>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
+            {[
+              { value: "+45%", label: "Attachment Rate" },
+              { value: "90%", label: "Time Saved" },
+              { value: "$2.4M", label: "Annual Revenue" }
+            ].map((stat) => (
+              <Box key={stat.label} sx={insuranceFlowTokens.statCardSx}>
+                <Text sx={insuranceFlowTokens.statValueSx}>{stat.value}</Text>
+                <Text sx={insuranceFlowTokens.statLabelSx}>{stat.label}</Text>
+              </Box>
+            ))}
           </Box>
 
-          <Box sx={{ mb: 3.5 }}>
-            <Box sx={{ mb: 2.5 }}>
-              <Typography variant="body2" sx={{ mb: 2, lineHeight: 1.7 }}>
-                Pilot project for a new booking platform. We integrated travel insurance directly into the booking flow to streamline quoting and lift attachment rates.
-              </Typography>
-              <Box sx={{ p: 2, backgroundColor: "action.hover", borderRadius: 1 }}>
-                <Typography variant="caption" sx={{ color: "text.secondary", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                  Objective & Key Result
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 0.75 }}>
-                  Streamline insurance quoting and increase attachment rates through an integrated workflow.
-                </Typography>
-              </Box>
+          <Box sx={{ marginBottom: 24 }}>
+            <Text sx={{ ...insuranceFlowTokens.bodyTextSx, display: "block", marginBottom: 12 }}>
+              Pilot project for a new booking platform. We integrated travel insurance directly into the booking flow to streamline quoting
+              and lift attachment rates.
+            </Text>
+            <Box sx={{ ...insuranceFlowTokens.cardSx, marginBottom: 12 }}>
+              <Text sx={insuranceFlowTokens.secondaryTextSx}>Objective & Key Result</Text>
+              <Text sx={{ ...insuranceFlowTokens.bodyTextSx, marginTop: 6, display: "block" }}>
+                Streamline insurance quoting and increase attachment rates through an integrated workflow.
+              </Text>
             </Box>
-
-            <Box sx={{ p: 2, backgroundColor: "action.hover", borderRadius: 1 }}>
-              <Typography variant="body2" sx={{ lineHeight: 1.5, m: 0, fontStyle: "italic", mb: 1 }}>
+            <Box sx={{ ...insuranceFlowTokens.cardSx, background: "#f6f8fa" }}>
+              <Text sx={{ ...insuranceFlowTokens.bodyTextSx, fontStyle: "italic", display: "block", marginBottom: 6 }}>
                 "The fact that I don't have to do 27 clicks to load this into the quote is a win. This would make a lot of people in retail very happy!"
-              </Typography>
-              <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                — Flight Centre consultant, usability testing
-              </Typography>
+              </Text>
+              <Text sx={insuranceFlowTokens.secondaryTextSx}>— Flight Centre consultant, usability testing</Text>
             </Box>
           </Box>
 
-          <Box sx={{ pt: 3, mb: 4 }}>
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
-                Discovery
-              </Typography>
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                  Research
-                </Typography>
-                <Box
-                  component="ul"
-                  sx={{
-                    m: 0,
-                    pl: 2.5,
-                    listStyle: "disc",
-                    "& > li": { mb: 1 },
-                    "& > li:last-of-type": { mb: 0 }
-                  }}
-                >
-                  {discoveryActivities.map((activity) => (
-                    <Typography
-                      key={activity.title}
-                      component="li"
-                      variant="body2"
-                      sx={{ lineHeight: 1.6, color: "text.primary" }}
-                    >
-                      {activity.description}
-                    </Typography>
-                  ))}
+          <Box sx={{ marginBottom: 28 }}>
+            <Heading as="h2" sx={insuranceFlowTokens.sectionTitleSx}>Discovery</Heading>
+            <Heading as="h3" sx={insuranceFlowTokens.subsectionTitleSx}>Research</Heading>
+            <Box as="ul" sx={insuranceFlowTokens.listSx}>
+              {discoveryActivities.map((activity) => (
+                <Box as="li" key={activity.title} sx={insuranceFlowTokens.listItemSx}>
+                  <Text sx={insuranceFlowTokens.bodyTextSx}>{activity.description}</Text>
                 </Box>
-                <Box
-                  sx={{
-                    mt: 2,
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(180px, 180px))",
-                    gap: 1.5,
-                    justifyContent: "start"
-                  }}
-                >
-                  {discoveryActivities
-                    .filter((activity) => activity.artifact)
-                    .map((activity, index) => (
-                      <Box
-                        key={activity.title}
-                        onClick={() => openLightbox("discovery", index)}
-                        sx={{
-                          border: "1px solid",
-                          borderColor: "divider",
-                          borderRadius: 2,
-                          overflow: "hidden",
-                          cursor: "pointer",
-                          backgroundColor: "background.paper",
-                          width: 180,
-                          "&:hover": { boxShadow: 2 }
-                        }}
-                      >
-                        <Box
-                          component="img"
-                          src={activity.artifact.src}
-                          alt={activity.artifact.alt}
-                          sx={{ width: "100%", height: 120, objectFit: "cover", display: "block" }}
-                        />
-                        <Box sx={{ px: 1.25, py: 0.75 }}>
-                          <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                            {activity.title}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    ))}
-                </Box>
-              </Box>
-
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                  Findings
-                </Typography>
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                    gap: 2
-                  }}
-                >
-                  {keyFindings.map((finding) => {
-                    const FindingIcon = finding.icon;
-                    return (
-                      <Box
-                        key={finding.title}
-                        sx={(theme) => ({
-                          position: "relative",
-                          p: 1.5,
-                          borderRadius: "12px",
-                          border: "1px solid",
-                          borderColor: "divider",
-                          backgroundColor: "background.paper"
-                        })}
-                      >
-                        <Box sx={{ display: "flex", gap: 1.25, alignItems: "flex-start" }}>
-                          <Box
-                            sx={{
-                              width: 36,
-                              height: 36,
-                              borderRadius: "8px",
-                              flexShrink: 0,
-                              color: "text.secondary",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center"
-                            }}
-                          >
-                            {FindingIcon ? <FindingIcon fontSize="small" /> : null}
-                          </Box>
-                          <Box>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.25, mb: 0.25 }}>
-                              {finding.title}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "text.secondary", lineHeight: 1.4 }}>
-                              {finding.detail}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </Box>
-                    );
-                  })}
-                </Box>
-              </Box>
-
-              <Box sx={{ mt: 3.5 }}>
-                <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                  Problem Definition
-                </Typography>
-                <Box sx={bodyTextSx}>
-                  <Typography component="p" variant="body2" sx={{ mb: 2, color: "text.primary" }}>
-                    How might we embed insurance quoting into the booking workflow so consultants can add coverage in under a minute, without context switching or manual calculations?
-                  </Typography>
-                </Box>
-              </Box>
+              ))}
             </Box>
 
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
-                Ideation
-              </Typography>
-              <Box sx={bodyTextSx}>
+            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12, marginTop: 12 }}>
+              {discoveryActivities.map((activity, index) => (
                 <Box
-                  component="ul"
-                  sx={{
-                    m: 0,
-                    pl: 2.5,
-                    listStyle: "disc",
-                    "& > li": { mb: 1 },
-                    "& > li:last-of-type": { mb: 0 }
-                  }}
+                  as="button"
+                  type="button"
+                  key={activity.title}
+                  onClick={() => openLightbox("discovery", index)}
+                  sx={insuranceFlowTokens.gridThumbSx}
                 >
-                  <Typography component="li" variant="body2" sx={{ lineHeight: 1.6, color: "text.primary" }}>
-                    Explored inline quote panels versus modal handoffs to keep consultants in the booking context.
-                  </Typography>
-                  <Typography component="li" variant="body2" sx={{ lineHeight: 1.6, color: "text.primary" }}>
-                    Mapped data dependencies to pre-fill customer details and reduce re-entry effort.
-                  </Typography>
-                  <Typography component="li" variant="body2" sx={{ lineHeight: 1.6, color: "text.primary" }}>
-                    Partnered with the insurance API team to validate real-time pricing and policy conversion steps.
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
-                Concept Development
-              </Typography>
-              <Box sx={bodyTextSx}>
-                <Box component="ul" sx={{ pl: 3, mb: 2 }}>
-                  <Box component="li" sx={{ mb: 1.5 }}>
-                    <strong>Integrated quoting</strong> - Insurance options displayed within the booking screen
-                  </Box>
-                  <Box component="li" sx={{ mb: 1.5 }}>
-                    <strong>Auto-calculated premiums</strong> - Real-time pricing based on trip details
-                  </Box>
-                  <Box component="li" sx={{ mb: 1.5 }}>
-                    <strong>Smart recommendations</strong> - Suggested coverage tiers aligned to traveler profiles
-                  </Box>
-                  <Box component="li" sx={{ mb: 1.5 }}>
-                    <strong>One-click add</strong> - Add insurance to booking in a single step
-                  </Box>
-                  <Box component="li" sx={{ mb: 0 }}>
-                    <strong>Pre-populated forms</strong> - Customer details auto-filled from booking data
-                  </Box>
-                </Box>
-                <Typography component="p" variant="inherit" sx={{ mb: 0 }}>
-                  Result: reduced insurance addition time from 5-8 minutes to 30 seconds while lifting attachment rates by 45%.
-                </Typography>
-              </Box>
-            </Box>
-
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
-                Prototyping
-              </Typography>
-              <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                Wireframes
-              </Typography>
-              <Box sx={{ lineHeight: 1.6, color: "text.primary", mb: 3 }}>
-                <Typography component="p" variant="inherit" sx={{ mb: 2 }}>
-                  Early layout iterations focused on keeping quoting, pricing, and policy conversion in a single continuous flow.
-                </Typography>
-                {wireframeImages.length ? (
                   <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(auto-fill, minmax(180px, 180px))",
-                      gap: 1.5,
-                      mt: 2,
-                      mb: 0,
-                      justifyContent: "start"
-                    }}
-                  >
-                    {wireframeImages.map((image, index) => (
-                      <Box
-                        key={index}
-                        onClick={() => openLightbox('wireframes', index)}
-                        sx={{
-                          border: "1px solid",
-                          borderColor: "divider",
-                          borderRadius: 2,
-                          overflow: "hidden",
-                          cursor: "pointer",
-                          backgroundColor: "background.paper",
-                          width: 180,
-                          "&:hover": { boxShadow: 2 }
-                        }}
-                      >
-                        <Box
-                          component="img"
-                          src={image.src}
-                          alt={image.alt}
-                          sx={{ width: "100%", height: 120, objectFit: "cover", display: "block" }}
-                        />
-                        <Box sx={{ px: 1.25, py: 0.75 }}>
-                          <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                            {image.alt}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    ))}
+                    as="img"
+                    src={activity.artifact.src}
+                    alt={activity.artifact.alt}
+                    sx={{ width: "100%", height: 120, objectFit: "cover", display: "block" }}
+                  />
+                  <Box sx={{ padding: "8px 10px" }}>
+                    <Text sx={insuranceFlowTokens.secondaryTextSx}>{activity.title}</Text>
                   </Box>
-                ) : (
-                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                    Wireframe artifacts available on request.
-                  </Typography>
-                )}
-              </Box>
+                </Box>
+              ))}
             </Box>
 
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                Hi-Fidelity Prototypes
-              </Typography>
-              <Box sx={{ lineHeight: 1.6, color: "text.primary", mb: 3 }}>
-                {hifiImages.length ? (
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(auto-fill, minmax(180px, 180px))",
-                      gap: 1.5,
-                      mt: 2,
-                      mb: 0,
-                      justifyContent: "start"
-                    }}
-                  >
-                    {hifiImages.map((image, index) => (
-                      <Box
-                        key={image.src}
-                        onClick={() => openLightbox('hifi', index)}
-                        sx={{
-                          border: "1px solid",
-                          borderColor: "divider",
-                          borderRadius: 2,
-                          overflow: "hidden",
-                          cursor: "pointer",
-                          backgroundColor: "background.paper",
-                          width: 180,
-                          "&:hover": { boxShadow: 2 }
-                        }}
-                      >
-                        <Box
-                          component="img"
-                          src={image.src}
-                          alt={image.alt}
-                          sx={{ width: "100%", height: 120, objectFit: "cover", display: "block" }}
-                        />
-                        <Box sx={{ px: 1.25, py: 0.75 }}>
-                          <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                            {image.alt}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    ))}
-                  </Box>
-                ) : (
-                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                    High-fidelity prototypes available on request.
-                  </Typography>
-                )}
-              </Box>
-            </Box>
-
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                Usability Testing
-              </Typography>
-              <Box sx={bodyTextSx}>
-                <Typography component="p" variant="inherit" sx={{ mb: 2 }}>
-                  Moderated usability testing with 5 consultants/advisors validated the integrated insurance experience.
-                </Typography>
-                <Box component="ul" sx={{ pl: 3, mb: 2 }}>
-                  <Box component="li" sx={{ mb: 1.5 }}>
-                    <strong>Methodology</strong> - Remote moderated usability testing
-                  </Box>
-                  <Box component="li" sx={{ mb: 1.5 }}>
-                    <strong>Key tasks</strong> - Add insurance quote to HELiO booking, convert quote to policy
-                  </Box>
-                  <Box component="li" sx={{ mb: 0 }}>
-                    <strong>Participants</strong> - 3 Flight Centre AU consultants + 2 Travel Associates AU advisors
-                  </Box>
-                </Box>
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-                    gap: 2,
-                    mb: 2
-                  }}
-                >
-                  <Box sx={{ p: 2, background: "#e8f5e9", borderRadius: 1, border: "1px solid #4caf50" }}>
-                    <Typography variant="h5" sx={{ color: "#2e7d32", fontWeight: 700 }}>
-                      58%
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: "#2e7d32" }}>
-                      Improved usability score (UMUX 27% → 90%)
-                    </Typography>
-                  </Box>
-                  <Box sx={{ p: 2, background: "#e3f2fd", borderRadius: 1, border: "1px solid #2196f3" }}>
-                    <Typography variant="h5" sx={{ color: "#1565c0", fontWeight: 700 }}>
-                      233%
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: "#1565c0" }}>
-                      Reduction in clicks (28-36 → 16)
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box sx={{ p: 2, backgroundColor: "action.hover", borderRadius: 1, mt: 2 }}>
-                  <Typography variant="body2" sx={{ lineHeight: 1.5, m: 0, fontStyle: "italic", mb: 1 }}>
-                    "100% I would use the insurance flow. I think it's a very good addition and it will increase our productivity and sales."
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                    — Travel Associates advisor, usability testing
-                  </Typography>
-                </Box>
-                {userTestingImages.length ? (
-                  <Box
-                    sx={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(auto-fill, minmax(180px, 180px))",
-                      gap: 1.5,
-                      mt: 2,
-                      mb: 0,
-                      justifyContent: "start"
-                    }}
-                  >
-                    {userTestingImages.map((image, index) => (
-                      <Box
-                        key={image.src}
-                        onClick={() => openLightbox('userTesting', index)}
-                        sx={{
-                          border: "1px solid",
-                          borderColor: "divider",
-                          borderRadius: 2,
-                          overflow: "hidden",
-                          cursor: "pointer",
-                          backgroundColor: "background.paper",
-                          width: 180,
-                          "&:hover": { boxShadow: 2 }
-                        }}
-                      >
-                        <Box
-                          component="img"
-                          src={image.src}
-                          alt={image.alt}
-                          sx={{ width: "100%", height: 120, objectFit: "cover", display: "block" }}
-                        />
-                        <Box sx={{ px: 1.25, py: 0.75 }}>
-                          <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                            {image.alt}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    ))}
-                  </Box>
-                ) : null}
-              </Box>
-            </Box>
-
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
-                Development
-              </Typography>
-              <Box sx={bodyTextSx}>
-                <Box component="ul" sx={{ pl: 3, mb: 0 }}>
-                  <Box component="li" sx={{ mb: 1.5 }}>
-                    <strong>In-house delivery</strong> - Led Flight Centre's internal agile team to build the integration
-                  </Box>
-                  <Box component="li" sx={{ mb: 1.5 }}>
-                    <strong>API integration</strong> - Worked with EA's API team to enable real-time quoting and conversion
-                  </Box>
-                  <Box component="li" sx={{ mb: 0 }}>
-                    <strong>Training rollout</strong> - Created materials and ran training for consultants
-                  </Box>
-                </Box>
-                <Box sx={{ mt: 3 }}>
-                  <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                    Quality Assurance
-                  </Typography>
-                  <Box component="ul" sx={{ pl: 3, mb: 2 }}>
-                    <Box component="li" sx={{ mb: 1.5 }}>
-                      <strong>Compliance validation</strong> - Ensured regulatory requirements were met across markets
-                    </Box>
-                    <Box component="li" sx={{ mb: 1.5 }}>
-                      <strong>Pilot testing</strong> - Controlled pilot with select consultants to validate usability and stability
-                    </Box>
-                    <Box component="li" sx={{ mb: 0 }}>
-                      <strong>Performance monitoring</strong> - Tracked attachment rates and system stability post-launch
-                    </Box>
-                  </Box>
-                  <Box
-                    sx={{
-                      p: "14px 18px",
-                      background: "#d1ecf1",
-                      borderRadius: "4px",
-                      mt: 2
-                    }}
-                  >
-                    <Typography component="p" variant="inherit" sx={{ m: 0, color: "#0c5460" }}>
-                      <strong>Launch readiness:</strong> Pilot stability confirmed | Compliance checks passed | Training completion above 95%
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box sx={{ mt: 3 }}>
-                  <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                    Delivery
-                  </Typography>
-                  <Typography component="p" variant="inherit" sx={{ mb: 2 }}>
-                    Integrating insurance into the booking platform required close coordination with external partners and internal stakeholders.
-                  </Typography>
-
-                  <Box sx={{ p: 3, background: "#f5f5f7", borderRadius: "10px", mb: 3 }}>
-                    <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                      Delivery Approach
-                    </Typography>
-                    <Box component="ul" sx={{ pl: 3, mb: 0 }}>
-                      <Box component="li" sx={{ mb: 1.5 }}>
-                        <strong>In-house development</strong> - Led Flight Centre's internal agile team
-                      </Box>
-                      <Box component="li" sx={{ mb: 1.5 }}>
-                        <strong>Platform pilot</strong> - Used as a pilot project for the new booking platform
-                      </Box>
-                      <Box component="li" sx={{ mb: 1.5 }}>
-                        <strong>API integration</strong> - Partnered with EA insurance API team
-                      </Box>
-                      <Box component="li" sx={{ mb: 1.5 }}>
-                        <strong>Compliance validation</strong> - Ensured regulatory requirements across markets
-                      </Box>
-                      <Box component="li" sx={{ mb: 1.5 }}>
-                        <strong>Pilot testing</strong> - Controlled pilot with select consultants
-                      </Box>
-                      <Box component="li" sx={{ mb: 1.5 }}>
-                        <strong>Training rollout</strong> - Training materials and sessions for consultants
-                      </Box>
-                      <Box component="li" sx={{ mb: 0 }}>
-                        <strong>Performance monitoring</strong> - Tracked attachment rates and stability post-launch
+            <Box sx={{ marginTop: 20 }}>
+              <Heading as="h3" sx={insuranceFlowTokens.subsectionTitleSx}>Findings</Heading>
+              <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
+                {keyFindings.map((finding) => (
+                  <Box key={finding.title} sx={insuranceFlowTokens.cardSx}>
+                    <Box sx={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                      <Text sx={insuranceFlowTokens.pillSx}>{finding.icon}</Text>
+                      <Box>
+                        <Text sx={{ fontSize: 13, fontWeight: 700, display: "block", marginBottom: 4 }}>
+                          {finding.title}
+                        </Text>
+                        <Text sx={insuranceFlowTokens.secondaryTextSx}>{finding.detail}</Text>
                       </Box>
                     </Box>
                   </Box>
-
-                  <Box
-                    sx={{
-                      p: 2,
-                      background: "#e8f5e9",
-                      border: "1px solid #4caf50",
-                      borderRadius: "8px"
-                    }}
-                  >
-                    <Typography component="p" variant="inherit" sx={{ m: 0, color: "#2e7d32", fontWeight: 600 }}>
-                      ✓ <strong>Launched successfully in July 2024</strong> — Seamless integration with immediate revenue impact
-                    </Typography>
-                  </Box>
-                </Box>
+                ))}
               </Box>
             </Box>
 
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
-                Rollout
-              </Typography>
-              <Box sx={bodyTextSx}>
-                <Box component="ul" sx={{ pl: 3, mb: 0 }}>
-                  <Box component="li" sx={{ mb: 0 }}>
-                    <strong>July 2024 launch</strong> - Rolled out from pilot consultants to broader teams with ongoing monitoring
-                  </Box>
-                </Box>
-              </Box>
+            <Box sx={{ marginTop: 20 }}>
+              <Heading as="h3" sx={insuranceFlowTokens.subsectionTitleSx}>Problem Definition</Heading>
+              <Text sx={insuranceFlowTokens.bodyTextSx}>
+                How might we embed insurance quoting into the booking workflow so consultants can add coverage in under a minute, without
+                context switching or manual calculations?
+              </Text>
+            </Box>
+          </Box>
 
-            <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
+          <Box sx={{ marginBottom: 28 }}>
+            <Heading as="h2" sx={insuranceFlowTokens.sectionTitleSx}>Ideation</Heading>
+            <Box as="ul" sx={insuranceFlowTokens.listSx}>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}>
+                  Explored inline quote panels versus modal handoffs to keep consultants in the booking context.
+                </Text>
+              </Box>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}>
+                  Mapped data dependencies to pre-fill customer details and reduce re-entry effort.
+                </Text>
+              </Box>
+              <Box as="li">
+                <Text sx={insuranceFlowTokens.bodyTextSx}>
+                  Partnered with the insurance API team to validate real-time pricing and policy conversion steps.
+                </Text>
+              </Box>
+            </Box>
+          </Box>
+
+          <Box sx={{ marginBottom: 28 }}>
+            <Heading as="h2" sx={insuranceFlowTokens.sectionTitleSx}>Concept Development</Heading>
+            <Box as="ul" sx={insuranceFlowTokens.listSx}>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Integrated quoting</strong> - Insurance options displayed within the booking screen</Text>
+              </Box>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Auto-calculated premiums</strong> - Real-time pricing based on trip details</Text>
+              </Box>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Smart recommendations</strong> - Suggested coverage tiers aligned to traveler profiles</Text>
+              </Box>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>One-click add</strong> - Add insurance to booking in a single step</Text>
+              </Box>
+              <Box as="li">
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Pre-populated forms</strong> - Customer details auto-filled from booking data</Text>
+              </Box>
+            </Box>
+            <Text sx={{ ...insuranceFlowTokens.bodyTextSx, display: "block", marginTop: 10 }}>
+              Result: reduced insurance addition time from 5-8 minutes to 30 seconds while lifting attachment rates by 45%.
+            </Text>
+          </Box>
+
+          <Box sx={{ marginBottom: 28 }}>
+            <Heading as="h2" sx={insuranceFlowTokens.sectionTitleSx}>Prototyping</Heading>
+            <Heading as="h3" sx={insuranceFlowTokens.subsectionTitleSx}>Wireframes</Heading>
+            <Text sx={{ ...insuranceFlowTokens.bodyTextSx, display: "block", marginBottom: 10 }}>
+              Early layout iterations focused on keeping quoting, pricing, and policy conversion in a single continuous flow.
+            </Text>
+            <Text sx={insuranceFlowTokens.secondaryTextSx}>Wireframe artifacts available on request.</Text>
+
+            <Heading as="h3" sx={{ ...insuranceFlowTokens.subsectionTitleSx, marginTop: 18 }}>Hi-Fidelity Prototypes</Heading>
+            <Text sx={insuranceFlowTokens.secondaryTextSx}>High-fidelity prototypes available on request.</Text>
+
+            <Heading as="h3" sx={{ ...insuranceFlowTokens.subsectionTitleSx, marginTop: 18 }}>Usability Testing</Heading>
+            <Text sx={{ ...insuranceFlowTokens.bodyTextSx, display: "block", marginBottom: 8 }}>
+              Moderated usability testing with 5 consultants/advisors validated the integrated insurance experience.
+            </Text>
+            <Box as="ul" sx={insuranceFlowTokens.listSx}>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Methodology</strong> - Remote moderated usability testing</Text>
+              </Box>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Key tasks</strong> - Add insurance quote to HELiO booking, convert quote to policy</Text>
+              </Box>
+              <Box as="li">
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Participants</strong> - 3 Flight Centre AU consultants + 2 Travel Associates AU advisors</Text>
+              </Box>
+            </Box>
+            <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginTop: 12 }}>
+              <Box sx={{ ...insuranceFlowTokens.cardSx, background: "#e8f5e9", borderColor: "#1a7f37" }}>
+                <Text sx={{ fontSize: 18, fontWeight: 700, color: "#1a7f37" }}>58%</Text>
+                <Text sx={insuranceFlowTokens.secondaryTextSx}>Improved usability score (UMUX 27% → 90%)</Text>
+              </Box>
+              <Box sx={{ ...insuranceFlowTokens.cardSx, background: "#ddf4ff", borderColor: "#0969da" }}>
+                <Text sx={{ fontSize: 18, fontWeight: 700, color: "#0969da" }}>233%</Text>
+                <Text sx={insuranceFlowTokens.secondaryTextSx}>Reduction in clicks (28-36 → 16)</Text>
+              </Box>
+            </Box>
+            <Box sx={{ ...insuranceFlowTokens.cardSx, background: "#f6f8fa", marginTop: 12 }}>
+              <Text sx={{ ...insuranceFlowTokens.bodyTextSx, fontStyle: "italic", display: "block", marginBottom: 6 }}>
+                "100% I would use the insurance flow. I think it's a very good addition and it will increase our productivity and sales."
+              </Text>
+              <Text sx={insuranceFlowTokens.secondaryTextSx}>— Travel Associates advisor, usability testing</Text>
+            </Box>
+          </Box>
+
+          <Box sx={{ marginBottom: 28 }}>
+            <Heading as="h2" sx={insuranceFlowTokens.sectionTitleSx}>Development</Heading>
+            <Box as="ul" sx={insuranceFlowTokens.listSx}>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>In-house delivery</strong> - Led Flight Centre's internal agile team to build the integration</Text>
+              </Box>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>API integration</strong> - Worked with EA's API team to enable real-time quoting and conversion</Text>
+              </Box>
+              <Box as="li">
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Training rollout</strong> - Created materials and ran training for consultants</Text>
+              </Box>
+            </Box>
+
+            <Heading as="h3" sx={{ ...insuranceFlowTokens.subsectionTitleSx, marginTop: 18 }}>Quality Assurance</Heading>
+            <Box as="ul" sx={insuranceFlowTokens.listSx}>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Compliance validation</strong> - Ensured regulatory requirements were met across markets</Text>
+              </Box>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Pilot testing</strong> - Controlled pilot with select consultants to validate usability and stability</Text>
+              </Box>
+              <Box as="li">
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Performance monitoring</strong> - Tracked attachment rates and system stability post-launch</Text>
+              </Box>
+            </Box>
+            <Box sx={{ ...insuranceFlowTokens.cardSx, background: "#ddf4ff", marginTop: 12 }}>
+              <Text sx={insuranceFlowTokens.bodyTextSx}>
+                <strong>Launch readiness:</strong> Pilot stability confirmed | Compliance checks passed | Training completion above 95%
+              </Text>
+            </Box>
+
+            <Heading as="h3" sx={{ ...insuranceFlowTokens.subsectionTitleSx, marginTop: 18 }}>Delivery</Heading>
+            <Text sx={{ ...insuranceFlowTokens.bodyTextSx, display: "block", marginBottom: 8 }}>
+              Integrating insurance into the booking platform required close coordination with external partners and internal stakeholders.
+            </Text>
+            <Box sx={{ ...insuranceFlowTokens.cardSx, marginBottom: 12 }}>
+              <Heading as="h4" sx={{ fontSize: 14, margin: "0 0 8px 0" }}>Delivery Approach</Heading>
+              <Box as="ul" sx={insuranceFlowTokens.listSx}>
+                <Box as="li" sx={insuranceFlowTokens.listItemSx}><Text sx={insuranceFlowTokens.bodyTextSx}><strong>In-house development</strong> - Led Flight Centre's internal agile team</Text></Box>
+                <Box as="li" sx={insuranceFlowTokens.listItemSx}><Text sx={insuranceFlowTokens.bodyTextSx}><strong>Platform pilot</strong> - Used as a pilot project for the new booking platform</Text></Box>
+                <Box as="li" sx={insuranceFlowTokens.listItemSx}><Text sx={insuranceFlowTokens.bodyTextSx}><strong>API integration</strong> - Partnered with EA insurance API team</Text></Box>
+                <Box as="li" sx={insuranceFlowTokens.listItemSx}><Text sx={insuranceFlowTokens.bodyTextSx}><strong>Compliance validation</strong> - Ensured regulatory requirements across markets</Text></Box>
+                <Box as="li" sx={insuranceFlowTokens.listItemSx}><Text sx={insuranceFlowTokens.bodyTextSx}><strong>Pilot testing</strong> - Controlled pilot with select consultants</Text></Box>
+                <Box as="li" sx={insuranceFlowTokens.listItemSx}><Text sx={insuranceFlowTokens.bodyTextSx}><strong>Training rollout</strong> - Training materials and sessions for consultants</Text></Box>
+                <Box as="li"><Text sx={insuranceFlowTokens.bodyTextSx}><strong>Performance monitoring</strong> - Tracked attachment rates and stability post-launch</Text></Box>
+              </Box>
+            </Box>
+            <Box sx={{ ...insuranceFlowTokens.cardSx, background: "#e8f5e9", borderColor: "#1a7f37" }}>
+              <Text sx={{ ...insuranceFlowTokens.bodyTextSx, fontWeight: 600, color: "#1a7f37" }}>
+                ✓ <strong>Launched successfully in July 2024</strong> — Seamless integration with immediate revenue impact
+              </Text>
+            </Box>
+          </Box>
+
+          <Box sx={{ marginBottom: 28 }}>
+            <Heading as="h2" sx={insuranceFlowTokens.sectionTitleSx}>Rollout</Heading>
+            <Box as="ul" sx={insuranceFlowTokens.listSx}>
+              <Box as="li">
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>July 2024 launch</strong> - Rolled out from pilot consultants to broader teams with ongoing monitoring</Text>
+              </Box>
+            </Box>
+
+            <Heading as="h3" sx={{ ...insuranceFlowTokens.subsectionTitleSx, marginTop: 18 }}>
               Workflow Efficiency Measurements
-            </Typography>
-            <Typography component="p" variant="inherit" sx={{ ...bodySecondarySx, mb: 3 }}>
+            </Heading>
+            <Text sx={{ ...insuranceFlowTokens.secondaryTextSx, display: "block", marginBottom: 10 }}>
               Technical breakdown of workflow improvements between old and new flows
-            </Typography>
-
-            <Box
-              sx={{
-                p: 3,
-                background: "#f8f9fa",
-                borderRadius: "10px",
-                border: "1px solid #e0e0e0"
-              }}
-            >
-              <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px" }}>
-                <Box
-                  sx={{
-                    background: "#ffffff",
-                    padding: "14px",
-                    borderRadius: "10px",
-                    border: "1px solid #e0e0e0",
-                    textAlign: "center"
-                  }}
-                >
-                  <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 500 }}>
-                    Context Switching
+            </Text>
+            <Box sx={{ ...insuranceFlowTokens.cardSx, background: "#f6f8fa" }}>
+              <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
+                {[
+                  { label: "Context Switching", value: "100%", note: "2 systems → 1" },
+                  { label: "Process Time", value: "90%", note: "5-8m → 30s" },
+                  { label: "User Actions", value: "233%", note: "28-36 → 16 clicks" }
+                ].map((item) => (
+                  <Box key={item.label} sx={insuranceFlowTokens.cardSx}>
+                    <Text sx={{ fontSize: 12, color: "#57606a", fontWeight: 600 }}>{item.label}</Text>
+                    <Text sx={{ fontSize: 20, fontWeight: 700, marginTop: 6 }}>{item.value}</Text>
+                    <Text sx={insuranceFlowTokens.secondaryTextSx}>{item.note}</Text>
                   </Box>
-                  <Box sx={{ fontSize: "26px", fontWeight: 600, color: "#1d1d1f", mb: 0.5 }}>
-                    100%
-                  </Box>
-                  <Box sx={{ fontSize: "13px", color: "#34c759", fontWeight: 600 }}>
-                    ↓ eliminated
-                  </Box>
-                  <Box sx={{ fontSize: "12px", color: "#6e6e73", mt: 1 }}>
-                    2 systems → 1
-                  </Box>
-                </Box>
-
-                <Box
-                  sx={{
-                    background: "#ffffff",
-                    padding: "14px",
-                    borderRadius: "10px",
-                    border: "1px solid #e0e0e0",
-                    textAlign: "center"
-                  }}
-                >
-                  <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 500 }}>
-                    Process Time
-                  </Box>
-                  <Box sx={{ fontSize: "26px", fontWeight: 600, color: "#1d1d1f", mb: 0.5 }}>
-                    90%
-                  </Box>
-                  <Box sx={{ fontSize: "13px", color: "#34c759", fontWeight: 600 }}>
-                    ↓ faster
-                  </Box>
-                  <Box sx={{ fontSize: "12px", color: "#6e6e73", mt: 1 }}>
-                    5-8m → 30s
-                  </Box>
-                </Box>
-
-                <Box
-                  sx={{
-                    background: "#ffffff",
-                    padding: "14px",
-                    borderRadius: "10px",
-                    border: "1px solid #e0e0e0",
-                    textAlign: "center"
-                  }}
-                >
-                  <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 500 }}>
-                    User Actions
-                  </Box>
-                  <Box sx={{ fontSize: "26px", fontWeight: 600, color: "#1d1d1f", mb: 0.5 }}>
-                    233%
-                  </Box>
-                  <Box sx={{ fontSize: "13px", color: "#34c759", fontWeight: 600 }}>
-                    ↓ fewer
-                  </Box>
-                  <Box sx={{ fontSize: "12px", color: "#6e6e73", mt: 1 }}>
-                    28-36 → 16 clicks
-                  </Box>
-                </Box>
+                ))}
               </Box>
-
-              <Box
-                sx={{
-                  textAlign: "center",
-                  color: "text.secondary",
-                  fontStyle: "italic",
-                  mt: 2.5
-                }}
-              >
+              <Text sx={{ ...insuranceFlowTokens.secondaryTextSx, fontStyle: "italic", textAlign: "center", marginTop: 12 }}>
                 Try the interactive demo to experience both workflows
-              </Box>
+              </Text>
             </Box>
 
-            <Box sx={{ mt: 4 }}>
-              <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                Post-Release Validation
-              </Typography>
-              <Typography component="p" variant="inherit" sx={{ ...bodySecondarySx, mb: 3 }}>
-                Business impact and adoption signals tracked after rollout
-              </Typography>
-
-              <Box sx={{ p: 3, background: "#f8f9fa", borderRadius: "10px", border: "1px solid #e0e0e0" }}>
-                <Typography variant="subtitle1" component="h3" sx={{ ...subsectionHeadingSx, mb: 2.5 }}>
-                  Early Impact Signals
-                </Typography>
-
-                <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", mb: 3 }}>
-                  <Box sx={{ background: "#ffffff", padding: "14px", borderRadius: "10px", border: "1px solid #e0e0e0" }}>
-                    <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 600 }}>
-                      Attachment Rate
-                    </Box>
-                    <Box sx={{ fontSize: "26px", fontWeight: 700, color: "#34c759", mb: 1 }}>
-                      +45%
-                    </Box>
-                    <Box sx={{ ...bodyTextSx, lineHeight: 1.5 }}>
-                      increase in insurance attachment after launch
-                    </Box>
+            <Heading as="h3" sx={{ ...insuranceFlowTokens.subsectionTitleSx, marginTop: 18 }}>
+              Post-Release Validation
+            </Heading>
+            <Text sx={{ ...insuranceFlowTokens.secondaryTextSx, display: "block", marginBottom: 10 }}>
+              Business impact and adoption signals tracked after rollout
+            </Text>
+            <Box sx={insuranceFlowTokens.cardSx}>
+              <Heading as="h4" sx={{ fontSize: 14, margin: "0 0 10px 0" }}>Early Impact Signals</Heading>
+              <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
+                {[
+                  { label: "Attachment Rate", value: "+45%", note: "increase in insurance attachment after launch" },
+                  { label: "Time to Add Insurance", value: "30s", note: "average time to add coverage (down from 5-8 minutes)" },
+                  { label: "Revenue Lift", value: "$2.4M", note: "additional annual revenue from improved attachment" },
+                  { label: "Compliance Risk", value: "↓ lower", note: "consistent insurance offering and audit-ready records" }
+                ].map((item) => (
+                  <Box key={item.label} sx={insuranceFlowTokens.cardSx}>
+                    <Text sx={{ fontSize: 12, color: "#57606a", fontWeight: 600 }}>{item.label}</Text>
+                    <Text sx={{ fontSize: 18, fontWeight: 700, marginTop: 6 }}>{item.value}</Text>
+                    <Text sx={insuranceFlowTokens.secondaryTextSx}>{item.note}</Text>
                   </Box>
+                ))}
+              </Box>
+              <Box sx={{ ...insuranceFlowTokens.cardSx, background: "#ddf4ff", marginTop: 12 }}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}>
+                  <strong>Business impact:</strong> Improved consultant efficiency, stronger compliance posture, and new revenue unlocked in the first quarter post-launch.
+                </Text>
+              </Box>
+            </Box>
+          </Box>
 
-                  <Box sx={{ background: "#ffffff", padding: "14px", borderRadius: "10px", border: "1px solid #e0e0e0" }}>
-                    <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 600 }}>
-                      Time to Add Insurance
-                    </Box>
-                    <Box sx={{ fontSize: "26px", fontWeight: 700, color: "#34c759", mb: 1 }}>
-                      30s
-                    </Box>
-                    <Box sx={{ ...bodyTextSx, lineHeight: 1.5 }}>
-                      average time to add coverage (down from 5-8 minutes)
-                    </Box>
-                  </Box>
-
-                  <Box sx={{ background: "#ffffff", padding: "14px", borderRadius: "10px", border: "1px solid #e0e0e0" }}>
-                    <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 600 }}>
-                      Revenue Lift
-                    </Box>
-                    <Box sx={{ fontSize: "26px", fontWeight: 700, color: "#0071e3", mb: 1 }}>
-                      $2.4M
-                    </Box>
-                    <Box sx={{ ...bodyTextSx, lineHeight: 1.5 }}>
-                      additional annual revenue from improved attachment
-                    </Box>
-                  </Box>
-
-                  <Box sx={{ background: "#ffffff", padding: "14px", borderRadius: "10px", border: "1px solid #e0e0e0" }}>
-                    <Box sx={{ fontSize: "13px", color: "#6e6e73", mb: 1, fontWeight: 600 }}>
-                      Compliance Risk
-                    </Box>
-                    <Box sx={{ fontSize: "26px", fontWeight: 700, color: "#34c759", mb: 1 }}>
-                      ↓ lower
-                    </Box>
-                    <Box sx={{ ...bodyTextSx, lineHeight: 1.5 }}>
-                      consistent insurance offering and audit-ready records
-                    </Box>
-                  </Box>
+          <Box sx={{ marginBottom: 8 }}>
+            <Heading as="h2" sx={insuranceFlowTokens.sectionTitleSx}>Reflection</Heading>
+            <Heading as="h3" sx={insuranceFlowTokens.subsectionTitleSx}>Challenges & Learnings</Heading>
+            <Text sx={{ ...insuranceFlowTokens.bodyTextSx, display: "block", marginBottom: 12 }}>
+              Building the pilot surfaced a few key learnings that shaped subsequent phases:
+            </Text>
+            <Box sx={{ ...insuranceFlowTokens.cardSx, background: "#fff8c5", borderColor: "#d4a72c", marginBottom: 12 }}>
+              <Text sx={{ fontSize: 12, fontWeight: 600, color: "#7d4e00", marginBottom: 6 }}>Key Challenges</Text>
+              <Box as="ul" sx={insuranceFlowTokens.listSx}>
+                <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                  <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Regulatory complexity:</strong> Coverage rules varied by market, requiring additional validation logic</Text>
                 </Box>
-
-                <Box sx={{ p: 2, background: "#e3f2fd", borderRadius: "10px", border: "1px solid #90caf9" }}>
-                  <Typography component="p" variant="inherit" sx={{ m: 0, ...bodyTextSx, color: "#0d47a1" }}>
-                    <strong>Business impact:</strong> Improved consultant efficiency, stronger compliance posture, and new revenue unlocked in the first quarter post-launch.
-                  </Typography>
+                <Box as="li">
+                  <Text sx={insuranceFlowTokens.bodyTextSx}><strong>API dependencies:</strong> Tight coupling with partner APIs required careful staging and fallback handling</Text>
                 </Box>
               </Box>
             </Box>
+            <Box sx={{ ...insuranceFlowTokens.cardSx, background: "#dafbe1", borderColor: "#1a7f37", marginBottom: 12 }}>
+              <Text sx={{ fontSize: 12, fontWeight: 600, color: "#1a7f37", marginBottom: 6 }}>What I Learned</Text>
+              <Box as="ul" sx={insuranceFlowTokens.listSx}>
+                <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                  <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Align with compliance early:</strong> Early validation reduced rework and approval cycles</Text>
+                </Box>
+                <Box as="li">
+                  <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Prototype with real data:</strong> Real booking scenarios revealed edge cases faster than mock data</Text>
+                </Box>
+              </Box>
             </Box>
 
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="h5" component="h2" sx={sectionHeadingSx}>
-                Reflection
-              </Typography>
-              <Box sx={{ lineHeight: 1.6, color: "text.primary", mb: 3 }}>
-                <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                  Challenges & Learnings
-                </Typography>
-                <Box sx={{ mb: 3 }}>
-                  <Typography component="p" variant="inherit" sx={{ mb: 2 }}>
-                    Building the pilot surfaced a few key learnings that shaped subsequent phases:
-                  </Typography>
-                  <Box
-                    sx={{
-                      p: 2,
-                      background: "#fff3cd",
-                      borderRadius: "10px",
-                      border: "1px solid #ffc107",
-                      mb: 2.5
-                    }}
-                  >
-                    <Typography sx={{ fontSize: "12px", fontWeight: 600, color: "#856404", mb: 1 }}>
-                      Key Challenges
-                    </Typography>
-                    <Box component="ul" sx={{ pl: 3, mt: 1, mb: 0 }}>
-                      <Box component="li" sx={{ mb: 1, color: "#856404" }}>
-                        <strong>Regulatory complexity:</strong> Coverage rules varied by market, requiring additional validation logic
-                      </Box>
-                      <Box component="li" sx={{ mb: 0, color: "#856404" }}>
-                        <strong>API dependencies:</strong> Tight coupling with partner APIs required careful staging and fallback handling
-                      </Box>
-                    </Box>
-                  </Box>
+            <Heading as="h3" sx={insuranceFlowTokens.subsectionTitleSx}>Dream vs Reality</Heading>
+            <Text sx={{ ...insuranceFlowTokens.bodyTextSx, display: "block", marginBottom: 12 }}>
+              The ideal vision was a fully personalized coverage assistant that recommended the right plan automatically. We shipped the highest-impact,
+              feasible version for the pilot timeline.
+            </Text>
+            <Box as="ul" sx={insuranceFlowTokens.listSx}>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}>Instant coverage recommendations based on trip, traveler, and policy rules</Text>
+              </Box>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}>Auto-approval for low-risk policies to reduce consultant workload</Text>
+              </Box>
+              <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                <Text sx={insuranceFlowTokens.bodyTextSx}>Real-time compliance checks across markets</Text>
+              </Box>
+              <Box as="li">
+                <Text sx={insuranceFlowTokens.bodyTextSx}>One-step policy conversion with no extra data entry</Text>
+              </Box>
+            </Box>
 
-                  <Box
-                    sx={{
-                      p: 2,
-                      background: "#d4edda",
-                      borderRadius: "10px",
-                      border: "1px solid #c3e6cb"
-                    }}
-                  >
-                    <Typography sx={{ fontSize: "12px", fontWeight: 600, color: "#155724", mb: 1 }}>
-                      What I Learned
-                    </Typography>
-                    <Box component="ul" sx={{ pl: 3, mt: 1, mb: 0 }}>
-                      <Box component="li" sx={{ mb: 1, color: "#155724" }}>
-                        <strong>Align with compliance early:</strong> Early validation reduced rework and approval cycles
-                      </Box>
-                      <Box component="li" sx={{ mb: 0, color: "#155724" }}>
-                        <strong>Prototype with real data:</strong> Real booking scenarios revealed edge cases faster than mock data
-                      </Box>
-                    </Box>
-                  </Box>
+            <Box sx={{ ...insuranceFlowTokens.cardSx, background: "#fff8c5", borderColor: "#d4a72c", marginTop: 12 }}>
+              <Text sx={{ ...insuranceFlowTokens.bodyTextSx, fontWeight: 600, marginBottom: 6 }}>Why we phased the dream:</Text>
+              <Box as="ul" sx={insuranceFlowTokens.listSx}>
+                <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                  <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Regulatory constraints:</strong> Requirements varied across markets and insurers</Text>
                 </Box>
-
-                <Typography variant="subtitle1" component="h3" sx={subsectionHeadingSx}>
-                  Dream vs Reality
-                </Typography>
-                <Typography component="p" variant="inherit" sx={{ mb: 2 }}>
-                  The ideal vision was a fully personalized coverage assistant that recommended the right plan automatically. We shipped the highest-impact,
-                  feasible version for the pilot timeline.
-                </Typography>
-
-                <Box component="ul" sx={{ pl: 3, mb: 2 }}>
-                  <Box component="li" sx={{ mb: 1 }}>Instant coverage recommendations based on trip, traveler, and policy rules</Box>
-                  <Box component="li" sx={{ mb: 1 }}>Auto-approval for low-risk policies to reduce consultant workload</Box>
-                  <Box component="li" sx={{ mb: 1 }}>Real-time compliance checks across markets</Box>
-                  <Box component="li" sx={{ mb: 0 }}>One-step policy conversion with no extra data entry</Box>
+                <Box as="li" sx={insuranceFlowTokens.listItemSx}>
+                  <Text sx={insuranceFlowTokens.bodyTextSx}><strong>API maturity:</strong> Real-time pricing endpoints required staged rollout</Text>
                 </Box>
-
-                <Box
-                  sx={{
-                    mt: 2,
-                    p: 2,
-                    background: "#fff3cd",
-                    borderRadius: "10px",
-                    border: "1px solid #ffc107"
-                  }}
-                >
-                  <Typography component="p" variant="inherit" sx={{ m: 0, fontWeight: 600, color: "#856404" }}>
-                    Why we phased the dream:
-                  </Typography>
-                  <Box component="ul" sx={{ pl: 3, mt: 1, mb: 0 }}>
-                    <Box component="li" sx={{ mb: 1, color: "#856404" }}>
-                      <strong>Regulatory constraints:</strong> Requirements varied across markets and insurers
-                    </Box>
-                    <Box component="li" sx={{ mb: 1, color: "#856404" }}>
-                      <strong>API maturity:</strong> Real-time pricing endpoints required staged rollout
-                    </Box>
-                    <Box component="li" sx={{ mb: 0, color: "#856404" }}>
-                      <strong>Pilot timeline:</strong> Delivered the integrated flow first to prove impact and adoption
-                    </Box>
-                  </Box>
+                <Box as="li">
+                  <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Pilot timeline:</strong> Delivered the integrated flow first to prove impact and adoption</Text>
                 </Box>
               </Box>
             </Box>
           </Box>
         </Box>
+      </Box>
 
-        <Dialog
-          open={lightbox.isOpen}
-          onClose={closeLightbox}
-          fullScreen
-          PaperProps={{
-            sx: {
-              backgroundColor: "transparent",
-              boxShadow: "none"
-            }
-          }}
-          BackdropProps={{
-            sx: { backgroundColor: "rgba(0, 0, 0, 0.95)" }
-          }}
-        >
-          <DialogContent
-            sx={{
-              p: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-            onClick={closeLightbox}
-          >
-            {galleryImages.length ? (
+      {lightbox.isOpen && galleryImages.length ? (
+        <Box sx={insuranceFlowTokens.overlaySx} onClick={closeLightbox}>
+          <Box sx={insuranceFlowTokens.lightboxSx} onClick={(event) => event.stopPropagation()}>
+            <Button sx={{ position: "absolute", top: -48, right: 0 }} onClick={closeLightbox}>
+              Close
+            </Button>
+            {galleryImages.length > 1 && (
+              <button
+                type="button"
+                onClick={() => navigateLightbox('prev')}
+                style={{ ...insuranceFlowTokens.lightboxButtonSx, position: "absolute", left: "-60px" }}
+                aria-label="Previous image"
+              >
+                Prev
+              </button>
+            )}
+            <Box
+              as="img"
+              src={galleryImages[lightbox.currentIndex].src}
+              alt={galleryImages[lightbox.currentIndex].alt}
+              sx={{ maxWidth: "95vw", maxHeight: "95vh", borderRadius: 8, objectFit: "contain" }}
+            />
+            {galleryImages.length > 1 && (
+              <button
+                type="button"
+                onClick={() => navigateLightbox('next')}
+                style={{ ...insuranceFlowTokens.lightboxButtonSx, position: "absolute", right: "-60px" }}
+                aria-label="Next image"
+              >
+                Next
+              </button>
+            )}
+            {galleryImages.length > 1 && (
               <Box
-                onClick={(e) => e.stopPropagation()}
                 sx={{
-                  position: "relative",
-                  maxWidth: "95vw",
-                  maxHeight: "95vh",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center"
+                  position: "absolute",
+                  bottom: "-40px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  color: "#ffffff",
+                  fontSize: 12
                 }}
               >
-                <IconButton
-                  onClick={closeLightbox}
-                  aria-label="Close lightbox"
-                  sx={{
-                    position: "absolute",
-                    top: "-50px",
-                    right: 0,
-                    background: "rgba(255, 255, 255, 0.2)",
-                    color: "#ffffff",
-                    width: "40px",
-                    height: "40px",
-                    "&:hover": { background: "rgba(255, 255, 255, 0.3)" }
-                  }}
-                >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-
-                {galleryImages.length > 1 && (
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigateLightbox('prev');
-                    }}
-                    aria-label="Previous image"
-                    sx={{
-                      position: "absolute",
-                      left: "-60px",
-                      background: "rgba(255, 255, 255, 0.2)",
-                      color: "#ffffff",
-                      width: "50px",
-                      height: "50px",
-                      "&:hover": { background: "rgba(255, 255, 255, 0.3)" }
-                    }}
-                  >
-                    <ChevronLeftIcon />
-                  </IconButton>
-                )}
-
-                <Box
-                  component="img"
-                  src={galleryImages[lightbox.currentIndex].src}
-                  alt={galleryImages[lightbox.currentIndex].alt}
-                  sx={{
-                    maxWidth: "100%",
-                    maxHeight: "95vh",
-                    objectFit: "contain",
-                    borderRadius: "8px"
-                  }}
-                />
-
-                {galleryImages.length > 1 && (
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigateLightbox('next');
-                    }}
-                    aria-label="Next image"
-                    sx={{
-                      position: "absolute",
-                      right: "-60px",
-                      background: "rgba(255, 255, 255, 0.2)",
-                      color: "#ffffff",
-                      width: "50px",
-                      height: "50px",
-                      "&:hover": { background: "rgba(255, 255, 255, 0.3)" }
-                    }}
-                  >
-                    <ChevronRightIcon />
-                  </IconButton>
-                )}
-
-                {galleryImages.length > 1 && (
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      bottom: "-50px",
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      color: "#ffffff",
-                      fontSize: "14px",
-                      background: "rgba(0, 0, 0, 0.5)",
-                      px: 2,
-                      py: 1,
-                      borderRadius: "20px"
-                    }}
-                  >
-                    {lightbox.currentIndex + 1} / {galleryImages.length}
-                  </Box>
-                )}
+                {lightbox.currentIndex + 1} / {galleryImages.length}
               </Box>
-            ) : null}
-          </DialogContent>
-        </Dialog>
-      </Box>
-    </Box>
+            )}
+          </Box>
+        </Box>
+      ) : null}
+    </BaseStyles>
   );
 };
 
 export default InsuranceCaseStudy;
-

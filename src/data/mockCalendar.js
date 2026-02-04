@@ -1,21 +1,20 @@
 /**
  * Mock calendar data for date selection
- * Generates 4 months of availability data
+ * Generates 3 months of availability data (May–Jul 2024)
  */
 
-export const generateCalendarMonths = (startDate, endDate) => {
-  return [
+export const generateCalendarMonths = (startDate, endDate, activeMonth) => {
+  const months = [
     {
-      name: 'MARCH',
-      emptyStart: 5, // March 2025 starts on Saturday
+      name: 'MAY',
+      emptyStart: 3, // May 2024 starts on Wednesday
       days: Array.from({length: 31}, (_, i) => {
         const date = i + 1;
-        const isCurrent = date >= startDate && date <= endDate;
         let price = 450;
         let avail = 'high';
         
         // Weekend pricing
-        if ([7,8,14,15,20,21].includes(date)) {
+        if ([4,5,11,12,18,19,25,26].includes(date)) {
           price = 480;
           avail = 'medium';
         }
@@ -24,17 +23,12 @@ export const generateCalendarMonths = (startDate, endDate) => {
           avail = date === 31 ? 'low' : 'high';
         }
         
-        return { 
-          date, 
-          price, 
-          avail: isCurrent ? 'current' : avail,
-          current: isCurrent
-        };
+        return { date, price, avail };
       })
     },
     {
-      name: 'APRIL',
-      emptyStart: 1,
+      name: 'JUNE',
+      emptyStart: 6,
       days: Array.from({length: 30}, (_, i) => ({
         date: i + 1,
         price: i < 2 ? 520 : i % 7 === 0 ? 480 : 450,
@@ -42,23 +36,16 @@ export const generateCalendarMonths = (startDate, endDate) => {
       }))
     },
     {
-      name: 'MAY',
-      emptyStart: 3,
+      name: 'JULY',
+      emptyStart: 1,
       days: Array.from({length: 31}, (_, i) => ({
         date: i + 1,
         price: i % 9 === 0 ? 520 : i % 6 === 0 ? 480 : 450,
         avail: i === 25 ? 'sold' : i % 9 === 0 ? 'low' : i % 6 === 0 ? 'medium' : 'high'
       }))
-    },
-    {
-      name: 'JUNE',
-      emptyStart: 6,
-      days: Array.from({length: 30}, (_, i) => ({
-        date: i + 1,
-        price: i % 8 === 0 ? 520 : i % 5 === 0 ? 480 : 450,
-        avail: i === 26 ? 'sold' : i % 8 === 0 ? 'low' : i % 5 === 0 ? 'medium' : 'high'
-      }))
     }
   ];
+
+  return months;
 };
 

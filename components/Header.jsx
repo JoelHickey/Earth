@@ -1,6 +1,14 @@
 import React from 'react';
 
-const Header = ({ onClose, onMinimize, isMacOS8Theme = false, onDragStart }) => {
+const Header = ({
+  onClose,
+  onMinimize,
+  isMacOS8Theme = false,
+  onDragStart,
+  title = 'Earth',
+  iconSrc = '/Earth.ico',
+  iconAlt = 'Earth'
+}) => {
   const styles = {
     header: {
       background: isMacOS8Theme ? "#c0c0c0" : "linear-gradient(90deg, #000080 0%, #1084d0 100%)",
@@ -65,8 +73,8 @@ const Header = ({ onClose, onMinimize, isMacOS8Theme = false, onDragStart }) => 
       onMouseDown={onDragStart}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-        <img src="/Earth.ico" alt="Earth" style={{ width: "14px", height: "14px" }} />
-        <span>Earth</span>
+        <img src={iconSrc} alt={iconAlt} style={{ width: "14px", height: "14px" }} />
+        <span>{title}</span>
       </div>
       <div style={{ display: "flex", alignItems: "center" }}>
         <button
