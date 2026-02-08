@@ -29,6 +29,7 @@ import AmendmentsCaseStudy from './src/components/AmendmentsCaseStudy';
 import InsuranceCaseStudy from './src/components/InsuranceCaseStudy';
 import AmendmentsFlowDemo from './src/components/AmendmentsFlowDemo';
 import InsuranceOldFlow from './src/components/InsuranceOldFlow';
+import PipeBendingPlanner from './src/components/PipeBendingPlanner';
 
 function App() {
   console.log("App is rendering!");
@@ -120,12 +121,38 @@ function App() {
     x: typeof window !== 'undefined' ? Math.max(0, (window.innerWidth - 1000) / 2) : 50,
     y: typeof window !== 'undefined' ? Math.max(0, (window.innerHeight - 700) / 2) : 100
   }));
-  // Third app window state (Travel Amendments)
+  // Third app window state (Streamlining Amendments)
   const [travelWindows, setTravelWindows] = useState([]);
   
   // Fourth app window state (Insurance)
   const [isInsuranceAppOpen, setIsInsuranceAppOpen] = useState(false);
   const [isInsuranceDemoOpen, setIsInsuranceDemoOpen] = useState(false);
+  
+  // Fifth app window state (Pipe)
+  const [isPipePlannerOpen, setIsPipePlannerOpen] = useState(false);
+  const [pipePlannerPosition, setPipePlannerPosition] = useState(() => {
+    if (typeof window === 'undefined') {
+      return { x: 80, y: 140 };
+    }
+    const targetWidth = Math.min(1120, window.innerWidth * 0.96);
+    const targetHeight = 820;
+    return {
+      x: Math.max(0, (window.innerWidth - targetWidth) / 2),
+      y: Math.max(0, (window.innerHeight - targetHeight) / 2)
+    };
+  });
+  const [pipePlannerZIndex, setPipePlannerZIndex] = useState(150);
+  useEffect(() => {
+    if (!isPipePlannerOpen || typeof window === 'undefined') {
+      return;
+    }
+    const targetWidth = Math.min(1120, window.innerWidth * 0.96);
+    const targetHeight = 820;
+    setPipePlannerPosition({
+      x: Math.max(0, (window.innerWidth - targetWidth) / 2),
+      y: Math.max(0, (window.innerHeight - targetHeight) / 2)
+    });
+  }, [isPipePlannerOpen]);
   
   // Window position state - center windows on initial load
   const [windowPosition, setWindowPosition] = useState(() => ({
@@ -196,6 +223,7 @@ function App() {
     count += cvWindows.filter((window) => !window.minimized).length;
     count += travelWindows.filter((window) => !window.minimized).length;
     if (isInsuranceAppOpen) count += 1;
+    if (isPipePlannerOpen) count += 1;
     return count;
   };
 
@@ -207,6 +235,10 @@ function App() {
     }
     if (type === 'insurance') {
       setInsuranceWindowZIndex(nextZIndex);
+      return;
+    }
+    if (type === 'pipe') {
+      setPipePlannerZIndex(nextZIndex);
       return;
     }
     if (type === 'cv') {
@@ -422,6 +454,26 @@ function App() {
     setIsInsuranceDemoOpen(false);
   };
 
+  const openPipePlannerApp = () => {
+    setIsPipePlannerOpen(true);
+    const width = 960;
+    const height = 680;
+    const baseX = Math.max(0, (window.innerWidth - width) / 2);
+    const baseY = Math.max(0, (window.innerHeight - height) / 2);
+    const offset = getCascadeIndex() * cascadeOffset;
+    setPipePlannerPosition({
+      x: Math.max(0, baseX + offset),
+      y: Math.max(0, baseY + offset)
+    });
+    bringWindowToFront('pipe');
+    console.log('Pipe planner opened');
+  };
+
+  const closePipePlannerApp = () => {
+    setIsPipePlannerOpen(false);
+    console.log('Pipe planner closed');
+  };
+
   const handleEditComponent = (componentName) => {
     setEditingComponent(componentName);
     setIsEditModalOpen(true);
@@ -555,6 +607,8 @@ function App() {
         )));
       } else if (draggingWindow.type === 'insurance') {
         setInsuranceWindowPosition(nextPosition);
+      } else if (draggingWindow.type === 'pipe') {
+        setPipePlannerPosition(nextPosition);
       }
     };
 
@@ -3668,11 +3722,15 @@ function App() {
     mainWindow: {
       width: "1000px",
       height: "fit-content",
-      background: "var(--canvas-default, #ffffff)",
-      border: "1px solid var(--borderColor-default)",
-      borderRadius: "var(--borderRadius-medium, 6px)",
-      boxShadow: "var(--shadow-medium, 0 8px 24px rgba(0,0,0,0.12))",
+      background: "#d4d0c8",
+      borderTop: "2px solid #ffffff",
+      borderLeft: "2px solid #ffffff",
+      borderBottom: "2px solid #808080",
+      borderRight: "2px solid #808080",
+      borderRadius: "0",
+      boxShadow: "none",
       fontFamily: "'MS Sans Serif', sans-serif",
+      fontSize: "8pt",
       display: "flex",
       flexDirection: "column",
       padding: "0",
@@ -3682,7 +3740,7 @@ function App() {
     mainContent: {
       background: "#d4d0c8",
       flex: 1,
-      padding: "4px",
+      padding: "8px",
       minHeight: "250px",
       width: "100%",
       flexShrink: 0,
@@ -3768,20 +3826,20 @@ function App() {
           }}>📄</span>
         </div>
         <span style={{
-          fontSize: "12px",
+          fontSize: "8pt",
           fontFamily: "'MS Sans Serif', sans-serif",
           color: "#ffffff",
           textAlign: "center",
           textShadow: "1px 1px 0px #000000",
           whiteSpace: "normal",
           width: "90px",
-          lineHeight: "14px"
+          lineHeight: "12px"
         }}>
           Curriculum Vitae
         </span>
       </div>
 
-      {/* Second Desktop Icon - Flight Centre Amendments */}
+      {/* Second Desktop Icon - Streamlining Amendments */}
       <div
         style={{
           position: "absolute",
@@ -3798,7 +3856,7 @@ function App() {
         }}
         role="button"
         tabIndex={0}
-        aria-label="Flight Centre Amendments"
+        aria-label="Streamlining Amendments"
         onClick={openTravelApp}
         onDoubleClick={openTravelApp}
         onKeyDown={(event) => handleDesktopIconKeyDown(event, openTravelApp)}
@@ -3824,20 +3882,20 @@ function App() {
           }}>✈️</span>
         </div>
         <span style={{
-          fontSize: "12px",
+          fontSize: "8pt",
           fontFamily: "'MS Sans Serif', sans-serif",
           color: "#ffffff",
           textAlign: "center",
           textShadow: "1px 1px 0px #000000",
           whiteSpace: "normal",
           width: "90px",
-          lineHeight: "14px"
+          lineHeight: "12px"
         }}>
-          Flight Centre Amendments
+          Streamlining Amendments
         </span>
       </div>
 
-    {/* Third Desktop Icon - Flight Centre Insurance */}
+    {/* Third Desktop Icon - Travel Insurance */}
     <div
       style={{
         position: "absolute",
@@ -3854,7 +3912,7 @@ function App() {
       }}
       role="button"
       tabIndex={0}
-      aria-label="Flight Centre Insurance"
+      aria-label="Travel Insurance"
       onClick={openInsuranceApp}
       onDoubleClick={openInsuranceApp}
       onKeyDown={(event) => handleDesktopIconKeyDown(event, openInsuranceApp)}
@@ -3880,20 +3938,76 @@ function App() {
         }}>🛡️</span>
       </div>
       <span style={{
-        fontSize: "12px",
+        fontSize: "8pt",
         fontFamily: "'MS Sans Serif', sans-serif",
         color: "#ffffff",
         textAlign: "center",
         textShadow: "1px 1px 0px #000000",
         whiteSpace: "normal",
         width: "90px",
-        lineHeight: "14px"
+        lineHeight: "12px"
       }}>
-        Flight Centre Insurance
+        Travel Insurance
       </span>
     </div>
 
-    {/* Fourth Desktop Icon - Magento Shipping */}
+    {/* Fourth Desktop Icon - Pipe */}
+    <div
+      style={{
+        position: "absolute",
+        top: "420px",
+        left: "50px",
+        width: "64px",
+        height: "64px",
+        cursor: "pointer",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "transparent"
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label="Pipe"
+      onClick={openPipePlannerApp}
+      onDoubleClick={openPipePlannerApp}
+      onKeyDown={(event) => handleDesktopIconKeyDown(event, openPipePlannerApp)}
+      onMouseEnter={addDesktopIconOutline}
+      onMouseLeave={removeDesktopIconOutline}
+      onFocus={addDesktopIconOutline}
+      onBlur={removeDesktopIconOutline}
+    >
+      <div style={{
+        width: "32px",
+        height: "32px",
+        background: "transparent",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: "4px"
+      }}>
+        <span style={{
+          fontSize: "32px",
+          fontFamily: "'MS Sans Serif', sans-serif",
+          color: "#ffffff",
+          textShadow: "1px 1px 0px #000000"
+        }}>🛠️</span>
+      </div>
+      <span style={{
+        fontSize: "8pt",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        color: "#ffffff",
+        textAlign: "center",
+        textShadow: "1px 1px 0px #000000",
+        whiteSpace: "normal",
+        width: "90px",
+        lineHeight: "12px"
+      }}>
+        Pipe
+      </span>
+    </div>
+
+    {/* Fifth Desktop Icon - Magento Shipping */}
     <div
       style={{
         position: "absolute",
@@ -3936,14 +4050,14 @@ function App() {
         }}>📦</span>
       </div>
       <span style={{
-        fontSize: "12px",
+        fontSize: "8pt",
         fontFamily: "'MS Sans Serif', sans-serif",
         color: "#ffffff",
         textAlign: "center",
         textShadow: "1px 1px 0px #000000",
         whiteSpace: "normal",
         width: "90px",
-        lineHeight: "14px"
+        lineHeight: "12px"
       }}>
         Magento Shipping
       </span>
@@ -3977,14 +4091,14 @@ function App() {
     >
       <img src="/Earth.ico" alt="Earth" style={{ width: "32px", height: "32px", marginBottom: "4px" }} />
       <span style={{
-        fontSize: "12px",
+        fontSize: "8pt",
         fontFamily: "'MS Sans Serif', sans-serif",
         color: "#ffffff",
         textAlign: "center",
         textShadow: "1px 1px 0px #000000",
         whiteSpace: "normal",
         width: "90px",
-        lineHeight: "14px"
+        lineHeight: "12px"
       }}>
         Earth
       </span>
@@ -4042,24 +4156,33 @@ function App() {
             top: cvWindow.position.y,
             left: cvWindow.position.x,
             zIndex: cvWindow.zIndex,
-            bgcolor: "background.paper",
+            bgcolor: "#d4d0c8",
             width: { xs: "95vw", md: theme.spacing(125) },
             maxWidth: "95vw",
             height: { xs: "90vh", md: theme.spacing(87.5) },
             maxHeight: "90vh",
-            boxShadow: 1,
-            borderRadius: theme.shape.borderRadius,
-            border: "1px solid",
-            borderColor: "divider",
+            boxShadow: "none",
+            borderRadius: 0,
+            borderTop: "2px solid #ffffff",
+            borderLeft: "2px solid #ffffff",
+            borderBottom: "2px solid #808080",
+            borderRight: "2px solid #808080",
             overflow: "hidden",
             display: "flex",
             flexDirection: "column"
           })}
           onMouseDown={() => bringWindowToFront('cv', cvWindow.id)}
         >
+          <Header
+            title="Curriculum Vitae"
+            iconSrc="/Notepad.ico"
+            iconAlt="Document"
+            onClose={() => closeSecondApp(cvWindow.id)}
+            onMinimize={() => minimizeSecondApp(cvWindow.id)}
+            onDragStart={(e) => startWindowDrag('cv', cvWindow.id, e)}
+          />
         <Box
             aria-label="Curriculum Vitae header"
-            onMouseDown={(e) => startWindowDrag('cv', cvWindow.id, e)}
             sx={{
               minHeight: 0,
               display: "flex",
@@ -4124,34 +4247,6 @@ function App() {
                     Senior Product Designer
                   </Typography>
                 </Box>
-              </Box>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <IconButton
-                onClick={() => closeSecondApp(cvWindow.id)}
-                ref={cvCloseButtonRef}
-                aria-label="Close Curriculum Vitae"
-                size="large"
-                sx={{
-                  color: "text.primary",
-                  "&:focus": {
-                    outline: "1px dotted !important",
-                    outlineColor: "text.primary",
-                    outlineOffset: "2px"
-                  },
-                  "&:focus-visible": {
-                    outline: "1px dotted !important",
-                    outlineColor: "text.primary",
-                    outlineOffset: "2px"
-                  },
-                  "&.Mui-focusVisible": {
-                    outline: "1px dotted !important",
-                    outlineColor: "text.primary",
-                    outlineOffset: "2px"
-                  }
-                }}
-              >
-                <CloseIcon fontSize="medium" />
-              </IconButton>
               </Box>
             </Box>
           </Box>
@@ -4394,14 +4489,12 @@ function App() {
                       <Box component="span" sx={{ fontWeight: 300 }}>
                         Senior UI/UX Designer
                       </Box>
+                      {" · "}
+                      <Box component="span" sx={{ fontWeight: 300 }}>
+                        2021-2025
+                      </Box>
                     </Typography>
-                    <Typography
-                      component="div"
-                      variant="body2"
-                      sx={{ mt: 0.5, mb: 1.5, color: "text.primary" }}
-                    >
-                      2021-2025
-                    </Typography>
+                    <Box sx={{ mt: 0.5, mb: 1.5 }} />
                     <Box
                       component="ul"
                       sx={{
@@ -4413,35 +4506,42 @@ function App() {
                       }}
                     >
                       <Typography component="li" variant="body2">
-                        Solved a high-friction amendment flow that forced consultants through multiple screens and manual steps, cutting steps and lifting productivity by 67%
+                        Led the UX transformation of website verticals and delivered a new internal platform that streamlined operations.
                       </Typography>
                       <Typography component="li" variant="body2">
-                        Embedded insurance quoting into the booking workflow to remove context switching and manual calculations, improving attachment rates
+                        Solved a high-friction amendment flow that forced consultants through multiple screens and manual steps, lifting consultant productivity and cutting average handling time from 8–12 minutes to 2–3 minutes.
                       </Typography>
                       <Typography component="li" variant="body2">
-                        Improved CSAT scores for booking tasks and conversion metrics for travel add-ons.
+                        Embedded insurance quoting into the booking workflow to remove context switching and manual calculations, improving attachment rates by 45%, boosting productivity, and reducing add time to ~30 seconds.
                       </Typography>
                       <Typography component="li" variant="body2">
-                        Coordinated and delivered design within external and internal teams through discovery, prototyping, launch, and post-release optimization
+                        Improved consultant satisfaction scores for booking tasks and conversion metrics for travel add-ons.
                       </Typography>
                       <Typography component="li" variant="body2">
-                        Recognized: FCTG Global Lisbon selectee (2024); Buzz Night award winner (2022, 2023)
+                        Coordinated and delivered design within external and internal teams through discovery, prototyping, launch, and post-release optimisation.
+                      </Typography>
+                      <Typography component="li" variant="body2">
+                        Recognized: FCTG Global Lisbon selectee (2024); Buzz Night award winner (2022, 2023).
                       </Typography>
                     </Box>
                   </Box>
 
                   {/* Canstar */}
                   <Box sx={{ mb: 4 }}>
-                    <Typography component="div" variant="subtitle1" sx={{ fontWeight: 600 }}>
-                      Canstar — Lead UI/UX Designer
+                    <Typography component="div" variant="subtitle1">
+                      <Box component="span" sx={{ fontWeight: 600 }}>
+                        Canstar
+                      </Box>
+                      {" — "}
+                      <Box component="span" sx={{ fontWeight: 300 }}>
+                        Lead UI/UX Designer
+                      </Box>
+                      {" · "}
+                      <Box component="span" sx={{ fontWeight: 300 }}>
+                        2019-2020
+                      </Box>
                     </Typography>
-                    <Typography
-                      component="div"
-                      variant="body2"
-                      sx={{ mt: 0.5, mb: 1.5, color: "text.primary" }}
-                    >
-                      2019-2020
-                    </Typography>
+                    <Box sx={{ mt: 0.5, mb: 1.5 }} />
                     <Box
                       component="ul"
                       sx={{
@@ -4452,6 +4552,9 @@ function App() {
                         "& > li:last-of-type": { mb: 0 }
                       }}
                     >
+                      <Typography component="li" variant="body2">
+                        Led the UX transformation of website verticals and delivered a new internal platform that streamlined operations.
+                      </Typography>
                       <Typography component="li" variant="body2">
                         Migrated design workflow to Figma and established a living UI repository and handoff standards, reducing design-to-dev friction.
                       </Typography>
@@ -4466,16 +4569,20 @@ function App() {
 
                   {/* Temando */}
                   <Box sx={{ mb: 4 }}>
-                    <Typography component="div" variant="subtitle1" sx={{ fontWeight: 600 }}>
-                      Temando — UI/UX Designer
+                    <Typography component="div" variant="subtitle1">
+                      <Box component="span" sx={{ fontWeight: 600 }}>
+                        Temando
+                      </Box>
+                      {" — "}
+                      <Box component="span" sx={{ fontWeight: 300 }}>
+                        UI/UX Designer
+                      </Box>
+                      {" · "}
+                      <Box component="span" sx={{ fontWeight: 300 }}>
+                        2015-2019
+                      </Box>
                     </Typography>
-                    <Typography
-                      component="div"
-                      variant="body2"
-                      sx={{ mt: 0.5, mb: 1.5, color: "text.primary" }}
-                    >
-                      2015-2019
-                    </Typography>
+                    <Box sx={{ mt: 0.5, mb: 1.5 }} />
                     <Box
                       component="ul"
                       sx={{
@@ -4599,7 +4706,7 @@ function App() {
         </Box>
       ))}
 
-      {/* Third Application Window - Travel Amendments */}
+      {/* Third Application Window - Streamlining Amendments */}
       {travelWindows.filter((window) => !window.minimized).map((travelWindow) => (
         <React.Fragment key={travelWindow.id}>
           {travelWindow.view === 'caseStudy' && (
@@ -4656,6 +4763,16 @@ function App() {
           onClose={closeInsuranceApp}
           zIndex={insuranceWindowZIndex}
           position={insuranceWindowPosition}
+        />
+      )}
+
+      {isPipePlannerOpen && (
+        <PipeBendingPlanner
+          onClose={closePipePlannerApp}
+          onDragStart={(e) => startWindowDrag('pipe', null, e)}
+          onBringToFront={() => bringWindowToFront('pipe')}
+          position={pipePlannerPosition}
+          zIndex={pipePlannerZIndex}
         />
       )}
 

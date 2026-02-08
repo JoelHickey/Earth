@@ -13,7 +13,8 @@ export const insuranceFlowTokens = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: "12px 16px",
+    px: 5,
+    py: 3,
     borderBottom: "1px solid #d0d7de",
     background: "#ffffff",
     gap: 12

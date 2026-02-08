@@ -48,25 +48,30 @@ const LoginDialog = ({ isOpen, onClose, onLogin }) => {
       borderRight: '2px solid #808080',
       padding: '8px',
       minWidth: '300px',
-      boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)'
+      boxShadow: 'none'
     },
     titleBar: {
       background: '#000080',
       color: '#ffffff',
       padding: '2px 4px',
-      fontSize: '11px',
+      fontSize: '8pt',
       fontFamily: "'MS Sans Serif', sans-serif",
       fontWeight: 'bold',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: '8px'
+      marginBottom: '8px',
+      height: '20px',
+      boxSizing: 'border-box'
     },
     closeButton: {
       background: '#d4d0c8',
-      border: '1px solid #808080',
+      borderTop: '1px solid #ffffff',
+      borderLeft: '1px solid #ffffff',
+      borderBottom: '1px solid #808080',
+      borderRight: '1px solid #808080',
       color: '#000000',
-      fontSize: '10px',
+      fontSize: '8pt',
       width: '16px',
       height: '14px',
       cursor: 'pointer',
@@ -85,14 +90,14 @@ const LoginDialog = ({ isOpen, onClose, onLogin }) => {
       gap: '2px'
     },
     label: {
-      fontSize: '11px',
+      fontSize: '8pt',
       fontFamily: "'MS Sans Serif', sans-serif",
       color: '#000000',
       fontWeight: 'normal'
     },
     input: {
       height: '20px',
-      fontSize: '11px',
+      fontSize: '8pt',
       fontFamily: "'MS Sans Serif', sans-serif",
       background: '#ffffff',
       borderTop: '2px solid #808080',
@@ -111,7 +116,7 @@ const LoginDialog = ({ isOpen, onClose, onLogin }) => {
     },
     button: {
       height: '22px',
-      fontSize: '11px',
+      fontSize: '8pt',
       fontFamily: "'MS Sans Serif', sans-serif",
       background: '#d4d0c8',
       borderTop: '2px solid #ffffff',

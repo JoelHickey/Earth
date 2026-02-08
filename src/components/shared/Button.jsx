@@ -1,5 +1,4 @@
 import React from 'react';
-import { colors, fontSize, spacing, borderRadius, transitions } from '../../styles/tokens';
 
 const Button = ({ 
   children, 
@@ -10,41 +9,40 @@ const Button = ({
   loading = false,
   ...props 
 }) => {
-  const variants = {
-    primary: {
-      background: colors.primary,
-      color: colors.white,
-      hoverBg: colors.primaryHover
-    },
-    success: {
-      background: colors.success,
-      color: colors.white,
-      hoverBg: '#2fb350'
-    },
-    secondary: {
-      background: colors.backgroundDark,
-      color: colors.primary,
-      hoverBg: colors.border
-    }
-  };
-
   const sizes = {
     small: {
-      fontSize: fontSize.sm,
-      padding: `${spacing.xs} ${spacing.md}`
+      padding: "1px 6px"
     },
     medium: {
-      fontSize: fontSize.base,
-      padding: `${spacing.sm} ${spacing.xl}`
+      padding: "2px 8px"
     },
     large: {
-      fontSize: fontSize.lg,
-      padding: `${spacing.md} 14px`
+      padding: "3px 10px"
     }
   };
 
-  const style = variants[variant];
-  const sizeStyle = sizes[size];
+  const sizeStyle = sizes[size] || sizes.medium;
+
+  const normalBorder = {
+    borderTop: "2px solid #ffffff",
+    borderLeft: "2px solid #ffffff",
+    borderBottom: "2px solid #808080",
+    borderRight: "2px solid #808080"
+  };
+
+  const pressedBorder = {
+    borderTop: "2px solid #808080",
+    borderLeft: "2px solid #808080",
+    borderBottom: "2px solid #ffffff",
+    borderRight: "2px solid #ffffff"
+  };
+
+  const disabledBorder = {
+    borderTop: "2px solid #c0c0c0",
+    borderLeft: "2px solid #c0c0c0",
+    borderBottom: "2px solid #c0c0c0",
+    borderRight: "2px solid #c0c0c0"
+  };
 
   return (
     <button
@@ -52,29 +50,38 @@ const Button = ({
       disabled={disabled || loading}
       style={{
         ...sizeStyle,
-        background: loading ? variants.success.background : style.background,
-        color: style.color,
-        border: 'none',
-        borderRadius: borderRadius.lg,
+        background: "#d4d0c8",
+        color: disabled || loading ? "#808080" : "#000000",
+        ...(disabled || loading ? disabledBorder : normalBorder),
+        borderRadius: "0",
         cursor: disabled || loading ? 'default' : 'pointer',
-        fontWeight: '600',
+        fontWeight: 'normal',
         display: 'flex',
         alignItems: 'center',
         gap: '4px',
-        transition: 'all 0.3s ease',
+        fontFamily: "'MS Sans Serif', sans-serif",
+        fontSize: "8pt",
         ...props.style
       }}
-      onMouseOver={(e) => !disabled && !loading && (e.currentTarget.style.background = style.hoverBg)}
-      onMouseOut={(e) => !disabled && !loading && (e.currentTarget.style.background = style.background)}
+      onMouseDown={(e) => {
+        if (!disabled && !loading) {
+          Object.assign(e.currentTarget.style, pressedBorder);
+        }
+      }}
+      onMouseUp={(e) => {
+        if (!disabled && !loading) {
+          Object.assign(e.currentTarget.style, normalBorder);
+        }
+      }}
       {...props}
     >
       {loading && (
         <div style={{
           width: '8px',
           height: '8px',
-          border: '2px solid #ffffff',
-          borderTopColor: 'transparent',
-          borderRadius: '50%',
+          border: '2px solid #808080',
+          borderTopColor: '#ffffff',
+          borderRadius: '0',
           animation: 'spin 0.6s linear infinite'
         }} />
       )}

@@ -2,10 +2,10 @@ import { test, expect } from '@playwright/test';
 
 const openOldFlowWindow = async (page) => {
   await page.goto('/');
-  const amendmentsIcon = page.locator('[aria-label="Flight Centre Amendments"]');
-  await expect(amendmentsIcon).toHaveCount(1);
+  const amendmentsIcon = page.getByRole('button', { name: 'Streamlining Amendments' });
+  await expect(amendmentsIcon).toBeVisible({ timeout: 15000 });
   await amendmentsIcon.click({ force: true });
-  await expect(page.getByRole('heading', { name: 'Streamlining amendments' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Streamlining Amendments' })).toBeVisible();
   const demoToggle = page.getByRole('switch', { name: 'Interactive demo toggle' });
   await expect(demoToggle).toBeVisible();
   await demoToggle.click();
@@ -43,7 +43,7 @@ test('capture old flow screenshots', async ({ page }) => {
 
   await selectAmendmentOptions(page);
   await page.getByRole('button', { name: /Continue to Travellers/i }).click();
-  const travellersModal = page.getByRole('dialog', { name: 'Adjust Travellers' });
+  const travellersModal = page.getByRole('dialog', { name: 'Travellers' });
   await expect(travellersModal).toBeVisible();
   await travellersModal.screenshot({ path: 'tests/artifacts/old-flow-travellers-modal.png' });
 
@@ -58,19 +58,22 @@ test('capture old flow screenshots', async ({ page }) => {
   await expect(page.getByText('Found 8 available hotels')).toBeVisible({ timeout: 15000 });
   await demoWindow.screenshot({ path: 'tests/artifacts/old-flow-search-results.png' });
 
-  await page.getByRole('button', { name: /Select Room/i }).first().click();
-  await page.getByRole('button', { name: /Add to Cart/i }).click();
+  const resultsSection = page.getByText('Found 8 available hotels').locator('..');
+  const firstHotelCard = resultsSection.getByRole('button', { name: /Hilton Hawaiian Village/ }).first();
+  await firstHotelCard.click({ force: true });
+  await expect(firstHotelCard.getByText('Available rooms')).toBeVisible({ timeout: 15000 });
+  await firstHotelCard.getByRole('button', { name: 'Add to Cart', exact: true }).first().click();
   await expect(page.getByText('New Hotel Selection')).toBeVisible({ timeout: 10000 });
   await demoWindow.screenshot({ path: 'tests/artifacts/old-flow-cart.png' });
 
   await page.getByRole('button', { name: /Proceed to Travellers/i }).click();
-  await expect(page.getByText('Traveller 1')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText('Select Travellers')).toBeVisible({ timeout: 10000 });
   await demoWindow.screenshot({ path: 'tests/artifacts/old-flow-travellers.png' });
 
   await page.getByRole('button', { name: /Go to Payment/i }).scrollIntoViewIfNeeded();
   await page.getByRole('button', { name: /Go to Payment/i }).click({ force: true });
   await expect(page.getByText('Loading payment form...')).toBeVisible({ timeout: 10000 });
   await expect(page.getByText('Loading payment form...')).toBeHidden({ timeout: 30000 });
-  await expect(page.getByText('Credit Card Details')).toBeVisible({ timeout: 20000 });
+  await expect(page.getByText('Payment Details')).toBeVisible({ timeout: 20000 });
   await demoWindow.screenshot({ path: 'tests/artifacts/old-flow-payment.png' });
 });

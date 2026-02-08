@@ -1,9 +1,15 @@
 import { test, expect } from '@playwright/test';
 import { registerCvBaselineTests } from './utils/uiBaselineChecks';
 
+const clickCvIcon = async (page) => {
+  const cvIcon = page.getByRole('button', { name: 'Curriculum Vitae' });
+  await expect(cvIcon).toBeVisible({ timeout: 30000 });
+  await cvIcon.click();
+};
+
 const openCvWindow = async (page) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   const cvWindow = page.getByLabel('Curriculum Vitae window');
   await expect(cvWindow).toBeVisible();
   return cvWindow;
@@ -13,14 +19,14 @@ registerCvBaselineTests({ test, expect, openCvWindow });
 
 test('open CV window from desktop icon', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   await expect(page.getByText('Senior Product Designer')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Experience' })).toBeVisible();
 });
 
 test('close CV window', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   await expect(page.getByText('Senior Product Designer')).toBeVisible();
   await page.getByRole('button', { name: 'Close Curriculum Vitae' }).click();
   await expect(page.getByText('Senior Product Designer')).not.toBeVisible();
@@ -28,7 +34,7 @@ test('close CV window', async ({ page }) => {
 
 test('scroll CV window to lower section', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   await expect(page.getByRole('heading', { name: 'Experience' })).toBeVisible();
   await page.getByRole('heading', { name: 'Education' }).scrollIntoViewIfNeeded();
   await expect(page.getByRole('heading', { name: 'Education' })).toBeVisible();
@@ -36,7 +42,7 @@ test('scroll CV window to lower section', async ({ page }) => {
 
 test('CV close button meets 44px target size', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   const closeButton = page.getByRole('button', { name: 'Close Curriculum Vitae' });
   await expect(closeButton).toBeVisible();
   const box = await closeButton.boundingBox();
@@ -47,7 +53,7 @@ test('CV close button meets 44px target size', async ({ page }) => {
 
 test('CV contact links meet 44px target height', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
 
   const links = [
     page.getByRole('link', { name: 'Email Joel Hickey' }),
@@ -65,7 +71,7 @@ test('CV contact links meet 44px target height', async ({ page }) => {
 
 test('CV font sizes meet minimum readability thresholds', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
 
   const title = page.getByRole('heading', { name: 'Joel Hickey' });
   const sectionHeading = page.getByRole('heading', { name: 'Experience' });
@@ -85,7 +91,7 @@ test('CV font sizes meet minimum readability thresholds', async ({ page }) => {
 
 test('CV contact links meet minimum text size', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
 
   const links = [
     page.getByRole('link', { name: 'Email Joel Hickey' }),
@@ -102,7 +108,7 @@ test('CV contact links meet minimum text size', async ({ page }) => {
 
 test('CV headings follow a basic hierarchy', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
 
   const h1 = page.getByRole('heading', { level: 1 });
   const h2 = page.getByRole('heading', { level: 2 });
@@ -114,7 +120,7 @@ test('CV headings follow a basic hierarchy', async ({ page }) => {
 
 test('CV section landmarks are labeled', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
 
   await expect(page.getByRole('region', { name: 'Experience' })).toBeVisible();
   await expect(page.getByRole('region', { name: 'Education' })).toBeVisible();
@@ -124,7 +130,7 @@ test('CV section landmarks are labeled', async ({ page }) => {
 
 test('CV close button keeps distance from scrollbar', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
 
   const cvContent = page.getByLabel('Curriculum Vitae content');
   const cvWindow = cvContent.locator('..');
@@ -143,7 +149,7 @@ test('CV close button keeps distance from scrollbar', async ({ page }) => {
 
 test('CV focus indicators are visible', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
 
   const closeButton = page.getByRole('button', { name: 'Close Curriculum Vitae' });
   const linkedInLink = page.getByRole('link', { name: 'Joel Hickey LinkedIn' });
@@ -159,7 +165,7 @@ test('CV focus indicators are visible', async ({ page }) => {
 
 test('CV hover styles are visible on links', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
 
   const linkedInLink = page.getByRole('link', { name: 'Joel Hickey LinkedIn' });
   const dribbbleLink = page.getByRole('link', { name: 'Joel Hickey Dribbble' });
@@ -179,7 +185,7 @@ test('CV hover styles are visible on links', async ({ page }) => {
 
 test('CV keyboard navigation reaches close button', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   const closeButton = page.getByRole('button', { name: 'Close Curriculum Vitae' });
   await expect(closeButton).toBeVisible();
   await page.getByLabel('Curriculum Vitae content').focus();
@@ -198,7 +204,7 @@ test('CV keyboard navigation reaches close button', async ({ page }) => {
 
 test('CV scroll reaches lower sections', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   await page.getByRole('heading', { name: 'Education' }).scrollIntoViewIfNeeded();
   await expect(page.getByRole('heading', { name: 'Education' })).toBeVisible();
   await page.getByRole('heading', { name: 'Tools' }).scrollIntoViewIfNeeded();
@@ -209,7 +215,7 @@ test('CV scroll reaches lower sections', async ({ page }) => {
 
 test('CV contact links have expected destinations', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   const emailLink = page.getByRole('link', { name: 'Email Joel Hickey' });
   const linkedInLink = page.getByRole('link', { name: 'Joel Hickey LinkedIn' });
   const dribbbleLink = page.getByRole('link', { name: 'Joel Hickey Dribbble' });
@@ -223,13 +229,13 @@ test('CV contact links have expected destinations', async ({ page }) => {
 
 test('CV scroll position resets after reopen', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   const cvContent = page.getByLabel('Curriculum Vitae content');
   await cvContent.evaluate((el) => {
     el.scrollTop = el.scrollHeight;
   });
   await page.getByRole('button', { name: 'Close Curriculum Vitae' }).click();
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   const scrollTop = await page.getByLabel('Curriculum Vitae content').evaluate((el) => el.scrollTop);
   expect(scrollTop).toBe(0);
 });
@@ -237,7 +243,7 @@ test('CV scroll position resets after reopen', async ({ page }) => {
 test('CV window stays within small viewport', async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 700 });
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   const cvWindow = page.getByLabel('Curriculum Vitae window');
   const box = await cvWindow.boundingBox();
   expect(box).not.toBeNull();
@@ -247,7 +253,7 @@ test('CV window stays within small viewport', async ({ page }) => {
 
 test('CV focus remains inside window when tabbing', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   const cvWindow = page.getByLabel('Curriculum Vitae window');
   await page.getByLabel('Curriculum Vitae content').focus();
   await expect(cvWindow).toBeVisible();
@@ -265,7 +271,7 @@ test('CV focus remains inside window when tabbing', async ({ page }) => {
 test('CV window stays usable on mobile viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
   const cvWindow = page.getByLabel('Curriculum Vitae window');
   const box = await cvWindow.boundingBox();
   expect(box).not.toBeNull();
@@ -277,7 +283,7 @@ test('CV window stays usable on mobile viewport', async ({ page }) => {
 test('CV reflows at 200% zoom without horizontal scroll', async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 700 });
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
 
   await page.evaluate(() => {
     document.body.style.zoom = '2';
@@ -293,7 +299,7 @@ test('CV reflows at 200% zoom without horizontal scroll', async ({ page }) => {
 test('CV reflows at 400% zoom without horizontal scroll', async ({ page }) => {
   await page.setViewportSize({ width: 900, height: 700 });
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  await clickCvIcon(page);
 
   await page.evaluate(() => {
     document.body.style.zoom = '4';

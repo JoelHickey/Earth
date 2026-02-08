@@ -11,16 +11,16 @@ const Header = ({
 }) => {
   const styles = {
     header: {
-      background: isMacOS8Theme ? "#c0c0c0" : "linear-gradient(90deg, #000080 0%, #1084d0 100%)",
+      background: isMacOS8Theme ? "#c0c0c0" : "#000080",
       color: isMacOS8Theme ? "#000000" : "#ffffff",
-      padding: isMacOS8Theme ? "3px 6px" : "2px 4px",
-      fontSize: isMacOS8Theme ? "12px" : "8px",
+      padding: isMacOS8Theme ? "2px 6px" : "2px 6px",
+      fontSize: isMacOS8Theme ? "12px" : "8pt",
       fontWeight: isMacOS8Theme ? "normal" : "bold",
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
       borderBottom: isMacOS8Theme ? "1px solid #808080" : "1px solid #808080",
-      height: isMacOS8Theme ? "20px" : "19px",
+      height: isMacOS8Theme ? "24px" : "24px",
       boxSizing: "border-box",
       fontFamily: isMacOS8Theme ? "'Chicago', 'Geneva', 'Helvetica', sans-serif" : "'MS Sans Serif', sans-serif",
       textShadow: isMacOS8Theme ? "none" : "none"
@@ -37,7 +37,7 @@ const Header = ({
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontSize: isMacOS8Theme ? "10px" : "8px",
+      fontSize: isMacOS8Theme ? "10px" : "10px",
       fontFamily: isMacOS8Theme ? "'Chicago', 'Geneva', 'Helvetica', sans-serif" : "'MS Sans Serif', sans-serif",
       color: "#000000",
       padding: "0",

@@ -25,10 +25,13 @@ const Slider = ({
       width: "4px",
       height: "150px",
       background: "#808080",
-      border: "1px inset #c0c0c0",
+      borderTop: "1px solid #808080",
+      borderLeft: "1px solid #808080",
+      borderBottom: "1px solid #ffffff",
+      borderRight: "1px solid #ffffff",
       position: "relative",
       margin: "0 auto",
-      boxShadow: "inset 1px 1px #808080, inset -1px -1px #ffffff"
+      boxShadow: "none"
     },
     sliderTrack: {
       width: "100%",
@@ -51,18 +54,20 @@ const Slider = ({
     input: {
       width: "40px",
       height: "16px",
-      fontSize: "8px",
+      fontSize: "8pt",
       fontFamily: "'MS Sans Serif', sans-serif",
-      border: "2px inset #c0c0c0",
       background: "#ffffff",
       textAlign: "center",
       padding: "2px",
       marginTop: "16px",
-      boxShadow: "inset 1px 1px #808080, inset -1px -1px #ffffff",
+      borderTop: "2px solid #808080",
+      borderLeft: "2px solid #808080",
+      borderBottom: "2px solid #ffffff",
+      borderRight: "2px solid #ffffff",
       boxSizing: "border-box"
     },
     label: {
-      fontSize: "8px",
+      fontSize: "8pt",
       textAlign: "center",
       marginTop: "4px",
       fontFamily: "'MS Sans Serif', sans-serif",

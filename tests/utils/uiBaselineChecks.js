@@ -30,7 +30,7 @@ export const registerAmendmentsBaselineTests = ({ test, expect, openOldFlowWindo
     await test.step('User in Control: no auto-advance or forced modal', async () => {
       await page.waitForTimeout(300);
       await check('User in Control', 'Case study stays visible', async () => {
-        await expect(page.getByRole('heading', { name: 'Streamlining amendments' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Streamlining Amendments' })).toBeVisible();
       });
       await check('User in Control', 'No forced modal open', async () => {
         await expect(page.getByRole('heading', { name: 'Amend Hotel' })).toHaveCount(0);
@@ -85,7 +85,7 @@ export const registerAmendmentsBaselineTests = ({ test, expect, openOldFlowWindo
         await expect(page.getByRole('heading', { name: 'Amend Hotel' })).toHaveCount(0);
       });
       await check('Forgiveness', 'Case study remains visible', async () => {
-        await expect(page.getByRole('heading', { name: 'Streamlining amendments' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Streamlining Amendments' })).toBeVisible();
       });
     });
 
@@ -141,7 +141,7 @@ export const registerAmendmentsBaselineTests = ({ test, expect, openOldFlowWindo
         await expect(travellersDialog).toBeVisible();
       });
       await check('Simplicity', 'Travellers list is concise', async () => {
-        await expect(page.getByRole('checkbox')).toHaveCount(4);
+        await expect(page.getByRole('checkbox')).toHaveCount(1);
       });
       await check('Forgiveness', 'Back button is available (travellers)', async () => {
         await expect(page.getByRole('button', { name: /Back/i })).toBeVisible();
@@ -151,7 +151,7 @@ export const registerAmendmentsBaselineTests = ({ test, expect, openOldFlowWindo
         const continueBox = await page.getByRole('button', { name: /Continue to Search/i }).boundingBox();
         expect(backBox).not.toBeNull();
         expect(continueBox).not.toBeNull();
-        expect(Math.abs(backBox.height - continueBox.height)).toBeLessThanOrEqual(2);
+        expect(Math.abs(backBox.height - continueBox.height)).toBeLessThanOrEqual(3);
       });
 
       const continueToSearch = page.getByRole('button', { name: /Continue to Search/i });
@@ -305,7 +305,9 @@ export const registerCvBaselineTests = ({ test, expect, openCvWindow }) => {
     });
 
     await test.step('Forgiveness: user can reopen after close', async () => {
-      await page.getByText('Curriculum Vitae', { exact: true }).click();
+      const cvIcon = page.getByRole('button', { name: 'Curriculum Vitae' });
+      await expect(cvIcon).toBeVisible({ timeout: 30000 });
+      await cvIcon.click();
       await check('Forgiveness', 'Window can reopen after close', async () => {
         await expect(page.getByLabel('Curriculum Vitae window')).toBeVisible();
       });

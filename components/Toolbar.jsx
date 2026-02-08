@@ -7,22 +7,24 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       display: "flex",
       alignItems: "center",
       gap: isMacOS8Theme ? "4px" : "2px",
-      padding: isMacOS8Theme ? "4px" : "2px",
-      background: isMacOS8Theme ? "#c0c0c0" : "#c0c0c0",
+      padding: isMacOS8Theme ? "2px" : "0 8px",
+      background: isMacOS8Theme ? "#c0c0c0" : "#d4d0c8",
       borderBottom: isMacOS8Theme ? "1px solid #808080" : "1px solid #808080",
       borderTop: isMacOS8Theme ? "1px solid #ffffff" : "1px solid #ffffff",
-      height: isMacOS8Theme ? "28px" : "32px",
-      boxShadow: isMacOS8Theme ? "inset 1px 1px 0px #ffffff, inset -1px -1px 0px #808080" : "none"
+      height: isMacOS8Theme ? "24px" : "24px",
+      boxShadow: isMacOS8Theme ? "inset 1px 1px 0px #ffffff, inset -1px -1px 0px #808080" : "none",
+      boxSizing: "border-box"
     },
     button: {
-      width: isMacOS8Theme ? "28px" : "32px",
-      height: isMacOS8Theme ? "20px" : "26px",
+      width: isMacOS8Theme ? "28px" : "36px",
+      height: isMacOS8Theme ? "20px" : "24px",
+      lineHeight: "24px",
       background: isMacOS8Theme ? "#c0c0c0" : "#d4d0c8",
       borderTop: isMacOS8Theme ? "1px solid #ffffff" : "2px solid #ffffff",
       borderLeft: isMacOS8Theme ? "1px solid #ffffff" : "2px solid #ffffff",
       borderBottom: isMacOS8Theme ? "1px solid #808080" : "2px solid #808080",
       borderRight: isMacOS8Theme ? "1px solid #808080" : "2px solid #808080",
-      fontSize: isMacOS8Theme ? "10px" : "8px",
+      fontSize: isMacOS8Theme ? "10px" : "8pt",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
@@ -51,7 +53,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       display: "flex",
       alignItems: "center",
       padding: "0",
-      fontSize: "8px",
+      fontSize: "8pt",
       fontFamily: "'MS Sans Serif', sans-serif",
       marginLeft: "8px",
       boxSizing: "border-box",
@@ -96,7 +98,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       display: "flex",
       alignItems: "center",
       padding: "0",
-      fontSize: "8px",
+      fontSize: "8pt",
       fontFamily: "'MS Sans Serif', sans-serif",
       marginLeft: "8px",
       boxSizing: "border-box",
@@ -118,7 +120,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       transition: "width 0.2s ease"
     },
     bloodSugarLabel: {
-      fontSize: "8px",
+      fontSize: "8pt",
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000"
     },
@@ -133,7 +135,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       display: "flex",
       alignItems: "center",
       padding: "0",
-      fontSize: "8px",
+      fontSize: "8pt",
       fontFamily: "'MS Sans Serif', sans-serif",
       marginLeft: "8px",
       boxSizing: "border-box",
@@ -150,7 +152,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
       transition: "width 0.2s ease"
     },
     cortisolLabel: {
-      fontSize: "8px",
+      fontSize: "8pt",
       fontFamily: "'MS Sans Serif', sans-serif",
       color: "#000000"
     }
@@ -189,11 +191,11 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
             onMouseUp={handleButtonMouseUp}
           >
             {text ? (
-              <span style={{ fontSize: "8px", fontFamily: "'MS Sans Serif', sans-serif" }}>
+              <span style={{ fontSize: "8pt", fontFamily: "'MS Sans Serif', sans-serif" }}>
                 {text}
               </span>
             ) : (
-              <img src={icon} alt={alt} style={{ width: "18px", height: "18px" }} />
+              <img src={icon} alt={alt} style={{ width: "16px", height: "16px" }} />
             )}
           </button>
           {id === 'timeline' && (
@@ -211,7 +213,7 @@ const Toolbar = ({ activeView, setActiveView, outputValue, bloodSugar, getBloodS
         <div style={styles.healthBars}>
           <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
             <span style={{ 
-              fontSize: "8px", 
+              fontSize: "8pt", 
               fontFamily: "'MS Sans Serif', sans-serif",
               color: "#000000"
             }}>

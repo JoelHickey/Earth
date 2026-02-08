@@ -7,7 +7,9 @@ test('generate CV saliency heatmap', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium', 'Heatmap generation runs only on chromium.');
 
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  const cvIcon = page.getByRole('button', { name: 'Curriculum Vitae' });
+  await expect(cvIcon).toBeVisible({ timeout: 30000 });
+  await cvIcon.click();
 
   const cvContent = page.getByLabel('Curriculum Vitae content');
   await expect(cvContent).toBeVisible();

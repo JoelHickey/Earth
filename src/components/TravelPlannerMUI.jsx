@@ -1,4 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+
+const GOOGLE_MAPS_SCRIPT_ID = 'google-maps-js';
+let googleMapsScriptPromise;
+
+const loadGoogleMapsScript = (apiKey) => {
+  if (typeof window === 'undefined') {
+    return Promise.reject(new Error('Google Maps can only load in the browser.'));
+  }
+
+  if (window.google && window.google.maps) {
+    return Promise.resolve(window.google.maps);
+  }
+
+  if (googleMapsScriptPromise) {
+    return googleMapsScriptPromise;
+  }
+
+  googleMapsScriptPromise = new Promise((resolve, reject) => {
+    const existingScript = document.getElementById(GOOGLE_MAPS_SCRIPT_ID);
+    if (existingScript) {
+      existingScript.addEventListener('load', () => resolve(window.google.maps));
+      existingScript.addEventListener('error', () => reject(new Error('Failed to load Google Maps JS API.')));
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.id = GOOGLE_MAPS_SCRIPT_ID;
+    script.async = true;
+    script.defer = true;
+    script.dataset.googleMaps = 'true';
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=weekly&libraries=places`;
+    script.onload = () => resolve(window.google.maps);
+    script.onerror = () => reject(new Error('Failed to load Google Maps JS API.'));
+    document.head.appendChild(script);
+  });
+
+  return googleMapsScriptPromise;
+};
 
 const TravelPlannerMUI = ({
   isOpen,
@@ -23,6 +61,13 @@ const TravelPlannerMUI = ({
   const [userLocation, setUserLocation] = useState(null);
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [mapStatus, setMapStatus] = useState('idle');
+  const [mapLoadError, setMapLoadError] = useState('');
+  const mapContainerRef = useRef(null);
+  const mapRef = useRef(null);
+  const markerRef = useRef(null);
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const googleMapsMapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID;
 
   const requestLocation = () => {
     if (navigator.geolocation) {
@@ -94,6 +139,75 @@ const TravelPlannerMUI = ({
     travelers: 2,
     budget: '$150-200/night'
   });
+
+  useEffect(() => {
+    if (activeTab !== 'map') return;
+
+    if (!googleMapsApiKey || googleMapsApiKey === 'YOUR_GOOGLE_MAPS_API_KEY') {
+      setMapLoadError('Google Maps API key is missing. Add VITE_GOOGLE_MAPS_API_KEY to your .env file.');
+      setMapStatus('error');
+      return;
+    }
+
+    let isMounted = true;
+    setMapLoadError('');
+    setMapStatus('loading');
+
+    loadGoogleMapsScript(googleMapsApiKey)
+      .then((maps) => {
+        if (!isMounted || !mapContainerRef.current) return;
+
+        const defaultCenter = { lat: 25.7907, lng: -80.1300 };
+
+        if (!mapRef.current) {
+          mapRef.current = new maps.Map(mapContainerRef.current, {
+            center: defaultCenter,
+            zoom: 12,
+            mapTypeId: 'satellite',
+            tilt: 67.5,
+            heading: 320,
+            mapId: googleMapsMapId || undefined,
+            disableDefaultUI: true,
+            gestureHandling: 'greedy'
+          });
+        }
+
+        const geocoder = new maps.Geocoder();
+        geocoder.geocode({ address: tripData.destination }, (results, status) => {
+          if (!isMounted || !mapRef.current) return;
+
+          if (status === 'OK' && results[0]) {
+            const location = results[0].geometry.location;
+            mapRef.current.setCenter(location);
+            mapRef.current.setZoom(13);
+            mapRef.current.setTilt(67.5);
+            mapRef.current.setHeading(320);
+
+            if (markerRef.current) {
+              markerRef.current.setMap(null);
+            }
+
+            markerRef.current = new maps.Marker({
+              map: mapRef.current,
+              position: location,
+              title: tripData.destination
+            });
+          }
+
+          setMapStatus('ready');
+        });
+      })
+      .catch((error) => {
+        if (!isMounted) return;
+        console.error(error);
+        setMapLoadError('Unable to load Google Maps. Check your API key and billing.');
+        setMapStatus('error');
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeTab, tripData.destination, googleMapsApiKey, googleMapsMapId]);
 
   // Shells data
   const [components, setComponents] = useState([
@@ -509,320 +623,424 @@ const TravelPlannerMUI = ({
             ))}
           </div>
 
-          {/* Shells List */}
-          {components.length > 0 && (
-            <div style={{ 
-              border: '1px solid #e1e3e5',
-              borderRadius: '8px',
-              overflow: 'hidden'
-            }}>
-              {components.map((component, index) => {
-              const statusColors = getStatusColor(component.statusType);
-              const isEditing = editingId === component.id;
-              
-              return (
-                <div
-                  key={component.id}
-                  style={{
-                    padding: '16px',
-                    borderBottom: index < components.length - 1 ? '1px solid #e1e3e5' : 'none',
-                    background: isEditing ? '#f6f6f7' : '#ffffff',
-                    transition: 'background 0.1s'
-                  }}
-                >
-                  {isEditing ? (
-                    // Edit Mode
-                    <div>
-                      <div style={{ marginBottom: '12px' }}>
-                        <label style={{
-                          display: 'block',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          color: '#6d7175',
-                          marginBottom: '4px'
-                        }}>
-                          Name
-                        </label>
-                        <input
-                          type="text"
-                          defaultValue={component.name}
-                          onBlur={(e) => handleSave(component.id, 'name', e.target.value)}
-                          style={{
-                            width: '100%',
-                            padding: '8px 12px',
-                            border: '1px solid #c9cccf',
-                            borderRadius: '4px',
-                            fontSize: '14px',
-                            fontFamily: 'inherit',
-                            color: '#202223',
-                            background: '#ffffff',
-                            boxSizing: 'border-box'
-                          }}
-                        />
-                      </div>
-                      
-                      <div style={{ marginBottom: '12px' }}>
-                        <label style={{
-                          display: 'block',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          color: '#6d7175',
-                          marginBottom: '4px'
-                        }}>
-                          Details
-                        </label>
-                        <input
-                          type="text"
-                          defaultValue={component.details}
-                          onBlur={(e) => handleSave(component.id, 'details', e.target.value)}
-                          style={{
-                            width: '100%',
-                            padding: '8px 12px',
-                            border: '1px solid #c9cccf',
-                            borderRadius: '4px',
-                            fontSize: '14px',
-                            fontFamily: 'inherit',
-                            color: '#202223',
-                            background: '#ffffff',
-                            boxSizing: 'border-box'
-                          }}
-                        />
-                      </div>
+          {activeTab === 'itinerary' && (
+            <>
+              {/* Shells List */}
+              {components.length > 0 && (
+                <div style={{ 
+                  border: '1px solid #e1e3e5',
+                  borderRadius: '8px',
+                  overflow: 'hidden'
+                }}>
+                  {components.map((component, index) => {
+                  const statusColors = getStatusColor(component.statusType);
+                  const isEditing = editingId === component.id;
+                  
+                  return (
+                    <div
+                      key={component.id}
+                      style={{
+                        padding: '16px',
+                        borderBottom: index < components.length - 1 ? '1px solid #e1e3e5' : 'none',
+                        background: isEditing ? '#f6f6f7' : '#ffffff',
+                        transition: 'background 0.1s'
+                      }}
+                    >
+                      {isEditing ? (
+                        // Edit Mode
+                        <div>
+                          <div style={{ marginBottom: '12px' }}>
+                            <label style={{
+                              display: 'block',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              color: '#6d7175',
+                              marginBottom: '4px'
+                            }}>
+                              Name
+                            </label>
+                            <input
+                              type="text"
+                              defaultValue={component.name}
+                              onBlur={(e) => handleSave(component.id, 'name', e.target.value)}
+                              style={{
+                                width: '100%',
+                                padding: '8px 12px',
+                                border: '1px solid #c9cccf',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                fontFamily: 'inherit',
+                                color: '#202223',
+                                background: '#ffffff',
+                                boxSizing: 'border-box'
+                              }}
+                            />
+                          </div>
+                          
+                          <div style={{ marginBottom: '12px' }}>
+                            <label style={{
+                              display: 'block',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              color: '#6d7175',
+                              marginBottom: '4px'
+                            }}>
+                              Details
+                            </label>
+                            <input
+                              type="text"
+                              defaultValue={component.details}
+                              onBlur={(e) => handleSave(component.id, 'details', e.target.value)}
+                              style={{
+                                width: '100%',
+                                padding: '8px 12px',
+                                border: '1px solid #c9cccf',
+                                borderRadius: '4px',
+                                fontSize: '14px',
+                                fontFamily: 'inherit',
+                                color: '#202223',
+                                background: '#ffffff',
+                                boxSizing: 'border-box'
+                              }}
+                            />
+                          </div>
 
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'space-between' }}>
-                        <button
-                          onClick={() => handleRemoveShell(component.id)}
-                          style={{
-                            padding: '6px 12px',
-                            background: 'transparent',
-                            border: '1px solid #d82c0d',
-                            borderRadius: '4px',
-                            color: '#d82c0d',
-                            fontSize: '13px',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            transition: 'all 0.1s'
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.background = '#ffd6d6';
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                          }}
-                        >
-                          Delete
-                        </button>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <button
-                            onClick={handleCancel}
-                            style={{
-                              padding: '6px 12px',
-                              background: '#ffffff',
-                              border: '1px solid #c9cccf',
-                              borderRadius: '4px',
-                              color: '#202223',
-                              fontSize: '13px',
-                              fontWeight: '600',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            onClick={() => setEditingId(null)}
-                            style={{
-                              padding: '6px 12px',
-                              background: '#008060',
-                              border: 'none',
-                              borderRadius: '4px',
-                              color: '#ffffff',
-                              fontSize: '13px',
-                              fontWeight: '600',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            Done
-                          </button>
+                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'space-between' }}>
+                            <button
+                              onClick={() => handleRemoveShell(component.id)}
+                              style={{
+                                padding: '6px 12px',
+                                background: 'transparent',
+                                border: '1px solid #d82c0d',
+                                borderRadius: '4px',
+                                color: '#d82c0d',
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.1s'
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.background = '#ffd6d6';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.background = 'transparent';
+                              }}
+                            >
+                              Delete
+                            </button>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button
+                                onClick={handleCancel}
+                                style={{
+                                  padding: '6px 12px',
+                                  background: '#ffffff',
+                                  border: '1px solid #c9cccf',
+                                  borderRadius: '4px',
+                                  color: '#202223',
+                                  fontSize: '13px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={() => setEditingId(null)}
+                                style={{
+                                  padding: '6px 12px',
+                                  background: '#008060',
+                                  border: 'none',
+                                  borderRadius: '4px',
+                                  color: '#ffffff',
+                                  fontSize: '13px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                Done
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  ) : (
-                    // View Mode
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <div style={{ flex: 1 }}>
+                      ) : (
+                        // View Mode
                         <div style={{
                           display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          marginBottom: '4px'
+                          justifyContent: 'space-between',
+                          alignItems: 'center'
                         }}>
-                          <div style={{ 
-                            fontSize: '14px', 
-                            fontWeight: '600',
-                            color: '#202223'
-                          }}>
-                            {component.name}
+                          <div style={{ flex: 1 }}>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              marginBottom: '4px'
+                            }}>
+                              <div style={{ 
+                                fontSize: '14px', 
+                                fontWeight: '600',
+                                color: '#202223'
+                              }}>
+                                {component.name}
+                              </div>
+                              <span style={{
+                                padding: '2px 8px',
+                                background: '#f6f6f7',
+                                color: '#6d7175',
+                                borderRadius: '4px',
+                                fontSize: '11px',
+                                fontWeight: '600',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px'
+                              }}>
+                                {component.type}
+                              </span>
+                            </div>
+                            <div style={{ 
+                              fontSize: '13px', 
+                              fontWeight: '400',
+                              color: '#6d7175'
+                            }}>
+                              {component.details}
+                            </div>
                           </div>
-                          <span style={{
-                            padding: '2px 8px',
-                            background: '#f6f6f7',
-                            color: '#6d7175',
-                            borderRadius: '4px',
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.5px'
-                          }}>
-                            {component.type}
-                          </span>
-                        </div>
-                        <div style={{ 
-                          fontSize: '13px', 
-                          fontWeight: '400',
-                          color: '#6d7175'
-                        }}>
-                          {component.details}
-                        </div>
-                      </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {/* Status Badge */}
-                        <div style={{
-                          padding: '4px 8px',
-                          background: statusColors.bg,
-                          color: statusColors.text,
-                          border: `1px solid ${statusColors.border}`,
-                          borderRadius: '4px',
-                          fontSize: '12px',
-                          fontWeight: '500'
-                        }}>
-                          {component.status}
-                        </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {/* Status Badge */}
+                            <div style={{
+                              padding: '4px 8px',
+                              background: statusColors.bg,
+                              color: statusColors.text,
+                              border: `1px solid ${statusColors.border}`,
+                              borderRadius: '4px',
+                              fontSize: '12px',
+                              fontWeight: '500'
+                            }}>
+                              {component.status}
+                            </div>
 
-                        {/* Edit Button */}
-                        <button
-                          onClick={() => handleEdit(component.id)}
-                          style={{
-                            padding: '6px 12px',
-                            background: 'transparent',
-                            border: '1px solid #c9cccf',
-                            borderRadius: '4px',
-                            color: '#202223',
-                            fontSize: '13px',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            transition: 'all 0.1s'
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.background = '#f6f6f7';
-                            e.currentTarget.style.borderColor = '#919699';
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.borderColor = '#c9cccf';
-                          }}
-                        >
-                          Edit
-                        </button>
-                      </div>
+                            {/* Edit Button */}
+                            <button
+                              onClick={() => handleEdit(component.id)}
+                              style={{
+                                padding: '6px 12px',
+                                background: 'transparent',
+                                border: '1px solid #c9cccf',
+                                borderRadius: '4px',
+                                color: '#202223',
+                                fontSize: '13px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.1s'
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.background = '#f6f6f7';
+                                e.currentTarget.style.borderColor = '#919699';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.background = 'transparent';
+                                e.currentTarget.style.borderColor = '#c9cccf';
+                              }}
+                            >
+                              Edit
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  )}
+                  );
+                })}
                 </div>
-              );
-            })}
+              )}
+
+              {/* Add Shell Button */}
+              <button
+                  onClick={handleAddShell}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    marginTop: '12px',
+                    background: 'transparent',
+                    border: '1px dashed #c9cccf',
+                    borderRadius: '8px',
+                    color: '#6d7175',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.1s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = '#f6f6f7';
+                    e.currentTarget.style.borderColor = '#919699';
+                    e.currentTarget.style.color = '#202223';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.borderColor = '#c9cccf';
+                    e.currentTarget.style.color = '#6d7175';
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>+</span>
+                  Add Shell
+              </button>
+
+            {/* Action Button - Shopify Polaris style */}
+            <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
+              <button
+                style={{
+                  flex: 1,
+                  padding: '11px 16px',
+                  background: '#008060',
+                  border: 'none',
+                  borderRadius: '4px',
+                  color: '#ffffff',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.1s',
+                  boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 0 0 rgba(0, 0, 0, 0.05)'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = '#006e52';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = '#008060';
+                }}
+              >
+                Manage Booking
+              </button>
+              
+              <button
+                style={{
+                  padding: '11px 16px',
+                  background: '#ffffff',
+                  border: '1px solid #c9cccf',
+                  borderRadius: '4px',
+                  color: '#202223',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.1s',
+                  boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 0 0 rgba(0, 0, 0, 0.05)'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = '#f6f6f7';
+                  e.currentTarget.style.borderColor = '#919699';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = '#ffffff';
+                  e.currentTarget.style.borderColor = '#c9cccf';
+                }}
+              >
+                Export
+              </button>
+            </div>
+          </>
+          )}
+
+          {activeTab === 'map' && (
+            <div style={{
+              border: '1px solid #e1e3e5',
+              borderRadius: '8px',
+              overflow: 'hidden',
+              background: '#ffffff'
+            }}>
+              <div style={{
+                padding: '12px 16px',
+                borderBottom: '1px solid #e1e3e5',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '12px'
+              }}>
+                <div style={{ fontSize: '13px', fontWeight: '600', color: '#202223' }}>
+                  3D Earth View
+                </div>
+                <div style={{ fontSize: '12px', color: '#6d7175' }}>
+                  {tripData.destination}
+                </div>
+              </div>
+              <div style={{
+                position: 'relative',
+                height: '420px',
+                background: '#0b1a2a'
+              }}>
+                <div
+                  ref={mapContainerRef}
+                  style={{ position: 'absolute', inset: 0 }}
+                />
+                {mapStatus === 'loading' && (
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#ffffff',
+                    fontSize: '13px',
+                    background: 'rgba(11, 26, 42, 0.6)'
+                  }}>
+                    Loading 3D map...
+                  </div>
+                )}
+                {mapLoadError && (
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#ffffff',
+                    fontSize: '13px',
+                    padding: '16px',
+                    textAlign: 'center',
+                    background: 'rgba(11, 26, 42, 0.8)'
+                  }}>
+                    {mapLoadError}
+                  </div>
+                )}
+                {!googleMapsMapId && mapStatus === 'ready' && (
+                  <div style={{
+                    position: 'absolute',
+                    right: '12px',
+                    bottom: '12px',
+                    padding: '6px 10px',
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    color: '#ffffff',
+                    borderRadius: '6px',
+                    fontSize: '11px'
+                  }}>
+                    Tip: add VITE_GOOGLE_MAPS_MAP_ID for richer 3D.
+                  </div>
+                )}
+              </div>
+              <div style={{
+                padding: '12px 16px',
+                borderTop: '1px solid #e1e3e5',
+                fontSize: '12px',
+                color: '#6d7175'
+              }}>
+                Showing satellite terrain with tilt for a 3D-style view. Use scroll to zoom and drag to rotate.
+              </div>
             </div>
           )}
 
-          {/* Add Shell Button */}
-          <button
-              onClick={handleAddShell}
-              style={{
-                width: '100%',
-                padding: '12px',
-                marginTop: '12px',
-                background: 'transparent',
-                border: '1px dashed #c9cccf',
-                borderRadius: '8px',
-                color: '#6d7175',
-                fontSize: '13px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.1s',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = '#f6f6f7';
-                e.currentTarget.style.borderColor = '#919699';
-                e.currentTarget.style.color = '#202223';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.borderColor = '#c9cccf';
-                e.currentTarget.style.color = '#6d7175';
-              }}
-            >
-              <span style={{ fontSize: '16px' }}>+</span>
-              Add Shell
-          </button>
-        </div>
-
-        {/* Action Button - Shopify Polaris style */}
-        <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
-          <button
-            style={{
-              flex: 1,
-              padding: '11px 16px',
-              background: '#008060',
-              border: 'none',
-              borderRadius: '4px',
-              color: '#ffffff',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.1s',
-              boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 0 0 rgba(0, 0, 0, 0.05)'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = '#006e52';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = '#008060';
-            }}
-          >
-            Manage Booking
-          </button>
-          
-          <button
-            style={{
-              padding: '11px 16px',
+          {activeTab === 'timeline' && (
+            <div style={{
+              padding: '20px',
+              border: '1px solid #e1e3e5',
+              borderRadius: '8px',
               background: '#ffffff',
-              border: '1px solid #c9cccf',
-              borderRadius: '4px',
-              color: '#202223',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.1s',
-              boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 0 0 rgba(0, 0, 0, 0.05)'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = '#f6f6f7';
-              e.currentTarget.style.borderColor = '#919699';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = '#ffffff';
-              e.currentTarget.style.borderColor = '#c9cccf';
-            }}
-          >
-            Export
-          </button>
+              color: '#6d7175',
+              fontSize: '13px'
+            }}>
+              Timeline view is coming next. Switch to Itinerary or Map to continue planning.
+            </div>
+          )}
         </div>
       </div>
 

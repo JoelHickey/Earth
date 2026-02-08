@@ -66,7 +66,7 @@ const TravelCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             letterSpacing: "0.8px",
             marginBottom: "12px"
           }}>
-            Case Study · Flight Centre
+            Case Study · Travel
           </div>
           <h1 style={{
             fontSize: "48px",
@@ -76,7 +76,7 @@ const TravelCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             color: "#1d1d1f",
             lineHeight: "1.1"
           }}>
-            Travel Amendments & Insurance
+            Streamlining Amendments & Insurance
           </h1>
         </div>
 
@@ -126,7 +126,7 @@ const TravelCaseStudy = ({ onViewOldFlow, onViewNewFlow, onClose }) => {
             marginBottom: "24px"
           }}>
             <p style={{ marginBottom: "16px" }}>
-              When customers wanted to modify their travel bookings—hotels (change dates, upgrade rooms), rental cars (adjust pickup times, vehicle types), activities (reschedule tours, change group sizes), transfers (update pickup locations, times)—or add travel insurance, they called Flight Centre consultants. The existing booking system required consultants to navigate through multiple screens and manual steps to complete even simple requests. This created:
+              When customers wanted to modify their travel bookings—hotels (change dates, upgrade rooms), rental cars (adjust pickup times, vehicle types), activities (reschedule tours, change group sizes), transfers (update pickup locations, times)—or add travel insurance, they called travel consultants. The existing booking system required consultants to navigate through multiple screens and manual steps to complete even simple requests. This created:
             </p>
             <ul style={{ paddingLeft: "24px", marginBottom: "16px" }}>
               <li style={{ marginBottom: "8px" }}><strong>Low consultant productivity</strong> - 8-12 minutes per amendment or insurance call</li>

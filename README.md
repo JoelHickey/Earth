@@ -31,8 +31,8 @@ npm run dev
 
 ## 📸 What You'll See
 - 🗂 Desktop UI with icons, windows, and classic controls
-- ✈️ Flight Centre Amendments case study + demos (old/new/dream flows)
-- 🧾 Flight Centre Insurance case study
+- ✈️ Streamlining Amendments case study + demos (old/new/dream flows)
+- 🧾 Travel Insurance case study
 - 📄 CV window (profile, experience, education, tools)
 
 ## 📚 Documentation
@@ -66,6 +66,19 @@ Frontend: React 18 + Vite
 UI: Primer React + MUI + Emotion  
 Testing: Playwright + Vitest  
 Optional: Supabase client
+
+## 🔧 Tooling
+Editor/AI assistant: Cursor (code generation + IDE)  
+Source control: Git  
+Hosting/remote: GitHub  
+Hosting/Deployment: Vercel  
+Dev/build: Vite (vite, @vitejs/plugin-react)  
+Testing: Vitest, Testing Library, Playwright, axe-core
+
+## 🧱 Tech Stack
+Runtime: React 18, Sass  
+UI libraries: Carbon, Fluent UI, MUI, Primer, Ant Design, Lucide  
+Other deps: Supabase client, FFT, Sharp
 
 ## 🧪 Development
 Available Scripts

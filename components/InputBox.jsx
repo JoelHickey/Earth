@@ -20,17 +20,19 @@ const InputBox = ({
     input: {
       width: "50px",
       height: "18px",
-      fontSize: "10px",
+      fontSize: "8pt",
       fontFamily: "'MS Sans Serif', sans-serif",
-      border: "2px inset #c0c0c0",
       background: "#ffffff",
       textAlign: "center",
       padding: "1px 2px",
-      boxShadow: "inset 1px 1px #808080, inset -1px -1px #ffffff",
+      borderTop: "2px solid #808080",
+      borderLeft: "2px solid #808080",
+      borderBottom: "2px solid #ffffff",
+      borderRight: "2px solid #ffffff",
       boxSizing: "border-box"
     },
     label: {
-      fontSize: "10px",
+      fontSize: "8pt",
       textAlign: "center",
       marginTop: "4px",
       fontFamily: "'MS Sans Serif', sans-serif",

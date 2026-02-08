@@ -30,6 +30,7 @@ import {
   ChevronRightIcon,
   HistoryIcon,
   HomeIcon,
+  KebabHorizontalIcon,
   XIcon
 } from '@primer/octicons-react';
 import { UnderlineNav } from '@primer/react/deprecated';
@@ -226,8 +227,14 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
   const formStackSx = { display: 'flex', flexDirection: 'column', gap: 3 };
   const cardHeaderSx = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 };
   const modalFooterStyle = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginTop: 16, flexWrap: 'wrap' };
-  const closeButtonSx = { width: 32, height: 32, minWidth: 32, p: 0 };
-  const closeIconSize = 16;
+  const closeIconButtonSx = {
+    width: 28,
+    height: 28,
+    minWidth: 28,
+    minHeight: 28,
+    p: 0,
+    '& svg': { width: 12, height: 12 }
+  };
   const inlineToastSx = {
     backgroundColor: 'success.subtle',
     color: 'fg.default',
@@ -286,6 +293,13 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
   });
   const [dreamDateRange, setDreamDateRange] = useState({ start: 15, end: 20, month: 'MAY' });
   const [dreamRoomType, setDreamRoomType] = useState('standard');
+  const [selectedRoomId, setSelectedRoomId] = useState('standard');
+  const [selectedHotelName, setSelectedHotelName] = useState('Royal Hawaiian Resort');
+  const [confirmedHotelName, setConfirmedHotelName] = useState('Royal Hawaiian Resort');
+  const [confirmedRoomId, setConfirmedRoomId] = useState('standard');
+  const [confirmedDatesSummary, setConfirmedDatesSummary] = useState('May 15–20, 2024');
+  const [showAmendmentHistory, setShowAmendmentHistory] = useState(false);
+  const [amendmentHistoryEntries, setAmendmentHistoryEntries] = useState([]);
   const [dreamTravellers, setDreamTravellers] = useState({
     john: true,
     sarah: true,
@@ -293,7 +307,16 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
     max: true
   });
   const [showRoomOptions, setShowRoomOptions] = useState(false);
+  const [aiHasAutoTyped, setAiHasAutoTyped] = useState(false);
+  const [aiDraftingPrompt, setAiDraftingPrompt] = useState(false);
+  const [aiSearching, setAiSearching] = useState(false);
+  const [aiDraftingIdle, setAiDraftingIdle] = useState(false);
+  const [aiSuggestionVisible, setAiSuggestionVisible] = useState(false);
+  const [dreamTestScenario, setDreamTestScenario] = useState('default');
+  const [dreamErrorMessage, setDreamErrorMessage] = useState('');
   const [isApplyingDates, setIsApplyingDates] = useState(false);
+  const [isConfirmingChange, setIsConfirmingChange] = useState(false);
+  const [undoingEntryId, setUndoingEntryId] = useState(null);
   const [reasonForAmendment, setReasonForAmendment] = useState('');
   const [causeOfAmendment, setCauseOfAmendment] = useState('');
   const [oldFlowSelectedHotel, setOldFlowSelectedHotel] = useState(null);
@@ -306,13 +329,47 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
   const [successLabel, setSuccessLabel] = useState('Booking updated');
   const debugShowToast = false;
   const modalRootRef = useRef(null);
+  const aiTypingTimeoutRef = useRef(null);
+  const aiSearchTimeoutRef = useRef(null);
+  const aiIdleTimeoutRef = useRef(null);
+  const aiDraftingDoneTimeoutRef = useRef(null);
+  const aiAutoTypeStartedRef = useRef(false);
   const isAnyModalOpen = Boolean(loadingMessage || isAmendModalOpen || isTravellersModalOpen || isSearchModalOpen);
   const [expandedHotelId, setExpandedHotelId] = useState(null);
+  const formatTimestamp = (date) =>
+    date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   const roomOptions = [
     { id: 'standard', label: 'Standard Room', price: '$289' },
     { id: 'deluxe', label: 'Deluxe Room', price: '$325' },
     { id: 'suite', label: 'Ocean View Suite', price: '$375' }
   ];
+  const dreamAiSuggestion = {
+    hotel: 'Hilton Hawaiian Village',
+    roomId: 'ocean',
+    roomLabel: 'Ocean View Suite'
+  };
+  const dreamLongPrompt =
+    'Please update the reservation to a quieter room, keep two beds, add late checkout, add a note for airport pickup, and ensure the new dates work for a five-night stay.';
+  const dreamSpecialPrompt = 'Change dates to 06/01–06/05; add note: VIP #1234 @ gate B.';
+  const effectiveDreamAiSuggestion =
+    dreamTestScenario === 'ai_alt_suggestion'
+      ? { hotel: 'Moana Surfrider', roomId: 'deluxe', roomLabel: 'Deluxe Room' }
+      : dreamAiSuggestion;
+  const dreamAiSuggestedRoom = DREAM_ROOM_OPTIONS.find((room) => room.id === effectiveDreamAiSuggestion.roomId);
+  const dreamAiSuggestedHotelTotal = DREAM_HOTEL_TOTALS[effectiveDreamAiSuggestion.hotel] || DREAM_BASE_TOTAL;
+  const dreamAiSuggestedHotelDelta = dreamAiSuggestedHotelTotal - DREAM_BASE_TOTAL;
+  const effectiveAiSuggestionVisible = aiSuggestionVisible && dreamTestScenario !== 'ai_no_suggestion';
+  const dreamResultsList = dreamTestScenario === 'empty_results' ? [] : DREAM_RESULTS;
+  const dreamAvailabilityIssue = dreamTestScenario === 'availability_issue';
+  const dreamPaymentFailure = dreamTestScenario === 'payment_failure';
+  const dreamForcePayment = dreamTestScenario === 'payment_failure' || dreamTestScenario === 'payment_flow';
+  const dreamAiTimeout = dreamTestScenario === 'ai_timeout';
       const proceedToCart = () => {
         showLoadingThen('Adding to cart...', () => {
           setShowSearchResults(false);
@@ -334,6 +391,138 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
   const currentOldFlowStep = Math.max(oldFlowStepIndex, 1);
   const currentNewFlowStep = Math.min(Math.max(newFlowStep, 1), newFlowSteps.length);
   const dreamStepIndex = dreamConfirmed ? 4 : dreamPayment ? 3 : dreamResults || dreamDateChange || dreamNewDates ? 2 : 1;
+  const showExceedsSummary = effectiveAiSuggestionVisible || (!aiHasAutoTyped && dreamPrompt.trim().length > 0);
+  const showDreamConfirmBar =
+    dreamNewDates ||
+    dreamSelection?.type === 'room' ||
+    (selectedHotelName && selectedHotelName !== 'Royal Hawaiian Resort');
+  const dreamItineraryDates = confirmedDatesSummary;
+  const dreamItineraryHotel = confirmedHotelName;
+  const dreamItineraryRoom =
+    DREAM_ROOM_OPTIONS.find((room) => room.id === confirmedRoomId)?.label || 'Standard Room';
+
+  const renderDreamConfirmBar = () =>
+    showDreamConfirmBar ? (
+      <div
+        style={{
+          padding: 10,
+          borderRadius: 8,
+          border: '1px dashed var(--borderColor-muted)',
+          background: 'var(--canvas-subtle)'
+        }}
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr auto',
+            alignItems: 'center',
+            gap: 8
+          }}
+        >
+          <Stack direction="horizontal" gap="condensed" sx={{ flexWrap: 'wrap' }}>
+            <Text
+              as="strong"
+              sx={{ color: 'fg.muted' }}
+              style={{ fontSize: '12px', lineHeight: '14px' }}
+            >
+              Changes
+            </Text>
+            {dreamNewDates && (
+              <Text sx={{ fontWeight: 600 }} style={{ fontSize: '12px', lineHeight: '14px' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <CalendarIcon size={12} />
+                  <span>{dreamSelection?.summary}</span>
+                </span>
+              </Text>
+            )}
+            {selectedHotelName && selectedHotelName !== 'Royal Hawaiian Resort' && (
+              <Text sx={{ fontWeight: 600 }} style={{ fontSize: '12px', lineHeight: '14px' }}>
+                🏨 {selectedHotelName}
+              </Text>
+            )}
+            {dreamSelection?.type === 'room' && selectedRoomId && (
+              <Text sx={{ fontWeight: 600 }} style={{ fontSize: '12px', lineHeight: '14px' }}>
+                🛏 {DREAM_ROOM_OPTIONS.find((room) => room.id === selectedRoomId)?.label || 'Standard Room'}
+              </Text>
+            )}
+          </Stack>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            {showExceedsSummary && (
+              <Text sx={{ color: 'fg.muted' }} style={{ fontSize: '12px', lineHeight: '14px' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <ArrowUpIcon size={10} />
+                  <HomeIcon size={10} />
+                  <span>Exceeds traveller preferences: larger ocean-view suite and resort amenities.</span>
+                </span>
+              </Text>
+            )}
+            <Button
+              size="small"
+              variant="primary"
+              disabled={isConfirmingChange}
+              onClick={() => {
+                setIsConfirmingChange(true);
+                const historyEntries = [];
+                if (selectedHotelName && selectedHotelName !== 'Royal Hawaiian Resort') {
+                  historyEntries.push({
+                    id: `history-hotel-${Date.now()}`,
+                    title: 'Hotel swap',
+                    detail: `Royal Hawaiian Resort → ${selectedHotelName}`,
+                    timestamp: formatTimestamp(new Date())
+                  });
+                }
+                if (selectedRoomId && selectedRoomId !== 'standard') {
+                  const roomLabel = DREAM_ROOM_OPTIONS.find((room) => room.id === selectedRoomId)?.label || 'Standard Room';
+                  historyEntries.push({
+                    id: `history-room-${Date.now() + 1}`,
+                    title: 'Room change',
+                    detail: `Standard Room → ${roomLabel}`,
+                    timestamp: formatTimestamp(new Date())
+                  });
+                }
+                if (dreamNewDates) {
+                  historyEntries.push({
+                    id: `history-date-${Date.now() + 2}`,
+                    title: 'Date change',
+                    detail: `May 15–20 → ${dreamSelection?.summary || 'New dates'}`,
+                    timestamp: formatTimestamp(new Date())
+                  });
+                }
+                if (historyEntries.length > 0) {
+                  setAmendmentHistoryEntries((prev) => [...historyEntries, ...prev]);
+                }
+                setTimeout(() => {
+                  setIsConfirmingChange(false);
+                  if (dreamAvailabilityIssue) {
+                    setDreamErrorMessage('No availability for the requested change.');
+                    return;
+                  }
+                  if (selectedHotelName) {
+                    setConfirmedHotelName(selectedHotelName);
+                  }
+                  if (selectedRoomId) {
+                    setConfirmedRoomId(selectedRoomId);
+                  }
+                  if (dreamNewDates && dreamSelection?.summary) {
+                    setConfirmedDatesSummary(dreamSelection.summary);
+                  }
+                  setSuccessLabel('Booking updated');
+                  setDreamPayment(false);
+                  setDreamDateChange(false);
+                  setDreamConfirmed(false);
+                  setShowSuccess(true);
+                  closeDreamFlow();
+                  setTimeout(() => setShowSuccess(false), 2500);
+                }, 1400);
+              }}
+            >
+              {isConfirmingChange && <Spinner size="small" />}
+              {isConfirmingChange ? 'Processing…' : 'Confirm'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    ) : null;
 
   const showLoadingThen = (message, callback, duration = 1400) => {
     setLoadingMessage(message);
@@ -342,6 +531,57 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
       callback();
     }, duration);
   };
+  useEffect(() => {
+    setDreamErrorMessage('');
+    setShowSuccess(false);
+  }, [dreamTestScenario]);
+  useEffect(() => {
+    if (aiTypingTimeoutRef.current) {
+      clearTimeout(aiTypingTimeoutRef.current);
+      aiTypingTimeoutRef.current = null;
+    }
+    if (aiSearchTimeoutRef.current) {
+      clearTimeout(aiSearchTimeoutRef.current);
+      aiSearchTimeoutRef.current = null;
+    }
+    if (aiIdleTimeoutRef.current) {
+      clearTimeout(aiIdleTimeoutRef.current);
+      aiIdleTimeoutRef.current = null;
+    }
+    if (aiDraftingDoneTimeoutRef.current) {
+      clearTimeout(aiDraftingDoneTimeoutRef.current);
+      aiDraftingDoneTimeoutRef.current = null;
+    }
+    if (dreamTestScenario === 'input_long') {
+      aiAutoTypeStartedRef.current = true;
+      setAiHasAutoTyped(true);
+      setAiDraftingPrompt(false);
+      setAiSearching(false);
+      setAiDraftingIdle(false);
+      setAiSuggestionVisible(false);
+      setDreamPrompt(dreamLongPrompt);
+      return;
+    }
+    if (dreamTestScenario === 'input_special') {
+      aiAutoTypeStartedRef.current = true;
+      setAiHasAutoTyped(true);
+      setAiDraftingPrompt(false);
+      setAiSearching(false);
+      setAiDraftingIdle(false);
+      setAiSuggestionVisible(false);
+      setDreamPrompt(dreamSpecialPrompt);
+      return;
+    }
+    if (dreamTestScenario === 'input_empty') {
+      aiAutoTypeStartedRef.current = false;
+      setAiHasAutoTyped(false);
+      setAiDraftingPrompt(false);
+      setAiSearching(false);
+      setAiDraftingIdle(false);
+      setAiSuggestionVisible(false);
+      setDreamPrompt('');
+    }
+  }, [dreamTestScenario, dreamLongPrompt, dreamSpecialPrompt]);
   useEffect(() => {
     if (!modalRootRef.current) {
       return undefined;
@@ -365,6 +605,15 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
   };
 
   const closeDreamFlow = () => {
+    if (aiTypingTimeoutRef.current) {
+      clearTimeout(aiTypingTimeoutRef.current);
+      aiTypingTimeoutRef.current = null;
+    }
+    if (aiSearchTimeoutRef.current) {
+      clearTimeout(aiSearchTimeoutRef.current);
+      aiSearchTimeoutRef.current = null;
+    }
+    aiAutoTypeStartedRef.current = false;
     setShowDreamFlow(false);
     setDreamResults(false);
     setDreamDateChange(false);
@@ -372,6 +621,10 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
     setDreamPayment(false);
     setDreamConfirmed(false);
     setDreamPrompt('');
+    setAiHasAutoTyped(false);
+    setAiDraftingPrompt(false);
+    setAiSearching(false);
+    setAiSuggestionVisible(false);
     setDreamSelection({
       type: 'dates',
       label: 'Extend stay by 1 night',
@@ -381,6 +634,8 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
     });
     setDreamDateRange({ start: 15, end: 20, month: 'MAY' });
     setDreamRoomType('standard');
+    setSelectedRoomId('standard');
+    setSelectedHotelName('Royal Hawaiian Resort');
     setDreamTravellers({
       john: true,
       sarah: true,
@@ -389,6 +644,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
     });
     setShowRoomOptions(false);
     setIsApplyingDates(false);
+    setIsConfirmingChange(false);
     setActiveTab('itinerary');
   };
 
@@ -397,7 +653,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
       <ActionMenu.Anchor>
         <IconButton
           aria-label="More options"
-          icon={ChevronDownIcon}
+          icon={KebabHorizontalIcon}
           size="small"
           variant="default"
         />
@@ -474,11 +730,14 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
   };
 
   const startDreamPlan = (intent) => {
-    if (intent === 'room') {
+    if (intent === 'room' || intent === 'dates') {
+      setShowAmendmentHistory(false);
       setShowRoomOptions(true);
-      setDreamResults(true);
+      setDreamDateChange(true);
+      setDreamResults(false);
     }
     if (intent === 'hotel') {
+      setShowAmendmentHistory(false);
       setShowRoomOptions(false);
       setDreamResults(true);
     }
@@ -588,6 +847,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
         <Box sx={columnStackSx}>
           <Box sx={{ ...cardSx, position: 'relative' }}>
             <Stack sx={{ ...formStackSx, mt: 2 }}>
+              {dreamErrorMessage && <Flash variant="danger">{dreamErrorMessage}</Flash>}
               <FormControl>
                 <div
                   style={{
@@ -607,261 +867,595 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                       gap: 6
                     }}
                   >
-                    <TextInput
-                      placeholder="Describe the change"
-                      value={dreamPrompt}
-                      onChange={(event) => setDreamPrompt(event.target.value)}
-                      block
-                    />
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: 4,
-                        flexWrap: 'wrap'
-                      }}
-                    >
-                      <button
-                        type="button"
-                        style={{
-                          ...compactPillStyle,
-                          background: dreamDateChange ? 'var(--bgColor-accent-muted)' : 'var(--canvas-default)',
-                          borderColor: dreamDateChange ? 'var(--borderColor-accent-emphasis)' : 'var(--borderColor-default)',
-                          color: dreamDateChange ? 'var(--fgColor-accent)' : 'var(--fgColor-default)'
+                    <div style={{ position: 'relative' }}>
+                      <TextInput
+                        placeholder={aiSearching ? 'Searching AI options…' : 'Describe the change'}
+                        value={dreamPrompt}
+                        onFocus={() => {
+                          if (aiAutoTypeStartedRef.current || aiDraftingPrompt || dreamPrompt.trim().length > 0) {
+                            return;
+                          }
+                          if (aiIdleTimeoutRef.current) {
+                            clearTimeout(aiIdleTimeoutRef.current);
+                            aiIdleTimeoutRef.current = null;
+                          }
+                          if (aiDraftingDoneTimeoutRef.current) {
+                            clearTimeout(aiDraftingDoneTimeoutRef.current);
+                            aiDraftingDoneTimeoutRef.current = null;
+                          }
+                          setAiDraftingIdle(false);
+                          const promptText =
+                            'Find another hotel and room type that exceeds the traveler preferences';
+                          aiAutoTypeStartedRef.current = true;
+                          setAiHasAutoTyped(true);
+                          setAiDraftingPrompt(true);
+                          setAiSearching(false);
+                          setAiSuggestionVisible(false);
+                          setDreamPrompt('');
+                          if (aiTypingTimeoutRef.current) {
+                            clearTimeout(aiTypingTimeoutRef.current);
+                          }
+                          const typeNext = (index) => {
+                            if (index > promptText.length) {
+                              setAiDraftingPrompt(false);
+                              setAiSearching(true);
+                              if (dreamAiTimeout) {
+                                return;
+                              }
+                              aiSearchTimeoutRef.current = setTimeout(() => {
+                                setAiSearching(false);
+                              startDreamPlan('room');
+                              setSelectedHotelName(effectiveDreamAiSuggestion.hotel);
+                              setSelectedRoomId(effectiveDreamAiSuggestion.roomId);
+                                setDreamSelection({
+                                  type: 'room',
+                                label: effectiveDreamAiSuggestion.hotel,
+                                summary: `5 nights · 2 rooms · 1 traveller · ${effectiveDreamAiSuggestion.roomLabel}`,
+                                  priceDelta: dreamAiSuggestedHotelDelta,
+                                  total: dreamAiSuggestedHotelTotal
+                                });
+                                setAiSuggestionVisible(true);
+                              }, 700);
+                              return;
+                            }
+                            setDreamPrompt(promptText.slice(0, index));
+                            aiTypingTimeoutRef.current = setTimeout(() => typeNext(index + 1), 24);
+                          };
+                          typeNext(1);
                         }}
-                        onClick={() => {
-                          startDreamPlan('dates');
+                        onChange={(event) => {
+                          if (aiTypingTimeoutRef.current) {
+                            clearTimeout(aiTypingTimeoutRef.current);
+                            aiTypingTimeoutRef.current = null;
+                          }
+                          if (aiSearchTimeoutRef.current) {
+                            clearTimeout(aiSearchTimeoutRef.current);
+                            aiSearchTimeoutRef.current = null;
+                          }
+                          if (aiIdleTimeoutRef.current) {
+                            clearTimeout(aiIdleTimeoutRef.current);
+                          }
+                          if (aiDraftingDoneTimeoutRef.current) {
+                            clearTimeout(aiDraftingDoneTimeoutRef.current);
+                          }
+                          aiAutoTypeStartedRef.current = true;
+                          setAiHasAutoTyped(true);
+                          setAiDraftingPrompt(false);
+                          setAiSearching(false);
+                          setAiSuggestionVisible(false);
+                          setAiDraftingIdle(false);
+                          setDreamPrompt(event.target.value);
+                          aiIdleTimeoutRef.current = setTimeout(() => {
+                            setAiDraftingIdle(true);
+                            aiDraftingDoneTimeoutRef.current = setTimeout(() => {
+                              setAiDraftingIdle(false);
+                            }, 1200);
+                          }, 650);
                         }}
-                      >
-                        Change dates
-                      </button>
-                      <button
-                        type="button"
-                        style={{
-                          ...compactPillStyle,
-                          background: showRoomOptions ? 'var(--bgColor-accent-muted)' : 'var(--canvas-default)',
-                          borderColor: showRoomOptions ? 'var(--borderColor-accent-emphasis)' : 'var(--borderColor-default)',
-                          color: showRoomOptions ? 'var(--fgColor-accent)' : 'var(--fgColor-default)'
+                        block
+                        sx={{
+                          borderColor: 'var(--borderColor-accent-emphasis)',
+                          background: 'linear-gradient(120deg, rgba(218,227,255,0.35), rgba(255,255,255,0.7))',
+                          boxShadow: '0 0 0 1px rgba(130,80,223,0.35), 0 6px 18px rgba(130,80,223,0.12)',
+                          paddingRight: aiSearching ? 170 : 34,
+                          '&:focus-within': {
+                            boxShadow: '0 0 0 2px rgba(130,80,223,0.55), 0 10px 24px rgba(130,80,223,0.18)'
+                          }
                         }}
-                        onClick={() => {
-                          startDreamPlan('room');
-                        }}
-                      >
-                        Upgrade room
-                      </button>
-                      <button
-                        type="button"
-                        style={{
-                          ...compactPillStyle,
-                          background: dreamResults && !showRoomOptions ? 'var(--bgColor-accent-muted)' : 'var(--canvas-default)',
-                          borderColor: dreamResults && !showRoomOptions ? 'var(--borderColor-accent-emphasis)' : 'var(--borderColor-default)',
-                          color: dreamResults && !showRoomOptions ? 'var(--fgColor-accent)' : 'var(--fgColor-default)'
-                        }}
-                        onClick={() => {
-                          startDreamPlan('hotel');
-                        }}
-                      >
-                        Swap hotel
-                      </button>
+                      />
+                      {aiSearching && (
+                        <span
+                          aria-hidden="true"
+                          style={{
+                            position: 'absolute',
+                            right: 34,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            fontSize: '12px',
+                            fontWeight: 500,
+                            color: '#7b5cff',
+                            textAlign: 'left',
+                            pointerEvents: 'none'
+                          }}
+                        >
+                          AI drafting request…
+                        </span>
+                      )}
+                      {!aiSearching && (
+                        <span
+                          aria-hidden="true"
+                          style={{
+                            position: 'absolute',
+                            right: 10,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            width: 10,
+                            height: 10,
+                            borderRadius: 999,
+                            background:
+                              'radial-gradient(circle at 30% 30%, #fff 0%, #d7c6ff 30%, #7b5cff 65%, #4b2bbf 100%)',
+                            boxShadow: '0 0 0 1px rgba(130,80,223,0.35), 0 0 10px rgba(130,80,223,0.45)',
+                            animation: 'aiPulse 1.6s ease-in-out infinite',
+                            pointerEvents: 'none'
+                          }}
+                        />
+                      )}
                     </div>
+                    <div />
                   </div>
-                  <Button
-                    aria-label="Close dream flow"
-                    onClick={closeDreamFlow}
-                    variant="default"
-                    size="small"
-                    sx={{ width: 28, height: 28, minWidth: 28, p: 0, justifySelf: 'end', mt: '2px' }}
-                  >
-                    <XIcon size={12} />
-                  </Button>
+              <IconButton
+                aria-label="Close dream flow"
+                onClick={closeDreamFlow}
+                icon={XIcon}
+                variant="default"
+                size="small"
+                sx={closeIconButtonSx}
+              />
                 </div>
+              </FormControl>
+              <FormControl>
+                <FormControl.Label>Test scenario</FormControl.Label>
+                <Select
+                  value={dreamTestScenario}
+                  onChange={(event) => setDreamTestScenario(event.target.value)}
+                  block
+                >
+                  <Select.Option value="default">Default</Select.Option>
+                  <Select.Option value="ai_no_suggestion">AI suggestion hidden</Select.Option>
+                  <Select.Option value="ai_alt_suggestion">AI alternate suggestion</Select.Option>
+                  <Select.Option value="ai_timeout">AI search timeout</Select.Option>
+                  <Select.Option value="input_empty">Input empty</Select.Option>
+                  <Select.Option value="input_long">Input long</Select.Option>
+                  <Select.Option value="input_special">Input special chars</Select.Option>
+                  <Select.Option value="empty_results">No results</Select.Option>
+                  <Select.Option value="availability_issue">Availability issue</Select.Option>
+                  <Select.Option value="payment_flow">Payment flow</Select.Option>
+                  <Select.Option value="payment_failure">Payment failure</Select.Option>
+                </Select>
               </FormControl>
             </Stack>
           </Box>
 
-          {dreamResults && (
+          {dreamResults && !dreamDateChange && (
             <Box sx={cardSx}>
+              {effectiveAiSuggestionVisible && (
+                <Box sx={{ ...cardSlimSx, mb: 2, borderStyle: 'dashed', background: 'var(--canvas-subtle)' }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr auto',
+                      gap: 12,
+                      alignItems: 'center'
+                    }}
+                  >
+                    <div>
+                      <Text as="div" sx={{ fontWeight: 600 }}>
+                        AI suggestion
+                      </Text>
+                      <Text sx={{ color: 'fg.muted', fontSize: 0 }}>
+                        {effectiveDreamAiSuggestion.hotel} · {dreamAiSuggestedRoom?.label || 'Room upgrade'}
+                      </Text>
+                    </div>
+                    <Button
+                      size="small"
+                      onClick={() => {
+                        startDreamPlan('room');
+                        setSelectedHotelName(effectiveDreamAiSuggestion.hotel);
+                        setSelectedRoomId(effectiveDreamAiSuggestion.roomId);
+                        setDreamSelection({
+                          type: 'hotel',
+                          label: effectiveDreamAiSuggestion.hotel,
+                          summary: '5 nights · 2 rooms · 1 traveller',
+                          priceDelta: dreamAiSuggestedHotelDelta,
+                          total: dreamAiSuggestedHotelTotal
+                        });
+                        setAiSuggestionVisible(false);
+                      }}
+                    >
+                      Apply
+                    </Button>
+                  </div>
+                </Box>
+              )}
               <Stack gap="condensed">
-                {showRoomOptions
-                  ? DREAM_ROOM_OPTIONS.map((room) => (
-                      <div
-                        key={room.id}
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: '1fr auto',
-                          gap: 12,
-                          alignItems: 'center',
-                          borderBottom: '1px solid var(--borderColor-default)',
-                          paddingBottom: 8
+                {dreamResultsList.map((item) => {
+                  const nextTotal = DREAM_HOTEL_TOTALS[item.name] || DREAM_BASE_TOTAL;
+                  const delta = nextTotal - DREAM_BASE_TOTAL;
+                  const selectHotel = () => {
+                    setSelectedHotelName(item.name);
+                    setDreamSelection({
+                      type: 'hotel',
+                      label: item.name,
+                      summary: '5 nights · 2 rooms · 1 traveller',
+                      priceDelta: delta,
+                      total: nextTotal
+                    });
+                  };
+                  return (
+                    <div
+                      key={item.name}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr auto',
+                        gap: 12,
+                        alignItems: 'center',
+                        borderBottom: '1px solid var(--borderColor-default)',
+                        paddingBottom: 8,
+                        cursor: 'pointer'
+                      }}
+                      onClick={selectHotel}
+                    >
+                      <div>
+                        <Text as="div" sx={{ fontWeight: 600 }}>
+                          {item.name} · {item.price} per night · {formatDelta(delta)} total
+                        </Text>
+                      </div>
+                      <Button
+                        size="small"
+                        variant={selectedHotelName === item.name ? 'primary' : 'default'}
+                        disabled={selectedHotelName === item.name}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          selectHotel();
+                          setDreamResults(false);
+                          setDreamDateChange(false);
+                          setDreamPayment(true);
                         }}
                       >
-                        <div>
-                          <Text as="div" sx={{ fontWeight: 600 }}>
-                            {room.label} · {DREAM_ROOM_PRICES[room.id]} per night · {formatDelta(room.delta)} total
-                          </Text>
-                        </div>
-                        <Button
-                          size="small"
-                          variant="primary"
-                          onClick={() => {
-                            setDreamSelection({
-                              type: 'room',
-                              label: `Room: ${room.label}`,
-                              summary: '5 nights · 2 rooms',
-                              priceDelta: room.delta,
-                              total: DREAM_BASE_TOTAL + room.delta
-                            });
-                            setDreamResults(false);
-                            setDreamDateChange(false);
-                            setDreamPayment(true);
-                          }}
-                        >
-                          Review change
-                        </Button>
-                      </div>
-                    ))
-                  : DREAM_RESULTS.map((item) => {
-                      const nextTotal = DREAM_HOTEL_TOTALS[item.name] || DREAM_BASE_TOTAL;
-                      const delta = nextTotal - DREAM_BASE_TOTAL;
-                      return (
-                        <div
-                          key={item.name}
-                          style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr auto',
-                            gap: 12,
-                            alignItems: 'center',
-                            borderBottom: '1px solid var(--borderColor-default)',
-                            paddingBottom: 8
-                          }}
-                        >
-                          <div>
-                            <Text as="div" sx={{ fontWeight: 600 }}>
-                              {item.name} · {item.price} per night · {formatDelta(delta)} total
-                            </Text>
-                          </div>
-                          <Button
-                            size="small"
-                            variant="primary"
-                            onClick={() => {
-                              setDreamSelection({
-                                type: 'hotel',
-                                label: item.name,
-                                summary: '5 nights · 2 rooms',
-                                priceDelta: delta,
-                                total: nextTotal
-                              });
-                              setDreamResults(false);
-                              setDreamDateChange(false);
-                              setDreamPayment(true);
-                            }}
-                          >
-                            Review change
-                          </Button>
-                        </div>
-                      );
-                    })}
+                        {selectedHotelName === item.name ? 'Selected' : 'Select'}
+                      </Button>
+                    </div>
+                  );
+                })}
+                {dreamResultsList.length === 0 && (
+                  <Text as="div" sx={{ color: 'fg.muted' }}>
+                    No matching hotels yet. Try different dates or room preferences.
+                  </Text>
+                )}
               </Stack>
+              {renderDreamConfirmBar()}
             </Box>
           )}
 
           {dreamDateChange && (
             <Box sx={{ ...cardSx, p: 0 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, margin: 0, padding: 0 }}>
-                <CalendarPicker
-                  startDate={dreamDateRange.start}
-                  endDate={dreamDateRange.end}
-                  months={dreamCalendarMonths}
-                  scale={1.15}
-                  live
-                  currentRange={currentBookingRange}
-                  selectedRange={dreamNewDates ? dreamDateRange : null}
-                  onDateClick={(date, month) => {
-                    const nextStart = currentBookingRange.start;
-                    const nextEnd = Math.max(date, nextStart);
-                    setDreamDateRange({ start: nextStart, end: nextEnd, month: month.toUpperCase() });
-                    setDreamNewDates(true);
-                    setDreamSelection({
-                      type: 'dates',
-                      label: 'Selected new dates',
-                      summary: `${month} ${date}–${nextEnd}, 2024`,
-                      priceDelta: 410,
-                      total: DREAM_BASE_TOTAL + 410
-                    });
-                  }}
-                />
-                {dreamNewDates && (
-                  <div style={{ marginTop: 8 }}>
-                    <div
-                      style={{
-                        height: 0.5,
-                        background: 'var(--borderColor-default)',
-                        marginBottom: 8
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'minmax(0, 2fr) minmax(220px, 1fr)',
+                  gap: 16,
+                  alignItems: 'start'
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                  <div
+                    style={{
+                      border: '1px solid var(--borderColor-default)',
+                      borderRadius: 8,
+                      padding: 12,
+                      background: 'var(--canvas-default)'
+                    }}
+                  >
+                    <CalendarPicker
+                      startDate={dreamDateRange.start}
+                      endDate={dreamDateRange.end}
+                      months={dreamCalendarMonths}
+                      scale={1.15}
+                      live
+                      currentRange={currentBookingRange}
+                      selectedRange={dreamNewDates ? dreamDateRange : null}
+                      onDateClick={(date, month) => {
+                        const nextStart = currentBookingRange.start;
+                        const nextEnd = Math.max(date, nextStart);
+                        setDreamDateRange({ start: nextStart, end: nextEnd, month: month.toUpperCase() });
+                        setDreamNewDates(true);
+                        setDreamSelection({
+                          type: 'dates',
+                          label: 'Selected new dates',
+                          summary: `${month} ${date}–${nextEnd}, 2024`,
+                          priceDelta: 410,
+                          total: DREAM_BASE_TOTAL + 410
+                        });
                       }}
                     />
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr auto',
-                        alignItems: 'center',
-                        gap: 8
-                      }}
-                    >
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
-                        <Text
-                          sx={{ fontSize: 0, fontWeight: 600, color: 'fg.muted' }}
-                          style={{ fontStyle: 'italic', cursor: 'default' }}
-                        >
-                          Changes
-                        </Text>
-                        <Text
-                          sx={{ fontSize: 0, fontWeight: 700 }}
+                  </div>
+                </div>
+                {showRoomOptions ? (
+                  <div
+                    style={{
+                      border: '1px solid var(--borderColor-default)',
+                      borderRadius: 8,
+                      padding: 12,
+                      background: 'var(--canvas-default)'
+                    }}
+                  >
+                    {effectiveAiSuggestionVisible && (
+                      <Box sx={{ ...cardSlimSx, mb: 2, borderStyle: 'dashed', background: 'var(--canvas-subtle)' }}>
+                        <div
                           style={{
-                            color: '#0a58ca'
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto',
+                            gap: 12,
+                            alignItems: 'center'
                           }}
                         >
-                          {dreamSelection?.summary}
-                        </Text>
-                        <Text
-                          sx={{ fontSize: 0, fontWeight: 600 }}
-                          style={{ color: '#8c959f' }}
-                        >
-                          →
-                        </Text>
-                        <Text
-                          sx={{ fontSize: 0, fontWeight: 600 }}
+                          <div>
+                            <Text as="div" sx={{ fontWeight: 600 }}>
+                              AI suggestion
+                            </Text>
+                            <Text sx={{ color: 'fg.muted', fontSize: 0 }}>
+                              {effectiveDreamAiSuggestion.hotel} · {dreamAiSuggestedRoom?.label || 'Room upgrade'}
+                            </Text>
+                          </div>
+                          <Button
+                            size="small"
+                            onClick={() => {
+                              setSelectedHotelName(effectiveDreamAiSuggestion.hotel);
+                              setSelectedRoomId(effectiveDreamAiSuggestion.roomId);
+                              setDreamSelection({
+                                type: 'hotel',
+                                label: effectiveDreamAiSuggestion.hotel,
+                                summary: '5 nights · 2 rooms · 1 traveller',
+                                priceDelta: dreamAiSuggestedHotelDelta,
+                                total: dreamAiSuggestedHotelTotal
+                              });
+                              setAiSuggestionVisible(false);
+                            }}
+                          >
+                            Apply
+                          </Button>
+                        </div>
+                      </Box>
+                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginBottom: 8 }}>
+                      <div style={{ display: 'inline-flex', border: '1px solid var(--borderColor-default)', borderRadius: 999, overflow: 'hidden' }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            startDreamPlan('room');
+                          }}
                           style={{
-                            padding: '2px 6px',
-                            borderRadius: 999,
-                            background: '#dafbe1',
-                            color: '#1a7f37'
+                            padding: '2px 10px',
+                            fontSize: '11px',
+                            border: 'none',
+                            background: showRoomOptions ? 'var(--bgColor-accent-muted)' : 'var(--canvas-default)',
+                            color: showRoomOptions ? 'var(--fgColor-accent)' : 'var(--fgColor-default)',
+                            cursor: 'pointer'
                           }}
                         >
-                          {formatDelta(dreamSelection?.priceDelta ?? 0)}
-                        </Text>
+                          Rooms
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            startDreamPlan('hotel');
+                          }}
+                          style={{
+                            padding: '2px 10px',
+                            fontSize: '11px',
+                            border: 'none',
+                            background: !showRoomOptions ? 'var(--bgColor-accent-muted)' : 'var(--canvas-default)',
+                            color: !showRoomOptions ? 'var(--fgColor-accent)' : 'var(--fgColor-default)',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Hotels
+                        </button>
                       </div>
-                      <Button
-                        size="small"
-                        variant="primary"
-                      disabled={isApplyingDates}
-                        onClick={() => {
-                        setIsApplyingDates(true);
-                        setTimeout(() => {
-                          setIsApplyingDates(false);
-                          setSuccessLabel('Dates updated');
-                          closeDreamFlow();
-                          setShowSuccess(true);
-                          setTimeout(() => setShowSuccess(false), 2500);
-                        }, 1200);
-                        }}
-                        style={{ width: 'auto' }}
-                      >
-                      {isApplyingDates && <Spinner size="small" />}
-                      {isApplyingDates ? 'Applying…' : 'Confirm new dates'}
-                      </Button>
                     </div>
+                    <Stack gap="condensed">
+                      {DREAM_ROOM_OPTIONS.map((room) => (
+                        <div
+                          key={room.id}
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto',
+                            gap: 8,
+                            alignItems: 'center',
+                            borderBottom: '1px solid var(--borderColor-default)',
+                            paddingBottom: 8,
+                            background: selectedRoomId === room.id ? 'var(--bgColor-accent-muted)' : 'transparent',
+                            borderRadius: 6,
+                            paddingLeft: 6,
+                            paddingRight: 6
+                          }}
+                        >
+                          <div>
+                            <Text as="div" sx={{ fontWeight: 600 }}>
+                              {room.label} · {DREAM_ROOM_PRICES[room.id]} per night · {formatDelta(room.delta)} total
+                            </Text>
+                          </div>
+                          <Button
+                            size="small"
+                            variant={selectedRoomId === room.id ? 'primary' : 'default'}
+                            disabled={selectedRoomId === room.id}
+                            onClick={() => {
+                              setSelectedRoomId(room.id);
+                              setDreamSelection({
+                                type: 'room',
+                                label: `Room: ${room.label}`,
+                                summary: '5 nights · 2 rooms · 1 traveller',
+                                priceDelta: room.delta,
+                                total: DREAM_BASE_TOTAL + room.delta
+                              });
+                              setDreamPayment(false);
+                            }}
+                          >
+                            {selectedRoomId === room.id ? 'Selected' : 'Select'}
+                          </Button>
+                        </div>
+                      ))}
+                    </Stack>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      border: '1px solid var(--borderColor-default)',
+                      borderRadius: 8,
+                      padding: 12,
+                      background: 'var(--canvas-default)'
+                    }}
+                  >
+                    {effectiveAiSuggestionVisible && (
+                      <Box sx={{ ...cardSlimSx, mb: 2, borderStyle: 'dashed', background: 'var(--canvas-subtle)' }}>
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto',
+                            gap: 12,
+                            alignItems: 'center'
+                          }}
+                        >
+                          <div>
+                            <Text as="div" sx={{ fontWeight: 600 }}>
+                              AI suggestion
+                            </Text>
+                            <Text sx={{ color: 'fg.muted', fontSize: 0 }}>
+                              {effectiveDreamAiSuggestion.hotel} · {dreamAiSuggestedRoom?.label || 'Room upgrade'}
+                            </Text>
+                          </div>
+                          <Button
+                            size="small"
+                            onClick={() => {
+                              setSelectedHotelName(effectiveDreamAiSuggestion.hotel);
+                              setSelectedRoomId(effectiveDreamAiSuggestion.roomId);
+                              setDreamSelection({
+                                type: 'hotel',
+                                label: effectiveDreamAiSuggestion.hotel,
+                                summary: '5 nights · 2 rooms · 1 traveller',
+                                priceDelta: dreamAiSuggestedHotelDelta,
+                                total: dreamAiSuggestedHotelTotal
+                              });
+                              setAiSuggestionVisible(false);
+                            }}
+                          >
+                            Apply
+                          </Button>
+                        </div>
+                      </Box>
+                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginBottom: 8 }}>
+                      <div style={{ display: 'inline-flex', border: '1px solid var(--borderColor-default)', borderRadius: 999, overflow: 'hidden' }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            startDreamPlan('room');
+                          }}
+                          style={{
+                            padding: '2px 10px',
+                            fontSize: '11px',
+                            border: 'none',
+                            background: showRoomOptions ? 'var(--bgColor-accent-muted)' : 'var(--canvas-default)',
+                            color: showRoomOptions ? 'var(--fgColor-accent)' : 'var(--fgColor-default)',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Rooms
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            startDreamPlan('hotel');
+                          }}
+                          style={{
+                            padding: '2px 10px',
+                            fontSize: '11px',
+                            border: 'none',
+                            background: !showRoomOptions ? 'var(--bgColor-accent-muted)' : 'var(--canvas-default)',
+                            color: !showRoomOptions ? 'var(--fgColor-accent)' : 'var(--fgColor-default)',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Hotels
+                        </button>
+                      </div>
+                    </div>
+                    <Stack gap="condensed">
+                      {dreamResultsList.map((item) => {
+                        const nextTotal = DREAM_HOTEL_TOTALS[item.name] || DREAM_BASE_TOTAL;
+                        const delta = nextTotal - DREAM_BASE_TOTAL;
+                        const selectHotel = () => {
+                          setSelectedHotelName(item.name);
+                          setDreamSelection({
+                            type: 'hotel',
+                            label: item.name,
+                            summary: '5 nights · 2 rooms · 1 traveller',
+                            priceDelta: delta,
+                            total: nextTotal
+                          });
+                        };
+                        return (
+                          <div
+                            key={item.name}
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr auto',
+                              gap: 8,
+                              alignItems: 'center',
+                              borderBottom: '1px solid var(--borderColor-default)',
+                              paddingBottom: 8,
+                              background: selectedHotelName === item.name ? 'var(--bgColor-accent-muted)' : 'transparent',
+                              borderRadius: 6,
+                              paddingLeft: 6,
+                              paddingRight: 6,
+                              cursor: 'pointer'
+                            }}
+                            onClick={selectHotel}
+                          >
+                            <div>
+                              <Text as="div" sx={{ fontWeight: 600 }}>
+                                {item.name} · {item.price} per night · {formatDelta(delta)} total
+                              </Text>
+                            </div>
+                            <Button
+                              size="small"
+                              variant={selectedHotelName === item.name ? 'primary' : 'default'}
+                              disabled={selectedHotelName === item.name}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                selectHotel();
+                                if (dreamForcePayment) {
+                                  setDreamResults(false);
+                                  setDreamDateChange(false);
+                                  setDreamPayment(true);
+                                }
+                              }}
+                            >
+                              {selectedHotelName === item.name ? 'Selected' : 'Select'}
+                            </Button>
+                          </div>
+                        );
+                      })}
+                      {dreamResultsList.length === 0 && (
+                        <Text as="div" sx={{ color: 'fg.muted' }}>
+                          No matching hotels yet. Try different dates or room preferences.
+                        </Text>
+                      )}
+                    </Stack>
                   </div>
                 )}
               </div>
+              {renderDreamConfirmBar()}
             </Box>
           )}
 
@@ -892,11 +1486,24 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                   <Button
                     variant="primary"
                     onClick={() => {
+                      if (dreamPaymentFailure) {
+                        setDreamErrorMessage('Payment failed. Please try again.');
+                        return;
+                      }
+                      if (selectedHotelName) {
+                        setConfirmedHotelName(selectedHotelName);
+                      }
+                      if (selectedRoomId) {
+                        setConfirmedRoomId(selectedRoomId);
+                      }
+                      if (dreamNewDates && dreamSelection?.summary) {
+                        setConfirmedDatesSummary(dreamSelection.summary);
+                      }
                       setDreamPayment(false);
                       setDreamConfirmed(true);
                     }}
                   >
-                    Confirm & Pay
+                    Confirm
                   </Button>
                   <Button onClick={() => setDreamPayment(false)} variant="default">
                     Back
@@ -951,7 +1558,9 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
             <div>
               <Text as="div" sx={{ color: 'fg.muted', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-                <span>🏨 Royal Hawaiian Resort · May 15–20, 2024 · 5 nights · 2 rooms · 4 travellers</span>
+                <span>
+                  🏨 {dreamItineraryHotel} · {dreamItineraryRoom} · {dreamItineraryDates} · 5 nights · 2 rooms · 1 traveller
+                </span>
                 {(showSuccess || debugShowToast) && (
                   <span
                     style={{
@@ -978,6 +1587,23 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                 size="small"
                 aria-label="Amendment history"
                 sx={{ minWidth: 28, px: 1 }}
+                onClick={() =>
+                  setShowAmendmentHistory((prev) => {
+                    const next = !prev;
+                    if (next) {
+                      setShowDreamFlow(false);
+                    }
+                    return next;
+                  })
+                }
+                style={
+                  showAmendmentHistory
+                    ? {
+                        background: 'var(--bgColor-accent-muted)',
+                        borderRadius: 6
+                      }
+                    : undefined
+                }
               >
                 <HistoryIcon size={14} />
               </Button>
@@ -993,6 +1619,121 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
               }}
             >
               {dreamFlowPanel}
+            </div>
+          )}
+          {showAmendmentHistory && !showDreamFlow && (
+            <div
+              style={{
+                marginTop: 12,
+                borderTop: '1px solid var(--borderColor-default)',
+                paddingTop: 12
+              }}
+            >
+              <Stack gap="condensed">
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    borderBottom: amendmentHistoryEntries.length > 0 ? '1px solid var(--borderColor-default)' : 'none',
+                    paddingBottom: amendmentHistoryEntries.length > 0 ? 8 : 0
+                  }}
+                >
+                  <Text
+                    as="div"
+                    sx={{ fontWeight: 600 }}
+                    style={{
+                      fontSize: '11px',
+                      lineHeight: '14px',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      flex: 1,
+                      minWidth: 0
+                    }}
+                  >
+                    Booking created · Royal Hawaiian Resort · Standard Room · May 15–20
+                  </Text>
+                  <Text
+                    as="div"
+                    sx={{ color: 'fg.muted' }}
+                    style={{ fontSize: '10px', lineHeight: '12px', whiteSpace: 'nowrap' }}
+                  >
+                    {formatTimestamp(new Date('2024-03-12T09:18:00'))}
+                  </Text>
+                  <Button size="small" variant="invisible" disabled sx={{ minWidth: 56, px: 2 }}>
+                    Undo
+                  </Button>
+                </div>
+                {amendmentHistoryEntries.map((entry) => (
+                  <div
+                    key={entry.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      borderBottom: '1px solid var(--borderColor-default)',
+                      paddingBottom: 8
+                    }}
+                  >
+                    <Text
+                      as="div"
+                      sx={{ fontWeight: 600 }}
+                      style={{
+                        fontSize: '11px',
+                        lineHeight: '14px',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        flex: 1,
+                        minWidth: 0
+                      }}
+                    >
+                      {entry.title} · {entry.detail}
+                    </Text>
+                    <Text
+                      as="div"
+                      sx={{ color: 'fg.muted' }}
+                      style={{ fontSize: '10px', lineHeight: '12px', whiteSpace: 'nowrap' }}
+                    >
+                      {entry.timestamp}
+                    </Text>
+                    {undoingEntryId === entry.id ? (
+                      <div
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          minWidth: 120,
+                          justifyContent: 'flex-end'
+                        }}
+                      >
+                        <Spinner size="small" />
+                        <Text as="span" sx={{ color: 'fg.muted' }} style={{ fontSize: '10px' }}>
+                          Checking availability…
+                        </Text>
+                      </div>
+                    ) : (
+                      <Button
+                        size="small"
+                        variant="invisible"
+                        sx={{ minWidth: 56, px: 2 }}
+                        onClick={() => {
+                          setUndoingEntryId(entry.id);
+                          setTimeout(() => {
+                            setUndoingEntryId(null);
+                            setSuccessLabel('Change reverted');
+                            setShowSuccess(true);
+                            setTimeout(() => setShowSuccess(false), 2000);
+                          }, 900);
+                        }}
+                      >
+                        Undo
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </Stack>
             </div>
           )}
         </div>
@@ -1017,16 +1758,21 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
               0% { background-position: -200% 0; }
               100% { background-position: 200% 0; }
             }
+            @keyframes aiPulse {
+              0%, 100% { transform: translateY(-50%) scale(1); opacity: 0.8; }
+              50% { transform: translateY(-50%) scale(1.15); opacity: 1; }
+            }
           `}</style>
           <Box role="region" aria-label="Amendments demo window" sx={resolvedWindowSx}>
         {!embedded && (
           <Box sx={headerSx}>
-            <Heading as="h1" sx={{ fontSize: 2, lineHeight: 1.3, m: 0 }}>
-              Streamlining amendments
+            <Heading as="h1" sx={{ fontSize: '12px', lineHeight: 1.3, m: 0 }}>
+              Streamlining Amendments
             </Heading>
             <Box sx={headerControlsSx}>
               <Text as="span">Interactive Demo</Text>
               <ToggleSwitch
+                size="small"
                 aria-label="Interactive demo toggle"
                 defaultChecked
                 onChange={(event) => {
@@ -1035,9 +1781,14 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                   }
                 }}
               />
-              <Button aria-label="Close Amendments" onClick={onClose} variant="default" size="small" sx={closeButtonSx}>
-                <XIcon size={closeIconSize} />
-              </Button>
+              <IconButton
+                aria-label="Close Amendments"
+                onClick={onClose}
+                icon={XIcon}
+                variant="default"
+                size="small"
+                sx={closeIconButtonSx}
+              />
             </Box>
           </Box>
         )}
@@ -1049,7 +1800,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                 <Text as="div" style={{ fontSize: '16px', fontWeight: 500 }}>
                   <Text as="span">Hawaii Family Vacation</Text>
                   {' · '}
-                  <Text as="span">May 15–20, 2024 · 4 travellers</Text>
+                  <Text as="span">May 15–20, 2024 · 1 traveller</Text>
                 </Text>
               </div>
               <Text as="strong" style={{ fontSize: '16px', fontWeight: 500 }}>$4,805</Text>
@@ -1110,8 +1861,9 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                 );
               })}
             </Box>
-            <ProgressBar sx={{ mt: 1 }}>
+            <ProgressBar sx={{ mt: 1 }} aria-label="Old flow progress">
               <ProgressBar.Item
+                aria-label="Old flow progress"
                 progress={(currentOldFlowStep / oldFlowSteps.length) * 100}
               />
             </ProgressBar>
@@ -1146,8 +1898,9 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                 );
               })}
             </Box>
-            <ProgressBar sx={{ mt: 1 }}>
+            <ProgressBar sx={{ mt: 1 }} aria-label="New flow progress">
               <ProgressBar.Item
+                aria-label="New flow progress"
                 progress={(currentNewFlowStep / newFlowSteps.length) * 100}
               />
             </ProgressBar>
@@ -1168,7 +1921,35 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
           {activeTab === 'documents' && <Box />}
           {activeTab === 'payments' && <Box />}
           {activeTab === 'notes' && <Box />}
-          {activeTab === 'travellers' && <Box />}
+          {activeTab === 'travellers' && !showNewFlow && !showSearchResults && !showCartPage && !showTravellersPage && !showPaymentPage && (
+            <Box sx={sectionListSx}>
+              <div style={{ ...compactCardStyle, display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: '50%',
+                      background: 'var(--canvas-subtle)',
+                      color: 'var(--fgColor-muted)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 600,
+                      fontSize: 11
+                    }}
+                    aria-hidden="true"
+                  >
+                    JH
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Text as="span" sx={{ fontWeight: 600 }}>Joel Hickey</Text>
+                    <Text as="span" sx={{ color: 'fg.muted', fontSize: 0 }}>• Adult</Text>
+                  </div>
+                </div>
+              </div>
+            </Box>
+          )}
           {activeTab === 'history' && <Box />}
 
           {showSearchResults && (
@@ -1268,7 +2049,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                   <div>
                     <Text as="div" sx={{ color: 'fg.muted' }}>
-                      {oldFlowSelectedHotel?.name || 'Selected hotel'} · 5 nights · 2 rooms
+                      {oldFlowSelectedHotel?.name || 'Selected hotel'} · 5 nights · 2 rooms · 1 traveller
                     </Text>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -1291,10 +2072,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                 </Box>
                 <Stack sx={formStackSx}>
                   {[
-                    { id: 'john-smith', label: 'John Smith (Adult)', checked: true },
-                    { id: 'jane-smith', label: 'Jane Smith (Adult)', checked: true },
-                    { id: 'emily-smith', label: 'Emily Smith (Child - 12)', checked: true },
-                    { id: 'max-smith', label: 'Max Smith (Child - 8)', checked: true }
+                    { id: 'joel-hickey', label: 'Joel Hickey (Adult)', checked: true }
                   ].map((traveller) => (
                     <label
                       key={traveller.id}
@@ -1333,8 +2111,8 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                     </FormControl>
                   </Stack>
                   <FormControl>
-                    <FormControl.Label>Cardholder Name</FormControl.Label>
-                    <TextInput placeholder="John Smith" block />
+                  <FormControl.Label>Cardholder Name</FormControl.Label>
+                  <TextInput placeholder="Joel Hickey" block />
                   </FormControl>
                 </Stack>
               </Box>
@@ -1364,10 +2142,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                     </Box>
                     <div style={travellersGridStyle}>
                       {[
-                        { id: 'john-smith-new', label: 'John Smith', checked: true },
-                        { id: 'sarah-smith-new', label: 'Sarah Smith', checked: true },
-                        { id: 'emily-smith-new', label: 'Emily Smith', checked: false },
-                        { id: 'michael-smith-new', label: 'Michael Smith', checked: false }
+                        { id: 'joel-hickey-new', label: 'Joel Hickey', checked: true }
                       ].map((traveller) => (
                         <label
                           key={traveller.id}
@@ -1504,7 +2279,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                       <Stack gap="condensed">
                         <Text as="strong">Booking Summary</Text>
                         <Text sx={{ color: 'fg.muted', fontSize: 0 }}>
-                          {(newFlowSelectedHotel?.price || '$425')} × 5 nights × 2 rooms
+                          {(newFlowSelectedHotel?.price || '$425')} × 5 nights × 2 rooms × 1 traveller
                         </Text>
                         <Text sx={{ fontWeight: 600 }}>
                           Total ${newFlowTotals.total.toLocaleString()} (incl. taxes & fees)
@@ -1529,7 +2304,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
                           </FormControl>
                           <FormControl>
                             <FormControl.Label sx={{ fontSize: 0, mb: 1 }}>Name</FormControl.Label>
-                            <TextInput placeholder="John Smith" block />
+                            <TextInput placeholder="Joel Hickey" block />
                           </FormControl>
                         </div>
                       </Stack>
@@ -1793,10 +2568,7 @@ const AmendmentsFlowDemoPrimer = ({ onBackToCaseStudy, onClose, position, zIndex
               <Dialog.Body>
                 <Box sx={columnStackSx}>
                   {[
-                    { id: 'john-smith', label: 'John Smith (Adult)', checked: true },
-                    { id: 'jane-smith', label: 'Jane Smith (Adult)', checked: true },
-                    { id: 'emily-smith', label: 'Emily Smith (Child - 12)', checked: true },
-                    { id: 'max-smith', label: 'Max Smith (Child - 8)', checked: true }
+                    { id: 'joel-hickey', label: 'Joel Hickey (Adult)', checked: true }
                   ].map((traveller) => (
                     <label
                       key={traveller.id}

@@ -20,6 +20,12 @@ export const API_CONFIG = {
     BASE_URL: 'https://distribution-xml.booking.com',
     API_KEY: import.meta.env.VITE_BOOKING_API_KEY || 'YOUR_BOOKING_API_KEY',
   },
+
+  // Google Maps / Earth (3D map view)
+  GOOGLE_MAPS: {
+    API_KEY: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY',
+    MAP_ID: import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || 'YOUR_GOOGLE_MAPS_MAP_ID',
+  },
 };
 
 // API Setup Instructions:

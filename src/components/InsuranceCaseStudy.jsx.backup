@@ -68,7 +68,7 @@ const InsuranceCaseStudy = ({ onClose }) => {
             letterSpacing: "0.8px",
             marginBottom: "12px"
           }}>
-            Case Study · Flight Centre
+            Case Study · Travel
           </div>
           <h1 style={{
             fontSize: "48px",
@@ -87,7 +87,7 @@ const InsuranceCaseStudy = ({ onClose }) => {
             fontStyle: "italic",
             marginBottom: "0"
           }}>
-            Pilot project for new booking platform · Developed entirely in-house by Flight Centre
+            Pilot project for new booking platform · Developed entirely in-house
           </p>
         </div>
 
@@ -255,7 +255,7 @@ const InsuranceCaseStudy = ({ onClose }) => {
                 <strong>Goal:</strong> Validate usability of consultant insurance experience & identify opportunities
               </div>
               <div style={{ marginBottom: "16px" }}>
-                <strong>Participants:</strong> 5 users (3 Flight Centre AU consultants + 2 Travel Associates AU advisors)
+                <strong>Participants:</strong> 5 users (3 AU travel consultants + 2 AU travel advisors)
               </div>
               <div>
                 <strong>Key Tasks Tested:</strong>
@@ -550,7 +550,7 @@ const InsuranceCaseStudy = ({ onClose }) => {
                 Delivery Approach
               </h3>
               <ul style={{ paddingLeft: "24px", marginBottom: "0" }}>
-                <li style={{ marginBottom: "12px" }}><strong>In-house development</strong> - Led Flight Centre's internal agile development team to build solution entirely in-house</li>
+                <li style={{ marginBottom: "12px" }}><strong>In-house development</strong> - Led internal agile development team to build solution entirely in-house</li>
                 <li style={{ marginBottom: "12px" }}><strong>Platform pilot</strong> - Served as pilot project for new booking platform Owners, testing new development approach</li>
                 <li style={{ marginBottom: "12px" }}><strong>API integration</strong> - Worked with EA insurance partner's API team to build seamless integration</li>
                 <li style={{ marginBottom: "12px" }}><strong>Compliance validation</strong> - Ensured all insurance offerings met regulatory requirements across markets</li>

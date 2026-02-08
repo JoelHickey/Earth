@@ -20,6 +20,9 @@ Create a `.env` file in your project root:
 # .env file
 VITE_AMADEUS_API_KEY=your_actual_api_key_here
 VITE_AMADEUS_API_SECRET=your_actual_api_secret_here
+VITE_GOOGLE_MAPS_API_KEY=your_actual_google_maps_key_here
+# Optional: required for best 3D map rendering
+VITE_GOOGLE_MAPS_MAP_ID=your_google_maps_map_id_here
 ```
 
 ### Step 3: Restart Development Server
@@ -35,6 +38,7 @@ npm run dev
 - **Error handling** with retry functionality
 - **Fallback to mock data** if API fails
 - **Windows 95 authentic styling** maintained
+- **3D travel map view** using Google Maps JS API
 
 ### 🔄 API Integration Flow:
 1. **User clicks "Search"** → API call initiated

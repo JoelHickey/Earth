@@ -215,6 +215,8 @@ const AmendmentsCaseStudy = ({
     px: 5,
     py: 3
   };
+  const headerTitleSx = { m: 0, fontWeight: 700, lineHeight: 1.2 };
+  const headerTitleStyle = { fontSize: theme.fontSizes?.[3] };
 
   const sectionHeadingSx = {
     mb: 2,
@@ -296,14 +298,9 @@ const AmendmentsCaseStudy = ({
               onPointerDown={handleHeaderMouseDown}
               style={{ cursor: "move" }}
             >
-              <Heading as="h1" sx={{ m: 0, fontWeight: 700 }}>
-                Streamlining amendments
-              </Heading>
-              <img
-                src="/Flight_Centre_company_logo_(Non-free).png"
-                alt="Flight Centre logo"
-                style={{ height: 24, width: "auto", maxWidth: 120, display: "block" }}
-              />
+              <Text as="h1" sx={headerTitleSx} style={headerTitleStyle}>
+                Streamlining Amendments
+              </Text>
             </Stack>
 
             <Stack
@@ -333,7 +330,14 @@ const AmendmentsCaseStudy = ({
                 <Text as="span" sx={{ fontSize: 0, fontWeight: 600 }}>
                   Interactive Demo
                 </Text>
-                <span style={{ pointerEvents: "none" }}>
+                <span
+                  style={{
+                    pointerEvents: "none",
+                    display: "inline-flex",
+                    transform: "scale(0.85)",
+                    transformOrigin: "center"
+                  }}
+                >
                   <ToggleSwitch
                     size="small"
                     checked={isDemoEnabled}
@@ -344,7 +348,7 @@ const AmendmentsCaseStudy = ({
                   />
                 </span>
               </div>
-              <IconButton icon={XIcon} aria-label="Close Amendments" onClick={onClose} />
+              <IconButton icon={XIcon} aria-label="Close Amendments" onClick={onClose} size="small" />
             </Stack>
           </Stack>
 

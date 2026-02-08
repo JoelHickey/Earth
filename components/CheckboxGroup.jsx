@@ -15,18 +15,15 @@ const CheckboxGroup = ({ checkboxes, columns = 3 }) => {
       display: "flex",
       alignItems: "center",
       gap: "4px",
-      fontSize: "8px",
+      fontSize: "8pt",
       fontFamily: "'MS Sans Serif', sans-serif"
     },
     checkbox: {
-      width: "12px",
-      height: "12px",
-      border: "1px inset #c0c0c0",
+      width: "13px",
+      height: "13px",
       background: "#ffffff",
       cursor: "pointer",
-      appearance: "none",
-      WebkitAppearance: "none",
-      MozAppearance: "none"
+      accentColor: "#000000"
     }
   };
 

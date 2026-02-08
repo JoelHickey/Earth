@@ -3,7 +3,9 @@ import AxeBuilder from '@axe-core/playwright';
 
 test('CV window has no accessibility violations', async ({ page }) => {
   await page.goto('/');
-  await page.getByText('Curriculum Vitae', { exact: true }).click();
+  const cvIcon = page.getByRole('button', { name: 'Curriculum Vitae' });
+  await expect(cvIcon).toBeVisible({ timeout: 30000 });
+  await cvIcon.click();
   await expect(page.getByText('Senior Product Designer')).toBeVisible();
 
   const results = await new AxeBuilder({ page })

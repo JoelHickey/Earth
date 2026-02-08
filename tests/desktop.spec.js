@@ -4,8 +4,8 @@ import AxeBuilder from '@axe-core/playwright';
 test('desktop icons are accessible buttons', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Curriculum Vitae' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Flight Centre Amendments' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Flight Centre Insurance' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Streamlining Amendments' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Travel Insurance' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Earth' })).toBeVisible();
 });
 
@@ -21,8 +21,8 @@ test('desktop icons meet target size', async ({ page }) => {
   await page.goto('/');
   const icons = [
     page.getByRole('button', { name: 'Curriculum Vitae' }),
-    page.getByRole('button', { name: 'Flight Centre Amendments' }),
-    page.getByRole('button', { name: 'Flight Centre Insurance' }),
+    page.getByRole('button', { name: 'Streamlining Amendments' }),
+    page.getByRole('button', { name: 'Travel Insurance' }),
     page.getByRole('button', { name: 'Earth' })
   ];
 

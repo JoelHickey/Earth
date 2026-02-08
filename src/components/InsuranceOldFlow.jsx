@@ -83,12 +83,6 @@ const InsuranceOldFlow = ({ onBackToCaseStudy, onClose, zIndex = 99, position })
           <Box>
             <Heading as="h1" sx={insuranceFlowTokens.headerTitleSx}>Travel insurance integration</Heading>
             <Box sx={demoFlowTokens.headerMetaRowSx}>
-              <Box
-                as="img"
-                src="/Flight_Centre_company_logo_(Non-free).png"
-                alt="Flight Centre logo"
-                sx={demoFlowTokens.logoImageSx}
-              />
               <Text sx={insuranceFlowTokens.headerMetaSx}>Booking ref {bookingData.bookingRef}</Text>
             </Box>
           </Box>

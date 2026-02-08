@@ -68,7 +68,9 @@ export const createCvTestAgent = (page, expect, { planner, logger } = {}) => {
   };
 
   const openCvWindow = async () => {
-    await page.getByText(CV_ICON_NAME, { exact: true }).click();
+    const cvIcon = page.getByRole('button', { name: CV_ICON_NAME });
+    await expect(cvIcon).toBeVisible({ timeout: 30000 });
+    await cvIcon.click();
     await expect(cvWindow).toBeVisible();
   };
 

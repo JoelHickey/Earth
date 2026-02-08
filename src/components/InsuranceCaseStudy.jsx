@@ -1,10 +1,37 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { BaseStyles, Button, Heading, Text } from '@primer/react';
+import { BaseStyles, Heading, IconButton, Text, ThemeProvider, ToggleSwitch, theme } from '@primer/react';
 import { insuranceFlowTokens } from '../styles/insuranceFlowTokens';
+import { XIcon } from '@primer/octicons-react';
 
-const Box = ({ as: Component = "div", sx, style, ...props }) => (
-  <Component {...props} style={{ ...(sx || {}), ...(style || {}) }} />
-);
+const resolveSpaceValue = (value) => {
+  if (typeof value === "number") {
+    return theme.space?.[value] ?? value;
+  }
+  return value;
+};
+
+const Box = ({ as: Component = "div", sx, style, ...props }) => {
+  const resolvedSx = { ...(sx || {}) };
+  if (resolvedSx.p !== undefined) {
+    const padding = resolveSpaceValue(resolvedSx.p);
+    resolvedSx.padding = padding;
+    delete resolvedSx.p;
+  }
+  if (resolvedSx.px !== undefined) {
+    const paddingX = resolveSpaceValue(resolvedSx.px);
+    resolvedSx.paddingLeft = paddingX;
+    resolvedSx.paddingRight = paddingX;
+    delete resolvedSx.px;
+  }
+  if (resolvedSx.py !== undefined) {
+    const paddingY = resolveSpaceValue(resolvedSx.py);
+    resolvedSx.paddingTop = paddingY;
+    resolvedSx.paddingBottom = paddingY;
+    delete resolvedSx.py;
+  }
+
+  return <Component {...props} style={{ ...resolvedSx, ...(style || {}) }} />;
+};
 
 const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex = 99 }) => {
   const [lightbox, setLightbox] = useState({ isOpen: false, gallery: null, currentIndex: 0 });
@@ -26,7 +53,7 @@ const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex
       },
       {
         title: "Participants",
-        description: "5 participants across brands (3 Flight Centre AU consultants + 2 Travel Associates AU advisors).",
+        description: "5 participants across brands (3 AU travel consultants + 2 AU travel advisors).",
         icon: "👥",
         artifact: { src: "/images/insurance/image3.png", alt: "Participant summary artifact" }
       },
@@ -170,36 +197,77 @@ const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex
   };
 
   const galleryImages = lightbox.isOpen ? getGalleryImages() : [];
+  const headerTitleSx = {
+    ...insuranceFlowTokens.headerTitleSx,
+    m: 0,
+    fontWeight: 700,
+    lineHeight: 1.2
+  };
+  const headerTitleStyle = { fontSize: theme.fontSizes?.[3] };
 
   return (
-    <BaseStyles>
-      <Box sx={windowSx}>
-        <Box sx={insuranceFlowTokens.headerSx} onMouseDown={onDragStart}>
+    <ThemeProvider theme={theme}>
+      <BaseStyles>
+        <Box sx={windowSx}>
+          <Box sx={insuranceFlowTokens.headerSx} onMouseDown={onDragStart}>
           <Box>
-            <Heading as="h1" sx={insuranceFlowTokens.headerTitleSx}>
+            <Heading as="h1" sx={headerTitleSx} style={headerTitleStyle}>
               Travel insurance integration
             </Heading>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 8, mt: 1 }}>
-              <Box
-                as="img"
-                src="/Flight_Centre_company_logo_(Non-free).png"
-                alt="Flight Centre logo"
-                sx={{ height: 24, width: "auto", display: "block" }}
-              />
-              <Text sx={insuranceFlowTokens.headerMetaSx}>Flight Centre · Pilot program</Text>
-            </Box>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 8, mt: 1 }} />
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <Text sx={insuranceFlowTokens.toggleLabelSx}>Interactive Demo</Text>
-              <input
-                type="checkbox"
-                checked={isDemoEnabled}
-                onChange={handleDemoToggle}
-                aria-label="Interactive demo toggle"
-              />
-            </label>
-            <Button onClick={onClose}>Close</Button>
+          <Box
+            sx={{ display: "flex", alignItems: "center", gap: 12 }}
+            onMouseDown={(event) => event.stopPropagation()}
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div
+              role="switch"
+              aria-checked={isDemoEnabled}
+              aria-label="Interactive demo toggle"
+              tabIndex={0}
+              onClick={(event) => {
+                event.stopPropagation();
+                handleDemoToggle({ currentTarget: { checked: !isDemoEnabled } });
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  handleDemoToggle({ currentTarget: { checked: !isDemoEnabled } });
+                }
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                cursor: "pointer",
+                padding: "2px 4px",
+                borderRadius: "6px"
+              }}
+            >
+              <Text as="span" sx={{ fontSize: 0, fontWeight: 600 }}>
+                Interactive Demo
+              </Text>
+              <span
+                style={{
+                  pointerEvents: "none",
+                  display: "inline-flex",
+                  transform: "scale(0.85)",
+                  transformOrigin: "center"
+                }}
+              >
+                <ToggleSwitch
+                  size="small"
+                  checked={isDemoEnabled}
+                  buttonLabelOn=""
+                  buttonLabelOff=""
+                  tabIndex={-1}
+                  aria-hidden="true"
+                />
+              </span>
+            </div>
+            <IconButton icon={XIcon} aria-label="Close Insurance" onClick={onClose} size="small" />
           </Box>
         </Box>
 
@@ -232,7 +300,7 @@ const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex
               <Text sx={{ ...insuranceFlowTokens.bodyTextSx, fontStyle: "italic", display: "block", marginBottom: 6 }}>
                 "The fact that I don't have to do 27 clicks to load this into the quote is a win. This would make a lot of people in retail very happy!"
               </Text>
-              <Text sx={insuranceFlowTokens.secondaryTextSx}>— Flight Centre consultant, usability testing</Text>
+              <Text sx={insuranceFlowTokens.secondaryTextSx}>— Travel consultant, usability testing</Text>
             </Box>
           </Box>
 
@@ -365,7 +433,7 @@ const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex
                 <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Key tasks</strong> - Add insurance quote to HELiO booking, convert quote to policy</Text>
               </Box>
               <Box as="li">
-                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Participants</strong> - 3 Flight Centre AU consultants + 2 Travel Associates AU advisors</Text>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>Participants</strong> - 3 AU travel consultants + 2 AU travel advisors</Text>
               </Box>
             </Box>
             <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginTop: 12 }}>
@@ -390,7 +458,7 @@ const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex
             <Heading as="h2" sx={insuranceFlowTokens.sectionTitleSx}>Development</Heading>
             <Box as="ul" sx={insuranceFlowTokens.listSx}>
               <Box as="li" sx={insuranceFlowTokens.listItemSx}>
-                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>In-house delivery</strong> - Led Flight Centre's internal agile team to build the integration</Text>
+                <Text sx={insuranceFlowTokens.bodyTextSx}><strong>In-house delivery</strong> - Led the internal agile team to build the integration</Text>
               </Box>
               <Box as="li" sx={insuranceFlowTokens.listItemSx}>
                 <Text sx={insuranceFlowTokens.bodyTextSx}><strong>API integration</strong> - Worked with EA's API team to enable real-time quoting and conversion</Text>
@@ -425,7 +493,7 @@ const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex
             <Box sx={{ ...insuranceFlowTokens.cardSx, marginBottom: 12 }}>
               <Heading as="h4" sx={{ fontSize: 14, margin: "0 0 8px 0" }}>Delivery Approach</Heading>
               <Box as="ul" sx={insuranceFlowTokens.listSx}>
-                <Box as="li" sx={insuranceFlowTokens.listItemSx}><Text sx={insuranceFlowTokens.bodyTextSx}><strong>In-house development</strong> - Led Flight Centre's internal agile team</Text></Box>
+                <Box as="li" sx={insuranceFlowTokens.listItemSx}><Text sx={insuranceFlowTokens.bodyTextSx}><strong>In-house development</strong> - Led the internal agile team</Text></Box>
                 <Box as="li" sx={insuranceFlowTokens.listItemSx}><Text sx={insuranceFlowTokens.bodyTextSx}><strong>Platform pilot</strong> - Used as a pilot project for the new booking platform</Text></Box>
                 <Box as="li" sx={insuranceFlowTokens.listItemSx}><Text sx={insuranceFlowTokens.bodyTextSx}><strong>API integration</strong> - Partnered with EA insurance API team</Text></Box>
                 <Box as="li" sx={insuranceFlowTokens.listItemSx}><Text sx={insuranceFlowTokens.bodyTextSx}><strong>Compliance validation</strong> - Ensured regulatory requirements across markets</Text></Box>
@@ -620,7 +688,8 @@ const InsuranceCaseStudy = ({ onClose, onViewDemo, position, onDragStart, zIndex
           </Box>
         </Box>
       ) : null}
-    </BaseStyles>
+      </BaseStyles>
+    </ThemeProvider>
   );
 };
 
