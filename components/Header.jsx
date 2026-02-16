@@ -7,7 +7,8 @@ const Header = ({
   onDragStart,
   title = 'Earth',
   iconSrc = '/Earth.ico',
-  iconAlt = 'Earth'
+  iconAlt = 'Earth',
+  embed = false
 }) => {
   const styles = {
     header: {
@@ -76,26 +77,28 @@ const Header = ({
         <img src={iconSrc} alt={iconAlt} style={{ width: "14px", height: "14px" }} />
         <span>{title}</span>
       </div>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <button
-          style={styles.windowButton}
-          onClick={onMinimize}
-          onMouseDown={handleWindowButtonMouseDown}
-          onMouseUp={handleWindowButtonMouseUp}
-          title="Minimize"
-        >
-          −
-        </button>
-        <button
-          style={styles.windowButton}
-          onClick={onClose}
-          onMouseDown={handleWindowButtonMouseDown}
-          onMouseUp={handleWindowButtonMouseUp}
-          title="Close"
-        >
-          ✕
-        </button>
-      </div>
+      {!embed && (
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <button
+            style={styles.windowButton}
+            onClick={onMinimize}
+            onMouseDown={handleWindowButtonMouseDown}
+            onMouseUp={handleWindowButtonMouseUp}
+            title="Minimize"
+          >
+            −
+          </button>
+          <button
+            style={styles.windowButton}
+            onClick={onClose}
+            onMouseDown={handleWindowButtonMouseDown}
+            onMouseUp={handleWindowButtonMouseUp}
+            title="Close"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </div>
   );
 };

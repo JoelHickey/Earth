@@ -1,18 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Box,
   Button as MuiButton,
-  IconButton,
   Link as MuiLink,
   ToggleButton,
   ToggleButtonGroup,
   Typography
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import SportsBasketballIcon from '@mui/icons-material/SportsBasketball';
+import {
+  BaseStyles,
+  Heading,
+  IconButton,
+  Label,
+  LabelGroup,
+  Link,
+  Text,
+  ThemeProvider
+} from '@primer/react';
+import { DeviceMobileIcon, LinkIcon, MailIcon, XIcon } from '@primer/octicons-react';
 import Header from './components/Header';
 import Toolbar from './components/Toolbar';
 import Slider from './components/Slider';
@@ -26,6 +32,7 @@ import { useTravelSearch } from './src/hooks/useTravelSearch';
 import { SearchProgress, ErrorMessage, NoResultsMessage, HotelSkeleton } from './src/components/LoadingComponents';
 import TravelPlannerMUI from './src/components/TravelPlannerMUI';
 import AmendmentsCaseStudy from './src/components/AmendmentsCaseStudy';
+import MagentoShippingCaseStudy from './src/components/MagentoShippingCaseStudy';
 import InsuranceCaseStudy from './src/components/InsuranceCaseStudy';
 import AmendmentsFlowDemo from './src/components/AmendmentsFlowDemo';
 import InsuranceOldFlow from './src/components/InsuranceOldFlow';
@@ -33,9 +40,10 @@ import PipeBendingPlanner from './src/components/PipeBendingPlanner';
 
 function App() {
   console.log("App is rendering!");
-  
   // Add state for Toolbar props
   const [activeView, setActiveView] = useState('inputs');
+  const [isFlipView, setIsFlipView] = useState(false);
+  const [isShellFlip, setIsShellFlip] = useState(false);
   const [outputValue] = useState(5);
   const [bloodSugar] = useState(100);
   const [cortisolLevel] = useState(3);
@@ -108,7 +116,6 @@ function App() {
   const [cvWindows, setCvWindows] = useState([]);
   const cvWindowRef = useRef(null);
   const cvCloseButtonRef = useRef(null);
-  const [isCvScrolled, setIsCvScrolled] = useState(false);
   const [showCvHeatmap, setShowCvHeatmap] = useState(false);
   const [showCvHeatmapBaseline, setShowCvHeatmapBaseline] = useState(false);
   const [cvHeatmapHeight, setCvHeatmapHeight] = useState(0);
@@ -123,12 +130,15 @@ function App() {
   }));
   // Third app window state (Streamlining Amendments)
   const [travelWindows, setTravelWindows] = useState([]);
+
+  // Fourth app window state (Magento Shipping)
+  const [magentoWindows, setMagentoWindows] = useState([]);
   
-  // Fourth app window state (Insurance)
+  // Fifth app window state (Insurance)
   const [isInsuranceAppOpen, setIsInsuranceAppOpen] = useState(false);
   const [isInsuranceDemoOpen, setIsInsuranceDemoOpen] = useState(false);
   
-  // Fifth app window state (Pipe)
+  // Sixth app window state (Pipe)
   const [isPipePlannerOpen, setIsPipePlannerOpen] = useState(false);
   const [pipePlannerPosition, setPipePlannerPosition] = useState(() => {
     if (typeof window === 'undefined') {
@@ -179,9 +189,6 @@ function App() {
     setSliderValues(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleCvScroll = (event) => {
-    setIsCvScrolled(event.currentTarget.scrollTop > 16);
-  };
 
 
 
@@ -222,6 +229,7 @@ function App() {
     if (isWindowOpen && !isWindowMinimized) count += 1;
     count += cvWindows.filter((window) => !window.minimized).length;
     count += travelWindows.filter((window) => !window.minimized).length;
+    count += magentoWindows.filter((window) => !window.minimized).length;
     if (isInsuranceAppOpen) count += 1;
     if (isPipePlannerOpen) count += 1;
     return count;
@@ -249,6 +257,12 @@ function App() {
     }
     if (type === 'travel') {
       setTravelWindows(prev => prev.map(window => (
+        window.id === id ? { ...window, zIndex: nextZIndex } : window
+      )));
+      return;
+    }
+    if (type === 'magento') {
+      setMagentoWindows(prev => prev.map(window => (
         window.id === id ? { ...window, zIndex: nextZIndex } : window
       )));
     }
@@ -326,6 +340,7 @@ function App() {
       cvCloseButtonRef.current?.focus();
     }
   }, [cvWindows.length]);
+
 
   const cvHeatmapSuffix = showCvHeatmapBaseline ? '-baseline' : '';
   const cvHeatmapHeaderSrc = `/heatmaps/cv-heatmap-header-overlay${cvHeatmapSuffix}.png`;
@@ -436,7 +451,27 @@ function App() {
   };
 
   const openMagentoShipping = () => {
-    console.log('Magento Shipping case study coming soon');
+    const id = createWindowId();
+    const width = 1000;
+    const height = 720;
+    const baseX = Math.max(0, (window.innerWidth - width) / 2);
+    const baseY = Math.max(0, (window.innerHeight - height) / 2);
+    const offset = getCascadeIndex() * cascadeOffset;
+    const position = {
+      x: Math.max(0, baseX + offset),
+      y: Math.max(0, baseY + offset)
+    };
+    const zIndex = nextWindowZIndexRef.current++;
+    setMagentoWindows(prev => ([
+      ...prev,
+      { id, position, minimized: false, zIndex, view: 'caseStudy' }
+    ]));
+    console.log('Magento shipping app opened');
+  };
+
+  const closeMagentoShipping = (id) => {
+    setMagentoWindows(prev => prev.filter(window => window.id !== id));
+    console.log('Magento shipping app closed');
   };
 
   const closeInsuranceApp = () => {
@@ -605,6 +640,10 @@ function App() {
         setTravelWindows(prev => prev.map(window => (
           window.id === draggingWindow.id ? { ...window, position: nextPosition } : window
         )));
+    } else if (draggingWindow.type === 'magento') {
+      setMagentoWindows(prev => prev.map(window => (
+        window.id === draggingWindow.id ? { ...window, position: nextPosition } : window
+      )));
       } else if (draggingWindow.type === 'insurance') {
         setInsuranceWindowPosition(nextPosition);
       } else if (draggingWindow.type === 'pipe') {
@@ -668,8 +707,410 @@ function App() {
     </div>
   );
 
+  const renderWiringDiagram = () => {
+    const wiringNodes = [
+      { id: 'inputs', label: 'Inputs', x: 16, y: 30, color: '#9fd3ff', outputs: 3 },
+      { id: 'emotions', label: 'Emotions', x: 16, y: 70, color: '#ffb3c7', outputs: 3 },
+      { id: 'environment', label: 'Environment', x: 40, y: 50, color: '#b9f6ca', outputs: 3 },
+      { id: 'timeline', label: 'Timeline', x: 64, y: 30, color: '#ffe0a3', outputs: 3 },
+      { id: 'output', label: 'Output Bus', x: 82, y: 62, color: '#d6d0ff', inputs: 4, outputs: 1 },
+      { id: 'status', label: 'Status Bar', x: 82, y: 84, color: '#c8c8c8', inputs: 1 }
+    ];
+
+    const wiringCables = [
+      { from: 'inputs', fromPort: 0, to: 'output', toPort: 0, color: '#7ad3ff' },
+      { from: 'emotions', fromPort: 1, to: 'output', toPort: 1, color: '#ff7aa7' },
+      { from: 'environment', fromPort: 2, to: 'output', toPort: 2, color: '#65d69e' },
+      { from: 'timeline', fromPort: 0, to: 'output', toPort: 3, color: '#f4c26b' },
+      { from: 'output', fromPort: 0, to: 'status', toPort: 0, color: '#9fa0ff' }
+    ];
+
+    const wiringStyles = {
+      container: {
+        padding: "8px",
+        width: "100%",
+        height: "300px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "6px"
+      },
+      header: {
+        fontSize: "9px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        color: "#ffffff",
+        letterSpacing: "0.4px",
+        textTransform: "uppercase"
+      },
+      canvas: {
+        position: "relative",
+        flex: 1,
+        background: "linear-gradient(180deg, #2f2f2f 0%, #1f1f1f 100%)",
+        border: "2px inset #808080",
+        borderRadius: "6px",
+        overflow: "hidden"
+      },
+      node: (color) => ({
+        position: "absolute",
+        width: "128px",
+        height: "44px",
+        background: "#111111",
+        border: `1px solid ${color}`,
+        boxShadow: `0 0 0 1px #000000 inset, 0 0 10px ${color}40`,
+        borderRadius: "4px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        padding: "6px 8px",
+        color: "#eaeaea",
+        fontSize: "9px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        textTransform: "uppercase",
+        letterSpacing: "0.3px",
+        transform: "translate(-50%, -50%)"
+      }),
+      nodeLabel: {
+        fontSize: "9px",
+        marginBottom: "4px"
+      },
+      portDot: (color) => ({
+        position: "absolute",
+        width: "6px",
+        height: "6px",
+        borderRadius: "50%",
+        background: color,
+        border: "1px solid #050505",
+        boxShadow: `0 0 4px ${color}`,
+        transform: "translate(-50%, -50%)"
+      }),
+      portLayer: {
+        position: "absolute",
+        inset: 0,
+        pointerEvents: "none"
+      }
+    };
+
+    const getNode = (id) => wiringNodes.find((node) => node.id === id);
+    const spreadOffsets = (count, spacing) => {
+      if (count <= 1) return [0];
+      const mid = (count - 1) / 2;
+      return Array.from({ length: count }, (_, i) => (i - mid) * spacing);
+    };
+    const buildNodePorts = (node) => {
+      const ports = { inputs: [], outputs: [] };
+      const spacing = 3;
+      if (node.inputs) {
+        spreadOffsets(node.inputs, spacing).forEach((offset, index) => {
+          ports.inputs.push({
+            id: `${node.id}-in-${index}`,
+            x: node.x - 7,
+            y: node.y + offset
+          });
+        });
+      }
+      if (node.outputs) {
+        spreadOffsets(node.outputs, spacing).forEach((offset, index) => {
+          ports.outputs.push({
+            id: `${node.id}-out-${index}`,
+            x: node.x + 7,
+            y: node.y + offset
+          });
+        });
+      }
+      return ports;
+    };
+    const nodePorts = Object.fromEntries(wiringNodes.map((node) => [node.id, buildNodePorts(node)]));
+    const buildCablePath = (fromPort, toPort) => {
+      const x1 = fromPort.x;
+      const y1 = fromPort.y;
+      const x2 = toPort.x;
+      const y2 = toPort.y;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const distance = Math.hypot(dx, dy);
+      const sag = Math.min(16, Math.max(6, distance * 0.16));
+      const midX = (x1 + x2) / 2;
+      const midY = (y1 + y2) / 2 + sag;
+      const c1x = (x1 + midX) / 2;
+      const c1y = (y1 + midY) / 2 + sag * 0.12;
+      const c2x = (x2 + midX) / 2;
+      const c2y = (y2 + midY) / 2 + sag * 0.12;
+      return `M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}`;
+    };
+
+    return (
+      <div style={wiringStyles.container}>
+        <div style={wiringStyles.header}>Back of Rack</div>
+        <div style={wiringStyles.canvas}>
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 100 100"
+            style={{ position: "absolute", inset: 0 }}
+          >
+            {wiringCables.map((cable) => {
+              const fromNode = getNode(cable.from);
+              const toNode = getNode(cable.to);
+              if (!fromNode || !toNode) return null;
+              const fromPort = nodePorts[cable.from]?.outputs?.[cable.fromPort];
+              const toPort = nodePorts[cable.to]?.inputs?.[cable.toPort];
+              if (!fromPort || !toPort) return null;
+              const path = buildCablePath(fromPort, toPort);
+              return (
+                <g key={`${cable.from}-${cable.to}`}>
+                  <path
+                    d={path}
+                    fill="none"
+                    stroke={cable.color}
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    opacity="0.9"
+                  />
+                </g>
+              );
+            })}
+          </svg>
+          <div style={wiringStyles.portLayer}>
+            {wiringNodes.flatMap((node) => [
+              ...nodePorts[node.id].inputs.map((port) => ({
+                ...port,
+                color: node.color
+              })),
+              ...nodePorts[node.id].outputs.map((port) => ({
+                ...port,
+                color: node.color
+              }))
+            ]).map((port) => (
+              <span
+                key={port.id}
+                style={{
+                  ...wiringStyles.portDot(port.color),
+                  left: `${port.x}%`,
+                  top: `${port.y}%`
+                }}
+              />
+            ))}
+          </div>
+          {wiringNodes.map((node) => (
+            <div
+              key={node.id}
+              style={{
+                ...wiringStyles.node(node.color),
+                left: `${node.x}%`,
+                top: `${node.y}%`
+              }}
+            >
+              <div style={wiringStyles.nodeLabel}>{node.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderShellWiringDiagram = () => {
+    const shellNodes = [
+      { id: 'desktop', label: 'Desktop Surface', x: 14, y: 18, color: '#86e3ff', outputs: 2 },
+      { id: 'icons', label: 'Desktop Icons', x: 26, y: 42, color: '#a7ffac', inputs: 1 },
+      { id: 'windows', label: 'App Windows', x: 50, y: 26, color: '#ffb3c7', inputs: 1, outputs: 2 },
+      { id: 'taskbar', label: 'Taskbar', x: 70, y: 76, color: '#ffe29a', inputs: 1 },
+      { id: 'processes', label: 'Process Graph', x: 84, y: 42, color: '#b9b2ff', inputs: 2 },
+      { id: 'services', label: 'System Services', x: 60, y: 58, color: '#c8c8c8', outputs: 1 }
+    ];
+
+    const shellCables = [
+      { from: 'desktop', fromPort: 0, to: 'icons', toPort: 0, color: '#64d2ff' },
+      { from: 'desktop', fromPort: 1, to: 'windows', toPort: 0, color: '#ff83ad' },
+      { from: 'windows', fromPort: 0, to: 'taskbar', toPort: 0, color: '#f7c04a' },
+      { from: 'windows', fromPort: 1, to: 'processes', toPort: 0, color: '#9a8bff' },
+      { from: 'services', fromPort: 0, to: 'processes', toPort: 1, color: '#c8c8c8' }
+    ];
+
+    const shellStyles = {
+      panel: {
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        background: "rgba(12, 12, 12, 0.92)",
+        display: "flex",
+        flexDirection: "column",
+        padding: "24px"
+      },
+      header: {
+        fontSize: "10px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        color: "#f2f2f2",
+        letterSpacing: "0.4px",
+        textTransform: "uppercase",
+        marginBottom: "10px"
+      },
+      canvas: {
+        flex: 1,
+        position: "relative",
+        border: "2px inset #808080",
+        borderRadius: "8px",
+        background: "radial-gradient(circle at 20% 20%, #2d2d2d, #121212)"
+      },
+      node: (color) => ({
+        position: "absolute",
+        width: "180px",
+        height: "60px",
+        background: "#0b0b0b",
+        border: `1px solid ${color}`,
+        borderRadius: "6px",
+        boxShadow: `0 0 0 1px #000000 inset, 0 0 14px ${color}40`,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        padding: "10px 12px",
+        color: "#e6e6e6",
+        fontSize: "10px",
+        fontFamily: "'MS Sans Serif', sans-serif",
+        textTransform: "uppercase",
+        letterSpacing: "0.4px",
+        transform: "translate(-50%, -50%)"
+      }),
+      portDot: (color) => ({
+        position: "absolute",
+        width: "7px",
+        height: "7px",
+        borderRadius: "50%",
+        background: color,
+        border: "1px solid #040404",
+        boxShadow: `0 0 6px ${color}`,
+        transform: "translate(-50%, -50%)"
+      }),
+      portLayer: {
+        position: "absolute",
+        inset: 0,
+        pointerEvents: "none"
+      }
+    };
+
+    const getNode = (id) => shellNodes.find((node) => node.id === id);
+    const spreadOffsets = (count, spacing) => {
+      if (count <= 1) return [0];
+      const mid = (count - 1) / 2;
+      return Array.from({ length: count }, (_, i) => (i - mid) * spacing);
+    };
+    const buildNodePorts = (node) => {
+      const ports = { inputs: [], outputs: [] };
+      const spacing = 3.2;
+      if (node.inputs) {
+        spreadOffsets(node.inputs, spacing).forEach((offset, index) => {
+          ports.inputs.push({
+            id: `${node.id}-in-${index}`,
+            x: node.x - 8,
+            y: node.y + offset
+          });
+        });
+      }
+      if (node.outputs) {
+        spreadOffsets(node.outputs, spacing).forEach((offset, index) => {
+          ports.outputs.push({
+            id: `${node.id}-out-${index}`,
+            x: node.x + 8,
+            y: node.y + offset
+          });
+        });
+      }
+      return ports;
+    };
+    const nodePorts = Object.fromEntries(shellNodes.map((node) => [node.id, buildNodePorts(node)]));
+    const buildCablePath = (fromPort, toPort) => {
+      const x1 = fromPort.x;
+      const y1 = fromPort.y;
+      const x2 = toPort.x;
+      const y2 = toPort.y;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const distance = Math.hypot(dx, dy);
+      const sag = Math.min(18, Math.max(8, distance * 0.18));
+      const midX = (x1 + x2) / 2;
+      const midY = (y1 + y2) / 2 + sag;
+      const c1x = (x1 + midX) / 2;
+      const c1y = (y1 + midY) / 2 + sag * 0.12;
+      const c2x = (x2 + midX) / 2;
+      const c2y = (y2 + midY) / 2 + sag * 0.12;
+      return `M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}`;
+    };
+
+    return (
+      <div style={shellStyles.panel} aria-label="Shell wiring diagram">
+        <div style={shellStyles.header}>Shell Wiring View</div>
+        <div style={shellStyles.canvas}>
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 100 100"
+            style={{ position: "absolute", inset: 0 }}
+          >
+            {shellCables.map((cable) => {
+              const fromNode = getNode(cable.from);
+              const toNode = getNode(cable.to);
+              if (!fromNode || !toNode) return null;
+              const fromPort = nodePorts[cable.from]?.outputs?.[cable.fromPort];
+              const toPort = nodePorts[cable.to]?.inputs?.[cable.toPort];
+              if (!fromPort || !toPort) return null;
+              const path = buildCablePath(fromPort, toPort);
+              return (
+                <g key={`${cable.from}-${cable.to}`}>
+                  <path
+                    d={path}
+                    fill="none"
+                    stroke={cable.color}
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    opacity="0.9"
+                  />
+                </g>
+              );
+            })}
+          </svg>
+          <div style={shellStyles.portLayer}>
+            {shellNodes.flatMap((node) => [
+              ...nodePorts[node.id].inputs.map((port) => ({
+                ...port,
+                color: node.color
+              })),
+              ...nodePorts[node.id].outputs.map((port) => ({
+                ...port,
+                color: node.color
+              }))
+            ]).map((port) => (
+              <span
+                key={port.id}
+                style={{
+                  ...shellStyles.portDot(port.color),
+                  left: `${port.x}%`,
+                  top: `${port.y}%`
+                }}
+              />
+            ))}
+          </div>
+          {shellNodes.map((node) => (
+            <div
+              key={node.id}
+              style={{
+                ...shellStyles.node(node.color),
+                left: `${node.x}%`,
+                top: `${node.y}%`
+              }}
+            >
+              <div>{node.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   // Render view content based on active view
   const renderViewContent = () => {
+    if (isFlipView) {
+      return renderWiringDiagram();
+    }
     switch (activeView) {
       case 'inputs':
         return (
@@ -3756,6 +4197,42 @@ function App() {
     }
   };
 
+  const isEmbed = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('embed') === '1';
+
+  if (isEmbed) {
+    return (
+      <div className="win95-scope win95-ui" style={{ minHeight: '100%', width: '100%', background: '#d4d0c8' }}>
+        <div style={styles.mainWindow}>
+          <Header embed onClose={() => {}} onMinimize={() => {}} onDragStart={() => {}} />
+          <Toolbar
+            activeView={activeView}
+            setActiveView={setActiveView}
+            outputValue={outputValue}
+            bloodSugar={bloodSugar}
+            getBloodSugarStatus={getBloodSugarStatus}
+            saveSliderPositions={saveSliderPositions}
+            recallSliderPositions={recallSliderPositions}
+            hasSavedPositions={hasSavedPositions()}
+            undoSliderChange={undoSliderChange}
+            hasUndoAvailable={previousSliderValues !== null}
+            cortisolLevel={cortisolLevel}
+            isFlipView={isFlipView}
+            onToggleFlip={() => setIsFlipView((prev) => !prev)}
+          />
+          <div style={styles.mainContent}>
+            <div style={styles.leftContent}>
+              {renderViewContent()}
+            </div>
+          </div>
+          <StatusBar
+            caffeineLevel={sliderValues.caffeineLevel}
+            sliderValues={sliderValues}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       role="main"
@@ -3769,8 +4246,30 @@ function App() {
         position: "relative"
       }}
     >
-      <div className="win95-scope">
-        {/* Semi-transparent overlay for better text contrast */}
+      <div className="win95-scope win95-ui">
+        <button
+          type="button"
+          onClick={() => setIsShellFlip((prev) => !prev)}
+          style={{
+            position: "fixed",
+            top: "16px",
+            right: "16px",
+            zIndex: 10000,
+            background: "#d4d0c8",
+            borderTop: "2px solid #ffffff",
+            borderLeft: "2px solid #ffffff",
+            borderBottom: "2px solid #808080",
+            borderRight: "2px solid #808080",
+            fontSize: "8pt",
+            fontFamily: "'MS Sans Serif', sans-serif",
+            padding: "4px 10px",
+            cursor: "pointer"
+          }}
+        >
+          {isShellFlip ? "Front Shell" : "Flip Shell"}
+        </button>
+        {isShellFlip && renderShellWiringDiagram()}
+      {/* Semi-transparent overlay for better text contrast */}
         <div style={{
           position: "absolute",
           top: 0,
@@ -4125,9 +4624,11 @@ function App() {
           saveSliderPositions={saveSliderPositions}
           recallSliderPositions={recallSliderPositions}
           hasSavedPositions={hasSavedPositions()}
-                  undoSliderChange={undoSliderChange}
-                  hasUndoAvailable={previousSliderValues !== null}
+          undoSliderChange={undoSliderChange}
+          hasUndoAvailable={previousSliderValues !== null}
           cortisolLevel={cortisolLevel}
+          isFlipView={isFlipView}
+          onToggleFlip={() => setIsFlipView((prev) => !prev)}
         />
         <div style={styles.mainContent}>
           <div style={styles.leftContent}>
@@ -4145,625 +4646,298 @@ function App() {
       
 
       {/* Second Application Window - Clean Document */}
-      {cvWindows.filter((window) => !window.minimized).map((cvWindow) => (
-        <Box
-          key={cvWindow.id}
-          aria-label="Curriculum Vitae window"
-          ref={cvWindowRef}
-          onKeyDown={handleCvKeyDown}
-          sx={(theme) => ({
-            position: "fixed",
-            top: cvWindow.position.y,
-            left: cvWindow.position.x,
-            zIndex: cvWindow.zIndex,
-            bgcolor: "#d4d0c8",
-            width: { xs: "95vw", md: theme.spacing(125) },
-            maxWidth: "95vw",
-            height: { xs: "90vh", md: theme.spacing(87.5) },
-            maxHeight: "90vh",
-            boxShadow: "none",
-            borderRadius: 0,
-            borderTop: "2px solid #ffffff",
-            borderLeft: "2px solid #ffffff",
-            borderBottom: "2px solid #808080",
-            borderRight: "2px solid #808080",
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column"
-          })}
-          onMouseDown={() => bringWindowToFront('cv', cvWindow.id)}
-        >
-          <Header
-            title="Curriculum Vitae"
-            iconSrc="/Notepad.ico"
-            iconAlt="Document"
-            onClose={() => closeSecondApp(cvWindow.id)}
-            onMinimize={() => minimizeSecondApp(cvWindow.id)}
-            onDragStart={(e) => startWindowDrag('cv', cvWindow.id, e)}
-          />
-        <Box
-            aria-label="Curriculum Vitae header"
-            sx={{
-              minHeight: 0,
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "space-between",
-              px: 3,
-              py: 2,
-              borderBottom: isCvScrolled ? "1px solid" : "none",
-              borderColor: isCvScrolled ? "divider" : "transparent",
-              bgcolor: "transparent",
-              cursor: "move",
-              position: "relative"
-            }}
-          >
-            {showCvHeatmap && (
-              <Box
-                component="img"
-                src={cvHeatmapHeaderSrc}
-                alt="CV header attention heatmap overlay"
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  pointerEvents: "none",
-                  opacity: 0.6,
-                  zIndex: 0
+      {createPortal(
+        cvWindows.filter((window) => !window.minimized).map((cvWindow) => (
+          <ThemeProvider key={cvWindow.id} colorMode="light">
+            <BaseStyles>
+              <div
+                aria-label="Curriculum Vitae window"
+                ref={cvWindowRef}
+                onKeyDown={handleCvKeyDown}
+                onClick={() => bringWindowToFront('cv', cvWindow.id)}
+                className="primer-scope cv-window"
+                style={{
+                  position: "fixed",
+                  top: cvWindow.position.y,
+                  left: cvWindow.position.x,
+                  zIndex: cvWindow.zIndex
                 }}
-              />
-            )}
-            <Box
-              sx={{
-                position: "relative",
-                zIndex: 1,
-            display: "flex",
-                alignItems: "flex-start",
-                justifyContent: "space-between",
-                width: "100%"
-              }}
-            >
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
-                <Box sx={{ display: "flex", alignItems: "baseline", gap: 1.5 }}>
-                <Typography
-                  variant="h4"
-                  component="h1"
-                  sx={{
-                    m: 0,
-                    fontWeight: 700,
-                    letterSpacing: "0.02em",
-                    color: "text.primary",
-                    fontSize: { xs: "2rem", md: "2.5rem" }
-                  }}
+              >
+                <div
+                  aria-label="Curriculum Vitae header"
+                  onMouseDown={(e) => startWindowDrag('cv', cvWindow.id, e)}
+                  className="cv-window-header"
                 >
-                    Joel Hickey
-                  </Typography>
-                <Typography
-                  variant="h6"
-                  component="p"
-                  sx={{ fontWeight: 400, m: 0, color: "text.primary", letterSpacing: "0.01em" }}
+                  {showCvHeatmap && (
+                    <img
+                      src={cvHeatmapHeaderSrc}
+                      alt="CV header attention heatmap overlay"
+                      className="cv-heatmap"
+                    />
+                  )}
+                  <div className="cv-window-header-inner">
+                    <div className="cv-window-title">
+                      <div className="cv-window-title-row">
+                        <Heading as="h1" className="cv-heading">
+                          Joel Hickey
+                        </Heading>
+                        <Text as="p" className="cv-role">
+                          Senior Product Designer
+                        </Text>
+                      </div>
+                    </div>
+                    <div className="cv-close">
+                      <IconButton
+                        icon={XIcon}
+                        aria-label="Close Curriculum Vitae"
+                        size="small"
+                        onClick={() => closeSecondApp(cvWindow.id)}
+                        ref={cvCloseButtonRef}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="cv-divider" />
+                <hr className="cv-divider" />
+                <div
+                  tabIndex={0}
+                  aria-label="Curriculum Vitae content"
+                  ref={cvContentRef}
+                  className="cv-window-content"
                 >
-                    Senior Product Designer
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Box>
-          
-          {/* Scrollable content area */}
-          <Box
-            tabIndex={0}
-            aria-label="Curriculum Vitae content"
-            onScroll={handleCvScroll}
-            ref={cvContentRef}
-            sx={(theme) => ({
-              ...theme.typography.body1,
-            flex: 1,
-            overflow: "auto",
-              position: "relative",
-              px: 4,
-              pt: 0,
-              pb: 4,
-              color: theme.palette.text.primary,
-              fontFamily: theme.typography.fontFamily,
-            WebkitFontSmoothing: "antialiased"
-            })}
-          >
-            {showCvHeatmap && (
-              <Box
-                component="img"
-                src={cvHeatmapContentSrc}
-                alt="CV attention heatmap overlay"
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                width: "100%",
-                  height: cvHeatmapHeight ? `${cvHeatmapHeight}px` : "100%",
-                  objectFit: "cover",
-                  pointerEvents: "none",
-                  opacity: 0.6,
-                  zIndex: 1
-                }}
-              />
-            )}
-                {/* Portfolio & Contact */}
-                <Box component="section" aria-label="Portfolio & Contact" sx={{ mb: 3 }}>
-                  <Box
-                    component="ul"
-                    sx={{
-                      m: 0,
-                      p: 0,
-            display: "flex",
-                      flexWrap: "wrap",
-                      listStyle: "none",
-                      gap: 1.5
-                    }}
-                  >
-                    <Box
-                      component="li"
-                      sx={(theme) => ({
-                        display: "inline-flex",
-                        alignItems: "center",
-                        minHeight: theme.spacing(5.5)
-                      })}
-                    >
-                      <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
-                        <PhoneOutlinedIcon fontSize="small" sx={{ color: "text.primary" }} />
-                        <Typography component="span" variant="body2">
-                          0421 366 486
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box
-                      component="li"
-                      sx={(theme) => ({
-                        display: "inline-flex",
-                        alignItems: "center",
-                        minHeight: theme.spacing(5.5)
-                      })}
-                    >
-                      <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
-                        <EmailOutlinedIcon fontSize="small" sx={{ color: "text.primary" }} />
-                        <MuiLink
-                          href="mailto:joelhickeydesigns@gmail.com"
-                          aria-label="Email Joel Hickey"
-                          underline="none"
-                          sx={(theme) => ({
-                            ...theme.typography.body2,
-              cursor: "pointer",
-                            display: "inline-flex",
-              alignItems: "center",
-                            minHeight: theme.spacing(5.5),
-                            color: "text.primary",
-                            textDecoration: "underline",
-                            "&:hover": { textDecoration: "underline" },
-                            "&:focus": {
-                              outline: "1px dotted",
-                              outlineColor: "text.primary",
-                              outlineOffset: "2px",
-                              textDecoration: "underline"
-                            },
-                            "&:focus-visible": {
-                              outline: "1px dotted",
-                              outlineColor: "text.primary",
-                              outlineOffset: "2px",
-                              textDecoration: "underline"
-                            }
-                          })}
-                        >
-                          joelhickeydesigns@gmail.com
-                        </MuiLink>
-                      </Box>
-                    </Box>
-                    <Box
-                      component="li"
-                      sx={(theme) => ({
-                        display: "inline-flex",
-                        alignItems: "center",
-                        minHeight: theme.spacing(5.5)
-                      })}
-                    >
-                      <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
-                        <LinkedInIcon fontSize="small" sx={{ color: "text.primary" }} />
-                        <MuiLink
-                          href="https://linkedin.com/in/joelhickey"
-                          target="_blank"
-                          rel="noreferrer"
-                          aria-label="Joel Hickey LinkedIn"
-                          underline="none"
-                          sx={(theme) => ({
-                            ...theme.typography.body2,
-              cursor: "pointer",
-                            display: "inline-flex",
-              alignItems: "center",
-                            minHeight: theme.spacing(5.5),
-                            color: "text.primary",
-                            textDecoration: "underline",
-                            "&:hover": { textDecoration: "underline" },
-                            "&:focus": {
-                              outline: "1px dotted",
-                              outlineColor: "text.primary",
-                              outlineOffset: "2px",
-                              textDecoration: "underline"
-                            },
-                            "&:focus-visible": {
-                              outline: "1px dotted",
-                              outlineColor: "text.primary",
-                              outlineOffset: "2px",
-                              textDecoration: "underline"
-                            }
-                          })}
-                        >
-                          linkedin.com/in/joelhickey
-                        </MuiLink>
-                      </Box>
-                    </Box>
-                    <Box
-                      component="li"
-                      sx={(theme) => ({
-                        display: "inline-flex",
-                        alignItems: "center",
-                        minHeight: theme.spacing(5.5)
-                      })}
-                    >
-                      <Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
-                        <SportsBasketballIcon fontSize="small" sx={{ color: "text.primary" }} />
-                        <MuiLink
-                          href="https://dribbble.com/joelhickey"
-                          target="_blank"
-                          rel="noreferrer"
-                          aria-label="Joel Hickey Dribbble"
-                          underline="none"
-                          sx={(theme) => ({
-                            ...theme.typography.body2,
-                            cursor: "pointer",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            minHeight: theme.spacing(5.5),
-                            color: "text.primary",
-                            textDecoration: "underline",
-                            "&:hover": { textDecoration: "underline" },
-                            "&:focus": {
-                              outline: "1px dotted",
-                              outlineColor: "text.primary",
-                              outlineOffset: "2px",
-                              textDecoration: "underline"
-                            },
-                            "&:focus-visible": {
-                              outline: "1px dotted",
-                              outlineColor: "text.primary",
-                              outlineOffset: "2px",
-                              textDecoration: "underline"
-                            }
-                          })}
-                        >
-                          dribbble.com/joelhickey
-                        </MuiLink>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Box>
+                  {showCvHeatmap && (
+                    <img
+                      src={cvHeatmapContentSrc}
+                      alt="CV attention heatmap overlay"
+                      className="cv-heatmap"
+                      style={{ height: cvHeatmapHeight ? `${cvHeatmapHeight}px` : "100%" }}
+                    />
+                  )}
+                  <div className="cv-content-inner">
+                    <section aria-label="Portfolio & Contact" className="cv-section cv-section--compact">
+                      <ul className="cv-contact-list">
+                        <li className="cv-contact-item">
+                          <span className="cv-contact-inline">
+                            <DeviceMobileIcon size={16} />
+                            <Text as="span" className="cv-body">0421 366 486</Text>
+                          </span>
+                        </li>
+                        <li className="cv-contact-item">
+                          <span className="cv-contact-inline">
+                            <MailIcon size={16} />
+                            <Link
+                              href="mailto:joelhickeydesigns@gmail.com"
+                              aria-label="Email Joel Hickey"
+                              className="cv-link"
+                            >
+                              joelhickeydesigns@gmail.com
+                            </Link>
+                          </span>
+                        </li>
+                        <li className="cv-contact-item">
+                          <span className="cv-contact-inline">
+                            <LinkIcon size={16} />
+                            <Link
+                              href="https://linkedin.com/in/joelhickey"
+                              target="_blank"
+                              rel="noreferrer"
+                              aria-label="Joel Hickey LinkedIn"
+                              className="cv-link"
+                            >
+                              linkedin.com/in/joelhickey
+                            </Link>
+                          </span>
+                        </li>
+                        <li className="cv-contact-item">
+                          <span className="cv-contact-inline">
+                            <LinkIcon size={16} />
+                            <Link
+                              href="https://dribbble.com/joelhickey"
+                              target="_blank"
+                              rel="noreferrer"
+                              aria-label="Joel Hickey Dribbble"
+                              className="cv-link"
+                            >
+                              dribbble.com/joelhickey
+                            </Link>
+                          </span>
+                        </li>
+                      </ul>
+                    </section>
 
-                {/* About */}
-                <Box component="section" aria-label="About" sx={{ mb: 6, mt: 2 }}>
-                  <Typography
-                    variant="h5"
-                    component="h2"
-                    sx={{
-                      mb: 2.5,
-                      fontWeight: 700,
-                      color: "#4b2f73",
-                      letterSpacing: "0.04em"
-                    }}
-                  >
-                    About
-                  </Typography>
-                  <Typography component="p" variant="body2" sx={{ mb: 1.5 }}>
-                    From an early age I developed a unique lens that blends art and design. With experience in interaction design, service design, and human-centred thinking, I move fast to deliver valuable, delightful, measurable solutions that feel effortless to use.
-                  </Typography>
-                </Box>
+                    <section aria-label="About" className="cv-section cv-section--compact cv-section--spaced">
+                      <Heading as="h2" className="cv-section-title">About</Heading>
+                      <Text as="p" className="cv-body">
+                        From an early age I developed a unique lens that blends art and design. With experience in interaction design, service design, and human-centred thinking, I move fast to deliver valuable, delightful, measurable solutions that feel effortless to use.
+                      </Text>
+                    </section>
 
-                {/* Experience */}
-                <Box component="section" aria-label="Experience" sx={{ mb: 6, mt: 4 }}>
-                  <Typography
-                    variant="h5"
-                    component="h2"
-                    sx={{
-                      mb: 2.5,
-                      fontWeight: 700,
-                      color: "#4b2f73",
-                      letterSpacing: "0.04em"
-                    }}
-                  >
-                    Experience
-                  </Typography>
-                  
-                  {/* FCTG */}
-                  <Box sx={{ mb: 4 }}>
-                    <Typography component="div" variant="subtitle1">
-                      <Box component="span" sx={{ fontWeight: 600 }}>
-                        Flight Centre Travel Group
-                      </Box>
-                      {" — "}
-                      <Box component="span" sx={{ fontWeight: 300 }}>
-                        Senior UI/UX Designer
-                      </Box>
-                      {" · "}
-                      <Box component="span" sx={{ fontWeight: 300 }}>
-                        2021-2025
-                      </Box>
-                    </Typography>
-                    <Box sx={{ mt: 0.5, mb: 1.5 }} />
-                    <Box
-                      component="ul"
-                      sx={{
-                        m: 0,
-                        pl: 2.5,
-                        listStyle: "disc",
-                        "& > li": { mb: 1 },
-                        "& > li:last-of-type": { mb: 0 }
-                      }}
-                    >
-                      <Typography component="li" variant="body2">
-                        Led the UX transformation of website verticals and delivered a new internal platform that streamlined operations.
-                      </Typography>
-                      <Typography component="li" variant="body2">
-                        Solved a high-friction amendment flow that forced consultants through multiple screens and manual steps, lifting consultant productivity and cutting average handling time from 8–12 minutes to 2–3 minutes.
-                      </Typography>
-                      <Typography component="li" variant="body2">
-                        Embedded insurance quoting into the booking workflow to remove context switching and manual calculations, improving attachment rates by 45%, boosting productivity, and reducing add time to ~30 seconds.
-                      </Typography>
-                      <Typography component="li" variant="body2">
-                        Improved consultant satisfaction scores for booking tasks and conversion metrics for travel add-ons.
-                      </Typography>
-                      <Typography component="li" variant="body2">
-                        Coordinated and delivered design within external and internal teams through discovery, prototyping, launch, and post-release optimisation.
-                      </Typography>
-                      <Typography component="li" variant="body2">
-                        Recognized: FCTG Global Lisbon selectee (2024); Buzz Night award winner (2022, 2023).
-                      </Typography>
-                    </Box>
-                  </Box>
+                    <section aria-label="Experience" className="cv-section cv-section--spaced">
+                      <Heading as="h2" className="cv-section-title">Experience</Heading>
 
-                  {/* Canstar */}
-                  <Box sx={{ mb: 4 }}>
-                    <Typography component="div" variant="subtitle1">
-                      <Box component="span" sx={{ fontWeight: 600 }}>
-                        Canstar
-                      </Box>
-                      {" — "}
-                      <Box component="span" sx={{ fontWeight: 300 }}>
-                        Lead UI/UX Designer
-                      </Box>
-                      {" · "}
-                      <Box component="span" sx={{ fontWeight: 300 }}>
-                        2019-2020
-                      </Box>
-                    </Typography>
-                    <Box sx={{ mt: 0.5, mb: 1.5 }} />
-                    <Box
-                      component="ul"
-                      sx={{
-                        m: 0,
-                        pl: 2.5,
-                        listStyle: "disc",
-                        "& > li": { mb: 1 },
-                        "& > li:last-of-type": { mb: 0 }
-                      }}
-                    >
-                      <Typography component="li" variant="body2">
-                        Led the UX transformation of website verticals and delivered a new internal platform that streamlined operations.
-                      </Typography>
-                      <Typography component="li" variant="body2">
-                        Migrated design workflow to Figma and established a living UI repository and handoff standards, reducing design-to-dev friction.
-                      </Typography>
-                      <Typography component="li" variant="body2">
-                        Built a usability testing framework, ran stakeholder workshops, and delivered prioritized UX improvements across customer product verticals.
-                      </Typography>
-                      <Typography component="li" variant="body2">
-                        Represented UX in agile ceremonies and drove adoption of design system practices across product teams.
-                      </Typography>
-                    </Box>
-                  </Box>
+                      <div className="cv-entry">
+                        <Text as="div" className="cv-subtitle">
+                          <span>Flight Centre Travel Group</span>
+                          {" — "}
+                          <span className="cv-meta">Senior UI/UX Designer</span>
+                          {" · "}
+                          <span className="cv-meta">2021-2025</span>
+                        </Text>
+                        <div className="cv-spacer-4" />
+                        <ul className="cv-list">
+                          <Text as="li" className="cv-body">Solved a high-friction amendment flow that forced consultants through multiple screens and manual steps, lifting consultant productivity and cutting average handling time from 8–12 minutes to 2–3 minutes.</Text>
+                          <Text as="li" className="cv-body">Embedded insurance quoting into the booking workflow to remove context switching and manual calculations, improving attachment rates by 45%, boosting productivity, and reducing add time to ~30 seconds.</Text>
+                          <Text as="li" className="cv-body">Improved consultant satisfaction scores for booking tasks and conversion metrics for travel add-ons.</Text>
+                          <Text as="li" className="cv-body">Coordinated and delivered design within external and internal teams through discovery, prototyping, launch, and post-release optimisation.</Text>
+                          <Text as="li" className="cv-body">Recognized: FCTG Global Lisbon selectee (2024); Buzz Night award winner (2022, 2023).</Text>
+                        </ul>
+                      </div>
 
-                  {/* Temando */}
-                  <Box sx={{ mb: 4 }}>
-                    <Typography component="div" variant="subtitle1">
-                      <Box component="span" sx={{ fontWeight: 600 }}>
-                        Temando
-                      </Box>
-                      {" — "}
-                      <Box component="span" sx={{ fontWeight: 300 }}>
-                        UI/UX Designer
-                      </Box>
-                      {" · "}
-                      <Box component="span" sx={{ fontWeight: 300 }}>
-                        2015-2019
-                      </Box>
-                    </Typography>
-                    <Box sx={{ mt: 0.5, mb: 1.5 }} />
-                    <Box
-                      component="ul"
-                      sx={{
-                        m: 0,
-                        pl: 2.5,
-                        listStyle: "disc",
-                        "& > li": { mb: 1 },
-                        "& > li:last-of-type": { mb: 0 }
-                      }}
-                    >
-                      <Typography component="li" variant="body2">
-                        Designed merchant workflows for Magento Shipping (bulk shipments), enabling faster dispatch flows and measurably higher merchant throughput and satisfaction.
-                      </Typography>
-                      <Typography component="li" variant="body2">
-                        Developed end-to-end proposals and workflows for clients including Nike, Myer and ASOS.
-                      </Typography>
-                      <Typography component="li" variant="body2">
-                        Founded a UX guild and documented design frameworks to scale cross-team collaboration.
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
+                      <div className="cv-entry">
+                        <Text as="div" className="cv-subtitle">
+                          <span>Canstar</span>
+                          {" — "}
+                          <span className="cv-meta">Lead UI/UX Designer</span>
+                          {" · "}
+                          <span className="cv-meta">2019-2020</span>
+                        </Text>
+                        <div className="cv-spacer-4" />
+                        <ul className="cv-list">
+                          <Text as="li" className="cv-body">Led the UX transformation of website verticals and delivered a new internal platform that streamlined operations.</Text>
+                          <Text as="li" className="cv-body">Migrated design workflow to Figma and established a living UI repository and handoff standards, reducing design-to-dev friction.</Text>
+                          <Text as="li" className="cv-body">Built a usability testing framework, ran stakeholder workshops, and delivered prioritized UX improvements across customer product verticals.</Text>
+                          <Text as="li" className="cv-body">Represented UX in agile ceremonies and drove adoption of design system practices across product teams.</Text>
+                        </ul>
+                      </div>
 
-                {/* Education */}
-                <Box component="section" aria-label="Education" sx={{ mb: 6, mt: 4 }}>
-                  <Typography
-                    variant="h5"
-                    component="h2"
-                    sx={{
-                      mb: 2.5,
-                      fontWeight: 700,
-                      color: "#4b2f73",
-                      letterSpacing: "0.04em"
-                    }}
-                  >
-                    Education
-                  </Typography>
-                  <Typography component="div" variant="body2" sx={{ mb: 0.75 }}>
-                    Master of Interactive Media — Queensland College of Art (2015-2016)
-                  </Typography>
-                  <Typography component="div" variant="body2">
-                    Bachelor of Audio Engineering & Sound Production — JMC Academy (2011-2013)
-                  </Typography>
-                </Box>
+                      <div className="cv-entry">
+                        <Text as="div" className="cv-subtitle">
+                          <span>Temando</span>
+                          {" — "}
+                          <span className="cv-meta">UI/UX Designer</span>
+                          {" · "}
+                          <span className="cv-meta">2015-2019</span>
+                        </Text>
+                        <div className="cv-spacer-4" />
+                        <ul className="cv-list">
+                          <Text as="li" className="cv-body">Designed merchant workflows for Magento Shipping (bulk shipments), enabling faster dispatch flows and measurably higher merchant throughput and satisfaction.</Text>
+                          <Text as="li" className="cv-body">Developed end-to-end proposals and workflows for clients including Nike, Myer and ASOS.</Text>
+                          <Text as="li" className="cv-body">Founded a UX guild and documented design frameworks to scale cross-team collaboration.</Text>
+                        </ul>
+                      </div>
+                    </section>
 
-                {/* Tools & Methods */}
-                <Box component="section" aria-label="Tools & Methods" sx={{ mb: 6, mt: 4 }}>
-                  <Typography
-                    variant="h5"
-                    component="h2"
-                    sx={{
-                      mb: 2.5,
-                      fontWeight: 700,
-                      color: "#4b2f73",
-                      letterSpacing: "0.04em"
-                    }}
-                  >
-                    Tools & Methods
-                  </Typography>
-                  <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      Figma
-                    </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      Miro
-                    </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      FullStory
-                    </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      Confluence
-                    </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      Design Systems
-                    </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      Prototyping
-                    </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      Usability Testing
-                    </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      Research & Synthesis
-                    </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      UX Strategy
-                    </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      Accessibility
-                    </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      Sound design for UI
-                    </Typography>
-                    <Typography component="span" variant="body2" sx={{ color: "text.secondary" }}>
-                      AI Tools: Cursor, GitHub
-                    </Typography>
-                  </Box>
-                </Box>
+                    <section aria-label="Education" className="cv-section cv-section--spaced">
+                      <Heading as="h2" className="cv-section-title">Education</Heading>
+                      <Text as="div" className="cv-body">Master of Interactive Media — Queensland College of Art (2015-2016)</Text>
+                      <Text as="div" className="cv-body">Bachelor of Audio Engineering &amp; Sound Production — JMC Academy (2011-2013)</Text>
+                    </section>
 
-                {/* References */}
-                <Box component="section" aria-label="References" sx={{ mt: 4 }}>
-                  <Typography
-                    variant="h5"
-                    component="h2"
-                    sx={{
-                      mb: 2.5,
-                      fontWeight: 700,
-                      color: "#4b2f73",
-                      letterSpacing: "0.04em"
-                    }}
-                  >
-                    References
-                  </Typography>
-                  <Typography component="p" variant="body2" sx={{ m: 0 }}>
-                    References available on request
-                  </Typography>
-                </Box>
+                    <section aria-label="Tools & Methods" className="cv-section cv-section--spaced">
+                      <Heading as="h2" className="cv-section-title">Tools &amp; Methods</Heading>
+                      <LabelGroup>
+                        <Label>Figma</Label>
+                        <Label>Miro</Label>
+                        <Label>FullStory</Label>
+                        <Label>Confluence</Label>
+                        <Label>Design Systems</Label>
+                        <Label>Prototyping</Label>
+                        <Label>Usability Testing</Label>
+                        <Label>Research &amp; Synthesis</Label>
+                        <Label>UX Strategy</Label>
+                        <Label>Accessibility</Label>
+                        <Label>Sound design for UI</Label>
+                        <Label>AI Tools: Cursor, GitHub</Label>
+                      </LabelGroup>
+                    </section>
 
-              
-          </Box>
-        </Box>
-      ))}
-
-      {/* Third Application Window - Streamlining Amendments */}
-      {travelWindows.filter((window) => !window.minimized).map((travelWindow) => (
-        <React.Fragment key={travelWindow.id}>
-          {travelWindow.view === 'caseStudy' && (
-            <AmendmentsCaseStudy
-              onViewOldFlow={() => updateTravelWindowView(travelWindow.id, 'oldFlow')}
-              onViewNewFlow={() => updateTravelWindowView(travelWindow.id, 'newFlow')}
-              onClose={() => closeTravelApp(travelWindow.id)}
-              position={travelWindow.position}
-              onDragStart={(e) => startWindowDrag('travel', travelWindow.id, e)}
-              zIndex={travelWindow.zIndex}
-            />
-          )}
-          
-          {travelWindow.view === 'oldFlow' && (
-            <AmendmentsFlowDemo
-              onBackToCaseStudy={() => updateTravelWindowView(travelWindow.id, 'caseStudy')}
-              onClose={() => closeTravelApp(travelWindow.id)}
-              onBringToFront={() => bringWindowToFront('travel', travelWindow.id)}
-              position={travelWindow.position}
-              zIndex={travelWindow.zIndex}
-            />
-          )}
-          
-          {travelWindow.view === 'newFlow' && (
-            <TravelPlannerMUI
-              isOpen={!travelWindow.minimized}
-              onClose={() => closeTravelApp(travelWindow.id)}
-              onMinimize={() => minimizeTravelApp(travelWindow.id)}
-              position={travelWindow.position}
-              onDragStart={(e) => startWindowDrag('travel', travelWindow.id, e)}
-              isMinimized={travelWindow.minimized}
-              showBackButton={true}
-              onBackToCaseStudy={() => updateTravelWindowView(travelWindow.id, 'caseStudy')}
-              zIndex={travelWindow.zIndex}
-            />
-          )}
-        </React.Fragment>
-      ))}
-
-      {/* Fourth Application Window - Insurance */}
-      {isInsuranceAppOpen && !isInsuranceDemoOpen && (
-        <InsuranceCaseStudy
-          onClose={closeInsuranceApp}
-          onViewDemo={openInsuranceDemo}
-          zIndex={insuranceWindowZIndex}
-          position={insuranceWindowPosition}
-          onDragStart={(e) => startWindowDrag('insurance', null, e)}
-        />
+                    <section aria-label="References" className="cv-section cv-section--spaced">
+                      <Heading as="h2" className="cv-section-title">References</Heading>
+                      <Text as="p" className="cv-body">References available on request</Text>
+                    </section>
+                  </div>
+                </div>
+              </div>
+            </BaseStyles>
+          </ThemeProvider>
+        )),
+        document.body
       )}
 
-      {isInsuranceAppOpen && isInsuranceDemoOpen && (
-        <InsuranceOldFlow
-          onBackToCaseStudy={backToInsuranceCaseStudy}
-          onClose={closeInsuranceApp}
-          zIndex={insuranceWindowZIndex}
-          position={insuranceWindowPosition}
-        />
+      {createPortal(
+        <>
+          {/* Third Application Window - Streamlining Amendments */}
+          {travelWindows.filter((window) => !window.minimized).map((travelWindow) => (
+            <React.Fragment key={travelWindow.id}>
+              {travelWindow.view === 'caseStudy' && (
+                <AmendmentsCaseStudy
+                  onViewOldFlow={() => updateTravelWindowView(travelWindow.id, 'oldFlow')}
+                  onViewNewFlow={() => updateTravelWindowView(travelWindow.id, 'newFlow')}
+                  onClose={() => closeTravelApp(travelWindow.id)}
+                  position={travelWindow.position}
+                  onDragStart={(e) => startWindowDrag('travel', travelWindow.id, e)}
+                  zIndex={travelWindow.zIndex}
+                />
+              )}
+
+              {travelWindow.view === 'oldFlow' && (
+                <AmendmentsFlowDemo
+                  onBackToCaseStudy={() => updateTravelWindowView(travelWindow.id, 'caseStudy')}
+                  onClose={() => closeTravelApp(travelWindow.id)}
+                  onBringToFront={() => bringWindowToFront('travel', travelWindow.id)}
+                  position={travelWindow.position}
+                  zIndex={travelWindow.zIndex}
+                />
+              )}
+
+              {travelWindow.view === 'newFlow' && (
+                <TravelPlannerMUI
+                  isOpen={!travelWindow.minimized}
+                  onClose={() => closeTravelApp(travelWindow.id)}
+                  onMinimize={() => minimizeTravelApp(travelWindow.id)}
+                  position={travelWindow.position}
+                  onDragStart={(e) => startWindowDrag('travel', travelWindow.id, e)}
+                  isMinimized={travelWindow.minimized}
+                  showBackButton={true}
+                  onBackToCaseStudy={() => updateTravelWindowView(travelWindow.id, 'caseStudy')}
+                  zIndex={travelWindow.zIndex}
+                />
+              )}
+            </React.Fragment>
+          ))}
+
+          {/* Fourth Application Window - Magento Shipping */}
+          {magentoWindows.filter((window) => !window.minimized).map((magentoWindow) => (
+            <MagentoShippingCaseStudy
+              key={magentoWindow.id}
+              onClose={() => closeMagentoShipping(magentoWindow.id)}
+              position={magentoWindow.position}
+              onDragStart={(e) => startWindowDrag('magento', magentoWindow.id, e)}
+              zIndex={magentoWindow.zIndex}
+            />
+          ))}
+
+          {/* Fifth Application Window - Insurance */}
+          {isInsuranceAppOpen && !isInsuranceDemoOpen && (
+            <InsuranceCaseStudy
+              onClose={closeInsuranceApp}
+              onViewDemo={openInsuranceDemo}
+              zIndex={insuranceWindowZIndex}
+              position={insuranceWindowPosition}
+              onDragStart={(e) => startWindowDrag('insurance', null, e)}
+            />
+          )}
+
+          {isInsuranceAppOpen && isInsuranceDemoOpen && (
+            <InsuranceOldFlow
+              onBackToCaseStudy={backToInsuranceCaseStudy}
+              onClose={closeInsuranceApp}
+              zIndex={insuranceWindowZIndex}
+              position={insuranceWindowPosition}
+            />
+          )}
+        </>,
+        document.body
       )}
 
       {isPipePlannerOpen && (
