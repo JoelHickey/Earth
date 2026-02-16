@@ -4197,7 +4197,10 @@ function App() {
     }
   };
 
-  const isEmbed = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('embed') === '1';
+  const isEmbed = typeof window !== 'undefined' && (
+    window.location.pathname === '/embed' ||
+    ['1', 'true', 'yes'].includes(new URLSearchParams(window.location.search).get('embed') || '')
+  );
 
   if (isEmbed) {
     return (
