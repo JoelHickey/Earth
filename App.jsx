@@ -4198,6 +4198,7 @@ function App() {
   };
 
   const isEmbed = typeof window !== 'undefined' && (
+    window.self !== window.top || // loaded in iframe
     window.location.pathname === '/embed' ||
     ['1', 'true', 'yes'].includes(new URLSearchParams(window.location.search).get('embed') || '')
   );
